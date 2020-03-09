@@ -9,7 +9,7 @@ class Prj_api_index(generic.TemplateView):
     def get(self, request, *args, **kwargs):
         template_name = 'prj/index.html'
 
-        r = requests.get('http://prj_api:5000/hello')
+        r = requests.get('http://prj_api:5002/hello')
         rr = {
             "result":r.text
         }
