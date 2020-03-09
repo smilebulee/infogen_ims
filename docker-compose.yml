@@ -1,0 +1,31 @@
+version: "3"
+
+services:
+  # front ui
+  front:
+    build: "./ifg_front"
+    ports:
+      - "8000:8000"
+    links:
+      - emp_api
+      - prj_api
+  # 직원관리
+  emp_api: 
+    build: "./emp/api"
+    ports: 
+      - "5000:5000"
+    links: 
+      - emp_db
+  emp_db:
+    build: "./emp/db"
+    # image: mongo:3.6.4
+  # 프로젝트 관리
+  prj_api: 
+    build: "./prj/api"
+    ports: 
+      - "5001:5000"
+    links: 
+      - prj_db
+  prj_db:
+    build: "./prj/db"
+    # image: mongo:3.6.4dock
