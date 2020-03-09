@@ -9,23 +9,120 @@ services:
     links:
       - emp_api
       - prj_api
-  # 직원관리
+      - skil_api
+      - cmm_api
+      - cnc_api
+      - dili_api
+      - eval_api
+      - kpi_api
+      - stat_api
+      - site_api
+  # 1.직원관리
   emp_api: 
-    build: "./emp/api"
-    ports: 
-      - "5000:5000"
-    links: 
-      - emp_db
-  emp_db:
-    build: "./emp/db"
-    # image: mongo:3.6.4
-  # 프로젝트 관리
-  prj_api: 
-    build: "./prj/api"
+    build: "./api_containers/emp/api"
     ports: 
       - "5001:5000"
     links: 
+      - emp_db
+  emp_db:
+    build: "./api_containers/emp/db"
+    # image: mongo:3.6.4
+
+  # 2.프로젝트 관리
+  prj_api: 
+    build: "./api_containers/prj/api"
+    ports: 
+      - "5002:5000"
+    links: 
       - prj_db
   prj_db:
-    build: "./prj/db"
+    build: "./api_containers/prj/db"
+    # image: mongo:3.6.4dock
+
+  # 3.skill 관리
+  skil_api:
+    build: "./api_containers/skil/api"
+    ports:
+      - "5003:5000"
+    links:
+      - skil_db
+  skil_db:
+    build: "./api_containers/skil/db"
+    # image: mongo:3.6.4dock
+
+  # 4.cmm 관리
+  cmm_api:
+    build: "./api_containers/cmm/api"
+    ports:
+      - "5004:5000"
+    links:
+      - cmm_db
+  cmm_db:
+    build: "./api_containers/cmm/db"
+    # image: mongo:3.6.4dock
+
+  # 5.접속 관리
+  cnc_api:
+    build: "./api_containers/cnc/api"
+    ports:
+      - "5005:5000"
+    links:
+      - cnc_db
+  cnc_db:
+    build: "./api_containers/cnc/db"
+    # image: mongo:3.6.4dock
+
+  # 6.프로젝트 관리
+  dili_api:
+    build: "./api_containers/dili/api"
+    ports:
+      - "5006:5000"
+    links:
+      - dili_db
+  dili_db:
+    build: "./api_containers/dili/db"
+    # image: mongo:3.6.4dock
+
+  # 7.평가 관리
+  eval_api:
+    build: "./api_containers/eval/api"
+    ports:
+      - "5007:5000"
+    links:
+      - eval_db
+  eval_db:
+    build: "./api_containers/eval/db"
+    # image: mongo:3.6.4dock
+
+  # 8. kpi 관리
+  kpi_api:
+    build: "./api_containers/kpi/api"
+    ports:
+      - "5008:5000"
+    links:
+      - kpi_db
+  kpi_db:
+    build: "./api_containers/kpi/db"
+    # image: mongo:3.6.4dock
+
+  # 9.현황 관리
+  stat_api:
+    build: "./api_containers/stat/api"
+    ports:
+      - "5009:5000"
+    links:
+      - stat_db
+  stat_db:
+    build: "./api_containers/stat/db"
+    # image: mongo:3.6.4dock
+
+  # 10.사이트맵 관리
+  site_api:
+    build: "./api_containers/site/api"
+    ports:
+      - "5010:5000"
+    links:
+      - site_db
+  site_db:
+    build: "./api_containers/site/db"
     # image: mongo:3.6.4dock

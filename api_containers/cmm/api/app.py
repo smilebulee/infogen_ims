@@ -6,7 +6,7 @@ import bcrypt
 app = Flask(__name__)
 api = Api(app)
 
-client = MongoClient("mongodb://my_db:27017")
+client = MongoClient("mongodb://cmm_db:27017")
 db = client.projectDB
 users = db["Users"]
 
@@ -50,7 +50,7 @@ RESOURCES
 
 class Hello(Resource):
     def get(self):
-        return "This is Employee Management API!"
+        return "This is Common Management API!"
 
 
 class Register(Resource):
