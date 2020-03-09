@@ -26,7 +26,6 @@ services:
       - emp_db
   emp_db:
     build: "./api_containers/emp/db"
-    # image: mongo:3.6.4
 
   # 2.프로젝트 관리
   prj_api: 
@@ -37,7 +36,6 @@ services:
       - prj_db
   prj_db:
     build: "./api_containers/prj/db"
-    # image: mongo:3.6.4dock
 
   # 3.skill 관리
   skil_api:
@@ -48,7 +46,6 @@ services:
       - skil_db
   skil_db:
     build: "./api_containers/skil/db"
-    # image: mongo:3.6.4dock
 
   # 4.cmm 관리
   cmm_api:
@@ -59,7 +56,6 @@ services:
       - cmm_db
   cmm_db:
     build: "./api_containers/cmm/db"
-    # image: mongo:3.6.4dock
 
   # 5.접속 관리
   cnc_api:
@@ -70,7 +66,6 @@ services:
       - cnc_db
   cnc_db:
     build: "./api_containers/cnc/db"
-    # image: mongo:3.6.4dock
 
   # 6.프로젝트 관리
   dili_api:
@@ -81,7 +76,6 @@ services:
       - dili_db
   dili_db:
     build: "./api_containers/dili/db"
-    # image: mongo:3.6.4dock
 
   # 7.평가 관리
   eval_api:
@@ -92,7 +86,6 @@ services:
       - eval_db
   eval_db:
     build: "./api_containers/eval/db"
-    # image: mongo:3.6.4dock
 
   # 8. kpi 관리
   kpi_api:
@@ -103,7 +96,6 @@ services:
       - kpi_db
   kpi_db:
     build: "./api_containers/kpi/db"
-    # image: mongo:3.6.4dock
 
   # 9.현황 관리
   stat_api:
@@ -114,7 +106,6 @@ services:
       - stat_db
   stat_db:
     build: "./api_containers/stat/db"
-    # image: mongo:3.6.4dock
 
   # 10.사이트맵 관리
   site_api:
@@ -125,4 +116,3 @@ services:
       - site_db
   site_db:
     build: "./api_containers/site/db"
-    # image: mongo:3.6.4dock
