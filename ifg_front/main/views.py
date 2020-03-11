@@ -11,3 +11,8 @@ class Main_index(generic.TemplateView):
         template_name = 'main/index.html'
 
         return render(request, template_name)
+
+def sample(request):
+    template_name = 'sample.html'
+
+    return render(request, template_name)

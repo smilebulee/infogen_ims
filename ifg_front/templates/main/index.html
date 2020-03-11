@@ -29,18 +29,35 @@
               min-width: 220px;
             }
         </style>
+        <script type="text/javascript">
+          $(document).ready(function(){
+             $('.gotoIndexBtn').click(function(e){
+                var txt = ($(this).text()).split(' ')[0];
+                switch(txt){
+                  case 'EMP':
+                    location.href = '{% url 'emp_api:emp_api' %}'
+                    break;
+                  case 'PRJ':
+                    location.href = '{% url 'prj_api:prj_api' %}'
+                    break;
+
+                }
+             });
+          });
+
+        </script>
     </head>
     <body>
         <div class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-white border-bottom shadow-sm">
             <h5 class="my-0 mr-md-auto font-weight-bold">INF<font color="red">O</font><font color="gray">GEN</font></h5>
-            <!--
+
           <nav class="my-2 my-md-0 mr-md-3">
-            <a class="p-2 text-dark" href="#">Features</a>
-            <a class="p-2 text-dark" href="#">Enterprise</a>
+            <a class="p-2 text-dark" href="{% url 'main:sample' %}">Component Sample</a>
+           <!-- <a class="p-2 text-dark" href="#">Enterprise</a>
             <a class="p-2 text-dark" href="#">Support</a>
-            <a class="p-2 text-dark" href="#">Pricing</a>
+            <a class="p-2 text-dark" href="#">Pricing</a>-->
           </nav>
-          -->
+
           <a class="btn btn-outline-primary" href="#">Sign up</a>
         </div>
 
@@ -63,7 +80,7 @@
                     <li>&nbsp;</li>
 
                 </ul>
-                <button type="button" class="btn btn-lg btn-block btn-primary">EMP Main</button>
+                <button type="button" class="btn btn-lg btn-block btn-primary gotoIndexBtn">EMP Main</button>
               </div>
             </div>
             <div class="card mb-4 shadow-sm">
@@ -77,7 +94,7 @@
                   <li>예상프로젝트</li>
                   <li>투입가능정보</li>
                 </ul>
-                <button type="button" class="btn btn-lg btn-block btn-primary">PRJ Main</button>
+                <button type="button" class="btn btn-lg btn-block btn-primary gotoIndexBtn">PRJ Main</button>
               </div>
             </div>
             <div class="card mb-4 shadow-sm">
@@ -216,7 +233,10 @@
 
 
           </div>
-            <footer class="text-muted">
+
+
+        </div>
+        <footer class="text-muted">
               <div class="container">
                 <p class="float-right">
                   <a href="#">Back to top</a>
@@ -225,7 +245,5 @@
                 <p>KNK Tower</p>
               </div>
             </footer>
-
-        </div>
     </body>
 </html>
