@@ -52,19 +52,22 @@
                     },
                     {key: "customer", label: "customer", editor: {type: "text"}},
                     {
-                        key: "userType", label: "userType", editor: {
-                        type: "select", config: {
-                            columnKeys: {
-                                optionValue: "CD", optionText: "NM"
-                            },
-                            options: [
-                                {CD: "M", NM: "M: Man"},
-                                {CD: "D", NM: "D: Daughter"},
-                                {CD: "S", NM: "S: Son"},
-                                {CD: "W", NM: "W: Wife"}
-                            ]
+                        key: "userType",
+                        label: "userType",
+                        editor: {
+                            type: "select",
+                            config: {
+                                columnKeys: {
+                                    optionValue: "CD", optionText: "NM"
+                                },
+                                options: [
+                                    {CD: "M", NM: "M: Man"},
+                                    {CD: "D", NM: "D: Daughter"},
+                                    {CD: "S", NM: "S: Son"},
+                                    {CD: "W", NM: "W: Wife"}
+                                ]
+                            }
                         }
-                    }
                     },
                     {key: "desc", label: "desc", width:400, editor: {type: "textarea"}}
                 ],
@@ -108,7 +111,7 @@
                                     if (!n.__isGrouping) value += (n.price * n.amount);
                                 });
                                 return ax5.util.number(value, {"money": 1});
-                            }, 
+                            },
                             align: "right"
                         }
                     ]]
