@@ -1,0 +1,84 @@
+{% extends 'common/sampleBase.html' %}
+
+{% block content %}
+    <script type="text/javascript">
+        $(document).ready(function(){
+            var mask = new ax5.ui.mask();
+            mask.setConfig({
+                target: document.body, // 미리 선언했지만
+                content: "<h1>Mask will disappear after 3 seconds.</h1>",
+                onStateChanged: function(){
+                    //console.log(this);
+                }
+            });
+
+            $('#maskBtn').click(function () {
+                mask.open({
+                    content: '<h1><i class="fa fa-spinner fa-spin"></i> Loading</h1>'
+                });
+
+                setTimeout(function () {
+                    mask.close();
+                }, 2000);
+                // Mask will disappear after 3 seconds.
+            });
+
+            $('#intFormat').ax5formatter();
+            $('#dateFormat').ax5formatter();
+            $('#datetimeFormat').ax5formatter();
+            $('#timeFormat').ax5formatter();
+        });
+    </script>
+    <style>
+        .row { margin-bottom: 10px; }
+        [class|="col"] {
+          font-weight: 700;
+          padding: 10px;
+        }
+    </style>
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <h3>Mask <a href="http://ax5.io/ax5ui-mask/api/index.html" class="badge badge-info">Info</a></h3>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <!--<div><h5>Alert</h5></div>-->
+                <button class="btn btn-primary btn-block" type="button" id="maskBtn">Open Mask Button</button>
+            </div>
+
+
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <h3>Formatter <a href="http://ax5.io/ax5ui-formatter/api/index.html" class="badge badge-info">Info</a></h3>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3">
+                <div><h5>Number</h5></div>
+                <input id="intFormat" name="2" type="text" class="form-control" placeholder="1,000,000" data-ax5formatter="money" data-ax5="formatter">
+            </div>
+
+            <div class="col-md-3">
+                <div><h5>Date</h5></div>
+                <input id="dateFormat" name="3" type="text" class="form-control" placeholder="yyyy-mm-dd" data-ax5formatter="date">
+            </div>
+
+            <div class="col-md-3">
+                <div><h5>Datetime</h5></div>
+                <input id="datetimeFormat" name="3" type="text" class="form-control" placeholder="yyyy-mm-dd hh:mi:ss" data-ax5formatter="date(time)">
+            </div>
+
+
+            <div class="col-md-3">
+                <div><h5>Time</h5></div>
+                <input id="timeFormat" name="3" type="text" class="form-control" placeholder="hh:mi:ss" data-ax5formatter="time">
+            </div>
+
+        </div>
+
+
+    </div>
+{% endblock %}

@@ -1,0 +1,80 @@
+{% extends 'common/sampleBase.html' %}
+
+{% block content %}
+    <script type="text/javascript">
+        $(document).ready(function(){
+            var options = [];
+            for (var i = 0; i < 100; i++) {
+                options.push({value: "optionValue" + i, text: "optionText" + i});
+            }
+
+            $('[data-ax5select]').ax5select({
+                options: options
+            });
+
+            var options1 = [];
+            options1.push({value: "string", text: "string"});
+            options1.push({value: "number", text: "number"});
+            options1.push({value: "substr", text: "substr"});
+            options1.push({value: "substring", text: "substring"});
+            options1.push({value: "search", text: "search"});
+            options1.push({value: "parseInt", text: "parseInt"});
+            options1.push({value: "toFixed", text: "toFixed"});
+            options1.push({value: "min", text: "min"});
+            options1.push({value: "max", text: "max"});
+
+            $('[data-ax5combobox]').ax5combobox({
+                options: options1
+            });
+        });
+    </script>
+    <style>
+        .row { margin-bottom: 10px; }
+        [class|="col"] {
+          font-weight: 700;
+          padding: 10px;
+        }
+    </style>
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <h3>Select Box <a href="http://ax5.io/ax5ui-select/api/index.html" class="badge badge-info">Info</a></h3>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div><h5>단건 선택</h5></div>
+                <div class="form-group">
+                    <div data-ax5select="select1" data-ax5select-config="{}"></div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div><h5>다건 선택</h5></div>
+                <div class="form-group">
+                    <div data-ax5select="select2" data-ax5select-config="{multiple: true,reset:'<i class=\'fa fa-trash\'></i>'}"></div>
+                </div>
+            </div>
+
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <h3>Combo Box <a href="http://ax5.io/ax5ui-combobox/api/index.html" class="badge badge-info">Info</a></h3>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <div><h5>단건 선택</h5></div>
+                        <div class="form-group">
+                            <div data-ax5combobox="combobox1" data-ax5combobox-config="{}"></div>
+                        </div>
+            </div>
+            <div class="col-md-6">
+                <div><h5>다건 선택</h5></div>
+                <div class="form-group">
+                    <div data-ax5combobox="combobox2" data-ax5combobox-config="{multiple: true}"></div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+{% endblock %}

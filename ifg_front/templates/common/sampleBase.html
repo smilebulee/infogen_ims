@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1"><!-- 모바일 -->
+        {% load static %}
+        <link href="{% static 'css/bootstrap-4.4.1.min.css' %}" rel="stylesheet"/>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css" />
+        <link href="{% static 'css/ax5calendar.css' %}" rel="stylesheet"/>
+        <link href="{% static 'css/ax5combobox.css' %}" rel="stylesheet"/>
+        <link href="{% static 'css/ax5dialog.css' %}" rel="stylesheet"/>
+        <link href="{% static 'css/ax5formatter.css' %}" rel="stylesheet"/>
+        <link href="{% static 'css/ax5grid.css' %}" rel="stylesheet"/>
+        <link href="{% static 'css/ax5mask.css' %}" rel="stylesheet"/>
+        <link href="{% static 'css/ax5modal.css' %}" rel="stylesheet"/>
+        <link href="{% static 'css/ax5picker.css' %}" rel="stylesheet"/>
+        <link href="{% static 'css/ax5select.css' %}" rel="stylesheet"/>
+        <link href="{% static 'css/ax5toast.css' %}" rel="stylesheet"/>
+
+        <script type="text/javascript" src="{% static 'js/jquery-3.4.1.min.js' %}"></script>
+        <script type="text/javascript" src="{% static 'js/bootstrap-4.4.1.min.js' %}"></script>
+        <script type="text/javascript" src="{% static 'js/ax5core.js' %}"></script>
+        <script type="text/javascript" src="{% static 'js/ax5calendar.js' %}"></script>
+        <script type="text/javascript" src="{% static 'js/ax5combobox.js' %}"></script>
+        <script type="text/javascript" src="{% static 'js/ax5dialog.js' %}"></script>
+        <script type="text/javascript" src="{% static 'js/ax5formatter.js' %}"></script>
+        <script type="text/javascript" src="{% static 'js/ax5grid.js' %}"></script>
+        <script type="text/javascript" src="{% static 'js/ax5mask.js' %}"></script>
+        <script type="text/javascript" src="{% static 'js/ax5modal.js' %}"></script>
+        <script type="text/javascript" src="{% static 'js/ax5picker.js' %}"></script>
+        <script type="text/javascript" src="{% static 'js/ax5select.js' %}"></script>
+        <script type="text/javascript" src="{% static 'js/ax5toast.js' %}"></script>
+
+        <script type="text/javascript">
+          $(document).ready(function(){
+
+          });
+
+        </script>
+        <title>IFG-IMS Sample</title>
+    </head>
+    <body>
+        <div class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-white border-bottom shadow-sm">
+            <h5 class="my-0 mr-md-auto font-weight-bold">INF<font color="red">O</font><font color="gray">GEN</font></h5>
+
+          <nav class="my-2 my-md-0 mr-md-3">
+            <a class="p-2 text-dark" href="{% url 'main:sample' sample='date' %}">Calendar & Datepicker</a>
+            <a class="p-2 text-dark" href="{% url 'main:sample' sample='select' %}">Select & Combobox</a>
+            <a class="p-2 text-dark" href="{% url 'main:sample' sample='popup' %}">Diallog & Modal & Toast</a>
+            <a class="p-2 text-dark" href="{% url 'main:sample' sample='format' %}">Mask & Formatter</a>
+            <a class="p-2 text-dark" href="{% url 'main:sample' sample='grid' %}">Grid</a>
+            <a class="p-2 text-dark" href="https://getbootstrap.com/docs/4.4/getting-started/introduction/">Bootstrap</a>
+          </nav>
+        </div>
+
+        {% block content %}
+
+
+
+
+
+
+        {% endblock %}
+
+        <footer class="text-muted">
+              <div class="container">
+                <p class="float-right">
+                  <a href="#">Back to top</a>
+                </p>
+                <p>Copyright</p>
+                <p>KNK Tower</p>
+              </div>
+            </footer>
+    </body>
+</html>
