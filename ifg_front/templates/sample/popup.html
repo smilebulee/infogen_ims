@@ -1,0 +1,107 @@
+{% extends 'common/sampleBase.html' %}
+
+{% block content %}
+    <script type="text/javascript">
+        $(document).ready(function(){
+            var dialog = new ax5.ui.dialog();
+            dialog.setConfig({
+                title: 'Title',
+                lang:{
+                    "ok": "확인", "cancel": "취소"
+                }
+            });
+
+            $('#alertBtn').click(function () {
+                dialog.alert('Alert message');
+            });
+            $('#confirmBtn').click(function () {
+                dialog.confirm('confirm message');
+            });
+            $('#promptBtn').click(function () {
+                dialog.prompt('Prompt message');
+            });
+
+            var modal = new ax5.ui.modal();
+            modal.setConfig({
+                onStateChanged: function () {
+                    // console.log(this);
+                }
+            });
+
+            $('#modalBtn').click(function () {
+                modal.open({}, function () {
+                    var btn = jQuery('<button class="btn btn-success" type="button" style="margin-top: 100px;">Modal Close</button>');
+                    btn.click(function () {
+                        modal.close();
+                    });
+                    this.$["body-frame"].append(btn);
+                });
+            });
+
+            var toast = new ax5.ui.toast({
+                containerPosition: "top-right",
+                onStateChanged: function(){
+                    console.log(this);
+                }
+            });
+
+            $('#toastBtn').click(function () {
+                toast.push('Toast message', function () {
+
+                });
+            });
+        });
+    </script>
+    <style>
+        .row { margin-bottom: 10px; }
+        [class|="col"] {
+          font-weight: 700;
+          padding: 10px;
+        }
+    </style>
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <h3>Dialog <a href="http://ax5.io/ax5ui-dialog/api/index.html" class="badge badge-info">Info</a></h3>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <!--<div><h5>Alert</h5></div>-->
+                <button class="btn btn-danger btn-block" type="button" id="alertBtn">Alert Button</button>
+            </div>
+            <div class="col-sm-4">
+                <!--<div><h5>Confirm</h5></div>-->
+                <button class="btn btn-warning btn-block" type="button" id="confirmBtn">Confirm Button</button>
+            </div>
+            <div class="col-sm-4">
+                <!--<div><h5>Prompt</h5></div>-->
+                <button class="btn btn-info btn-block" type="button" id="promptBtn">Prompt Button</button>
+            </div>
+
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <h3>Modal <a href="http://ax5.io/ax5ui-modal/api/index.html" class="badge badge-info">Info</a></h3>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <button class="btn btn-primary btn-block" type="button" id="modalBtn">Modal Open Button</button>
+            </div>
+
+        </div>
+
+        <div class="row">
+            <div class="col-sm-12">
+                <h3>Toast <a href="http://ax5.io/ax5ui-toast/api/index.html" class="badge badge-info">Info</a></h3>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <button class="btn btn-outline-primary btn-block" type="button" id="toastBtn">Toast Open Button</button>
+            </div>
+        </div>
+
+    </div>
+{% endblock %}
