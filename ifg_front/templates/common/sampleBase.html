@@ -32,9 +32,19 @@
         <script type="text/javascript" src="{% static 'js/jquery-util.js' %}"></script>
 
         <script type="text/javascript">
-          $(document).ready(function(){
+            $(document).ready(function(){
+                var mask = new ax5.ui.mask();
 
-          });
+                $(document).ajaxStart(function(){
+                    mask.open({
+                        content: '<h1><i class="fa fa-spinner fa-spin"></i> Loading</h1>'
+                    });
+                });
+
+                $(document).ajaxStop(function(){
+                    mask.close();
+                });
+            });
 
         </script>
         <title>IFG-IMS Sample</title>
