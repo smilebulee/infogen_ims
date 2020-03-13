@@ -5,7 +5,7 @@
         $(document).ready(function(){
             var mask = new ax5.ui.mask();
             mask.setConfig({
-                target: document.body, // 미리 선언했지만
+                target: document.body,      /* DIV 같은 element도 가능 */
                 content: "<h1>Mask will disappear after 3 seconds.</h1>",
                 onStateChanged: function(){
                     //console.log(this);
@@ -14,7 +14,7 @@
 
             $('#maskBtn').click(function () {
                 mask.open({
-                    content: '<h1><i class="fa fa-spinner fa-spin"></i> Loading</h1>'
+                    content: '<h1><i class="fa fa-spinner fa-spin"></i> Loading</h1>'   /* 마스크 위에 보여줄 내용 */
                 });
 
                 setTimeout(function () {

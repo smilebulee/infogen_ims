@@ -3,121 +3,7 @@
 {% block content %}
     <script type="text/javascript">
         $(document).ready(function(){
-            var API_SERVER = "http://api-demo.ax5.io";
-            var firstGrid = new ax5.ui.grid({
-                target: $('[data-ax5grid="first-grid"]'),
-                columns: [
-                    {
-                        key: "a",
-                        label: "field A",
-                        width: 80,
-                        styleClass: function () {
-                            return "ABC";
-                        },
-                        enableFilter: true,
-                        align: "center", editor: {type: "text"}
-                    },
-                    {key: "b", label: "field  B", align: "center", editor: {type: "text"}},
-                    {
-                        key: undefined,
-                        label: "field C",
-                        columns: [
-                            {key: "price", label: "price", formatter: "money", align: "right", editor: {type: "money", updateWith:['cost']}},
-                            {key: "amount", label: "amount", formatter: "money", align: "right", editor: {type: "money", updateWith:['cost']}},
-                            {
-                                key: "cost",
-                                label: "cost",
-                                align: "right",
-                                formatter: function () {
-                                    return ax5.util.number(this.item.price * this.item.amount, {"money": true});
-                                }
-                            }
-                        ]
-                    },
-                    {
-                        key: "saleDt",
-                        label: "saleDt",
-                        //formatter: "date",
-                        align: "center",
-                        editor: {
-                            type: "date",
-                            config: {
-                                content: {
-                                    config: {
-                                        mode: "day", selectMode: "day"
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    {key: "customer", label: "customer", editor: {type: "text"}},
-                    {
-                        key: "userType",
-                        label: "userType",
-                        editor: {
-                            type: "select",
-                            config: {
-                                columnKeys: {
-                                    optionValue: "CD", optionText: "NM"
-                                },
-                                options: [
-                                    {CD: "M", NM: "M: Man"},
-                                    {CD: "D", NM: "D: Daughter"},
-                                    {CD: "S", NM: "S: Son"},
-                                    {CD: "W", NM: "W: Wife"}
-                                ]
-                            }
-                        }
-                    },
-                    {key: "desc", label: "desc", width:400, editor: {type: "textarea"}}
-                ],
-                body: {
-                    grouping: {
-                        by: ["a"],
-                        columns: [
-                            {
-                                label: function () {
-                                    return this.groupBy.labels.join(", ") + " SUM";
-                                },
-                                colspan: 2,
-                                align: "center"
-                            },
-                            {key: "price", collector: "avg", formatter: "money", align: "right"},
-                            {key: "amount", collector: "sum", formatter: "money", align: "right"},
-                            {
-                                key: "cost",
-                                collector: function () {
-                                    var value = 0;
-                                    this.list.forEach(function (n) {
-                                        if (!n.__isGrouping) value += (n.price * n.amount);
-                                    });
-                                    return ax5.util.number(value, {"money": 1});
-                                },
-                                align: "right"
-                            }
-                        ]
-                    }
-                },
-                footSum: [
-                    [
-                        {label: "SUMMARY", colspan: 2, align: "center"},
-                        {key: "price", collector: "avg", formatter: "money", align: "right"},
-                        {key: "amount", collector: "sum", formatter: "money", align: "right"},
-                        {
-                            key: "cost",
-                            collector: function () {
-                                var value = 0;
-                                this.list.forEach(function (n) {
-                                    if (!n.__isGrouping) value += (n.price * n.amount);
-                                });
-                                return ax5.util.number(value, {"money": 1});
-                            },
-                            align: "right"
-                        }
-                    ]]
-            });
-
-            var gridList = [
+            var gridList = [        /* 그리드에 세팅할 데이터는 JSON 배열 형태 */
                 {"a":"A", "b":"A01", "price":"1000", "amount":"10", "cost":"12100", "saleDt":"20200312", "customer":"lee", "userType":"D", "desc":""},
                 {"a":"A", "b":"A01", "price":"1000", "amount":"10", "cost":"12100", "saleDt":"20200312", "customer":"lee", "userType":"D", "desc":""},
                 {"a":"A", "b":"A01", "price":"1000", "amount":"10", "cost":"12100", "saleDt":"20200312", "customer":"lee", "userType":"M", "desc":""},
@@ -135,7 +21,148 @@
                 {"a":"B", "b":"B01", "price":"1000", "amount":"10", "cost":"12100", "saleDt":"20200312", "customer":"lee", "userType":"D", "desc":""}
             ];
 
+            var gridOptions = {
+                columns: [              /* columns : 그리드 헤더 및 매핑 시킬 컬럼 및 컬럼 속성 설정 항목(필수) */
+                    {
+                        key: "a",
+                        label: "field A",
+                        width: 80,
+                        styleClass: function () {       /* column style css class */
+                            return "font-weight-bolder";
+                        },
+                        enableFilter: true,
+                        align: "center",
+                        editor: {type: "text"}          /* 컬럼값 수정 모드 시 표시할 타입. text는 input box */
+                    },
+                    {key: "b", label: "field  B", align: "center", editor: {type: "text", disabled: function(){ return this.item.a == "A"}}},   /* a컬럼 값이 A이면 현재 컬럼 수정 불가 */
+                    {
+                        key: undefined,         /* key 값이 정의 되지 않고 자식 columns 설정이 있으면 헤더만 병합 */
+                        label: "field C",
+                        columns: [
+                            {key: "price", label: "price", formatter: "money", align: "right", editor: {type: "money", updateWith:['cost']}},   /* formatter money는 숫자 3자리 마다 ,(콤마) 생성 */
+                            {key: "amount", label: "amount", formatter: "money", align: "right", editor: {type: "money", updateWith:['cost']}}, /* editor의 type money는 input box에서 숫자 3자리 마다 ,(콤마) 생성하고 값 변경시 cost컬럼이 price * amount이므로 cost값도 변경 */
+                            {
+                                key: "cost",
+                                label: "cost",
+                                align: "right",
+                                formatter: function () {        /* 사용자 정의 formatter */
+                                    return ax5.util.number(this.item.price * this.item.amount, {"money": true});
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        key: "saleDt",
+                        label: "saleDt",
+                        align: "center",
+                        editor: {
+                            type: "date",       /* 달력, ax5picker 필요 */
+                            config: {
+                                content: {
+                                    config: {
+                                        mode: "day",            /* 최초 일달력 보여줌(year나 month 세팅시 연달력이나 월달력으로 보여줌) */
+                                        selectMode: "day"       /* 달력에서 날짜 선택 */
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    {key: "customer", label: "customer", editor: {type: "text"}},
+                    {
+                        key: "userType",
+                        label: "userType",
+                        editor: {
+                            type: "select",             /* 수정시 셀렉트 박스 */
+                            config: {
+                                options: [              /* 셀렉트 박스에서 보여줄 데이터 */
+                                    {CD: "M", NM: "M: Man"},
+                                    {CD: "D", NM: "D: Daughter"},
+                                    {CD: "S", NM: "S: Son"},
+                                    {CD: "W", NM: "W: Wife"}
+                                ],
+                                columnKeys: {
+                                    optionValue: "CD", optionText: "NM"
+                                }
+                            }
+                        }
+                    },
+                    {key: "desc", label: "desc", width:400, editor: {type: "textarea"}} /* 텍스트 박스 */
+                ],
+                body: {                 /* body부분 속성 정의. 필수 아님 */
+                    columnHeight: 40,
+                    grouping: {         /* 소계 부분. 필수 아님. 없어도 됨 */
+                        by: ["a"],      /* a컬럼 기준으로 소계 */
+                        columns: [
+                            {
+                                label: function () {
+                                    return this.groupBy.labels.join(", ") + " SUM";
+                                },
+                                colspan: 2,
+                                align: "center"
+                            },
+                            {key: "price", collector: "avg", formatter: "money", align: "right"},   /* 평균 */
+                            {key: "amount", collector: "sum", formatter: "money", align: "right"},  /* 합계 */
+                            {
+                                key: "cost",
+                                collector: function () {        /* 사용자 정의 */
+                                    var value = 0;
+                                    this.list.forEach(function (n) {
+                                        if (!n.__isGrouping) value += (n.price * n.amount);
+                                    });
+                                    return ax5.util.number(value, {"money": 1});
+                                },
+                                align: "right"
+                            }
+                        ]
+                    }
+                },
+                footSum: [[         /* 총합계. 필수 아님. 없어도 됨 */
+                    {label: "SUMMARY", colspan: 2, align: "center"},
+                    {key: "price", collector: "avg", formatter: "money", align: "right"},
+                    {key: "amount", collector: "sum", formatter: "money", align: "right"},
+                    {
+                        key: "cost",
+                        collector: function () {
+                            var value = 0;
+                            this.list.forEach(function (n) {
+                                if (!n.__isGrouping) value += (n.price * n.amount);
+                            });
+                            return ax5.util.number(value, {"money": 1});
+                        },
+                        align: "right"
+                    }
+                ]]
+            };
+
+            var firstGrid = $('[data-ax5grid="first-grid"]').initGrid(gridOptions);
             firstGrid.setData(gridList);
+
+
+            /* 그리드 옵션, 사용해야 할 옵션이 있으면 var gridOptions 에 추가 해서 사용
+            showLineNumber: true,
+            showRowSelector: false,
+            multipleSelect: false,
+            lineNumberColumnWidth: 40,
+            rowSelectorColumnWidth: 27,
+            frozenColumnIndex: 0,
+            frozenRowIndex: 0,
+            header: {
+                align: "center",
+                columnHeight: 40
+            },
+            body: {
+                align: "center",
+                columnHeight: 40
+            },
+            sortable: false,
+            multiSort: false,
+            mergeCells: ["a" , "b"]
+            등.....
+            더 많은 옵션 및 함수는 아래 참조
+            http://ax5.io/ax5ui-grid/demo/index.html        데모 페이지
+            http://ax5.io/ax5ui-grid/api/index.html         API 페이지
+
+            */
 
         });
     </script>
@@ -155,7 +182,7 @@
         <div class="row">
             <div class="col-sm-12">
                     <div style="position: relative;height:400px;" id="grid-parent">
-                        <div data-ax5grid="first-grid" data-ax5grid-config="{frozenColumnIndex: 2,showLineNumber: true,showRowSelector: true,sortable: true,header: {align:'center'}}" style="height: 100%;"></div>
+                        <div data-ax5grid="first-grid" style="height: 100%;"></div>
                     </div>
             </div>
 
