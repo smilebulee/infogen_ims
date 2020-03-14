@@ -1,6 +1,7 @@
 var g_dialog;
 var g_modal;
 var g_toast;
+var g_mask;
 
 $(document).ready(function(){
     g_dialog = new ax5.ui.dialog({
@@ -22,6 +23,18 @@ $(document).ready(function(){
 
         }
     });
+	
+	g_mask = new ax5.ui.mask();
+
+	$(document).ajaxStart(function(){
+		g_mask.open({
+			content: '<h1><i class="fa fa-spinner fa-spin"></i> Loading</h1>'
+		});
+	});
+
+	$(document).ajaxStop(function(){
+		g_mask.close();
+	});
 });
 
 (function($){
