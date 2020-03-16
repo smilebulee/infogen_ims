@@ -22,7 +22,7 @@ def sample(request, sample):
 
     return render(request, template_name)
 
-def sample_ajax(request, sample):
+def sample_ajax(request):
 
     param = json.loads(request.GET['param'])
 
