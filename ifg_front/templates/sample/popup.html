@@ -3,51 +3,37 @@
 {% block content %}
     <script type="text/javascript">
         $(document).ready(function(){
-            var dialog = new ax5.ui.dialog();
-            dialog.setConfig({
-                title: 'Title',
-                lang:{
-                    "ok": "확인", "cancel": "취소"
-                }
-            });
+
 
             $('#alertBtn').click(function () {
-                dialog.alert('Alert message');
+                 g_dialog.setConfig({
+                    title: '경고',
+                });
+                g_dialog.alert('Alert message');
             });
             $('#confirmBtn').click(function () {
-                dialog.confirm('confirm message');
+                g_dialog.setConfig({
+                    title: '확인',
+                });
+                g_dialog.confirm('confirm message');
             });
             $('#promptBtn').click(function () {
-                dialog.prompt('Prompt message');
-            });
-
-            var modal = new ax5.ui.modal();
-            modal.setConfig({
-                onStateChanged: function () {
-                    // console.log(this);
-                }
+                g_dialog.prompt('Prompt message');
             });
 
             $('#modalBtn').click(function () {
-                modal.open({}, function () {
+                g_modal.open({}, function () {
                     var btn = jQuery('<button class="btn btn-success" type="button" style="margin-top: 100px;">Modal Close</button>');
                     btn.click(function () {
-                        modal.close();
+                        g_modal.close();
                     });
                     this.$["body-frame"].append(btn);
                 });
             });
 
-            var toast = new ax5.ui.toast({
-                containerPosition: "top-right",
-                onStateChanged: function(){
-                    console.log(this);
-                }
-            });
-
             $('#toastBtn').click(function () {
-                toast.push('Toast message', function () {
-                    alert('확인');
+                g_toast.push('Toast message', function () {
+
                 });
             });
         });
