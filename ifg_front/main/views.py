@@ -29,7 +29,8 @@ def sample_ajax(request, sample):
     data = {
         'email' : param['email'],
         'password' : param['password'],
-        'addr' : param['addr'] + ' ' + param['addrDetl']
+        'addr' : param['addr'] + ' ' + param['addrDetl'],
+        'Check' : param['chk']
     }
     logger.info(data)
     return JsonResponse(data)
