@@ -78,46 +78,81 @@ $(document).ready(function(){
 })(jQuery);
 
 (function($){
-	$.ajaxCall = function(url, method, param, callbackFn, global){
-	    var data;
-	    if(typeof param == 'string') data = param;
-	    else data = JSON.stringify(param);
+	$.fn.ajaxCall = function(opts){
+	    var data = {};
+
+	    $(this).find('input,select,textarea').each(function(idx){
+            var key = $(this).attr('name');
+            var val = $(this).val();
+            var type = $(this).attr('type');
+
+            if(val != ''){
+                if(type == 'checkbox'){
+                    if($(this).is(':checked')){
+                        if(data.hasOwnProperty(key)){
+                            data[key].push(val);
+                        }else{
+                            var arr = new Array();
+                            arr.push(val);
+
+                            data[key] = arr;
+                        }
+                    }
+                }else{
+                    data[key] = val;
+                }
+            }else{
+                data[key] = '';
+            }
+	    });
 
 	    var ajaxOpts = {
-	        method: method,
-            url: url,
-            data: data,
+	        method: opts.method,
+            url: opts.url,
+            data: {param : JSON.stringify(data)},
             dataType: 'json',
             error: function(jqXHR, textStatus, errorThrown ){
-                dialog.setConfig({
+                g_dialog.setConfig({
                     title: 'Error!!'
                 });
 
-                dialog.alert(textStatus);
+                g_dialog.alert(jqXHR.statusText);
             },
             success: function(data, textStatus, jqXHR){
-                if(typeof callbackFn == 'function') callbackFn;
-	            else if(typeof callbackFn == 'string') eval(callbackFn);
+                if(typeof opts.callbackFn == 'function') opts.callbackFn(data);
+	            else if(typeof opts.callbackFn == 'string') eval(opts.callbackFn + '(data)');
             }
 	    }
-	    if(global != undefined && typeof global == 'boolean') ajaxOpts.global = global;
-	    if(global != undefined && (global == 'true' || global == 'false')) ajaxOpts.global = (global == 'true');
+	    if(opts.global != undefined && typeof opts.global == 'boolean') ajaxOpts.global = opts.global;
+	    if(opts.global != undefined && (opts.global == 'true' || opts.global == 'false')) ajaxOpts.global = (opts.global == 'true');
 
         $.ajax(ajaxOpts);
-
 	};
 })(jQuery);
 
 (function($){
-	$.fn.method = function(opts){
-		var options = $.extend({}, $.fn.method.defaultOpts, opts);
+	$.ajaxCall = function(data, opts){
+	    var ajaxOpts = {
+	        method: opts.method,
+            url: opts.url,
+            data: {param : JSON.stringify(data)},
+            dataType: 'json',
+            error: function(jqXHR, textStatus, errorThrown ){
+                g_dialog.setConfig({
+                    title: 'Error!!'
+                });
 
-		return this.each(function(){
-					var $el = $(this);
-			   });
-	};
+                g_dialog.alert(jqXHR.statusText);
+            },
+            success: function(data, textStatus, jqXHR){
+                if(typeof opts.callbackFn == 'function') opts.callbackFn(data);
+	            else if(typeof opts.callbackFn == 'string') eval(opts.callbackFn + '(data)');
+            }
+	    }
+	    if(opts.global != undefined && typeof opts.global == 'boolean') ajaxOpts.global = opts.global;
+	    if(opts.global != undefined && (opts.global == 'true' || opts.global == 'false')) ajaxOpts.global = (opts.global == 'true');
 
-	$.fn.method.defaultOpts = {
+        $.ajax(ajaxOpts);
 
 	};
 })(jQuery);

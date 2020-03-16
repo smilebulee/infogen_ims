@@ -22,6 +22,7 @@ urlpatterns = [
 
     path('', include('main.urls')),
     path('sample/<str:sample>', include('main.urls')),
+    path('sample/<str:sample>/get', include('main.urls')),
 
     path('emp/', include('emp_api.urls')),
     path('prj/', include('prj_api.urls')),
