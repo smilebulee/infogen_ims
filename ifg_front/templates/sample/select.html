@@ -26,6 +26,10 @@
             $('[data-ax5combobox]').ax5combobox({
                 options: options1
             });
+
+            $('#submitBtn').click(function(){
+                $('#formDiv').ajaxCall({method : 'get', url : 'url'});
+            });
         });
     </script>
     <style>
@@ -35,7 +39,7 @@
           padding: 10px;
         }
     </style>
-    <div class="container">
+    <div class="container" id="formDiv">
         <div class="row">
             <div class="col-sm-12">
                 <h3>Select Box <a href="http://ax5.io/ax5ui-select/api/index.html" class="badge badge-info">Info</a></h3>
@@ -75,6 +79,6 @@
                 </div>
             </div>
         </div>
-
+        <button class="btn btn-primary" id="submitBtn">Sign in</button>
     </div>
 {% endblock %}
