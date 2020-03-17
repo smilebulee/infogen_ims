@@ -6,9 +6,10 @@
             $('#submitBtn').click(function(){
                 $('#formDiv').ajaxCall({
                     method : 'get',
-                    url : '/sample/ajax/get',
+                    url : "{% url 'main:sample_ajax' %}",
                     callbackFn : function(data){    // function 형(callbackFn : callback) string 형(callbackFn : 'callback') 둘다 가능
                         var html = '';
+                        html += '<div class="alert alert-dark" role="alert">';
                         html += '<dl class="row">';
                         html += '<dt class="col-sm-3">Email</dt>';
                         html += '<dd class="col-sm-9">' + data.email + '</dd>';
@@ -16,7 +17,10 @@
                         html += '<dd class="col-sm-9">' + data.password + '</dd>';
                         html += '<dt class="col-sm-3">Address</dt>';
                         html += '<dd class="col-sm-9">' + data.addr + '</dd>';
+                        html += '<dt class="col-sm-3">Check</dt>';
+                        html += '<dd class="col-sm-9">' + data.Check + '</dd>';
                         html += '</dl>';
+                        html += '</div>';
 
                         $('#ajaxResult').html(html);
                     }
@@ -46,7 +50,7 @@
                 <h3>Ajax</h3>
             </div>
         </div>
-        <div id="formDiv">
+        <form id="formDiv"><!-- 아무태그나 써도 됨. form 대신 div 를 써도 상관 없음 -->
         <div class="form-row">
             <div class="form-group col-md-6">
               <label for="inputEmail4">Email</label>
@@ -56,11 +60,11 @@
               <label for="inputPassword4">Password</label>
               <input type="password" class="form-control" id="inputPassword4" name="password">
             </div>
-          </div>
-          <div class="form-group">
+        </div>
+        <div class="form-group">
             <label for="inputAddress">Address</label>
             <input type="text" class="form-control" id="inputAddress" placeholder="1234 Main St" name="addr">
-          </div>
+        </div>
           <div class="form-group">
             <label for="inputAddress2">Address 2</label>
             <input type="text" class="form-control" id="inputAddress2" placeholder="Apartment, studio, or floor" name="addrDetl">
@@ -83,22 +87,22 @@
               <input type="text" class="form-control" id="inputZip" name="zip">
             </div>
           </div>
-          <div class="form-group">
-            <div class="form-check">
+          <div class="form-group form-check">
+
               <input class="form-check-input" type="checkbox" id="gridCheck1" name="chk" value="1">
-              <label class="form-check-label" for="gridCheck1">
-                1
+              <label class="form-check-label" for="gridCheck1" style="margin-left:20px;">
+                Check 1
               </label>
               <input class="form-check-input" type="checkbox" id="gridCheck2" name="chk" value="2">
-              <label class="form-check-label" for="gridCheck2">
-                2
+              <label class="form-check-label" for="gridCheck2" style="margin-left:20px;">
+                Check 2
               </label>
-            </div>
+
           </div>
-        </div>
+        </form>
           <button class="btn btn-primary" id="submitBtn">Sign in</button>
 
-        <div id="ajaxResult">
+        <div id="ajaxResult" style="margin-top:50px;">
 
         </div>
 

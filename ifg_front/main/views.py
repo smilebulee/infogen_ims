@@ -22,14 +22,15 @@ def sample(request, sample):
 
     return render(request, template_name)
 
-def sample_ajax(request, sample):
+def sample_ajax(request):
 
     param = json.loads(request.GET['param'])
 
     data = {
         'email' : param['email'],
         'password' : param['password'],
-        'addr' : param['addr'] + ' ' + param['addrDetl']
+        'addr' : param['addr'] + ' ' + param['addrDetl'],
+        'Check' : param['chk']
     }
     logger.info(data)
     return JsonResponse(data)

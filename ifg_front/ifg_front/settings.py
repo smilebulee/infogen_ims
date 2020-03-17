@@ -154,5 +154,20 @@ LOGGING = {
 			'handlers': ['console'],
 			'propagate': False,  # required to avoid double logging with root logger
 		},
+        'emp_api': {  # django app
+			'level': 'INFO',
+			'handlers': ['console'],
+			'propagate': False,  # required to avoid double logging with root logger
+		},
+        'prj_api': {  # django app
+			'level': 'INFO',
+			'handlers': ['console'],
+			'propagate': False,  # required to avoid double logging with root logger
+		},
+        'kpi_api': {  # django app
+			'level': 'INFO',
+			'handlers': ['console'],
+			'propagate': False,  # required to avoid double logging with root logger
+		},
 	},
 }
