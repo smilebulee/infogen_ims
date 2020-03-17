@@ -5,7 +5,7 @@
         $(document).ready(function(){
             $('#submitBtn').click(function(){
                 $('#formDiv').ajaxCall({
-                    method : 'get',
+                    method : 'POST',
                     url : '/emp/testFox_ajax/get',
                     callbackFn : function(data){
                         var html = '';
@@ -47,6 +47,7 @@
                 </div>
                 <div class="alert alert-info" role="alert">
                     <div id="formDiv">
+                         {% csrf_token %}
                         <div class="form-row">
                             <div class="form-group col-md-6">
                                 <label for="inputEmail4">Email</label>

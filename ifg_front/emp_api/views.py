@@ -4,6 +4,9 @@ from django.shortcuts import render, redirect
 from django.views import View
 from django.views import generic
 from django.http import JsonResponse
+
+from django.views.decorators.csrf import csrf_exempt
+
 import requests
 import logging
 import json
@@ -33,20 +36,19 @@ class Emp_api_testFox(generic.TemplateView):
 
         return render(request, template_name, rr)
 
+@csrf_exempt
 def testFox_ajax(request):
 
-    param = json.loads(request.GET['param'])
+    param = json.loads(request.POST['param'])
 
-    data = {
+    datas = {
         'email' : param['email'],
         'password' : param['password'],
         'addr' : param['state'] + ' ' + param['city'] + ' ' + param['addr'] + ' ' + param['addrDetl'] + param['zip'],
         'sex' : param['chk']
     }
 
-    r = requests.get('http://emp_api:5000/save',data)
+    logger.info(datas)
+    r = requests.post('http://emp_api:5000/save',data=datas)
 
-
-
-    logger.info(data)
-    return JsonResponse(data)
+    return JsonResponse(datas)
