@@ -26,6 +26,10 @@ $(document).ready(function(){
 	
 	g_mask = new ax5.ui.mask();
 
+	$.ajaxSetup({
+        headers: { "X-CSRFToken": getCookie("csrftoken") }
+    });
+
 	$(document).ajaxStart(function(){
 		g_mask.open({
 			content: '<h1><i class="fa fa-spinner fa-spin"></i> Loading</h1>'
@@ -36,6 +40,19 @@ $(document).ready(function(){
 		g_mask.close();
 	});
 });
+
+function getCookie(c_name){
+    if (document.cookie.length > 0){
+        c_start = document.cookie.indexOf(c_name + "=");
+        if (c_start != -1){
+            c_start = c_start + c_name.length + 1;
+            c_end = document.cookie.indexOf(";", c_start);
+            if (c_end == -1) c_end = document.cookie.length;
+            return unescape(document.cookie.substring(c_start,c_end));
+        }
+    }
+    return "";
+ }
 
 (function($){
 	$.fn.initGrid = function(opts){
@@ -145,6 +162,8 @@ $(document).ready(function(){
                 g_dialog.alert(jqXHR.statusText);
             },
             success: function(data, textStatus, jqXHR){
+                console.log('=====================');
+                console.log(data);
                 if(typeof opts.callbackFn == 'function') opts.callbackFn(data);
 	            else if(typeof opts.callbackFn == 'string') eval(opts.callbackFn + '(data)');
             }
