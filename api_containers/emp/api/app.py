@@ -18,6 +18,13 @@ foxTestDb = db["foxTest"]
 HELPER FUNCTIONS
 """
 
+def existsEmail(email):
+    logging.debug(foxTestDb.find({"email": email}).count())
+    if foxTestDb.find({"email": email}).count() == 0:
+        return False
+    else:
+        return True
+
 
 """
 RESOURCES
@@ -34,20 +41,32 @@ class Save(Resource):
         # Get posted data from request
         logging.debug("save start")
         logging.debug(request)
+        logging.debug(request.get_json())
+        logging.debug(request.get_data())
         logging.debug(request.form['email'])
 
-        data = request.get_json()
-        logging.debug(data)
+        #data = request.get_json()
         # get data
-        email = data["email"]
-        password = data["password"]
-        addr = data["addr"]
-        sex = data["sex"]
+        email = request.form['email']
+        password = request.form['password']
+        addr = request.form['addr']
+        sex = request.form['sex']
 
-        logging.debug(email)
-        logging.debug(password)
-        logging.debug(addr)
-        logging.debug(sex)
+        logging.debug('--------------------------------------')
+        logging.debug('email : ' + email)
+        logging.debug('password : ' + password)
+        logging.debug('addr : ' + addr)
+        logging.debug('sex : ' + sex)
+        logging.debug('--------------------------------------')
+
+        # logging.debug(existsEmail(email))
+        if existsEmail(email):
+            logging.debug("OUT")
+            retJson = {
+                "status": 301,
+                "msg": "Already Exists EMAIL"
+            }
+            return jsonify(retJson)
 
         foxTestDb.insert({
             "email": email,
@@ -58,9 +77,8 @@ class Save(Resource):
 
         retJson = {
             "status": 200,
-            "msg": "Message has been saved successfully"
+            "msg": "Data has been saved successfully"
         }
-
         return jsonify(retJson)
 
 

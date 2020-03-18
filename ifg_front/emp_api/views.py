@@ -47,8 +47,9 @@ def testFox_ajax(request):
         'addr' : param['state'] + ' ' + param['city'] + ' ' + param['addr'] + ' ' + param['addrDetl'] + param['zip'],
         'sex' : param['chk']
     }
-
+    logger.info('request.post : ' + request.POST['param'])
     logger.info(datas)
-    r = requests.post('http://emp_api:5000/save',data=datas)
-
+    #r = requests.post('http://emp_api:5000/save',data=json.dumps(datas))
+    r = requests.post('http://emp_api:5000/save', data=datas)
+    logger.info(r)
     return JsonResponse(datas)
