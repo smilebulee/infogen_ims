@@ -60,7 +60,17 @@
         </style>
         <script type="text/javascript">
           $(document).ready(function(){
-
+            var forms = document.getElementsByClassName('needs-validation');
+            // Loop over them and prevent submission
+            var validation = Array.prototype.filter.call(forms, function(form) {
+              form.addEventListener('submit', function(event) {
+                if (form.checkValidity() === false) {
+                  event.preventDefault();
+                  event.stopPropagation();
+                }
+                form.classList.add('was-validated');
+              }, false);
+            });
           });
 
         </script>
@@ -82,7 +92,7 @@
         </div>-->
 
         <div class="container text-center">
-          <form method="POST" class="form-signin">
+          <form method="POST" class="form-signin needs-validation" action="{% url 'main:signin' %}" novalidate>
               <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
               {% csrf_token %}
               {% for field in form %}
@@ -96,6 +106,7 @@
                   <input type="checkbox" value="remember-me"> Remember me
                 </label>
               </div>
+              <input type="hidden" name="next" value="{{ next }}">
               <button type="submit" class="btn btn-lg btn-primary btn-bloc">Sign in</button>
               <p class="mt-5 mb-3 text-muted">INFOGEN &copy; 2003-2020</p>
           </form>

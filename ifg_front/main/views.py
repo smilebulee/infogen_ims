@@ -1,10 +1,13 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 # Create your views here.
 from django.views import View
 from django.views import generic
 from django.http import JsonResponse
+from django.contrib.auth.models import User
+from django.contrib.auth import authenticate, login, logout
 from .forms import LoginForm
+from urllib.parse import urlparse
 import requests
 import logging
 import json
@@ -41,4 +44,34 @@ def sample_ajax(request):
 def login_form(request):
     template_name = 'main/login.html'
     form = LoginForm()
-    return render(request, template_name, {'form': form})
+
+    try:
+        next = request.GET['next']
+    except:
+        next = '/'
+
+    return render(request, template_name, {'form': form, 'next': next})
+
+def signin(request):
+    username = request.POST['username']
+    password = request.POST['password']
+    email = request.POST['email']
+    next = request.POST['next']
+
+    user = authenticate(request, username=username, password=password)
+    if user is None:
+        user = User.objects.create_user(username=username, password=password, email=email)  #임시
+
+        # 사용자 없으면 직원관리 api 호출
+        # if 직원정보 있으면:
+            # user = User.objects.create_user 직원정보로 사용자 생성
+        # else: 직원정보 없으면
+            # redirect('/')
+
+    login(request, user)
+    return redirect(next)
+
+@login_required
+def signout(request):
+    logout(request)
+    return redirect('/')
