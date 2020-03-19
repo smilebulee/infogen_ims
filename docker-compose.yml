@@ -6,6 +6,7 @@ volumes:
   data-postgressql:
     external: true
 services:
+  # 최초 설치시 DB(ifg_ims)와 사용자(infogen / infogen) 생성해야 함
   postgres:
     image: postgres:9.6.6
 #    container_name: postgres
