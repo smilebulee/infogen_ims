@@ -40,7 +40,9 @@
                   case 'PRJ':
                     location.href = '{% url 'prj_api:prj_api' %}'
                     break;
-
+                  case 'CMM':
+                    location.href = '{% url 'cmm_api:cmm_api' %}'
+                    break;
                 }
              });
           });
@@ -130,7 +132,7 @@
                   <li>MAIN정보</li>
                     <li>TO-DO정보</li>
                 </ul>
-                <button type="button" class="btn btn-lg btn-block btn-primary">CMM Main</button>
+                <button type="button" class="btn btn-lg btn-block btn-primary gotoIndexBtn">CMM Main</button>
               </div>
             </div>
 
@@ -242,14 +244,6 @@
 
 
         </div>
-        <footer class="text-muted">
-              <div class="container">
-                <p class="float-right">
-                  <a href="#">Back to top</a>
-                </p>
-                <p>Copyright</p>
-                <p>KNK Tower</p>
-              </div>
-            </footer>
+       {% include 'common/footer.html' %}
     </body>
 </html>

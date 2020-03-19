@@ -1,15 +1,44 @@
 {% extends 'common/base.html' %}
 
 {% block content %}
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $('#apiCallBtn').click(function(){
+                $.ajaxCall({}, {
+                    'method':'post',
+                    'url':'{% url 'prj_api:retrieve' %}',
+                    'callbackFn': function(data){
+                        var html = '';
+                        html += '<div class="jumbotron">';
+                        html += '<h1 class="display-4">Ajax Request Success!</h1>';
+                        html += '<dt class="col-sm-3">이름</dt>';
+                        html += '<dd class="col-sm-9">' + data.user + '</dd>';
 
-    <div class="container">
+                        html += '<dt class="col-sm-3">메일</dt>';
+                        html += '<dd class="col-sm-9">' + data.mail + '</dd>';
+
+                        html += '</div>';
+
+                        $('#result').html(html);
+                    }
+                });
+            });
+        });
+
+    </script>
+
         <div class="row">
             <div class="col-sm-12">
                 <div class="alert alert-info" role="alert">
                     프로젝트 index : {{ result }}
                 </div>
             </div>
+            <button id="apiCallBtn" type="button" class="btn btn-lg btn-block btn-primary">API호출</button>
         </div>
-    </div>
+        <div class="row">
+            <div id="result" class="col-sm-12"></div>
+
+        </div>
+
 
 {% endblock %}

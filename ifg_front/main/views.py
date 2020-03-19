@@ -2,8 +2,9 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 # Create your views here.
 from django.views import View
+from django.urls import reverse
 from django.views import generic
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseRedirect
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from .forms import LoginForm
@@ -16,9 +17,12 @@ logger = logging.getLogger(__name__)
 
 class Main_index(generic.TemplateView):
     def get(self, request, *args, **kwargs):
-        template_name = 'main/index.html'
 
-        return render(request, template_name)
+        return HttpResponseRedirect(reverse('main:index'))
+
+def index(request):
+    template_name = 'main/index.html'
+    return render(request, template_name)
 
 @login_required
 def sample(request, sample):
@@ -74,4 +78,4 @@ def signin(request):
 @login_required
 def signout(request):
     logout(request)
-    return redirect('/')
+    return HttpResponseRedirect(reverse('main:index'))
