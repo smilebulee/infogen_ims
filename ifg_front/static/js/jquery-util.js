@@ -208,3 +208,75 @@ ex) $.ajaxCall(json type data, json type jquery ajax option);
 
 	};
 })(jQuery);
+
+function alertMsg(comment){
+    var title = '<span style="color:#c82333;font-size:20px;"><i class="fa fa-exclamation-circle"></i></span> ALERT';
+    //var msg = '<div class="row">'
+    //msg += '<div class="col-3"><span style="color:#c82333"><i class="fa fa-exclamation-circle fa-5x"></i></span></div>';
+    //msg += '<div class="col-9">' + comment + '</div>';
+    //msg += '</div>';
+
+    g_dialog.alert({
+        theme : 'info',
+        title : title,
+        msg : comment
+    });
+}
+
+function confirmMsg(comment, callbackfn){
+    var title = '<span style="color:#fd7e14;font-size:20px;"><i class="fa fa-check-circle"></i></span> CHECK';
+    //var msg = '<div class="row">'
+    //msg += '<div class="col-3"><span style="color:#fd7e14"><i class="fa fa-check-circle fa-5x"></i></span></div>';
+    //msg += '<div class="col-9">' + comment + '</div>';
+    //msg += '</div>';
+
+    g_dialog.confirm({
+        theme : 'info',
+        title : title,
+        msg : comment
+    }, function(){
+        if(typeof callbackfn == 'function') callbackfn();
+        else if(typeof callbackfn == 'string') eval(callbackfn + '()');
+    });
+}
+
+function getCodes(grpArr, callbackFn){
+    var data = {
+        grps : grpArr
+    };
+    var options = {
+        method : 'get',
+        url : '',
+        global : false,
+        callbackFn :  callbackFn
+    };
+
+    $.ajaxCall(data, options);
+}
+
+(function($){
+    $.fn.selectbox = function(opts){
+        var grpArr = new Array();
+        var selArr = new Array();
+        $(this).each(function(){
+            var grp = $(this).attr('grp');
+            if(grp != undefined && grp != ''){
+                grpArr.push(grp);
+                selArr.push(this);
+            }
+        });
+
+        getCodes(grpArr, function(data){
+            $(selArr).each(function(idx){
+                var codes = data[grpArr[idx]];
+                var options = '<option value="">선택</option>';
+
+                for(var i = 0;i < codes.length;i++){
+                    options += '<option value="' + codes[i].cmm_api_cd + '">' + codes[i].cmm_api_cd_nm + '</option>';
+                }
+
+                $(this).html(options);
+            });
+        });
+    };
+});

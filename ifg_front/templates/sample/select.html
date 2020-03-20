@@ -57,7 +57,19 @@ history
                 <div class="form-group">ta-ax5select-config="{}"></div>
                 </div>
             </div>-->
-            <div class="col-md-12">
+            <div class="col-md-6">
+                <div><h5>단건 선택</h5></div>
+                <div class="form-group">
+                    <select class="custom-select" id="validationCustom1" grp="SAMPLE_01">
+                    </select>
+                    <select class="custom-select" id="validationCustom2" grp="SAMPLE_02">
+                    </select>
+                </div>
+            </div>
+
+
+
+            <div class="col-md-6">
                 <div><h5>다건 선택</h5></div>
                 <div class="form-group">
                     <div data-ax5select="select2" data-ax5select-config="{multiple: true,reset:'<i class=\'fa fa-trash\'></i>'}"></div>
@@ -84,6 +96,6 @@ history
                 </div>
             </div>
         </div>
-        <button class="btn btn-primary" id="submitBtn">Sign in</button>
+        <!--<button class="btn btn-primary" id="submitBtn">Sign in</button>-->
     </div>
 {% endblock %}

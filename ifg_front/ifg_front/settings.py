@@ -93,6 +93,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'ifg_ims',
         'USER': 'infogen',
+        'PASSWORD': 'infogen',
         'HOST': 'postgres',
         'PORT': 5432,
     }

@@ -11,17 +11,15 @@ history
 
 
             $('#alertBtn').click(function () {
-                 g_dialog.setConfig({
-                    title: '경고',
-                });
-                g_dialog.alert('Alert message');
+                alertMsg('경고!!!');
             });
+
             $('#confirmBtn').click(function () {
-                g_dialog.setConfig({
-                    title: '확인',
+                confirmMsg('확인!!!!', function(){
+                    $('#toastBtn').trigger('click');
                 });
-                g_dialog.confirm('confirm message');
             });
+
             $('#promptBtn').click(function () {
                 g_dialog.prompt('Prompt message');
             });
@@ -38,7 +36,7 @@ history
 
             $('#toastBtn').click(function () {
                 g_toast.push('Toast message', function () {
-
+                    alertMsg('경고!!!');
                 });
             });
         });
@@ -65,10 +63,10 @@ history
                 <!--<div><h5>Confirm</h5></div>-->
                 <button class="btn btn-warning btn-block" type="button" id="confirmBtn">Confirm Button</button>
             </div>
-            <div class="col-sm-4">
-                <!--<div><h5>Prompt</h5></div>-->
+            <!--<div class="col-sm-4">
+                &lt;!&ndash;<div><h5>Prompt</h5></div>&ndash;&gt;
                 <button class="btn btn-info btn-block" type="button" id="promptBtn">Prompt Button</button>
-            </div>
+            </div>-->
 
         </div>
         <div class="row">
