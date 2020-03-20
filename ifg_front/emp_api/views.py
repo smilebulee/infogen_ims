@@ -37,7 +37,7 @@ class Emp_api_testFox(generic.TemplateView):
         return render(request, template_name, rr)
 
 @csrf_exempt
-def testFox_ajax(request):
+def insert_ajax(request):
 
     param = json.loads(request.POST['param'])
 
@@ -52,4 +52,23 @@ def testFox_ajax(request):
     #r = requests.post('http://emp_api:5000/save',data=json.dumps(datas))
     r = requests.post('http://emp_api:5000/save', data=datas)
     logger.info(r)
-    return JsonResponse(datas)
+    logger.info(r.text)
+    logger.info(r.json())
+    return JsonResponse(r.json())
+
+def search_ajax(request):
+
+    param = json.loads(request.GET['param'])
+
+    datas = {
+        'email' : param['searchemail']
+    }
+    logger.info(datas)
+    r = requests.get('http://emp_api:5000/search', params=datas)
+    logger.info(r)
+    logger.info(r.text)
+    logger.info("----------------")
+    logger.info(r.json())
+    logger.info(json.loads(r.text))
+    # return JsonResponse(r.json())
+    return JsonResponse(r.json(), safe=False)

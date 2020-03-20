@@ -10,7 +10,8 @@ app_name = 'emp_api'
 urlpatterns = [
     url(r'^$', views.Emp_api_index.as_view(), name='emp_api'),
     url(r'^testFox/', views.Emp_api_testFox.as_view(), name='emp_foxTest'),
-    url(r'^testFox_ajax/get', views.testFox_ajax, name='testFox_ajax'),
+    url(r'^insert_ajax/post', views.insert_ajax, name='insert_ajax'),
+    url(r'^search_ajax/get', views.search_ajax, name='search_ajax'),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

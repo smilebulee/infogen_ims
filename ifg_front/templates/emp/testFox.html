@@ -3,19 +3,270 @@
 {% block content %}
     <script type="text/javascript">
         $(document).ready(function(){
+<!--            var gridList = [        /* 그리드에 세팅할 데이터는 JSON 배열 형태 */-->
+<!--                {"a":"A", "b":"A01", "price":"1000", "amount":"10", "cost":"12100", "saleDt":"20200312", "customer":"lee", "userType":"D", "desc":""},-->
+<!--                {"a":"A", "b":"A01", "price":"1000", "amount":"10", "cost":"12100", "saleDt":"20200312", "customer":"lee", "userType":"D", "desc":""},-->
+<!--                {"a":"A", "b":"A01", "price":"1000", "amount":"10", "cost":"12100", "saleDt":"20200312", "customer":"lee", "userType":"M", "desc":""},-->
+<!--                {"a":"A", "b":"A01", "price":"1000", "amount":"10", "cost":"12100", "saleDt":"20200312", "customer":"lee", "userType":"M", "desc":""},-->
+<!--                {"a":"A", "b":"A01", "price":"1000", "amount":"10", "cost":"12100", "saleDt":"20200312", "customer":"lee", "userType":"D", "desc":""},-->
+<!--                {"a":"A", "b":"A01", "price":"1000", "amount":"10", "cost":"12100", "saleDt":"20200312", "customer":"lee", "userType":"D", "desc":""},-->
+<!--                {"a":"A", "b":"A01", "price":"1000", "amount":"10", "cost":"12100", "saleDt":"20200312", "customer":"lee", "userType":"W", "desc":""},-->
+<!--                {"a":"B", "b":"B01", "price":"1000", "amount":"10", "cost":"12100", "saleDt":"20200312", "customer":"lee", "userType":"W", "desc":""},-->
+<!--                {"a":"B", "b":"B01", "price":"1000", "amount":"10", "cost":"12100", "saleDt":"20200312", "customer":"lee", "userType":"W", "desc":""},-->
+<!--                {"a":"B", "b":"B01", "price":"1000", "amount":"10", "cost":"12100", "saleDt":"20200312", "customer":"lee", "userType":"D", "desc":""},-->
+<!--                {"a":"B", "b":"B01", "price":"1000", "amount":"10", "cost":"12100", "saleDt":"20200312", "customer":"lee", "userType":"M", "desc":""},-->
+<!--                {"a":"B", "b":"B01", "price":"1000", "amount":"10", "cost":"12100", "saleDt":"20200312", "customer":"lee", "userType":"D", "desc":""},-->
+<!--                {"a":"B", "b":"B01", "price":"1000", "amount":"10", "cost":"12100", "saleDt":"20200312", "customer":"lee", "userType":"D", "desc":""},-->
+<!--                {"a":"B", "b":"B01", "price":"1000", "amount":"10", "cost":"12100", "saleDt":"20200312", "customer":"lee", "userType":"D", "desc":""},-->
+<!--                {"a":"B", "b":"B01", "price":"1000", "amount":"10", "cost":"12100", "saleDt":"20200312", "customer":"lee", "userType":"D", "desc":""}-->
+<!--            ];-->
+
+<!--            var gridOptions = {-->
+<!--                columns: [              /* columns : 그리드 헤더 및 매핑 시킬 컬럼 및 컬럼 속성 설정 항목(필수) */-->
+<!--                    {-->
+<!--                        key: "a",-->
+<!--                        label: "field A",-->
+<!--                        width: 80,-->
+<!--                        styleClass: function () {       /* column style css class */-->
+<!--                            return "font-weight-bolder";-->
+<!--                        },-->
+<!--                        enableFilter: true,-->
+<!--                        align: "center",-->
+<!--                        editor: {type: "text"}          /* 컬럼값 수정 모드 시 표시할 타입. text는 input box */-->
+<!--                    },-->
+<!--                    {key: "b", label: "field  B", align: "center", editor: {type: "text", disabled: function(){ return this.item.a == "A"}}},   /* a컬럼 값이 A이면 현재 컬럼 수정 불가 */-->
+<!--                    {-->
+<!--                        key: undefined,         /* key 값이 정의 되지 않고 자식 columns 설정이 있으면 헤더만 병합 */-->
+<!--                        label: "field C",-->
+<!--                        columns: [-->
+<!--                            {key: "price", label: "price", formatter: "money", align: "right", editor: {type: "money", updateWith:['cost']}},   /* formatter money는 숫자 3자리 마다 ,(콤마) 생성 */-->
+<!--                            {key: "amount", label: "amount", formatter: "money", align: "right", editor: {type: "money", updateWith:['cost']}}, /* editor의 type money는 input box에서 숫자 3자리 마다 ,(콤마) 생성하고 값 변경시 cost컬럼이 price * amount이므로 cost값도 변경 */-->
+<!--                            {-->
+<!--                                key: "cost",-->
+<!--                                label: "cost",-->
+<!--                                align: "right",-->
+<!--                                formatter: function () {        /* 사용자 정의 formatter */-->
+<!--                                    return ax5.util.number(this.item.price * this.item.amount, {"money": true});-->
+<!--                                }-->
+<!--                            }-->
+<!--                        ]-->
+<!--                    },-->
+<!--                    {-->
+<!--                        key: "saleDt",-->
+<!--                        label: "saleDt",-->
+<!--                        align: "center",-->
+<!--                        editor: {-->
+<!--                            type: "date",       /* 달력, ax5picker 필요 */-->
+<!--                            config: {-->
+<!--                                content: {-->
+<!--                                    config: {-->
+<!--                                        mode: "day",            /* 최초 일달력 보여줌(year나 month 세팅시 연달력이나 월달력으로 보여줌) */-->
+<!--                                        selectMode: "day"       /* 달력에서 날짜 선택 */-->
+<!--                                    }-->
+<!--                                }-->
+<!--                            }-->
+<!--                        }-->
+<!--                    },-->
+<!--                    {key: "customer", label: "customer", editor: {type: "text"}},-->
+<!--                    {-->
+<!--                        key: "userType",-->
+<!--                        label: "userType",-->
+<!--                        editor: {-->
+<!--                            type: "select",             /* 수정시 셀렉트 박스 */-->
+<!--                            config: {-->
+<!--                                options: [              /* 셀렉트 박스에서 보여줄 데이터 */-->
+<!--                                    {CD: "M", NM: "M: Man"},-->
+<!--                                    {CD: "D", NM: "D: Daughter"},-->
+<!--                                    {CD: "S", NM: "S: Son"},-->
+<!--                                    {CD: "W", NM: "W: Wife"}-->
+<!--                                ],-->
+<!--                                columnKeys: {-->
+<!--                                    optionValue: "CD", optionText: "NM"-->
+<!--                                }-->
+<!--                            }-->
+<!--                        }-->
+<!--                    },-->
+<!--                    {key: "desc", label: "desc", width:400, editor: {type: "textarea"}} /* 텍스트 박스 */-->
+<!--                ],-->
+<!--                body: {                 /* body부분 속성 정의. 필수 아님 */-->
+<!--                    columnHeight: 40,-->
+<!--                    grouping: {         /* 소계 부분. 필수 아님. 없어도 됨 */-->
+<!--                        by: ["a"],      /* a컬럼 기준으로 소계 */-->
+<!--                        columns: [-->
+<!--                            {-->
+<!--                                label: function () {-->
+<!--                                    return this.groupBy.labels.join(", ") + " SUM";-->
+<!--                                },-->
+<!--                                colspan: 2,-->
+<!--                                align: "center"-->
+<!--                            },-->
+<!--                            {key: "price", collector: "avg", formatter: "money", align: "right"},   /* 평균 */-->
+<!--                            {key: "amount", collector: "sum", formatter: "money", align: "right"},  /* 합계 */-->
+<!--                            {-->
+<!--                                key: "cost",-->
+<!--                                collector: function () {        /* 사용자 정의 */-->
+<!--                                    var value = 0;-->
+<!--                                    this.list.forEach(function (n) {-->
+<!--                                        if (!n.__isGrouping) value += (n.price * n.amount);-->
+<!--                                    });-->
+<!--                                    return ax5.util.number(value, {"money": 1});-->
+<!--                                },-->
+<!--                                align: "right"-->
+<!--                            }-->
+<!--                        ]-->
+<!--                    }-->
+<!--                },-->
+<!--                footSum: [[         /* 총합계. 필수 아님. 없어도 됨 */-->
+<!--                    {label: "SUMMARY", colspan: 2, align: "center"},-->
+<!--                    {key: "price", collector: "avg", formatter: "money", align: "right"},-->
+<!--                    {key: "amount", collector: "sum", formatter: "money", align: "right"},-->
+<!--                    {-->
+<!--                        key: "cost",-->
+<!--                        collector: function () {-->
+<!--                            var value = 0;-->
+<!--                            this.list.forEach(function (n) {-->
+<!--                                if (!n.__isGrouping) value += (n.price * n.amount);-->
+<!--                            });-->
+<!--                            return ax5.util.number(value, {"money": 1});-->
+<!--                        },-->
+<!--                        align: "right"-->
+<!--                    }-->
+<!--                ]]-->
+<!--            };-->
+
+<!--            var firstGrid = $('[data-ax5grid="first-grid"]').initGrid(gridOptions);-->
+<!--            firstGrid.setData(gridList);-->
+
+
+            /* 그리드 옵션, 사용해야 할 옵션이 있으면 var gridOptions 에 추가 해서 사용
+            showLineNumber: true,
+            showRowSelector: false,
+            multipleSelect: false,
+            lineNumberColumnWidth: 40,
+            rowSelectorColumnWidth: 27,
+            frozenColumnIndex: 0,
+            frozenRowIndex: 0,
+            header: {
+                align: "center",
+                columnHeight: 40
+            },
+            body: {
+                align: "center",
+                columnHeight: 40
+            },
+            sortable: false,
+            multiSort: false,
+            mergeCells: ["a" , "b"]
+            등.....
+            더 많은 옵션 및 함수는 아래 참조
+            http://ax5.io/ax5ui-grid/demo/index.html        데모 페이지
+            http://ax5.io/ax5ui-grid/api/index.html         API 페이지
+
+            */
+
+            $('#searchBtn').click(function(){
+
+                $('#formSearchDiv').ajaxCall({
+                    method : 'GET',
+                    url : '/emp/search_ajax/get',
+                    callbackFn : function(data){
+<!--                        alert("종료"+ $.parseJSON(data));-->
+                        var gridList = $.parseJSON(data); /* 그리드에 세팅할 데이터는 JSON 배열 형태 */
+
+                        var gridOptions = {
+                            columns: [              /* columns : 그리드 헤더 및 매핑 시킬 컬럼 및 컬럼 속성 설정 항목(필수) */
+                                {
+                                    key: "_id",
+                                    label: "MONGO ID",
+                                    width: 80,
+                                    align: "center",
+                                    editor: {type: "text"}
+                                },
+                                {
+                                    key: "email",
+                                    label: "EMAIL",
+                                    width: 100,
+                                    styleClass: function () {       /* column style css class */
+                                        return "font-weight-bolder";
+                                    },
+                                    enableFilter: true,
+                                    align: "center",
+                                    editor: {type: "text"}          /* 컬럼값 수정 모드 시 표시할 타입. text는 input box */
+                                },
+                                {
+                                    key: "password",
+                                    label: "PASSWORD",
+                                    width: 80,
+                                    align: "center",
+                                    editor: {type: "password"}
+                                },
+                                {
+                                    key: "addr",
+                                    label: "ADDRESS",
+                                    align: "left",
+                                    editor: {type: "text"}
+                                },
+                                {
+                                    key: "sex",
+                                    label: "SEX",
+                                    editor: {
+                                        type: "select",             /* 수정시 셀렉트 박스 */
+                                        config: {
+                                            options: [              /* 셀렉트 박스에서 보여줄 데이터 */
+                                                {CD: "M", NM: "M: Man"},
+                                                {CD: "F", NM: "F: Female"}
+                                            ],
+                                            columnKeys: {
+                                                optionValue: "CD", optionText: "NM"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        };
+
+                        var firstGrid = $('[data-ax5grid="first-grid"]').initGrid(gridOptions);
+                        firstGrid.setData(gridList);
+                    }
+                });
+            });
+
             $('#submitBtn').click(function(){
+
+                /* validate  st */
+                if( isNullChk("inputEmail4") ) return false;
+                if( isNullChk("inputPassword4") ) return false;
+                if( isNullChk("inputAddress") ) return false;
+                if( isNullChk("inputAddress2") ) return false;
+                if( isNullChk("inputCity") ) return false;
+
+                if( isEmpty($('#inputState').val()) || $('#inputState').val() == "Choose..." ){
+                    alert("국가를 선택하세요.");
+                    $('#inputState').focus();
+                    return false;
+                }
+
+                if( isNullChk("inputZip") ) return false;
+                if( isNullChk("gridCheck1") ) return false;
+                if( !$('#gridCheck1').is(":checked") && !$('#gridCheck2').is(":checked") ){
+                    alert("성별을 선택하세요.");
+                    $('#gridCheck1').focus();
+                    return false;
+                }
+
+                alert("valid 종료");
+                /* validate  ed */
+
                 $('#formDiv').ajaxCall({
                     method : 'POST',
-                    url : '/emp/testFox_ajax/get',
+                    url : '/emp/insert_ajax/post',
                     callbackFn : function(data){
                         var html = '';
                         html += '<dl class="row">';
-                        html += '<dt class="col-sm-3">Email</dt>';
-                        html += '<dd class="col-sm-9">' + data.email + '</dd>';
-                        html += '<dt class="col-sm-3">Password</dt>';
-                        html += '<dd class="col-sm-9">' + data.password + '</dd>';
-                        html += '<dt class="col-sm-3">Address</dt>';
-                        html += '<dd class="col-sm-9">' + data.addr + '</dd>';
+                        html += '<dt class="col-sm-3">Status</dt>';
+                        html += '<dd class="col-sm-9">' + data.status + '</dd>';
+                        html += '<dt class="col-sm-3">Msg</dt>';
+                        html += '<dd class="col-sm-9">' + data.msg + '</dd>';
                         html += '</dl>';
 
                         $('#ajaxResult').html(html);
@@ -24,20 +275,33 @@
             });
         });
 
-        function callback(data){
-            var html = '';
-            html += '<dl class="row">';
-            html += '<dt class="col-sm-3">Email</dt>';
-            html += '<dd class="col-sm-9">' + data.email + '</dd>';
-            html += '<dt class="col-sm-3">Password</dt>';
-            html += '<dd class="col-sm-9">' + data.password + '</dd>';
-            html += '<dt class="col-sm-3">Address</dt>';
-            html += '<dd class="col-sm-9">' + data.addr + '</dd>';
-            html += '</dl>';
-
-
-            $('#ajaxResult').html(html);
+        function fncNm(name,value){
+            $("input[type=checkbox][name="+name+"]").prop("checked",false);
+            $("input[name=chk][value="+value+"]").prop("checked",true);
         }
+
+        /**
+        * 문자열이 빈 문자열인지 체크하여 결과값을 리턴한다.
+        * @param str       : 체크할 문자열
+        */
+        function isEmpty(str){
+            if(typeof str == "undefined" || str == null || str == "")
+                return true;
+            else
+                return false;
+        }
+
+        function isNullChk( objId ) {
+            var objVal = document.getElementById( objId ).value;
+            if( typeof objVal == "undefined" || objVal == null || objVal == "" ){
+                 alert($("label[for="+objId+"]").text()+"을(를) 입력하세요.");
+                 document.getElementById( objId ).focus();
+                 return true;
+            }else{
+                return false;
+            }
+        }
+
     </script>
     <div class="container">
         <div class="row">
@@ -51,25 +315,25 @@
                         <div class="form-row">
                             <div class="form-group col-md-6">
                                 <label for="inputEmail4">Email</label>
-                                <input type="email" class="form-control" id="inputEmail4" name="email">
+                                <input type="email" class="form-control" id="inputEmail4" name="email" placeholder="example@example.com" maxlength="70">
                             </div>
                             <div class="form-group col-md-6">
                                 <label for="inputPassword4">Password</label>
-                                <input type="password" class="form-control" id="inputPassword4" name="password">
+                                <input type="password" class="form-control" id="inputPassword4" name="password" maxlength="20">
                             </div>
                         </div>
                         <div class="form-group">
                             <label for="inputAddress">Address</label>
-                            <input type="text" class="form-control" id="inputAddress" placeholder="1234 Main St" name="addr">
+                            <input type="text" class="form-control" id="inputAddress" placeholder="1234 Main St" name="addr" maxlength="100">
                         </div>
                         <div class="form-group">
                             <label for="inputAddress2">Address 2</label>
-                            <input type="text" class="form-control" id="inputAddress2" placeholder="Apartment, studio, or floor" name="addrDetl">
+                            <input type="text" class="form-control" id="inputAddress2" placeholder="Apartment, studio, or floor" name="addrDetl" maxlength="100">
                         </div>
                         <div class="form-row">
                             <div class="form-group col-md-6">
                                 <label for="inputCity">City</label>
-                                <input type="text" class="form-control" id="inputCity" name="city">
+                                <input type="text" class="form-control" id="inputCity" name="city" maxlength="50">
                             </div>
                             <div class="form-group col-md-4">
                                 <label for="inputState">State</label>
@@ -81,18 +345,18 @@
                             </div>
                             <div class="form-group col-md-2">
                                 <label for="inputZip">Zip</label>
-                                <input type="text" class="form-control" id="inputZip" name="zip">
+                                <input type="text" class="form-control" id="inputZip" name="zip" maxlength="5">
                             </div>
                         </div>
                         <div class="form-group">
                             <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="gridCheck1" name="chk" value="M"/>
-                                <label class="form-check-label" for="gridCheck1">
-                                    남성
+                                <input class="form-check-input" type="checkbox" id="gridCheck1" name="chk" value="M" onclick="fncNm(this.name, this.value)"/>
+                                <label class="form-check-label" for="gridCheck1" style="margin-left:20px;">
+                                    Male
                                 </label>
-                                <input class="form-check-input" type="checkbox" id="gridCheck2" name="chk" value="F"/>
-                                <label class="form-check-label" for="gridCheck2">
-                                    여성
+                                <input class="form-check-input" type="checkbox" id="gridCheck2" name="chk" value="F" onclick="fncNm(this.name, this.value)"/>
+                                <label class="form-check-label" for="gridCheck2" style="margin-left:20px;">
+                                    Female
                                 </label>
                             </div>
                         </div>
@@ -101,6 +365,22 @@
                 <button class="btn btn-primary" id="submitBtn">Sign in</button>
                 <div id="ajaxResult">
 
+                </div>
+            </div>
+            <div class="col-sm-12">
+                <div class="alert alert-info" role="alert">
+                    <div id="formSearchDiv">
+                        <div class="form-group col-md-6">
+                            <label for="inputSearchEmail4">Email</label>
+                            <input type="email" class="form-control" id="inputSearchEmail4" name="searchemail" placeholder="example@example.com" maxlength="70">
+                        </div>
+                        <button class="btn btn-primary" id="searchBtn">Search</button><p/>
+                    </div>
+
+                    <h3>Grid <a href="http://ax5.io/ax5ui-grid/api/index.html" class="badge badge-info">Info</a></h3>
+                </div>
+                <div style="position: relative;height:400px;" id="grid-parent">
+                    <div data-ax5grid="first-grid" style="height: 100%;"></div>
                 </div>
             </div>
         </div>
