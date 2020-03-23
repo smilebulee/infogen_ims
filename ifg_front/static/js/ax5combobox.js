@@ -139,15 +139,16 @@
               item.$target.height("");
               item.$display.height("");
 
-              var displayTableHeight = item.$displayTable.outerHeight();
-              if (Math.abs(displayTableHeight - item.$target.height()) > displayTableHeightAdjust) {
-                item.$target.css({
-                  height: displayTableHeight + displayTableHeightAdjust + 4
-                });
-                item.$display.css({
-                  height: displayTableHeight + displayTableHeightAdjust + 4
-                });
-              }
+//              var displayTableHeight = item.$displayTable.outerHeight();
+//              if (Math.abs(displayTableHeight - item.$target.height()) > displayTableHeightAdjust) {
+//                item.$target.css({
+//                  height: displayTableHeight + displayTableHeightAdjust + 4
+//                });
+//                item.$display.css({
+//                  height: displayTableHeight + displayTableHeightAdjust + 4
+//                });
+//              }
+
             }
           }
         }

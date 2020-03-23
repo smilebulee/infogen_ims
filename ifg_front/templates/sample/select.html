@@ -8,6 +8,8 @@ history
 {% block content %}
     <script type="text/javascript">
         $(document).ready(function(){
+            $('[cd-grp]').makeForm();       // 코드로 셀렉트박스 option, 체크박스, 라디오 생성
+
             var options = [];
             for (var i = 0; i < 100; i++) {
                 options.push({value: "optionValue" + i, text: "optionText" + i});
@@ -35,14 +37,13 @@ history
             $('#submitBtn').click(function(){
                 $('#formDiv').ajaxCall({method : 'get', url : 'url'});
             });
+
+
         });
     </script>
     <style>
         .row { margin-bottom: 10px; }
-        [class|="col"] {
-          font-weight: 700;
-          padding: 10px;
-        }
+
     </style>
     <div id="formDiv">
         <div class="row">
@@ -60,9 +61,9 @@ history
             <div class="col-md-6">
                 <div><h5>단건 선택</h5></div>
                 <div class="form-group">
-                    <select class="custom-select" id="validationCustom1" grp="SAMPLE_01">
+                    <select class="custom-select" id="select1" cd-grp="SAMPLE_01">
                     </select>
-                    <select class="custom-select" id="validationCustom2" grp="SAMPLE_02">
+                    <select class="custom-select" id="select2" cd-grp="SAMPLE_02">
                     </select>
                 </div>
             </div>
@@ -73,6 +74,12 @@ history
                 <div><h5>다건 선택</h5></div>
                 <div class="form-group">
                     <div data-ax5select="select2" data-ax5select-config="{multiple: true,reset:'<i class=\'fa fa-trash\'></i>'}"></div>
+                </div>
+                <div  class="form-check" cd-grp="SAMPLE_01" cd-type="checkbox" cd-name="sample_chk_box">
+                    <!-- 체크박스 -->
+                </div>
+                <div  class="form-check" cd-grp="SAMPLE_02" cd-type="radio" cd-name="sample_radio">
+                    <!-- radio -->
                 </div>
             </div>
 
@@ -92,7 +99,10 @@ history
             <div class="col-md-12">
                 <div><h5>다건 선택</h5></div>
                 <div class="form-group">
-                    <div data-ax5combobox="combobox2" data-ax5combobox-config="{multiple: true}"></div>
+                    <div data-ax5combobox="combobox2" data-ax5combobox-config="{multiple: true}">
+
+
+                    </div>
                 </div>
             </div>
         </div>

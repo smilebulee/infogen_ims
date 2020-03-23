@@ -159,11 +159,11 @@ ex) $('divID or formID or etcID...').ajaxCall(json type jquery ajax option);
             data: {param : JSON.stringify(data)},
             dataType: 'json',
             error: function(jqXHR, textStatus, errorThrown ){
-                g_dialog.setConfig({
-                    title: 'Error!!'
-                });
+//                g_dialog.setConfig({
+//                    title: 'Error!!'
+//                });
 
-                g_dialog.alert(jqXHR.statusText);
+                alertMsg(jqXHR.statusText);
             },
             success: function(data, textStatus, jqXHR){
                 if(typeof opts.callbackFn == 'function') opts.callbackFn(data);
@@ -190,11 +190,11 @@ ex) $.ajaxCall(json type data, json type jquery ajax option);
             data: {param : JSON.stringify(data)},
             dataType: 'json',
             error: function(jqXHR, textStatus, errorThrown ){
-                g_dialog.setConfig({
-                    title: 'Error!!'
-                });
+//                g_dialog.setConfig({
+//                    title: 'Error!!'
+//                });
 
-                g_dialog.alert(jqXHR.statusText);
+                alertMsg(jqXHR.statusText);
             },
             success: function(data, textStatus, jqXHR){
                 if(typeof opts.callbackFn == 'function') opts.callbackFn(data);
@@ -246,7 +246,7 @@ function getCodes(grpArr, callbackFn){
     };
     var options = {
         method : 'get',
-        url : '',
+        url : "/cmm/getCodes",
         global : false,
         callbackFn :  callbackFn
     };
@@ -255,28 +255,62 @@ function getCodes(grpArr, callbackFn){
 }
 
 (function($){
-    $.fn.selectbox = function(opts){
+    $.fn.makeForm = function(){
         var grpArr = new Array();
         var selArr = new Array();
         $(this).each(function(){
-            var grp = $(this).attr('grp');
+            var grp = $(this).attr('cd-grp');
             if(grp != undefined && grp != ''){
                 grpArr.push(grp);
                 selArr.push(this);
             }
         });
 
+        grpArr = grpArr.reduce(function(a, b){
+            if(a.indexOf(b) < 0) a.push(b);
+            return a;
+        }, []);     // 중복제거
+
         getCodes(grpArr, function(data){
-            $(selArr).each(function(idx){
-                var codes = data[grpArr[idx]];
-                var options = '<option value="">선택</option>';
+            $.each(grpArr, function(idx, val){
+                var codes = data[val];
+                $('[cd-grp="' + val + '"]').each(function(){
+                    if(this.nodeName == 'SELECT'){
+                        var options = '<option value="">선택</option>';
 
-                for(var i = 0;i < codes.length;i++){
-                    options += '<option value="' + codes[i].cmm_api_cd + '">' + codes[i].cmm_api_cd_nm + '</option>';
-                }
+                        $.each(codes, function(i, code){
+                            options += '<option value="' + code.cmm_cd + '">' + code.cmm_nm + '</option>';
+                        });
 
-                $(this).html(options);
+                        $(this).html(options);
+                    }else{
+                        var type = $(this).attr('cd-type');
+                        var name = $(this).attr('cd_name');
+                        var html = '';
+
+                        if(name == undefined || name == '') name = codes[0].grp_cd;
+
+                        switch(type){
+                            case 'checkbox':
+                                $.each(codes, function(i, code){
+                                    var id = code.grp_cd + code.cmm_cd;
+                                    html += '<input class="form-check-input" type="checkbox" id="' + id + '" name="' + name + '" value="' + code.cmm_cd + '">';
+                                    html += '<label class="form-check-label" for="' + id + '" style="margin-left:20px;margin-right:20px;">' + code.cmm_nm + '</label>';
+                                });
+
+                                break;
+                            case 'radio':
+                                 $.each(codes, function(i, code){
+                                    var id = code.grp_cd + code.cmm_cd;
+                                    html += '<input class="form-check-input" type="radio" name="exampleRadios" id="' + id + '" value="' + code.cmm_cd + '" >'
+                                    html += '<label class="form-check-label" for="' + id + '" style="margin-left:20px;margin-right:20px;">' + code.cmm_nm + '</label>';
+                                 });
+                                break;
+                        }
+                        $(this).html(html);
+                    }
+                });
             });
         });
     };
-});
+})(jQuery);

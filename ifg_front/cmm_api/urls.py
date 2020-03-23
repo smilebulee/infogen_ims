@@ -9,6 +9,7 @@ app_name = 'cmm_api'
 
 urlpatterns = [
     path('', views.Cmm_api_index.as_view(), name='cmm_api'),
+    path('getCodes/', views.getCodes, name='getCodes'),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
