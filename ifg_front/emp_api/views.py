@@ -56,6 +56,25 @@ def insert_ajax(request):
     logger.info(r.json())
     return JsonResponse(r.json())
 
+@csrf_exempt
+def update_ajax(request):
+
+    param = json.loads(request.POST['param'])
+    logger.info(param)
+    # datas = {
+    #     'email' : param['email'],
+    #     'password' : param['password'],
+    #     'addr' : param['addr'],
+    #     'sex' : param['sex']
+    # }
+    logger.info('request.post : ' + request.POST['param'])
+    # logger.info(datas)
+    r = requests.post('http://emp_api:5000/update', json=param)
+    logger.info(r)
+    logger.info(r.text)
+    logger.info(r.json())
+    return JsonResponse(r.json())
+
 def search_ajax(request):
 
     param = json.loads(request.GET['param'])

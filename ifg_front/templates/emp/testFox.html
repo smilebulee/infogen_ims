@@ -3,185 +3,57 @@
 {% block content %}
     <script type="text/javascript">
         $(document).ready(function(){
-<!--            var gridList = [        /* 그리드에 세팅할 데이터는 JSON 배열 형태 */-->
-<!--                {"a":"A", "b":"A01", "price":"1000", "amount":"10", "cost":"12100", "saleDt":"20200312", "customer":"lee", "userType":"D", "desc":""},-->
-<!--                {"a":"A", "b":"A01", "price":"1000", "amount":"10", "cost":"12100", "saleDt":"20200312", "customer":"lee", "userType":"D", "desc":""},-->
-<!--                {"a":"A", "b":"A01", "price":"1000", "amount":"10", "cost":"12100", "saleDt":"20200312", "customer":"lee", "userType":"M", "desc":""},-->
-<!--                {"a":"A", "b":"A01", "price":"1000", "amount":"10", "cost":"12100", "saleDt":"20200312", "customer":"lee", "userType":"M", "desc":""},-->
-<!--                {"a":"A", "b":"A01", "price":"1000", "amount":"10", "cost":"12100", "saleDt":"20200312", "customer":"lee", "userType":"D", "desc":""},-->
-<!--                {"a":"A", "b":"A01", "price":"1000", "amount":"10", "cost":"12100", "saleDt":"20200312", "customer":"lee", "userType":"D", "desc":""},-->
-<!--                {"a":"A", "b":"A01", "price":"1000", "amount":"10", "cost":"12100", "saleDt":"20200312", "customer":"lee", "userType":"W", "desc":""},-->
-<!--                {"a":"B", "b":"B01", "price":"1000", "amount":"10", "cost":"12100", "saleDt":"20200312", "customer":"lee", "userType":"W", "desc":""},-->
-<!--                {"a":"B", "b":"B01", "price":"1000", "amount":"10", "cost":"12100", "saleDt":"20200312", "customer":"lee", "userType":"W", "desc":""},-->
-<!--                {"a":"B", "b":"B01", "price":"1000", "amount":"10", "cost":"12100", "saleDt":"20200312", "customer":"lee", "userType":"D", "desc":""},-->
-<!--                {"a":"B", "b":"B01", "price":"1000", "amount":"10", "cost":"12100", "saleDt":"20200312", "customer":"lee", "userType":"M", "desc":""},-->
-<!--                {"a":"B", "b":"B01", "price":"1000", "amount":"10", "cost":"12100", "saleDt":"20200312", "customer":"lee", "userType":"D", "desc":""},-->
-<!--                {"a":"B", "b":"B01", "price":"1000", "amount":"10", "cost":"12100", "saleDt":"20200312", "customer":"lee", "userType":"D", "desc":""},-->
-<!--                {"a":"B", "b":"B01", "price":"1000", "amount":"10", "cost":"12100", "saleDt":"20200312", "customer":"lee", "userType":"D", "desc":""},-->
-<!--                {"a":"B", "b":"B01", "price":"1000", "amount":"10", "cost":"12100", "saleDt":"20200312", "customer":"lee", "userType":"D", "desc":""}-->
-<!--            ];-->
 
-<!--            var gridOptions = {-->
-<!--                columns: [              /* columns : 그리드 헤더 및 매핑 시킬 컬럼 및 컬럼 속성 설정 항목(필수) */-->
-<!--                    {-->
-<!--                        key: "a",-->
-<!--                        label: "field A",-->
-<!--                        width: 80,-->
-<!--                        styleClass: function () {       /* column style css class */-->
-<!--                            return "font-weight-bolder";-->
-<!--                        },-->
-<!--                        enableFilter: true,-->
-<!--                        align: "center",-->
-<!--                        editor: {type: "text"}          /* 컬럼값 수정 모드 시 표시할 타입. text는 input box */-->
-<!--                    },-->
-<!--                    {key: "b", label: "field  B", align: "center", editor: {type: "text", disabled: function(){ return this.item.a == "A"}}},   /* a컬럼 값이 A이면 현재 컬럼 수정 불가 */-->
-<!--                    {-->
-<!--                        key: undefined,         /* key 값이 정의 되지 않고 자식 columns 설정이 있으면 헤더만 병합 */-->
-<!--                        label: "field C",-->
-<!--                        columns: [-->
-<!--                            {key: "price", label: "price", formatter: "money", align: "right", editor: {type: "money", updateWith:['cost']}},   /* formatter money는 숫자 3자리 마다 ,(콤마) 생성 */-->
-<!--                            {key: "amount", label: "amount", formatter: "money", align: "right", editor: {type: "money", updateWith:['cost']}}, /* editor의 type money는 input box에서 숫자 3자리 마다 ,(콤마) 생성하고 값 변경시 cost컬럼이 price * amount이므로 cost값도 변경 */-->
-<!--                            {-->
-<!--                                key: "cost",-->
-<!--                                label: "cost",-->
-<!--                                align: "right",-->
-<!--                                formatter: function () {        /* 사용자 정의 formatter */-->
-<!--                                    return ax5.util.number(this.item.price * this.item.amount, {"money": true});-->
-<!--                                }-->
-<!--                            }-->
-<!--                        ]-->
-<!--                    },-->
-<!--                    {-->
-<!--                        key: "saleDt",-->
-<!--                        label: "saleDt",-->
-<!--                        align: "center",-->
-<!--                        editor: {-->
-<!--                            type: "date",       /* 달력, ax5picker 필요 */-->
-<!--                            config: {-->
-<!--                                content: {-->
-<!--                                    config: {-->
-<!--                                        mode: "day",            /* 최초 일달력 보여줌(year나 month 세팅시 연달력이나 월달력으로 보여줌) */-->
-<!--                                        selectMode: "day"       /* 달력에서 날짜 선택 */-->
-<!--                                    }-->
-<!--                                }-->
-<!--                            }-->
-<!--                        }-->
-<!--                    },-->
-<!--                    {key: "customer", label: "customer", editor: {type: "text"}},-->
-<!--                    {-->
-<!--                        key: "userType",-->
-<!--                        label: "userType",-->
-<!--                        editor: {-->
-<!--                            type: "select",             /* 수정시 셀렉트 박스 */-->
-<!--                            config: {-->
-<!--                                options: [              /* 셀렉트 박스에서 보여줄 데이터 */-->
-<!--                                    {CD: "M", NM: "M: Man"},-->
-<!--                                    {CD: "D", NM: "D: Daughter"},-->
-<!--                                    {CD: "S", NM: "S: Son"},-->
-<!--                                    {CD: "W", NM: "W: Wife"}-->
-<!--                                ],-->
-<!--                                columnKeys: {-->
-<!--                                    optionValue: "CD", optionText: "NM"-->
-<!--                                }-->
-<!--                            }-->
-<!--                        }-->
-<!--                    },-->
-<!--                    {key: "desc", label: "desc", width:400, editor: {type: "textarea"}} /* 텍스트 박스 */-->
-<!--                ],-->
-<!--                body: {                 /* body부분 속성 정의. 필수 아님 */-->
-<!--                    columnHeight: 40,-->
-<!--                    grouping: {         /* 소계 부분. 필수 아님. 없어도 됨 */-->
-<!--                        by: ["a"],      /* a컬럼 기준으로 소계 */-->
-<!--                        columns: [-->
-<!--                            {-->
-<!--                                label: function () {-->
-<!--                                    return this.groupBy.labels.join(", ") + " SUM";-->
-<!--                                },-->
-<!--                                colspan: 2,-->
-<!--                                align: "center"-->
-<!--                            },-->
-<!--                            {key: "price", collector: "avg", formatter: "money", align: "right"},   /* 평균 */-->
-<!--                            {key: "amount", collector: "sum", formatter: "money", align: "right"},  /* 합계 */-->
-<!--                            {-->
-<!--                                key: "cost",-->
-<!--                                collector: function () {        /* 사용자 정의 */-->
-<!--                                    var value = 0;-->
-<!--                                    this.list.forEach(function (n) {-->
-<!--                                        if (!n.__isGrouping) value += (n.price * n.amount);-->
-<!--                                    });-->
-<!--                                    return ax5.util.number(value, {"money": 1});-->
-<!--                                },-->
-<!--                                align: "right"-->
-<!--                            }-->
-<!--                        ]-->
-<!--                    }-->
-<!--                },-->
-<!--                footSum: [[         /* 총합계. 필수 아님. 없어도 됨 */-->
-<!--                    {label: "SUMMARY", colspan: 2, align: "center"},-->
-<!--                    {key: "price", collector: "avg", formatter: "money", align: "right"},-->
-<!--                    {key: "amount", collector: "sum", formatter: "money", align: "right"},-->
-<!--                    {-->
-<!--                        key: "cost",-->
-<!--                        collector: function () {-->
-<!--                            var value = 0;-->
-<!--                            this.list.forEach(function (n) {-->
-<!--                                if (!n.__isGrouping) value += (n.price * n.amount);-->
-<!--                            });-->
-<!--                            return ax5.util.number(value, {"money": 1});-->
-<!--                        },-->
-<!--                        align: "right"-->
-<!--                    }-->
-<!--                ]]-->
-<!--            };-->
+            var firstGrid = $('[data-ax5grid="first-grid"]');
 
-<!--            var firstGrid = $('[data-ax5grid="first-grid"]').initGrid(gridOptions);-->
-<!--            firstGrid.setData(gridList);-->
+            $('#searchSave').click(function(){
+
+                console.log(firstGrid);
+                console.log();
+                console.log(firstGrid.getList("modified"));
+                console.log(firstGrid.getList("modified").length);
+
+                if( firstGrid.getList("modified").length == "undefined"
+                 || firstGrid.getList("modified").length == 0 ){
+                    alert("수정된 데이터가 없습니다.");
+                    return false;
+                }
+
+                $.ajaxCall({data:firstGrid.getList("modified")} , {
+                    method : 'POST',
+                    url : '/emp/update_ajax/post',
+                    callbackFn : function(data){
+                        var html = '';
+                        html += '<dl class="row">';
+                        html += '<dt class="col-sm-3">Status</dt>';
+                        html += '<dd class="col-sm-9">' + data.status + '</dd>';
+                        html += '<dt class="col-sm-3">Msg</dt>';
+                        html += '<dd class="col-sm-9">' + data.msg + '</dd>';
+                        html += '</dl>';
+
+                        $('#ajaxUpdateResult').html(html);
+
+                        if(data.status=="200"){
+                            alert("정상적으로 수정되었습니다.");
+                        }else if(data.status=="500"){
+                            alert("비정상 종료되었습니다.");
+                        }
+                        $('#searchBtn').click();
+                    }
+                });
+            });
 
 
-            /* 그리드 옵션, 사용해야 할 옵션이 있으면 var gridOptions 에 추가 해서 사용
-            showLineNumber: true,
-            showRowSelector: false,
-            multipleSelect: false,
-            lineNumberColumnWidth: 40,
-            rowSelectorColumnWidth: 27,
-            frozenColumnIndex: 0,
-            frozenRowIndex: 0,
-            header: {
-                align: "center",
-                columnHeight: 40
-            },
-            body: {
-                align: "center",
-                columnHeight: 40
-            },
-            sortable: false,
-            multiSort: false,
-            mergeCells: ["a" , "b"]
-            등.....
-            더 많은 옵션 및 함수는 아래 참조
-            http://ax5.io/ax5ui-grid/demo/index.html        데모 페이지
-            http://ax5.io/ax5ui-grid/api/index.html         API 페이지
-
-            */
-
+            /* 조회 버튼 */
             $('#searchBtn').click(function(){
-
                 $('#formSearchDiv').ajaxCall({
                     method : 'GET',
                     url : '/emp/search_ajax/get',
                     callbackFn : function(data){
-<!--                        alert("종료"+ $.parseJSON(data));-->
                         var gridList = $.parseJSON(data); /* 그리드에 세팅할 데이터는 JSON 배열 형태 */
 
                         var gridOptions = {
                             columns: [              /* columns : 그리드 헤더 및 매핑 시킬 컬럼 및 컬럼 속성 설정 항목(필수) */
-                                {
-                                    key: "_id",
-                                    label: "MONGO ID",
-                                    width: 80,
-                                    align: "center",
-                                    editor: {type: "text"}
-                                },
                                 {
                                     key: "email",
                                     label: "EMAIL",
@@ -224,13 +96,14 @@
                                 }
                             ]
                         };
-
-                        var firstGrid = $('[data-ax5grid="first-grid"]').initGrid(gridOptions);
+                        firstGrid = $('[data-ax5grid="first-grid"]');
+                        firstGrid = firstGrid.initGrid(gridOptions);
                         firstGrid.setData(gridList);
                     }
                 });
             });
 
+            /* 등록 버튼 */
             $('#submitBtn').click(function(){
 
                 /* validate  st */
@@ -368,19 +241,29 @@
                 </div>
             </div>
             <div class="col-sm-12">
-                <div class="alert alert-info" role="alert">
-                    <div id="formSearchDiv">
-                        <div class="form-group col-md-6">
-                            <label for="inputSearchEmail4">Email</label>
-                            <input type="email" class="form-control" id="inputSearchEmail4" name="searchemail" placeholder="example@example.com" maxlength="70">
-                        </div>
-                        <button class="btn btn-primary" id="searchBtn">Search</button><p/>
-                    </div>
 
-                    <h3>Grid <a href="http://ax5.io/ax5ui-grid/api/index.html" class="badge badge-info">Info</a></h3>
+            </div>
+            <div class="col-sm-12">
+                <div id="formSearchDiv">
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <input type="email" class="form-control" id="inputSearchEmail4" name="searchemail" placeholder="example@example.com" maxlength="70"/>
+                        </div>
+                        <div class="form-group col-md-4">
+
+                        </div>
+                        <div class="form-group col-md-2">
+                            <button class="btn btn-primary" id="searchBtn">Search</button>
+                            <button class="btn btn-primary" id="searchSave">Save</button>
+                        </div>
+                    </div>
                 </div>
+                <h3>Grid <a href="http://ax5.io/ax5ui-grid/api/index.html" class="badge badge-info">Info</a></h3>
                 <div style="position: relative;height:400px;" id="grid-parent">
                     <div data-ax5grid="first-grid" style="height: 100%;"></div>
+                </div>
+                <div id="ajaxUpdateResult">
+
                 </div>
             </div>
         </div>

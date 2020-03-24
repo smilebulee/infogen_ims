@@ -11,6 +11,7 @@ urlpatterns = [
     url(r'^$', views.Emp_api_index.as_view(), name='emp_api'),
     url(r'^testFox/', views.Emp_api_testFox.as_view(), name='emp_foxTest'),
     url(r'^insert_ajax/post', views.insert_ajax, name='insert_ajax'),
+    url(r'^update_ajax/post', views.update_ajax, name='update_ajax'),
     url(r'^search_ajax/get', views.search_ajax, name='search_ajax'),
 ]
 

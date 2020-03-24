@@ -83,6 +83,58 @@ class Save(Resource):
 
         return jsonify(retJson)
 
+class Update(Resource):
+    def post(self):
+        # Get posted data from request
+        logging.debug("update start")
+        # logging.debug(request)
+        logging.debug(request.get_json())
+        # logging.debug(request.get_data())
+        # logging.debug(request.form['email'])
+
+        upData = request.get_json()
+        # get data
+
+        logging.debug(len(upData['data']))
+
+        if len(upData['data']) == 0:
+            retJson = {
+                "status": 500,
+                "msg": "Update Data Not Found"
+            }
+            return jsonify(retJson)
+
+        for data in upData['data']:
+
+            email = data['email']
+            password = data['password']
+            addr = data['addr']
+            sex = data['sex']
+            logging.debug(data)
+            logging.debug('--------------------------------------')
+            logging.debug('email : ' + email)
+            logging.debug('password : ' + password)
+            logging.debug('addr : ' + addr)
+            logging.debug('sex : ' + sex)
+            logging.debug('--------------------------------------')
+
+            foxTestDb.update({
+                "email": email
+            },
+            {'$set':    {
+                        "password":password,
+                        "addr":addr,
+                        "sex":sex
+                        }
+            })
+
+        retJson = {
+            "status": 200,
+            "msg": "Data has been update successfully"
+        }
+
+        return jsonify(retJson)
+
 class Search(Resource):
     def get(self):
         # Get posted data from request
@@ -122,6 +174,7 @@ class Search(Resource):
 #
 api.add_resource(Hello, '/hello')
 api.add_resource(Save, '/save')
+api.add_resource(Update, '/update')
 api.add_resource(Search, '/search')
 
 
