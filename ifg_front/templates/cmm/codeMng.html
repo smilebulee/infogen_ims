@@ -1,0 +1,153 @@
+{% extends 'common/base.html' %}
+
+{% block content %}
+    <script type="text/javascript">
+        var grpGrid;
+        var codeGrid;
+
+        $(document).ready(function(){
+            var grpGridOpt = {
+                columns: [
+                    {key : "grp_cd", label : '코드그룹', editor : {type : 'text'}, headerStyleClass: "font-weight-bolder"},
+                    {key : "grp_nm", label : '코드그룹명', width : "*", editor : {type : 'text'}, headerStyleClass: "font-weight-bolder"},
+                    {key : "sort_ord", label : '정렬순서', editor : {type : 'money'}, headerStyleClass: "font-weight-bolder"}
+                ],
+                body : {
+                    onClick : function(){
+                        this.self.select(this.dindex);
+                        getCodeList();
+                    }
+                }
+            };
+
+            var codeGridOpt = {
+                columns: [
+                    {key : "cmm_cd", label : '코드', editor : {type : 'text'}, headerStyleClass: "font-weight-bolder"},
+                    {key : "cmm_nm", label : '코드명', width : "*",editor : {type : 'text'}, headerStyleClass: "font-weight-bolder"},
+                    {key : "sort_ord", label : '정렬순서', editor : {type : 'money'}, headerStyleClass: "font-weight-bolder"}
+                ],
+                body : {
+                    onClick : function(){
+
+                    }
+                }
+            };
+
+            grpGrid = $('[data-ax5grid="grp-grid"]').initGrid(grpGridOpt);
+            codeGrid = $('[data-ax5grid="code-grid"]').initGrid(codeGridOpt);
+
+            $('#grpAddBtn').click(function(){
+                grpGrid.addRow({grp_cd: '', grp_nm: '', sort_ord: grpGrid.list.length + 1, status: 'C'}, 'last');
+            });
+            $('#grpSaveBtn').click(function(){
+                var updateList = grpGrid.getList('modified');
+
+                $.ajaxCall(updateList, {
+                    url : '{% url 'cmm_api:saveGrp' %}',
+                    method : 'post',
+                    callbackFn : function(data){
+                        getGrpList(1);
+                    }
+                });
+            });
+            $('#grpDelBtn').click(function(){
+                if(grpGrid.getList("selected")[0].status == 'C') grpGrid.removeRow("selected");
+                else{
+                    var delList = grpGrid.getList('selected');
+
+                    $.ajaxCall(delList, {
+                        url : '{% url 'cmm_api:deleteGrp' %}',
+                        method : 'post',
+                        callbackFn : function(data){
+                            getGrpList(1);
+                        }
+                    });
+                }
+            });
+
+            $('#cdAddBtn').click(function(){
+
+            });
+            $('#cdSaveBtn').click(function(){
+
+            });
+            $('#cdDelBtn').click(function(){
+
+            });
+
+            getGrpList(1);
+        });
+
+        function makePaging(ret){
+            $('#paging_navi').makePagingNavi(ret, 'getGrpList');
+        }
+
+        function getGrpList(page){
+            var options = {
+                method : 'get',
+                url : "{% url 'cmm_api:getCodeGrps' %}",
+                callbackFn :  function(ret){
+                    grpGrid.setData(ret.list);
+                    grpGrid.select(0);
+
+                    makePaging(ret);
+                    getCodeList();
+                }
+            };
+
+            $.ajaxCall({page : page}, options);
+        }
+
+        function getCodeList(){
+            var grp = new Array();
+            grp.push(grpGrid.getList('selected')[0].grp_cd);
+            getCodes(grp, function(data){
+                codeGrid.setData(data[grpGrid.getList('selected')[0].grp_cd]);
+            });
+        }
+
+
+    </script>
+        <div class="row">
+            <div class="col-sm-12">
+                <blockquote class="blockquote">
+                  <p class="h1">Code Management</p>
+                  <footer class="blockquote-footer">COMMON Part in <cite title="Source Title">IFG-IMS</cite></footer>
+                </blockquote>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-5">
+                <div class="row">
+                    <div class="col-sm-12" style="text-align:right; margin-bottom:5px;">
+                        <button id="grpAddBtn" type="button" class="btn btn-primary">추가</button>
+                        <button id="grpSaveBtn" type="button" class="btn btn-primary">저장</button>
+                        <button id="grpDelBtn" type="button" class="btn btn-danger">삭제</button>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div data-ax5grid="grp-grid" style="height: 500px;"></div>
+                        <div id="paging_navi"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-7">
+                <div class="row">
+                    <div class="col-sm-12" style="text-align:right; margin-bottom:5px;">
+                        <button id="cdAddBtn" type="button" class="btn btn-primary">추가</button>
+                        <button id="cdSaveBtn" type="button" class="btn btn-primary">저장</button>
+                        <button id="cdDelBtn" type="button" class="btn btn-danger">삭제</button>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div data-ax5grid="code-grid" style="height: 500px;"></div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+
+{% endblock %}

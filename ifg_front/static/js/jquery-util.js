@@ -81,23 +81,17 @@ ex) $('divID').initGrid(json type grid option);
 **********************************************************/
 (function($){
 	$.fn.initGrid = function(opts){
-		var options = $.extend({}, $.fn.initGrid.defaultOpts, opts);
+		var options = $.extend(true, $.fn.initGrid.defaultOpts, opts);
 		options.target = this;
 
 		var grid = new ax5.ui.grid();
 		grid.setConfig(options);
+        grid.addColumn({key:"status", label:"", width:0});
 
 		return grid;
 	};
 	
 	$.fn.initGrid.defaultOpts = {
-	    columns: [
-	        {key: "a", label: "field  A", align: "center"},
-	        {key: "b", label: "field  B", align: "center"},
-	        {key: "c", label: "field  C", align: "center"},
-	        {key: "d", label: "field  D", align: "center"},
-	        {key: "e", label: "field  E", align: "center"}
-	    ],
 		showLineNumber: true,
 		showRowSelector: false,
         multipleSelect: false,
@@ -115,7 +109,12 @@ ex) $('divID').initGrid(json type grid option);
 		},
 		sortable: false,
 		multiSort: false,
-		mergeCells: false
+		mergeCells: false,
+		page: {
+		    display: false,
+            statusDisplay: false
+		},
+		columnMinWidth : 100
 	};
 })(jQuery);
 
@@ -159,10 +158,6 @@ ex) $('divID or formID or etcID...').ajaxCall(json type jquery ajax option);
             data: {param : JSON.stringify(data)},
             dataType: 'json',
             error: function(jqXHR, textStatus, errorThrown ){
-//                g_dialog.setConfig({
-//                    title: 'Error!!'
-//                });
-
                 alertMsg(jqXHR.statusText);
             },
             success: function(data, textStatus, jqXHR){
@@ -312,5 +307,67 @@ function getCodes(grpArr, callbackFn){
                 });
             });
         });
+    };
+})(jQuery);
+
+(function($){
+    $.fn.makePagingNavi = function(obj, goPageFn){
+        var cPage = obj.page;       // 현재페이지
+        var tPage = obj.total_pages;        // 전체페이지
+        var hasP = obj.has_prev;
+        var hasN = obj.has_next;
+        var pDisable = '';
+        var nDisable = '';
+        var cDisable = '';
+        var html = '';
+
+        html += '<nav aria-label="Page navigation" style="margin-top: 10px;">';
+        html += '	<ul class="pagination pagination-sm justify-content-center">';
+        if(!hasP) pDisable = ' disabled';
+        html += '		<li class="page-item' + pDisable + '">';
+        html += '			<a class="page-link" href="javascript:' + goPageFn + '(' + (cPage - 1) + ')" aria-label="Previous">';
+        html += '				<span aria-hidden="true">&laquo;</span>';
+        html += '			</a>';
+        html += '		</li>';
+
+        var start = 0;
+        var end = 0;
+
+        if(tPage <= 5){
+            start = 1;
+            end = tPage;
+        }else{
+            start = cPage - 2;
+            end = cPage + 2;
+
+            if(start < 1){
+                start = 1;
+                end = 5;
+            }
+
+            if(end > tPage){
+                start = tPage - 4;
+                end = tPage;
+            }
+        }
+        for(var i = start;i <= end;i++){
+            if(i == cPage) {
+                html += '       <li class="page-item active" aria-current="page">';
+                html += '           <span class="page-link">' + i + '<span class="sr-only">(current)</span></span>';
+                html += '       </li>';
+            }else{
+                html += '		<li class="page-item"><a class="page-link" href="javascript:' + goPageFn + '(' + i + ')">' + i + '</a></li>';
+            }
+        }
+        if(!hasN) nDisable = ' disabled';
+        html += '		<li class="page-item' + nDisable + '">';
+        html += '			<a class="page-link" href="javascript:' + goPageFn + '(' + (cPage + 1) + ')" aria-label="Next">';
+        html += '				<span aria-hidden="true">&raquo;</span>';
+        html += '			</a>';
+        html += '		</li>';
+        html += '	</ul>';
+        html += '</nav>';
+
+        $(this).html(html);
     };
 })(jQuery);
