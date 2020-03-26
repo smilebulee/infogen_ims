@@ -14,7 +14,6 @@
                 ],
                 body : {
                     onClick : function(){
-                        this.self.select(this.dindex);
                         getCodeList();
                     }
                 }
@@ -24,55 +23,82 @@
                 columns: [
                     {key : "cmm_cd", label : '코드', editor : {type : 'text'}, headerStyleClass: "font-weight-bolder"},
                     {key : "cmm_nm", label : '코드명', width : "*",editor : {type : 'text'}, headerStyleClass: "font-weight-bolder"},
-                    {key : "sort_ord", label : '정렬순서', editor : {type : 'money'}, headerStyleClass: "font-weight-bolder"}
-                ],
-                body : {
-                    onClick : function(){
-
-                    }
-                }
+                    {key : "sort_ord", label : '정렬순서', editor : {type : 'money'}, headerStyleClass: "font-weight-bolder"},
+                    {key : "grp_cd", label : '', width: 0},
+                    {key : "id", label : '', width: 0}
+                ]
             };
 
             grpGrid = $('[data-ax5grid="grp-grid"]').initGrid(grpGridOpt);
             codeGrid = $('[data-ax5grid="code-grid"]').initGrid(codeGridOpt);
 
             $('#grpAddBtn').click(function(){
-                grpGrid.addRow({grp_cd: '', grp_nm: '', sort_ord: grpGrid.list.length + 1, status: 'C'}, 'last');
+                grpGrid.addRow({grp_cd: '', grp_nm: '', sort_ord: grpGrid.list.length + 1}, 'last');
             });
             $('#grpSaveBtn').click(function(){
-                var updateList = grpGrid.getList('modified');
+                confirmMsg('저장 하시겠습니까?', function(){
+                    var updateList = grpGrid.getList('modified');
 
-                $.ajaxCall(updateList, {
-                    url : '{% url 'cmm_api:saveGrp' %}',
-                    method : 'post',
-                    callbackFn : function(data){
-                        getGrpList(1);
-                    }
-                });
-            });
-            $('#grpDelBtn').click(function(){
-                if(grpGrid.getList("selected")[0].status == 'C') grpGrid.removeRow("selected");
-                else{
-                    var delList = grpGrid.getList('selected');
-
-                    $.ajaxCall(delList, {
-                        url : '{% url 'cmm_api:deleteGrp' %}',
+                    $.ajaxCall(updateList, {
+                        url : '{% url 'cmm_api:saveGrp' %}',
                         method : 'post',
                         callbackFn : function(data){
                             getGrpList(1);
                         }
                     });
-                }
+                });
+            });
+            $('#grpDelBtn').click(function(){
+                confirmMsg('삭제 하시겠습니까?', function(){
+                    if(grpGrid.getList("selected")[0].__created__) grpGrid.removeRow("selected");
+                    else{
+                        var delList = grpGrid.getList('selected');
+
+                        $.ajaxCall(delList, {
+                            url : '{% url 'cmm_api:deleteGrp' %}',
+                            method : 'post',
+                            callbackFn : function(data){
+                                getGrpList(1);
+                            }
+                        });
+                    }
+                });
             });
 
             $('#cdAddBtn').click(function(){
+                codeGrid.addRow({cmm_cd: '', cmm_nm: '', sort_ord: codeGrid.list.length + 1, grp_cd: grpGrid.getList('selected')[0].grp_cd}, 'last');
 
+                console.log(codeGrid.getList('created'));
             });
             $('#cdSaveBtn').click(function(){
+                confirmMsg('저장 하시겠습니까?', function(){
+                    var updateList = codeGrid.getList('modified');
 
+                    $.ajaxCall(updateList, {
+                        url : '{% url 'cmm_api:saveCd' %}',
+                        method : 'post',
+                        callbackFn : function(data){
+                            getCodeList();
+                        }
+                    });
+                });
             });
             $('#cdDelBtn').click(function(){
+                alert(codeGrid.getList("selected")[0].__created__);
+                confirmMsg('삭제 하시겠습니까?', function(){
+                    if(codeGrid.getList("selected")[0].__created__) codeGrid.removeRow("selected");
+                    else{
+                        var delList = codeGrid.getList('selected');
 
+                        $.ajaxCall(delList, {
+                            url : '{% url 'cmm_api:deleteCd' %}',
+                            method : 'post',
+                            callbackFn : function(data){
+                                getCodeList();
+                            }
+                        });
+                    }
+                });
             });
 
             getGrpList(1);

@@ -81,7 +81,37 @@ ex) $('divID').initGrid(json type grid option);
 **********************************************************/
 (function($){
 	$.fn.initGrid = function(opts){
-		var options = $.extend(true, $.fn.initGrid.defaultOpts, opts);
+        var defaultOptions = {
+            showLineNumber: true,
+            showRowSelector: false,
+            multipleSelect: false,
+            lineNumberColumnWidth: 40,
+            rowSelectorColumnWidth: 27,
+            frozenColumnIndex: 0,
+            frozenRowIndex: 0,
+            header: {
+                align: "center",
+                columnHeight: 40
+            },
+            body: {
+                align: "center",
+                columnHeight: 40,
+                onClick : function(){
+
+                }
+            },
+            sortable: false,
+            multiSort: false,
+            mergeCells: false,
+            page: {
+                display: false,
+                statusDisplay: false
+            },
+            columnMinWidth : 100
+        };
+
+		//var options = $.extend(true, $.fn.initGrid.defaultOpts, opts);
+		var options = $.extend(true, defaultOptions, opts);
 		options.target = this;
 
 		var grid = new ax5.ui.grid();
@@ -105,7 +135,10 @@ ex) $('divID').initGrid(json type grid option);
         },
         body: {
 			align: "center",
-			columnHeight: 40
+			columnHeight: 40,
+			onClick : function(){
+
+            }
 		},
 		sortable: false,
 		multiSort: false,

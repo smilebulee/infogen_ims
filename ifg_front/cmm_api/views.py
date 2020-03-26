@@ -33,7 +33,7 @@ def getCodes(request):
     data = {}
 
     for grp in grps:
-        qs = Cd.objects.filter(grp_cd = grp).order_by('sort_ord').values('grp_cd', 'cmm_cd', 'cmm_nm', 'sort_ord')
+        qs = Cd.objects.filter(grp_cd = grp).order_by('sort_ord').values('grp_cd', 'cmm_cd', 'cmm_nm', 'sort_ord', 'id')
         #logger.info(qs)
         #qs_json = serializers.serialize('json', qs)    values 가 없을 때 사용
         qs_json = list(qs)
@@ -73,7 +73,7 @@ def saveGrp(request):
     logger.info(param)
 
     for data in param:
-        if 'status' in data and data['status'] == 'C':
+        if '__created__' in data and data['__created__']:
             grp = Cd_grp(grp_cd=data['grp_cd'], grp_nm=data['grp_nm'], sort_ord=data['sort_ord'], create_dt=datetime.now(), update_dt=datetime.now())
             grp.save()
         else:
@@ -106,8 +106,8 @@ def saveCd(request):
     logger.info(param)
 
     for data in param:
-        if 'status' in data and data['status'] == 'C':
-            cd = Cd(cmm_cd=data['cmm_cd'], cmm_nm=data['cmm_nm'], sort_ord=data['sort_ord'], create_dt=datetime.now(), update_dt=datetime.now(), grp_cd=data['grp_cd'])
+        if '__created__' in data and data['__created__']:
+            cd = Cd(cmm_cd=data['cmm_cd'], cmm_nm=data['cmm_nm'], sort_ord=data['sort_ord'], create_dt=datetime.now(), update_dt=datetime.now(), grp_cd_id=data['grp_cd'])
             cd.save()
         else:
             cd = Cd.objects.get(pk = data['id'])
