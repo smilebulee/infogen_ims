@@ -116,7 +116,7 @@ ex) $('divID').initGrid(json type grid option);
 
 		var grid = new ax5.ui.grid();
 		grid.setConfig(options);
-        grid.addColumn({key:"status", label:"", width:0});
+        $('[data-ax5grid-panel="header"]').find('td').addClass('font-weight-bolder');
 
 		return grid;
 	};

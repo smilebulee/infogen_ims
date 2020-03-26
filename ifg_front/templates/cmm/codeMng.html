@@ -16,15 +16,17 @@
                             disabled : function(){
                                 return !this.item.__created__;
                             }
-                        },
-                        headerStyleClass: "font-weight-bolder"
+                        }
                     },
-                    {key : "grp_nm", label : '코드그룹명', width : "*", editor : {type : 'text'}, headerStyleClass: "font-weight-bolder"},
-                    {key : "sort_ord", label : '정렬순서', editor : {type : 'money'}, headerStyleClass: "font-weight-bolder"}
+                    {key : "grp_nm", label : '코드그룹명', width : "*", editor : {type : 'text'}},
+                    {key : "sort_ord", label : '정렬순서', editor : {type : 'money'}}
                 ],
                 body : {
                     onClick : function(){
-                        if(grpGrid.getList("selected")[0].__created__) return false;
+                        if(grpGrid.getList("selected")[0].__created__){
+                            codeGrid.setData([]);
+                            return false;
+                        }
                         getCodeList();
                     }
                 }
@@ -40,11 +42,10 @@
                             disabled : function(){
                                 return !this.item.__created__;
                             }
-                        },
-                        headerStyleClass: "font-weight-bolder"
+                        }
                     },
-                    {key : "cmm_nm", label : '코드명', width : "*",editor : {type : 'text'}, headerStyleClass: "font-weight-bolder"},
-                    {key : "sort_ord", label : '정렬순서', editor : {type : 'money'}, headerStyleClass: "font-weight-bolder"},
+                    {key : "cmm_nm", label : '코드명', width : "*",editor : {type : 'text'}},
+                    {key : "sort_ord", label : '정렬순서', editor : {type : 'money'}},
                     {key : "grp_cd", label : '', width: 0},
                     {key : "id", label : '', width: 0}
                 ]
@@ -195,7 +196,7 @@
                 </div>
                 <div class="row">
                     <div class="col-sm-12">
-                        <div data-ax5grid="grp-grid" style="height: 440px;"></div>
+                        <div data-ax5grid="grp-grid" style="height: 442px;"></div>
                         <div id="paging_navi"></div>
                     </div>
                 </div>
@@ -210,7 +211,7 @@
                 </div>
                 <div class="row">
                     <div class="col-sm-12">
-                        <div data-ax5grid="code-grid" style="height: 440px;"></div>
+                        <div data-ax5grid="code-grid" style="height: 442px;"></div>
                     </div>
                 </div>
 
