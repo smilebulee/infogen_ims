@@ -106,7 +106,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
                     selected: '__selected__',
                     modified: '__modified__',
                     deleted: '__deleted__',
-                    disableSelection: '__disable_selection__'
+                    disableSelection: '__disable_selection__',
+                    created: '__created__'      // 신규생성 상태 추가 by bulee
                 },
                 tree: {
                     use: false,
@@ -2076,6 +2077,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
                     }
 
                     if (self.config.body.onClick) {
+                        self.select(_column.dindex);        // 그리드 클릭시 row가 선택되도록 추가 by bulee
                         self.config.body.onClick.call(that, that, e);
                     }
                 },
@@ -4451,6 +4453,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         };
 
         moveFocus.call(this, _dindex);
+        select(_dindex);
         if (this.config.body.onClick) {
             this.config.body.onClick.call(that, that);
         }
@@ -4829,6 +4832,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
                 //_list = GRID.data.clearGroupingData(this.list);
                 returnList = [].concat(this.deletedList);
                 break;
+            case "created":         // 신규생성 상태 추가 by bulee
+                for (; i < l; i++) {
+                    if (list[i] && !list[i]["__isGrouping"] && list[i][this.config.columnKeys.created]) {
+                        returnList.push(jQuery.extend({}, list[i]));
+                    }
+                }
+                break;
             default:
                 returnList = GRID.data.clearGroupingData.call(this, list);
         }
@@ -4854,7 +4864,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         } else {
             if (typeof _dindex === "undefined") _dindex = "last";
             if (_dindex in processor) {
-                _row[this.config.columnKeys.modified] = true;
+                _row[this.config.columnKeys.created] = true;    // row 생성시 상태 추가 by bulee
                 processor[_dindex].call(this, _row);
             } else {
                 if (!U.isNumber(_dindex)) {

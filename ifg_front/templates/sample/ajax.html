@@ -1,9 +1,16 @@
-{% extends 'common/sampleBase.html' %}
+<!--  ********************************************
+ajax sample
+history
+    - 2020.03 이병욱 최초작성
+*********************************************** -->
+
+{% extends 'common/base.html' %}
 
 {% block content %}
     <script type="text/javascript">
         $(document).ready(function(){
             $('#submitBtn').click(function(){
+                // data를 직접 생성해서 호출하는 $.ajaxCall(data, options) 함수도 있음. jquery-util.js 참조
                 $('#formDiv').ajaxCall({
                     method : 'get',
                     url : "{% url 'main:sample_ajax' %}",
@@ -44,7 +51,7 @@
         }
     </script>
 
-    <div class="container">
+
         <div class="row">
             <div class="col-sm-12">
                 <h3>Ajax</h3>
@@ -107,5 +114,5 @@
         </div>
 
 
-    </div>
+
 {% endblock %}

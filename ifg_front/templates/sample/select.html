@@ -1,8 +1,15 @@
-{% extends 'common/sampleBase.html' %}
+<!--  ********************************************
+multi select box sample
+history
+    - 2020.03 이병욱 최초작성
+*********************************************** -->
+{% extends 'common/base.html' %}
 
 {% block content %}
     <script type="text/javascript">
         $(document).ready(function(){
+            $('[cd-grp]').makeForm();       // 코드로 셀렉트박스 option, 체크박스, 라디오 생성
+
             var options = [];
             for (var i = 0; i < 100; i++) {
                 options.push({value: "optionValue" + i, text: "optionText" + i});
@@ -30,32 +37,52 @@
             $('#submitBtn').click(function(){
                 $('#formDiv').ajaxCall({method : 'get', url : 'url'});
             });
+
+
         });
     </script>
     <style>
         .row { margin-bottom: 10px; }
-        [class|="col"] {
-          font-weight: 700;
-          padding: 10px;
-        }
+
     </style>
-    <div class="container" id="formDiv">
+    <div id="formDiv">
         <div class="row">
             <div class="col-sm-12">
                 <h3>Select Box <a href="http://ax5.io/ax5ui-select/api/index.html" class="badge badge-info">Info</a></h3>
             </div>
         </div>
         <div class="row">
-            <div class="col-sm-6">
+            <div class="alert alert-info" role="alert">
+                COMMON의 코드 관리 페이지에서 SAMPLE_01, SAMPLE_02 그룹과 하위 코드들을 등록해야 정상 작동함
+            </div>
+            <!--<div class="col-sm-6">
+                <div><h5>단건 선택</h5></div>
+                    <div data-ax5select="select1" da
+                <div class="form-group">ta-ax5select-config="{}"></div>
+                </div>
+            </div>-->
+            <div class="col-md-6">
                 <div><h5>단건 선택</h5></div>
                 <div class="form-group">
-                    <div data-ax5select="select1" data-ax5select-config="{}"></div>
+                    <select class="custom-select" id="select1" cd-grp="SAMPLE_01">
+                    </select>
+                    <select class="custom-select" id="select2" cd-grp="SAMPLE_02">
+                    </select>
                 </div>
             </div>
+
+
+
             <div class="col-md-6">
                 <div><h5>다건 선택</h5></div>
                 <div class="form-group">
                     <div data-ax5select="select2" data-ax5select-config="{multiple: true,reset:'<i class=\'fa fa-trash\'></i>'}"></div>
+                </div>
+                <div  class="form-check" cd-grp="SAMPLE_01" cd-type="checkbox" cd-name="sample_chk_box">
+                    <!-- 체크박스 -->
+                </div>
+                <div  class="form-check" cd-grp="SAMPLE_02" cd-type="radio" cd-name="sample_radio">
+                    <!-- radio -->
                 </div>
             </div>
 
@@ -66,19 +93,22 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-md-6">
+            <!--<div class="col-md-6">
                 <div><h5>단건 선택</h5></div>
                         <div class="form-group">
                             <div data-ax5combobox="combobox1" data-ax5combobox-config="{}"></div>
                         </div>
-            </div>
-            <div class="col-md-6">
+            </div>-->
+            <div class="col-md-12">
                 <div><h5>다건 선택</h5></div>
                 <div class="form-group">
-                    <div data-ax5combobox="combobox2" data-ax5combobox-config="{multiple: true}"></div>
+                    <div data-ax5combobox="combobox2" data-ax5combobox-config="{multiple: true}">
+
+
+                    </div>
                 </div>
             </div>
         </div>
-        <button class="btn btn-primary" id="submitBtn">Sign in</button>
+        <!--<button class="btn btn-primary" id="submitBtn">Sign in</button>-->
     </div>
 {% endblock %}

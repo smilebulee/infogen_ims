@@ -20,9 +20,8 @@ from django.urls import path
 urlpatterns = [
     path('admin/', admin.site.urls),
 
-    path('', include('main.urls')),
-    path('sample/<str:sample>', include('main.urls')),
-    path('ajax/get', include('main.urls')),
+    path('', include('index.urls')),
+    path('main/', include('main.urls')),
 
     path('emp/', include('emp_api.urls')),
     path('prj/', include('prj_api.urls')),

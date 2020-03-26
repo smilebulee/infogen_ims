@@ -1,4 +1,9 @@
-{% extends 'common/sampleBase.html' %}
+<!--  ********************************************
+popup sample
+history
+    - 2020.03 이병욱 최초작성
+*********************************************** -->
+{% extends 'common/base.html' %}
 
 {% block content %}
     <script type="text/javascript">
@@ -6,17 +11,15 @@
 
 
             $('#alertBtn').click(function () {
-                 g_dialog.setConfig({
-                    title: '경고',
-                });
-                g_dialog.alert('Alert message');
+                alertMsg('경고!!!');
             });
+
             $('#confirmBtn').click(function () {
-                g_dialog.setConfig({
-                    title: '확인',
+                confirmMsg('확인!!!!', function(){
+                    $('#toastBtn').trigger('click');
                 });
-                g_dialog.confirm('confirm message');
             });
+
             $('#promptBtn').click(function () {
                 g_dialog.prompt('Prompt message');
             });
@@ -33,7 +36,7 @@
 
             $('#toastBtn').click(function () {
                 g_toast.push('Toast message', function () {
-
+                    alertMsg('경고!!!');
                 });
             });
         });
@@ -45,7 +48,7 @@
           padding: 10px;
         }
     </style>
-    <div class="container">
+
         <div class="row">
             <div class="col-sm-12">
                 <h3>Dialog <a href="http://ax5.io/ax5ui-dialog/api/index.html" class="badge badge-info">Info</a></h3>
@@ -60,10 +63,10 @@
                 <!--<div><h5>Confirm</h5></div>-->
                 <button class="btn btn-warning btn-block" type="button" id="confirmBtn">Confirm Button</button>
             </div>
-            <div class="col-sm-4">
-                <!--<div><h5>Prompt</h5></div>-->
+            <!--<div class="col-sm-4">
+                &lt;!&ndash;<div><h5>Prompt</h5></div>&ndash;&gt;
                 <button class="btn btn-info btn-block" type="button" id="promptBtn">Prompt Button</button>
-            </div>
+            </div>-->
 
         </div>
         <div class="row">
@@ -89,5 +92,5 @@
             </div>
         </div>
 
-    </div>
+
 {% endblock %}

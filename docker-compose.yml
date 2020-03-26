@@ -1,6 +1,24 @@
 version: "3"
 
+# 윈도우에서 볼륨 지정시 FATAL: data directory "/var/lib/postgresql/data" has wrong ownership 에러 발생하면  아래 스크립트로 도커에 볼류생성한 후 volumes: 태그 등록 후 사용
+# docker volume create --name data-postgressql --driver local
+volumes:
+  data-postgressql:
+    external: true
 services:
+  # 최초 설치시 DB(ifg_ims)와 사용자(infogen / infogen) 생성해야 함
+  postgres:
+    image: postgres:9.6.6
+#    container_name: postgres
+    volumes:
+      - data-postgressql:/var/lib/postgresql/data
+#      - /c/workspace/postgres_db:/var/lib/postgresql/data
+
+    environment:
+      - POSTGRES_DB=ifg_ims
+      - POSTGRES_USER=infogen
+      - POSTGRES_PASSWORD=infogen
+      - POSTGRES_INITDB_ARGS=--encoding=UTF-8
   # front ui
   front:
     build: "./ifg_front"
@@ -9,14 +27,21 @@ services:
     links:
       - emp_api
       - prj_api
-      - skil_api
-      - cmm_api
-      - cnc_api
-      - dili_api
-      - eval_api
-      - kpi_api
-      - stat_api
-      - site_api
+      - postgres
+#      - skil_api
+#      - cmm_api
+#      - cnc_api
+#      - dili_api
+#      - eval_api
+#      - kpi_api
+#      - stat_api
+#      - site_api
+    environment:
+      - DJANGO_DB_HOST=postgres
+      - DJANGO_DB_PORT=5432
+      - DJANGO_DB_NAME=ifg_ims
+      - DJANGO_DB_USERNAME=infogen
+      - DJANGO_DB_PASSWORD=infogen
   # 1.직원관리
   emp_api: 
     build: "./api_containers/emp/api"
@@ -37,82 +62,83 @@ services:
   prj_db:
     build: "./api_containers/prj/db"
 
-  # 3.skill 관리
-  skil_api:
-    build: "./api_containers/skil/api"
-    ports:
-      - "5003:5000"
-    links:
-      - skil_db
-  skil_db:
-    build: "./api_containers/skil/db"
+#  # 3.skill 관리
+#  skil_api:
+#    build: "./api_containers/skil/api"
+#    ports:
+#      - "5003:5000"
+#    links:
+#      - skil_db
+#  skil_db:
+#    build: "./api_containers/skil/db"
+#
+#  # 4.cmm 관리
+#  cmm_api:
+#    build: "./api_containers/cmm/api"
+#    ports:
+#      - "5004:5000"
+#    links:
+#      - cmm_db
+#  cmm_db:
+#    build: "./api_containers/cmm/db"
+#
+#  # 5.접속 관리
+#  cnc_api:
+#    build: "./api_containers/cnc/api"
+#    ports:
+#      - "5005:5000"
+#    links:
+#      - cnc_db
+#  cnc_db:
+#    build: "./api_containers/cnc/db"
+#
+#  # 6.근태 관리
+#  dili_api:
+#    build: "./api_containers/dili/api"
+#    ports:
+#      - "5006:5000"
+#    links:
+#      - dili_db
+#  dili_db:
+#    build: "./api_containers/dili/db"
+#
+#  # 7.평가 관리
+#  eval_api:
+#    build: "./api_containers/eval/api"
+#    ports:
+#      - "5007:5000"
+#    links:
+#      - eval_db
+#  eval_db:
+#    build: "./api_containers/eval/db"
+#
+#  # 8. kpi 관리
+#  kpi_api:
+#    build: "./api_containers/kpi/api"
+#    ports:
+#      - "5008:5000"
+#    links:
+#      - kpi_db
+#  kpi_db:
+#    build: "./api_containers/kpi/db"
+#
+#  # 9.현황 관리
+#  stat_api:
+#    build: "./api_containers/stat/api"
+#    ports:
+#      - "5009:5000"
+#    links:
+#      - stat_db
+#  stat_db:
+#    build: "./api_containers/stat/db"
+#
+#  # 10.사이트맵 관리
+#  site_api:
+#    build: "./api_containers/site/api"
+#    ports:
+#      - "5010:5000"
+#    links:
+#      - site_db
+#  site_db:
+#    build: "./api_containers/site/db"
 
-  # 4.cmm 관리
-  cmm_api:
-    build: "./api_containers/cmm/api"
-    ports:
-      - "5004:5000"
-    links:
-      - cmm_db
-  cmm_db:
-    build: "./api_containers/cmm/db"
-
-  # 5.접속 관리
-  cnc_api:
-    build: "./api_containers/cnc/api"
-    ports:
-      - "5005:5000"
-    links:
-      - cnc_db
-  cnc_db:
-    build: "./api_containers/cnc/db"
-
-  # 6.프로젝트 관리
-  dili_api:
-    build: "./api_containers/dili/api"
-    ports:
-      - "5006:5000"
-    links:
-      - dili_db
-  dili_db:
-    build: "./api_containers/dili/db"
-
-  # 7.평가 관리
-  eval_api:
-    build: "./api_containers/eval/api"
-    ports:
-      - "5007:5000"
-    links:
-      - eval_db
-  eval_db:
-    build: "./api_containers/eval/db"
-
-  # 8. kpi 관리
-  kpi_api:
-    build: "./api_containers/kpi/api"
-    ports:
-      - "5008:5000"
-    links:
-      - kpi_db
-  kpi_db:
-    build: "./api_containers/kpi/db"
-
-  # 9.현황 관리
-  stat_api:
-    build: "./api_containers/stat/api"
-    ports:
-      - "5009:5000"
-    links:
-      - stat_db
-  stat_db:
-    build: "./api_containers/stat/db"
-
-  # 10.사이트맵 관리
-  site_api:
-    build: "./api_containers/site/api"
-    ports:
-      - "5010:5000"
-    links:
-      - site_db
-  site_db:
-    build: "./api_containers/site/db"

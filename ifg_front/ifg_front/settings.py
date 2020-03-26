@@ -32,6 +32,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'index',
     'main',
     'emp_api',
     'prj_api',
@@ -89,8 +90,12 @@ WSGI_APPLICATION = 'ifg_front.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'ifg_ims',
+        'USER': 'infogen',
+        'PASSWORD': 'infogen',
+        'HOST': 'postgres',
+        'PORT': 5432,
     }
 }
 
@@ -127,6 +132,7 @@ USE_L10N = True
 
 USE_TZ = True
 
+LOGIN_URL = '/main/login/'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
@@ -165,6 +171,11 @@ LOGGING = {
 			'propagate': False,  # required to avoid double logging with root logger
 		},
         'kpi_api': {  # django app
+			'level': 'INFO',
+			'handlers': ['console'],
+			'propagate': False,  # required to avoid double logging with root logger
+		},
+        'cmm_api': {  # django app
 			'level': 'INFO',
 			'handlers': ['console'],
 			'propagate': False,  # required to avoid double logging with root logger
