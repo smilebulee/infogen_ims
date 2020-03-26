@@ -6,7 +6,12 @@
 
             var firstGrid = $('[data-ax5grid="first-grid"]');
 
-            $('#searchSave').click(function(){
+            $('#rowDelBtn').click(function(){
+                alert(firstGrid.focus());
+                firstGrid.deleteRow(1);
+            });
+            /* 저장 버튼 */
+            $('#saveBtn').click(function(){
 
                 console.log(firstGrid);
                 console.log();
@@ -254,13 +259,16 @@
                         </div>
                         <div class="form-group col-md-2">
                             <button class="btn btn-primary" id="searchBtn">Search</button>
-                            <button class="btn btn-primary" id="searchSave">Save</button>
+                            <button class="btn btn-primary" id="saveBtn">Save</button>
                         </div>
                     </div>
                 </div>
                 <h3>Grid <a href="http://ax5.io/ax5ui-grid/api/index.html" class="badge badge-info">Info</a></h3>
                 <div style="position: relative;height:400px;" id="grid-parent">
                     <div data-ax5grid="first-grid" style="height: 100%;"></div>
+                </div>
+                <div>
+                    <button class="btn btn-primary" id="rowDelBtn">rowDelete</button>
                 </div>
                 <div id="ajaxUpdateResult">
 
