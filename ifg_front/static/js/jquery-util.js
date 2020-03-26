@@ -275,7 +275,7 @@ function getCodes(grpArr, callbackFn){
     var options = {
         method : 'get',
         url : "/cmm/getCodes",
-        global : false,
+        //global : false,
         callbackFn :  callbackFn
     };
 
