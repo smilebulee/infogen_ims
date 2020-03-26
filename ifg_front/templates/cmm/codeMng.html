@@ -8,12 +8,23 @@
         $(document).ready(function(){
             var grpGridOpt = {
                 columns: [
-                    {key : "grp_cd", label : '코드그룹', editor : {type : 'text'}, headerStyleClass: "font-weight-bolder"},
+                    {
+                        key : "grp_cd",
+                        label : '코드그룹',
+                        editor : {
+                            type : 'text',
+                            disabled : function(){
+                                return !this.item.__created__;
+                            }
+                        },
+                        headerStyleClass: "font-weight-bolder"
+                    },
                     {key : "grp_nm", label : '코드그룹명', width : "*", editor : {type : 'text'}, headerStyleClass: "font-weight-bolder"},
                     {key : "sort_ord", label : '정렬순서', editor : {type : 'money'}, headerStyleClass: "font-weight-bolder"}
                 ],
                 body : {
                     onClick : function(){
+                        if(grpGrid.getList("selected")[0].__created__) return false;
                         getCodeList();
                     }
                 }
@@ -21,7 +32,17 @@
 
             var codeGridOpt = {
                 columns: [
-                    {key : "cmm_cd", label : '코드', editor : {type : 'text'}, headerStyleClass: "font-weight-bolder"},
+                    {
+                        key : "cmm_cd",
+                        label : '코드',
+                        editor : {
+                            type : 'text',
+                            disabled : function(){
+                                return !this.item.__created__;
+                            }
+                        },
+                        headerStyleClass: "font-weight-bolder"
+                    },
                     {key : "cmm_nm", label : '코드명', width : "*",editor : {type : 'text'}, headerStyleClass: "font-weight-bolder"},
                     {key : "sort_ord", label : '정렬순서', editor : {type : 'money'}, headerStyleClass: "font-weight-bolder"},
                     {key : "grp_cd", label : '', width: 0},
@@ -36,6 +57,11 @@
                 grpGrid.addRow({grp_cd: '', grp_nm: '', sort_ord: grpGrid.list.length + 1}, 'last');
             });
             $('#grpSaveBtn').click(function(){
+                if(grpGrid.getList("modified").length == 0){
+                    alertMsg('수정 및 추가된 행이 없습니다.');
+                    return false;
+                }
+
                 confirmMsg('저장 하시겠습니까?', function(){
                     var updateList = grpGrid.getList('modified');
 
@@ -43,12 +69,18 @@
                         url : '{% url 'cmm_api:saveGrp' %}',
                         method : 'post',
                         callbackFn : function(data){
+                            g_toast.push('저장 되었습니다.');
                             getGrpList(1);
                         }
                     });
                 });
             });
             $('#grpDelBtn').click(function(){
+                if(grpGrid.getList("selected").length == 0){
+                    alertMsg('선택된 행이 없습니다.');
+                    return false;
+                }
+
                 confirmMsg('삭제 하시겠습니까?', function(){
                     if(grpGrid.getList("selected")[0].__created__) grpGrid.removeRow("selected");
                     else{
@@ -58,6 +90,7 @@
                             url : '{% url 'cmm_api:deleteGrp' %}',
                             method : 'post',
                             callbackFn : function(data){
+                                g_toast.push('삭제 되었습니다.');
                                 getGrpList(1);
                             }
                         });
@@ -67,10 +100,13 @@
 
             $('#cdAddBtn').click(function(){
                 codeGrid.addRow({cmm_cd: '', cmm_nm: '', sort_ord: codeGrid.list.length + 1, grp_cd: grpGrid.getList('selected')[0].grp_cd}, 'last');
-
-                console.log(codeGrid.getList('created'));
             });
             $('#cdSaveBtn').click(function(){
+                if(codeGrid.getList("modified").length == 0){
+                    alertMsg('수정 및 추가된 행이 없습니다.');
+                    return false;
+                }
+
                 confirmMsg('저장 하시겠습니까?', function(){
                     var updateList = codeGrid.getList('modified');
 
@@ -78,13 +114,18 @@
                         url : '{% url 'cmm_api:saveCd' %}',
                         method : 'post',
                         callbackFn : function(data){
+                            g_toast.push('저장 되었습니다.');
                             getCodeList();
                         }
                     });
                 });
             });
             $('#cdDelBtn').click(function(){
-                alert(codeGrid.getList("selected")[0].__created__);
+                if(codeGrid.getList("selected").length == 0){
+                    alertMsg('선택된 행이 없습니다.');
+                    return false;
+                }
+
                 confirmMsg('삭제 하시겠습니까?', function(){
                     if(codeGrid.getList("selected")[0].__created__) codeGrid.removeRow("selected");
                     else{
@@ -94,6 +135,7 @@
                             url : '{% url 'cmm_api:deleteCd' %}',
                             method : 'post',
                             callbackFn : function(data){
+                                g_toast.push('삭제 되었습니다.');
                                 getCodeList();
                             }
                         });
@@ -153,7 +195,7 @@
                 </div>
                 <div class="row">
                     <div class="col-sm-12">
-                        <div data-ax5grid="grp-grid" style="height: 500px;"></div>
+                        <div data-ax5grid="grp-grid" style="height: 440px;"></div>
                         <div id="paging_navi"></div>
                     </div>
                 </div>
@@ -168,7 +210,7 @@
                 </div>
                 <div class="row">
                     <div class="col-sm-12">
-                        <div data-ax5grid="code-grid" style="height: 500px;"></div>
+                        <div data-ax5grid="code-grid" style="height: 440px;"></div>
                     </div>
                 </div>
 

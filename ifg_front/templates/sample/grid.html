@@ -186,6 +186,11 @@ history
         </div>
         <div class="row">
             <div class="col-sm-12">
+                    <div class="alert alert-info" role="alert">
+                        기존에 getList() 함수에서 인자값으로 selected, modified, deleted 세 개만 줄 수 있었지만 created 하나를 더 추가함.<br/>
+                        grid.getList('modified')를 실행하면 modified + created 를 리턴하고 getList('created')를 하면 created 만 리턴함<br/>
+                        신규 생성 ROW 일 경우 row 선택후 grid.getList('selected')[0].__created__ 을 실행하면 true값이 리턴됨.
+                    </div>
                     <div style="position: relative;height:400px;" id="grid-parent">
                         <div data-ax5grid="first-grid" style="height: 100%;"></div>
                     </div>
