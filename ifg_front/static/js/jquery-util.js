@@ -76,7 +76,7 @@ function getCookie(c_name){
 
 /*********************************************************
 그리드 공통
-그리드 생성 후 그리드 반환
+그리드 생성 후 그리드 객체 반환
 ex) $('divID').initGrid(json type grid option);
 **********************************************************/
 (function($){
@@ -155,6 +155,7 @@ ex) $('divID').initGrid(json type grid option);
 ajax 공통
 특정 div나 form 등 특정 태그 내의 input, select box, textarea의 값들을 json 데이터로 변환하여 ajax 요청
 ex) $('divID or formID or etcID...').ajaxCall(json type jquery ajax option);
+opts : json. url, method, callback
 **********************************************************/
 (function($){
 	$.fn.ajaxCall = function(opts){
@@ -209,6 +210,8 @@ ex) $('divID or formID or etcID...').ajaxCall(json type jquery ajax option);
 ajax 공통
 개발자가 직접 생성한 데이터로 ajax 호출
 ex) $.ajaxCall(json type data, json type jquery ajax option);
+data : 서버로 전송할 데이터. json or array
+opts : json. url, method, callback
 **********************************************************/
 (function($){
 	$.ajaxCall = function(data, opts){
@@ -237,6 +240,10 @@ ex) $.ajaxCall(json type data, json type jquery ajax option);
 	};
 })(jQuery);
 
+/*********************************************************
+alert
+commnet : 메세지. string
+**********************************************************/
 function alertMsg(comment){
     var title = '<span style="color:#c82333;font-size:20px;"><i class="fa fa-exclamation-circle"></i></span> ALERT';
     //var msg = '<div class="row">'
@@ -251,6 +258,11 @@ function alertMsg(comment){
     });
 }
 
+/*********************************************************
+confirm
+comment : 메세지. string
+callbackFn : 확인 클릭시 실행할 함수
+**********************************************************/
 function confirmMsg(comment, callbackfn){
     var title = '<span style="color:#fd7e14;font-size:20px;"><i class="fa fa-check-circle"></i></span> CHECK';
     //var msg = '<div class="row">'
@@ -268,6 +280,11 @@ function confirmMsg(comment, callbackfn){
     });
 }
 
+/*********************************************************
+공통코드 조회
+grpArr : 코드 그룹 배열 ex) ['SAMPLE_01', 'SAMPLE_02']
+callbackFn : 공통코드 조회 후 실행할 함수
+**********************************************************/
 function getCodes(grpArr, callbackFn){
     var data = {
         grps : grpArr
@@ -282,6 +299,13 @@ function getCodes(grpArr, callbackFn){
     $.ajaxCall(data, options);
 }
 
+/*********************************************************
+공통코드 조회하여 select box, check box, radio 생성
+ex) $(selector).makeForm();
+selector로 선택한 element에는 cd-grp 라는 attribute가 존재해야 함..
+select box의 경우는 select 태그내에 option 태그만 생성
+check box와 radio의 경우는 div 태그내에 생성되어야 하므로 div에 cd-type(checkbox or radio)이라는 attribute가 필수
+**********************************************************/
 (function($){
     $.fn.makeForm = function(){
         var grpArr = new Array();
@@ -343,8 +367,20 @@ function getCodes(grpArr, callbackFn){
     };
 })(jQuery);
 
+/*********************************************************
+페이징 생성
+ex) $('#divId').makePagingNavi(obj, goPageFn);
+obj : 페이징 정보 json. 현재페이지, 전체페이지수, 이전페이지 존재여부, 다음페이지 존재여부
+goPageFn : 페이지 조회 스크립트 함수명. string
+**********************************************************/
 (function($){
     $.fn.makePagingNavi = function(obj, goPageFn){
+        if(obj.page == undefined || isNaN(Number(obj.page))) return;
+        if(obj.total_pages == undefined || isNaN(Number(obj.total_pages))) return;
+        if(obj.has_prev == undefined || typeof obj.has_prev != 'boolean') return;
+        if(obj.has_next == undefined || typeof obj.has_next != 'boolean') return;
+        if(goPageFn == undefined || typeof goPageFn != 'string') return;
+
         var cPage = obj.page;       // 현재페이지
         var tPage = obj.total_pages;        // 전체페이지
         var hasP = obj.has_prev;
