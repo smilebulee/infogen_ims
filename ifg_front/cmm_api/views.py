@@ -8,6 +8,7 @@ from django.http import JsonResponse, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
 from .models import Cd_grp, Cd
 from datetime import datetime
+from main.views import ajax_login_required
 import requests
 import json
 import logging
@@ -26,7 +27,7 @@ def codeMng(request):
 
     return render(request, template_name)
 
-@login_required
+@ajax_login_required
 def getCodes(request):
     param = json.loads(request.GET['param'])
     logger.info('===============================')
@@ -46,7 +47,7 @@ def getCodes(request):
     logger.info(data)
     return JsonResponse(data)
 
-@login_required
+@ajax_login_required
 def getCodeGrps(request):
     param = json.loads(request.GET['param'])
 
@@ -72,7 +73,7 @@ def getCodeGrps(request):
 
     return JsonResponse(data)
 
-@login_required
+@ajax_login_required
 def saveGrp(request):
     param = json.loads(request.POST['param'])
     logger.info(param)
@@ -92,7 +93,7 @@ def saveGrp(request):
     }
     return JsonResponse(ret)
 
-@login_required
+@ajax_login_required
 def deleteGrp(request):
     param = json.loads(request.POST['param'])
     logger.info(param)
@@ -106,7 +107,7 @@ def deleteGrp(request):
     }
     return JsonResponse(ret)
 
-@login_required
+@ajax_login_required
 def saveCd(request):
     param = json.loads(request.POST['param'])
     logger.info(param)
@@ -126,7 +127,7 @@ def saveCd(request):
     }
     return JsonResponse(ret)
 
-@login_required
+@ajax_login_required
 def deleteCd(request):
     param = json.loads(request.POST['param'])
     logger.info(param)

@@ -225,7 +225,14 @@ opts : json. url, method, callback
 //                    title: 'Error!!'
 //                });
 
-                alertMsg(jqXHR.statusText);
+                if(jqXHR.status == '403'){
+                    alertMsg('세션이 종료 되었습니다.<br/>로그인 페이지로 이동합니다.', function(){
+                        location.href = '/main/login/';
+                    });
+                }else{
+                    alertMsg(jqXHR.statusText);
+                }
+
             },
             success: function(data, textStatus, jqXHR){
                 if(typeof opts.callbackFn == 'function') opts.callbackFn(data);
@@ -244,7 +251,7 @@ opts : json. url, method, callback
 alert
 commnet : 메세지. string
 **********************************************************/
-function alertMsg(comment){
+function alertMsg(comment, callbackFn){
     var title = '<span style="color:#c82333;font-size:20px;"><i class="fa fa-exclamation-circle"></i></span> ALERT';
     //var msg = '<div class="row">'
     //msg += '<div class="col-3"><span style="color:#c82333"><i class="fa fa-exclamation-circle fa-5x"></i></span></div>';
@@ -255,7 +262,7 @@ function alertMsg(comment){
         theme : 'info',
         title : title,
         msg : comment
-    });
+    }, callbackFn);
 }
 
 /*********************************************************
