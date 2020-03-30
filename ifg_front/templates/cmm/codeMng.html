@@ -23,6 +23,8 @@
                 ],
                 body : {
                     onClick : function(){
+                        // this.dindex 현재 선택한 row index
+                        // this.beforeindex 직전에 선택했던 row index
                         if(grpGrid.getList("selected")[0].__created__){
                             codeGrid.setData([]);
                             return false;
@@ -168,6 +170,7 @@
         }
 
         function getCodeList(){
+            //console.log(grpGrid.getList("selected"));
             var grp = new Array();
             grp.push(grpGrid.getList('selected')[0].grp_cd);
             getCodes(grp, function(data){

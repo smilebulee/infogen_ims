@@ -2027,12 +2027,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     var init = function init() {
         var self = this;
 
+        // 클릭한 row가 선택되기 전 이 전에 선택되었던 row index를 클릭한 row에 저장. bulee
         this.$["container"]["body"].on("mousedown", '[data-ax5grid-column-attr]', function (e) {
             var beforeindex = $($(this).parent().parent().find('tr[data-ax5grid-selected="true"]')[0]).attr('data-ax5grid-tr-data-index');
             $(this).parent().attr('data-ax5grid-tr-data-before-index', beforeindex);
         });
 
         this.$["container"]["body"].on("click", '[data-ax5grid-column-attr]', function (e) {
+            // 이전에 선택했던 row index 추가. bulee
             var bindex = $(this).parent().attr('data-ax5grid-tr-data-before-index');
             if(bindex == undefined || bindex == '') bindex = -1;
 
@@ -2045,7 +2047,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
                 rowIndex = void 0,
                 colIndex = void 0,
                 disableSelection = void 0,
-                beforeindex = bindex,
+                beforeindex = bindex,   // bulee
                 targetClick = {
                 "default": function _default(_column) {
                     var column = self.bodyRowMap[_column.rowIndex + "_" + _column.colIndex],
@@ -2115,10 +2117,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
                 }
             };
 
-            beforeindex = $(this).parent().attr('data-ax5grid-tr-data-before-index');
-            if(beforeindex == undefined || beforeindex == '') beforeindex = -1;
-            else beforeindex = Number(beforeindex);
-
             panelName = this.getAttribute("data-ax5grid-panel-name");
             attr = this.getAttribute("data-ax5grid-column-attr");
             row = Number(this.getAttribute("data-ax5grid-column-row"));
@@ -2137,8 +2135,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
                     dindex: dindex,
                     doindex: doindex,
                     rowIndex: rowIndex,
-                    colIndex: colIndex,
-                    beforeindex: beforeindex
+                    colIndex: colIndex
                 }, this);
             }
         });

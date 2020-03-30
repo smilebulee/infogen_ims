@@ -8,7 +8,7 @@ from django.http import JsonResponse, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
 from .models import Cd_grp, Cd
 from datetime import datetime
-from main.views import ajax_login_required
+from main.helpers import ajax_login_required
 import requests
 import json
 import logging
