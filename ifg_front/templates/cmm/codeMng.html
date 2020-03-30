@@ -23,14 +23,11 @@
                 ],
                 body : {
                     onClick : function(){
-                        console.log(this);
-                        console.log(this.dindex);
-                        console.log(this.beforeindex);
                         if(grpGrid.getList("selected")[0].__created__){
                             codeGrid.setData([]);
                             return false;
                         }
-                        getCodeList();
+                        if(this.dindex != this.beforeindex) getCodeList();
                     }
                 }
             };

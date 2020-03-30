@@ -2033,6 +2033,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         });
 
         this.$["container"]["body"].on("click", '[data-ax5grid-column-attr]', function (e) {
+            var bindex = $(this).parent().attr('data-ax5grid-tr-data-before-index');
+            if(bindex == undefined || bindex == '') bindex = -1;
+
             var panelName = void 0,
                 attr = void 0,
                 row = void 0,
@@ -2042,7 +2045,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
                 rowIndex = void 0,
                 colIndex = void 0,
                 disableSelection = void 0,
-                beforeindex = void 0,
+                beforeindex = bindex,
                 targetClick = {
                 "default": function _default(_column) {
                     var column = self.bodyRowMap[_column.rowIndex + "_" + _column.colIndex],
@@ -2057,7 +2060,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
                         colIndex: _column.colIndex,
                         column: column,
                         value: self.list[_column.dindex][column.key],
-                        beforeindex: -1
+                        beforeindex: beforeindex
                     };
 
                     if (column.editor && column.editor.type === "checkbox") {
