@@ -110,23 +110,30 @@ class Update(Resource):
             password = data['password']
             addr = data['addr']
             sex = data['sex']
+
             logging.debug(data)
             logging.debug('--------------------------------------')
             logging.debug('email : ' + email)
             logging.debug('password : ' + password)
             logging.debug('addr : ' + addr)
             logging.debug('sex : ' + sex)
+            logging.debug('flag : ' + data['flag'])
             logging.debug('--------------------------------------')
 
-            foxTestDb.update({
-                "email": email
-            },
-            {'$set':    {
-                        "password":password,
-                        "addr":addr,
-                        "sex":sex
-                        }
-            })
+            if data['flag'] == "U":
+                foxTestDb.update({
+                    "email": email
+                },
+                {'$set':    {
+                            "password":password,
+                            "addr":addr,
+                            "sex":sex
+                            }
+                })
+            elif data['flag'] == "D":
+                foxTestDb.remove({
+                    "email": email
+                })
 
         retJson = {
             "status": 200,
