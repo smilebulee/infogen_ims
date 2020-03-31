@@ -158,6 +158,11 @@
                 method : 'get',
                 url : "{% url 'cmm_api:getCodeGrps' %}",
                 callbackFn :  function(ret){
+                    if(ret.list.length == 0){
+                        alertMsg('데이터가 없습니다.');
+                        grpGrid.setData([]);
+                        return false;
+                    }
                     grpGrid.setData(ret.list);
                     grpGrid.select(0);
 
@@ -170,7 +175,8 @@
         }
 
         function getCodeList(){
-            //console.log(grpGrid.getList("selected"));
+            if(grpGrid.getList().length == 0) return;
+
             var grp = new Array();
             grp.push(grpGrid.getList('selected')[0].grp_cd);
             getCodes(grp, function(data){

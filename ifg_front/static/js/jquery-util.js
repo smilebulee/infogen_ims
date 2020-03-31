@@ -331,44 +331,47 @@ check box와 radio의 경우는 div 태그내에 생성되어야 하므로 div�
         }, []);     // 중복제거
 
         getCodes(grpArr, function(data){
+            if($.isEmptyObject(data)) return false;
             $.each(grpArr, function(idx, val){
-                var codes = data[val];
-                $('[cd-grp="' + val + '"]').each(function(){
-                    if(this.nodeName == 'SELECT'){
-                        var options = '<option value="">선택</option>';
+                if(data.hasOwnProperty(val) && data[val].length > 0){
+                    var codes = data[val];
+                    $('[cd-grp="' + val + '"]').each(function(){
+                        if(this.nodeName == 'SELECT'){
+                            var options = '<option value="">선택</option>';
 
-                        $.each(codes, function(i, code){
-                            options += '<option value="' + code.cmm_cd + '">' + code.cmm_nm + '</option>';
-                        });
+                            $.each(codes, function(i, code){
+                                options += '<option value="' + code.cmm_cd + '">' + code.cmm_nm + '</option>';
+                            });
 
-                        $(this).html(options);
-                    }else{
-                        var type = $(this).attr('cd-type');
-                        var name = $(this).attr('cd_name');
-                        var html = '';
+                            $(this).html(options);
+                        }else{
+                            var type = $(this).attr('cd-type');
+                            var name = $(this).attr('cd_name');
+                            var html = '';
 
-                        if(name == undefined || name == '') name = codes[0].grp_cd;
+                            if(name == undefined || name == '') name = codes[0].grp_cd;
 
-                        switch(type){
-                            case 'checkbox':
-                                $.each(codes, function(i, code){
-                                    var id = code.grp_cd + code.cmm_cd;
-                                    html += '<input class="form-check-input" type="checkbox" id="' + id + '" name="' + name + '" value="' + code.cmm_cd + '">';
-                                    html += '<label class="form-check-label" for="' + id + '" style="margin-left:20px;margin-right:20px;">' + code.cmm_nm + '</label>';
-                                });
+                            switch(type){
+                                case 'checkbox':
+                                    $.each(codes, function(i, code){
+                                        var id = code.grp_cd + code.cmm_cd;
+                                        html += '<input class="form-check-input" type="checkbox" id="' + id + '" name="' + name + '" value="' + code.cmm_cd + '">';
+                                        html += '<label class="form-check-label" for="' + id + '" style="margin-left:20px;margin-right:20px;">' + code.cmm_nm + '</label>';
+                                    });
 
-                                break;
-                            case 'radio':
-                                 $.each(codes, function(i, code){
-                                    var id = code.grp_cd + code.cmm_cd;
-                                    html += '<input class="form-check-input" type="radio" name="exampleRadios" id="' + id + '" value="' + code.cmm_cd + '" >'
-                                    html += '<label class="form-check-label" for="' + id + '" style="margin-left:20px;margin-right:20px;">' + code.cmm_nm + '</label>';
-                                 });
-                                break;
+                                    break;
+                                case 'radio':
+                                     $.each(codes, function(i, code){
+                                        var id = code.grp_cd + code.cmm_cd;
+                                        html += '<input class="form-check-input" type="radio" name="exampleRadios" id="' + id + '" value="' + code.cmm_cd + '" >'
+                                        html += '<label class="form-check-label" for="' + id + '" style="margin-left:20px;margin-right:20px;">' + code.cmm_nm + '</label>';
+                                     });
+                                    break;
+                            }
+                            $(this).html(html);
                         }
-                        $(this).html(html);
-                    }
-                });
+                    });
+                }
             });
         });
     };
