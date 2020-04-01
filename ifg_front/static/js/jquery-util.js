@@ -450,3 +450,128 @@ goPageFn : 페이지 조회 스크립트 함수명. string
         $(this).html(html);
     };
 })(jQuery);
+
+
+/*********************************************************
+달력 생성
+ex) $('#divId').bindCalendar(json option);
+option.type : 달력 타입, basic, range, year, month 중 택일
+option.name : 달력 input에 bind할 name
+option.onStateChanged : 달력 상태가 바뀔 때 실행할 함수
+option.value : 초기값
+option.term : 기간달력의 경우 현재날짜 기준 날짜 간격. -1일경우 from 이 어제 날짜. to가 오늘 날짜
+**********************************************************/
+(function($){
+    $.fn.bindCalendar = function(options){
+        var picker = new ax5.ui.picker();
+        var inputHtml = '';
+        var defaultVal = ax5.util.date(new Date(), {'return': 'yyyy-MM-dd', 'add': {d: 0}});
+        var defaultVal2 = '';
+        var basicConfig = {
+            target: $(this),
+            direction: "top",
+            content: {
+                type: 'date',
+                config: {
+
+                },
+                formatter: {
+
+                }
+            },
+            onStateChanged: function () {
+                if(typeof options.onStateChanged == 'function') options.onStateChanged(this);
+                else if(typeof options.onStateChanged == 'string') eval(options.onStateChanged)(this);
+            }
+        };
+
+        if(options.type == undefined || options.type == '') return;
+
+        if(options.value != undefined && options.value != '') defaultVal = options.value;
+
+                console.log('>>>>>>' + defaultVal);
+console.log(ax5.util.isDateFormat(defaultVal));
+
+        if(!ax5.util.isDateFormat(defaultVal)) defaultVal = ax5.util.date(new Date(), {'return': 'yyyy-MM-dd', 'add': {d: 0}});
+
+        if(options.type == 'range'){
+            if(options.term == undefined || options.term == '') options.term = 0;
+            defaultVal2 = ax5.util.date(new Date(defaultVal), {'return': 'yyyy-MM-dd', 'add': {d: options.term}});
+        }
+
+        switch(options.type){
+            case 'basic':
+                basicConfig.content.width = 270;
+                basicConfig.content.margin = 10;
+                basicConfig.content.config.control = {};
+                basicConfig.content.config.control.left = '<i class="fa fa-chevron-left"></i>';
+                basicConfig.content.config.control.right = '<i class="fa fa-chevron-right"></i>';
+                basicConfig.content.config.control.yearTmpl = '%s';
+                basicConfig.content.config.control.monthTmpl = '%s';
+                basicConfig.content.config.lang = {};
+                basicConfig.content.config.lang.yearTmpl = '%s년';
+                basicConfig.content.config.lang.months = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'];
+                basicConfig.content.config.lang.dayTmpl = '%s';
+//                basicConfig.content.config.marker = (function(){
+//                    var marker = {};
+//                    marker[ax5.util.date(new Date(), {'return': 'yyyy-MM-dd', 'add': {d: 0}})] = true;
+//
+//                    return marker;
+//                })();
+                basicConfig.content.formatter.pattern = 'date';
+
+                inputHtml += '<input name="' + options.name + '" type="text" class="form-control" placeholder="yyyy-mm-dd" value="' + defaultVal + '">';
+                inputHtml += '<span class="input-group-addon"><i class="fa fa-calendar-o"></i></span>';
+                break;
+            case 'range':
+                basicConfig.content.width = 270;
+                basicConfig.content.margin = 10;
+                basicConfig.content.config.control = {};
+                basicConfig.content.config.control.left = '<i class="fa fa-chevron-left"></i>';
+                basicConfig.content.config.control.right = '<i class="fa fa-chevron-right"></i>';
+                basicConfig.content.config.control.yearTmpl = '%s';
+                basicConfig.content.config.control.monthTmpl = '%s';
+                basicConfig.content.config.lang = {};
+                basicConfig.content.config.lang.yearTmpl = '%s년';
+                basicConfig.content.config.lang.months = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'];
+                basicConfig.content.config.lang.dayTmpl = '%s';
+                basicConfig.content.formatter.pattern = 'date';
+
+                var from = '';
+                var to = '';
+
+                if(options.term < 0){
+                    from = defaultVal2;
+                    to = defaultVal;
+                }else{
+                    from = defaultVal;
+                    to = defaultVal2;
+                }
+
+                inputHtml += '<input name="from_' + options.name + '" type="text" class="form-control" placeholder="yyyy-mm-dd" value="' + from + '">';
+                inputHtml += '<span class="input-group-addon">~</span>';
+                inputHtml += '<input name="to_' + options.name + '" type="text" class="form-control" placeholder="yyyy-mm-dd" value="' + to + '">';
+                inputHtml += '<span class="input-group-addon"><i class="fa fa-calendar-o"></i></span>';
+                break;
+            case 'year':
+
+                basicConfig.content.config.mode = 'year';
+                basicConfig.content.config.selectMode = 'year';
+                basicConfig.content.formatter.pattern = 'date(year)';
+
+                inputHtml += '<input name="' + options.name + '" type="text" class="form-control" data-picker-date="year" placeholder="yyyy" value="' + defaultVal.substring(0, 4) + '">';
+                break;
+            case 'month':
+                basicConfig.content.config.mode = 'year';
+                basicConfig.content.config.selectMode = 'month';
+                basicConfig.content.formatter.pattern = 'date(month)';
+
+                inputHtml += '<input name="' + options.name + '" type="text" class="form-control" data-picker-date="month" placeholder="yyyy-mm" value="' + defaultVal.substring(0, 7) + '">';
+                break;
+        }
+
+        $(this).attr('data-ax5picker', options.type);
+        $(this).html(inputHtml);
+        picker.bind(basicConfig);
+    };
+})(jQuery);
