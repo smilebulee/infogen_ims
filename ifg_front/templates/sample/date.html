@@ -18,7 +18,7 @@ history
                 type : 'range',         // 기간달력
                 name : 'rangedate',     // 기간달력은 name 앞에 from_, to_ 접두어가 붙음
                 value : '2019-04-01', // 생략시 오늘 날짜
-                term : -3               // 생략시 0
+                term : 3               // 생략시 0
             });
 
             console.log($('input[name="from_rangedate"]').val());
@@ -26,12 +26,14 @@ history
 
             $('#yearCal').bindCalendar({
                 type : 'year',          // 연도달력
-                name : 'yeardate'
+                name : 'yeardate',
+                value : '2019'          // 생략시 올해
             });
 
             $('#monthCal').bindCalendar({
                 type : 'month',         // 월달력
-                name : 'monthdate'
+                name : 'monthdate',
+                value : '2019-01'       // 생략시 현재월
             });
 
 

@@ -489,7 +489,7 @@ option.term : 기간달력의 경우 현재날짜 기준 날짜 간격. -1일경
 
         if(options.value != undefined && options.value != '') defaultVal = options.value;
 
-        if(!ax5.util.isDateFormat(defaultVal)) defaultVal = ax5.util.date(new Date(), {'return': 'yyyy-MM-dd', 'add': {d: 0}});
+        if((options.type == 'basic' || options.type == 'range') && !ax5.util.isDateFormat(defaultVal)) defaultVal = ax5.util.date(new Date(), {'return': 'yyyy-MM-dd', 'add': {d: 0}});
 
         if(options.type == 'range'){
             if(options.term == undefined || options.term == '') options.term = 0;
