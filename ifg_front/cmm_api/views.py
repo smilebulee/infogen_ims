@@ -5,8 +5,10 @@ from django.core.paginator import Paginator
 from django.views import View
 from django.views import generic
 from django.http import JsonResponse, HttpResponseRedirect
+from django.contrib.auth.decorators import login_required
 from .models import Cd_grp, Cd
 from datetime import datetime
+from main.helpers import ajax_login_required
 import requests
 import json
 import logging
@@ -19,11 +21,13 @@ class Cmm_api_index(generic.TemplateView):
 
         return render(request, template_name)
 
+@login_required
 def codeMng(request):
     template_name = 'cmm/codeMng.html'
 
     return render(request, template_name)
 
+@ajax_login_required
 def getCodes(request):
     param = json.loads(request.GET['param'])
     logger.info('===============================')
@@ -43,6 +47,7 @@ def getCodes(request):
     logger.info(data)
     return JsonResponse(data)
 
+@ajax_login_required
 def getCodeGrps(request):
     param = json.loads(request.GET['param'])
 
@@ -68,6 +73,7 @@ def getCodeGrps(request):
 
     return JsonResponse(data)
 
+@ajax_login_required
 def saveGrp(request):
     param = json.loads(request.POST['param'])
     logger.info(param)
@@ -87,6 +93,7 @@ def saveGrp(request):
     }
     return JsonResponse(ret)
 
+@ajax_login_required
 def deleteGrp(request):
     param = json.loads(request.POST['param'])
     logger.info(param)
@@ -100,7 +107,7 @@ def deleteGrp(request):
     }
     return JsonResponse(ret)
 
-
+@ajax_login_required
 def saveCd(request):
     param = json.loads(request.POST['param'])
     logger.info(param)
@@ -120,6 +127,7 @@ def saveCd(request):
     }
     return JsonResponse(ret)
 
+@ajax_login_required
 def deleteCd(request):
     param = json.loads(request.POST['param'])
     logger.info(param)

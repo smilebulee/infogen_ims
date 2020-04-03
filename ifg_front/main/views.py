@@ -9,6 +9,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from .forms import LoginForm
 from urllib.parse import urlparse
+from .helpers import ajax_login_required
 import requests
 import logging
 import json
@@ -31,7 +32,7 @@ def sample(request, sample):
 
     return render(request, template_name)
 
-@login_required
+@ajax_login_required
 def sample_ajax(request):
 
     param = json.loads(request.GET['param'])
@@ -79,3 +80,12 @@ def signin(request):
 def signout(request):
     logout(request)
     return HttpResponseRedirect(reverse('main:index'))
+
+# def ajax_login_required(function):
+#     def wrap(request, *args, **kwargs):
+#         if request.user.is_authenticated:
+#             return function(request, *args, **kwargs)
+#         raise PermissionDenied ## or 401 == not authenticated
+#     wrap.__doc__ = function.__doc__
+#     wrap.__name__ = function.__name__
+#     return wrap

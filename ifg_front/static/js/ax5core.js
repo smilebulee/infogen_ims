@@ -904,19 +904,21 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         function isDateFormat(O) {
             var result = false;
             if (!O) {} else if (O instanceof Date && !isNaN(O.valueOf())) {
+                console.log('1');
                 result = true;
             } else {
-                if (O.length > 7) {
-                    if (date(O) instanceof Date) {
-                        return true;
-                    }
-                }
+//                if (O.length > 7) {
+//                    if (date(O) instanceof Date) {
+//                        return true;
+//                    }
+//                }     // date 함수는 1월 12월 범위가 벗어나더라도 날짜를 리턴해줌 20201301도 true를 반환함 bulee
                 O = O.replace(/\D/g, '');
                 if (O.length > 7) {
                     var mm = O.substr(4, 2),
                         dd = O.substr(6, 2);
                     O = date(O);
-                    if (O.getMonth() == mm - 1 && O.getDate() == dd) {
+                    // 월 조건 추가 1부터 12까지 bulee
+                    if (Number(mm) > 0 && Number(mm) < 13 && O.getMonth() == mm - 1 && O.getDate() == dd) {
                         result = true;
                     }
                 }

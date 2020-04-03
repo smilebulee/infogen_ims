@@ -76,7 +76,7 @@ function getCookie(c_name){
 
 /*********************************************************
 그리드 공통
-그리드 생성 후 그리드 반환
+그리드 생성 후 그리드 객체 반환
 ex) $('divID').initGrid(json type grid option);
 **********************************************************/
 (function($){
@@ -155,6 +155,7 @@ ex) $('divID').initGrid(json type grid option);
 ajax 공통
 특정 div나 form 등 특정 태그 내의 input, select box, textarea의 값들을 json 데이터로 변환하여 ajax 요청
 ex) $('divID or formID or etcID...').ajaxCall(json type jquery ajax option);
+opts : json. url, method, callback
 **********************************************************/
 (function($){
 	$.fn.ajaxCall = function(opts){
@@ -209,6 +210,8 @@ ex) $('divID or formID or etcID...').ajaxCall(json type jquery ajax option);
 ajax 공통
 개발자가 직접 생성한 데이터로 ajax 호출
 ex) $.ajaxCall(json type data, json type jquery ajax option);
+data : 서버로 전송할 데이터. json or array
+opts : json. url, method, callback
 **********************************************************/
 (function($){
 	$.ajaxCall = function(data, opts){
@@ -222,7 +225,14 @@ ex) $.ajaxCall(json type data, json type jquery ajax option);
 //                    title: 'Error!!'
 //                });
 
-                alertMsg(jqXHR.statusText);
+                if(jqXHR.status == '403'){
+                    alertMsg('세션이 종료 되었습니다.<br/>로그인 페이지로 이동합니다.', function(){
+                        location.href = '/main/login/';
+                    });
+                }else{
+                    alertMsg(jqXHR.statusText);
+                }
+
             },
             success: function(data, textStatus, jqXHR){
                 if(typeof opts.callbackFn == 'function') opts.callbackFn(data);
@@ -237,7 +247,11 @@ ex) $.ajaxCall(json type data, json type jquery ajax option);
 	};
 })(jQuery);
 
-function alertMsg(comment){
+/*********************************************************
+alert
+commnet : 메세지. string
+**********************************************************/
+function alertMsg(comment, callbackFn){
     var title = '<span style="color:#c82333;font-size:20px;"><i class="fa fa-exclamation-circle"></i></span> ALERT';
     //var msg = '<div class="row">'
     //msg += '<div class="col-3"><span style="color:#c82333"><i class="fa fa-exclamation-circle fa-5x"></i></span></div>';
@@ -248,9 +262,14 @@ function alertMsg(comment){
         theme : 'info',
         title : title,
         msg : comment
-    });
+    }, callbackFn);
 }
 
+/*********************************************************
+confirm
+comment : 메세지. string
+callbackFn : 확인 클릭시 실행할 함수
+**********************************************************/
 function confirmMsg(comment, callbackfn){
     var title = '<span style="color:#fd7e14;font-size:20px;"><i class="fa fa-check-circle"></i></span> CHECK';
     //var msg = '<div class="row">'
@@ -268,6 +287,11 @@ function confirmMsg(comment, callbackfn){
     });
 }
 
+/*********************************************************
+공통코드 조회
+grpArr : 코드 그룹 배열 ex) ['SAMPLE_01', 'SAMPLE_02']
+callbackFn : 공통코드 조회 후 실행할 함수
+**********************************************************/
 function getCodes(grpArr, callbackFn){
     var data = {
         grps : grpArr
@@ -282,6 +306,13 @@ function getCodes(grpArr, callbackFn){
     $.ajaxCall(data, options);
 }
 
+/*********************************************************
+공통코드 조회하여 select box, check box, radio 생성
+ex) $(selector).makeForm();
+selector로 선택한 element에는 cd-grp 라는 attribute가 존재해야 함..
+select box의 경우는 select 태그내에 option 태그만 생성
+check box와 radio의 경우는 div 태그내에 생성되어야 하므로 div에 cd-type(checkbox or radio)이라는 attribute가 필수
+**********************************************************/
 (function($){
     $.fn.makeForm = function(){
         var grpArr = new Array();
@@ -300,51 +331,66 @@ function getCodes(grpArr, callbackFn){
         }, []);     // 중복제거
 
         getCodes(grpArr, function(data){
+            if($.isEmptyObject(data)) return false;
             $.each(grpArr, function(idx, val){
-                var codes = data[val];
-                $('[cd-grp="' + val + '"]').each(function(){
-                    if(this.nodeName == 'SELECT'){
-                        var options = '<option value="">선택</option>';
+                if(data.hasOwnProperty(val) && data[val].length > 0){
+                    var codes = data[val];
+                    $('[cd-grp="' + val + '"]').each(function(){
+                        if(this.nodeName == 'SELECT'){
+                            var options = '<option value="">선택</option>';
 
-                        $.each(codes, function(i, code){
-                            options += '<option value="' + code.cmm_cd + '">' + code.cmm_nm + '</option>';
-                        });
+                            $.each(codes, function(i, code){
+                                options += '<option value="' + code.cmm_cd + '">' + code.cmm_nm + '</option>';
+                            });
 
-                        $(this).html(options);
-                    }else{
-                        var type = $(this).attr('cd-type');
-                        var name = $(this).attr('cd_name');
-                        var html = '';
+                            $(this).html(options);
+                        }else{
+                            var type = $(this).attr('cd-type');
+                            var name = $(this).attr('cd_name');
+                            var html = '';
 
-                        if(name == undefined || name == '') name = codes[0].grp_cd;
+                            if(name == undefined || name == '') name = codes[0].grp_cd;
 
-                        switch(type){
-                            case 'checkbox':
-                                $.each(codes, function(i, code){
-                                    var id = code.grp_cd + code.cmm_cd;
-                                    html += '<input class="form-check-input" type="checkbox" id="' + id + '" name="' + name + '" value="' + code.cmm_cd + '">';
-                                    html += '<label class="form-check-label" for="' + id + '" style="margin-left:20px;margin-right:20px;">' + code.cmm_nm + '</label>';
-                                });
+                            switch(type){
+                                case 'checkbox':
+                                    $.each(codes, function(i, code){
+                                        var id = code.grp_cd + code.cmm_cd;
+                                        html += '<input class="form-check-input" type="checkbox" id="' + id + '" name="' + name + '" value="' + code.cmm_cd + '">';
+                                        html += '<label class="form-check-label" for="' + id + '" style="margin-left:20px;margin-right:20px;">' + code.cmm_nm + '</label>';
+                                    });
 
-                                break;
-                            case 'radio':
-                                 $.each(codes, function(i, code){
-                                    var id = code.grp_cd + code.cmm_cd;
-                                    html += '<input class="form-check-input" type="radio" name="exampleRadios" id="' + id + '" value="' + code.cmm_cd + '" >'
-                                    html += '<label class="form-check-label" for="' + id + '" style="margin-left:20px;margin-right:20px;">' + code.cmm_nm + '</label>';
-                                 });
-                                break;
+                                    break;
+                                case 'radio':
+                                     $.each(codes, function(i, code){
+                                        var id = code.grp_cd + code.cmm_cd;
+                                        html += '<input class="form-check-input" type="radio" name="exampleRadios" id="' + id + '" value="' + code.cmm_cd + '" >'
+                                        html += '<label class="form-check-label" for="' + id + '" style="margin-left:20px;margin-right:20px;">' + code.cmm_nm + '</label>';
+                                     });
+                                    break;
+                            }
+                            $(this).html(html);
                         }
-                        $(this).html(html);
-                    }
-                });
+                    });
+                }
             });
         });
     };
 })(jQuery);
 
+/*********************************************************
+페이징 생성
+ex) $('#divId').makePagingNavi(obj, goPageFn);
+obj : 페이징 정보 json. 현재페이지, 전체페이지수, 이전페이지 존재여부, 다음페이지 존재여부
+goPageFn : 페이지 조회 스크립트 함수명. string
+**********************************************************/
 (function($){
     $.fn.makePagingNavi = function(obj, goPageFn){
+        if(obj.page == undefined || isNaN(Number(obj.page))) return;
+        if(obj.total_pages == undefined || isNaN(Number(obj.total_pages))) return;
+        if(obj.has_prev == undefined || typeof obj.has_prev != 'boolean') return;
+        if(obj.has_next == undefined || typeof obj.has_next != 'boolean') return;
+        if(goPageFn == undefined || typeof goPageFn != 'string') return;
+
         var cPage = obj.page;       // 현재페이지
         var tPage = obj.total_pages;        // 전체페이지
         var hasP = obj.has_prev;
@@ -402,5 +448,127 @@ function getCodes(grpArr, callbackFn){
         html += '</nav>';
 
         $(this).html(html);
+    };
+})(jQuery);
+
+
+/*********************************************************
+달력 생성
+ex) $('#divId').bindCalendar(json option);
+option.type : 달력 타입, basic, range, year, month 중 택일
+option.name : 달력 input에 bind할 name
+option.onStateChanged : 달력 상태가 바뀔 때 실행할 함수
+option.value : 초기값
+option.term : 기간달력의 경우 현재날짜 기준 날짜 간격. -1일경우 from 이 어제 날짜. to가 오늘 날짜
+**********************************************************/
+(function($){
+    $.fn.bindCalendar = function(options){
+        var picker = new ax5.ui.picker();
+        var inputHtml = '';
+        var defaultVal = ax5.util.date(new Date(), {'return': 'yyyy-MM-dd', 'add': {d: 0}});
+        var defaultVal2 = '';
+        var basicConfig = {
+            target: $(this),
+            direction: "top",
+            content: {
+                type: 'date',
+                config: {
+
+                },
+                formatter: {
+
+                }
+            },
+            onStateChanged: function () {
+                if(typeof options.onStateChanged == 'function') options.onStateChanged(this);
+                else if(typeof options.onStateChanged == 'string') eval(options.onStateChanged)(this);
+            }
+        };
+
+        if(options.type == undefined || options.type == '') return;
+
+        if(options.value != undefined && options.value != '') defaultVal = options.value;
+
+        if((options.type == 'basic' || options.type == 'range') && !ax5.util.isDateFormat(defaultVal)) defaultVal = ax5.util.date(new Date(), {'return': 'yyyy-MM-dd', 'add': {d: 0}});
+
+        if(options.type == 'range'){
+            if(options.term == undefined || options.term == '') options.term = 0;
+            defaultVal2 = ax5.util.date(new Date(defaultVal), {'return': 'yyyy-MM-dd', 'add': {d: options.term}});
+        }
+
+        switch(options.type){
+            case 'basic':
+                basicConfig.content.width = 270;
+                basicConfig.content.margin = 10;
+                basicConfig.content.config.control = {};
+                basicConfig.content.config.control.left = '<i class="fa fa-chevron-left"></i>';
+                basicConfig.content.config.control.right = '<i class="fa fa-chevron-right"></i>';
+                basicConfig.content.config.control.yearTmpl = '%s';
+                basicConfig.content.config.control.monthTmpl = '%s';
+                basicConfig.content.config.lang = {};
+                basicConfig.content.config.lang.yearTmpl = '%s년';
+                basicConfig.content.config.lang.months = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'];
+                basicConfig.content.config.lang.dayTmpl = '%s';
+//                basicConfig.content.config.marker = (function(){
+//                    var marker = {};
+//                    marker[ax5.util.date(new Date(), {'return': 'yyyy-MM-dd', 'add': {d: 0}})] = true;
+//
+//                    return marker;
+//                })();
+                basicConfig.content.formatter.pattern = 'date';
+
+                inputHtml += '<input name="' + options.name + '" type="text" class="form-control" placeholder="yyyy-mm-dd" value="' + defaultVal + '">';
+                inputHtml += '<span class="input-group-addon"><i class="fa fa-calendar-o"></i></span>';
+                break;
+            case 'range':
+                basicConfig.content.width = 270;
+                basicConfig.content.margin = 10;
+                basicConfig.content.config.control = {};
+                basicConfig.content.config.control.left = '<i class="fa fa-chevron-left"></i>';
+                basicConfig.content.config.control.right = '<i class="fa fa-chevron-right"></i>';
+                basicConfig.content.config.control.yearTmpl = '%s';
+                basicConfig.content.config.control.monthTmpl = '%s';
+                basicConfig.content.config.lang = {};
+                basicConfig.content.config.lang.yearTmpl = '%s년';
+                basicConfig.content.config.lang.months = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'];
+                basicConfig.content.config.lang.dayTmpl = '%s';
+                basicConfig.content.formatter.pattern = 'date';
+
+                var from = '';
+                var to = '';
+
+                if(options.term < 0){
+                    from = defaultVal2;
+                    to = defaultVal;
+                }else{
+                    from = defaultVal;
+                    to = defaultVal2;
+                }
+
+                inputHtml += '<input name="from_' + options.name + '" type="text" class="form-control" placeholder="yyyy-mm-dd" value="' + from + '">';
+                inputHtml += '<span class="input-group-addon">~</span>';
+                inputHtml += '<input name="to_' + options.name + '" type="text" class="form-control" placeholder="yyyy-mm-dd" value="' + to + '">';
+                inputHtml += '<span class="input-group-addon"><i class="fa fa-calendar-o"></i></span>';
+                break;
+            case 'year':
+
+                basicConfig.content.config.mode = 'year';
+                basicConfig.content.config.selectMode = 'year';
+                basicConfig.content.formatter.pattern = 'date(year)';
+
+                inputHtml += '<input name="' + options.name + '" type="text" class="form-control" data-picker-date="year" placeholder="yyyy" value="' + defaultVal.substring(0, 4) + '">';
+                break;
+            case 'month':
+                basicConfig.content.config.mode = 'year';
+                basicConfig.content.config.selectMode = 'month';
+                basicConfig.content.formatter.pattern = 'date(month)';
+
+                inputHtml += '<input name="' + options.name + '" type="text" class="form-control" data-picker-date="month" placeholder="yyyy-mm" value="' + defaultVal.substring(0, 7) + '">';
+                break;
+        }
+
+        $(this).attr('data-ax5picker', options.type);
+        $(this).html(inputHtml);
+        picker.bind(basicConfig);
     };
 })(jQuery);

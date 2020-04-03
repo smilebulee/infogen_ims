@@ -1,4 +1,5 @@
 from django.conf.urls import url, include
+from django.contrib.auth.decorators import login_required
 from . import views
 from django.urls import path
 
@@ -8,7 +9,7 @@ from django.conf.urls.static import static
 app_name = 'cmm_api'
 
 urlpatterns = [
-    path('', views.Cmm_api_index.as_view(), name='cmm_api'),
+    path('', login_required(views.Cmm_api_index.as_view()), name='cmm_api'),
     path('getCodeGrps/', views.getCodeGrps, name='getCodeGrps'),
     path('getCodes/', views.getCodes, name='getCodes'),
     path('codeMng/', views.codeMng, name='codeMng'),
