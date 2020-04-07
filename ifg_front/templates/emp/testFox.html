@@ -1,0 +1,313 @@
+{% extends 'common/base.html' %}
+
+{% block content %}
+    <div class="container">
+        <script type="text/javascript">
+        $(document).ready(function(){
+
+            var firstGrid = $('[data-ax5grid="first-grid"]');
+
+            /* 행 삭제 버튼 */
+            $('#rowDelBtn').click(function(){
+                if( isEmpty(firstGrid.selectedDataIndexs[0].toString()) ){
+                    alert("선택된 행이 없습니다.");
+                    return false;
+                }
+
+                firstGrid.deleteRow(firstGrid.selectedDataIndexs[0]); //선택한 행 삭제
+            });
+
+            /* 저장 버튼 */
+            $('#saveBtn').click(function(){
+                console.log("UPDATE DATA");
+                console.log(firstGrid.getList("modified"));
+                console.log(firstGrid.getList("modified").length);
+                console.log("DELETE DATA");
+                console.log(firstGrid.getList("deleted"));
+                console.log(firstGrid.getList("deleted").length);
+
+                var paData = new Array();
+
+                var tObj;
+
+
+                if ( firstGrid.getList("modified").length > 0 ){
+                    for(var iIndex=0; iIndex<firstGrid.getList("modified").length; iIndex++){
+
+                        tObj = firstGrid.getList("modified")[iIndex];
+                        tObj.flag = "U";
+                        paData.push( tObj );
+
+                    }
+                }
+
+                if ( firstGrid.getList("deleted").length > 0 ){
+                    for(var iIndex=0; iIndex<firstGrid.getList("deleted").length; iIndex++){
+
+                        tObj = firstGrid.getList("deleted")[iIndex];
+                        tObj.flag = "D";
+                        paData.push( tObj );
+
+                    }
+                }
+                console.log("PARAM DATA");
+                console.log( paData );
+                console.log( paData.length );
+                if( paData.length == 0 ) {
+                    alert("수정/삭제된 데이터가 없습니다.");
+                    return false;
+                }
+
+                $.ajaxCall({data:paData} , {
+                    method : 'POST',
+                    url : '/emp/update_ajax/post',
+                    callbackFn : function(data){
+                        var html = '';
+                        html += '<dl class="row">';
+                        html += '<dt class="col-sm-3">Status</dt>';
+                        html += '<dd class="col-sm-9">' + data.status + '</dd>';
+                        html += '<dt class="col-sm-3">Msg</dt>';
+                        html += '<dd class="col-sm-9">' + data.msg + '</dd>';
+                        html += '</dl>';
+
+                        $('#ajaxUpdateResult').html(html);
+
+                        if(data.status=="200"){
+                            alert("정상적으로 처리되었습니다.");
+                        }else if(data.status=="500"){
+                            alert("비정상 종료되었습니다.");
+                        }
+                        $('#searchBtn').click();
+                    }
+                });
+            });
+
+
+            /* 조회 버튼 */
+            $('#searchBtn').click(function(){
+                $('#formSearchDiv').ajaxCall({
+                    method : 'GET',
+                    url : '/emp/search_ajax/get',
+                    callbackFn : function(data){
+                        var gridList = $.parseJSON(data); /* 그리드에 세팅할 데이터는 JSON 배열 형태 */
+
+                        var gridOptions = {
+                            columns: [              /* columns : 그리드 헤더 및 매핑 시킬 컬럼 및 컬럼 속성 설정 항목(필수) */
+                                {
+                                    key: "email",
+                                    label: "EMAIL",
+                                    width: 100,
+                                    styleClass: function () {       /* column style css class */
+                                        return "font-weight-bolder";
+                                    },
+                                    enableFilter: true,
+                                    align: "center",
+                                    editor: {type: "text"}          /* 컬럼값 수정 모드 시 표시할 타입. text는 input box */
+                                },
+                                {
+                                    key: "password",
+                                    label: "PASSWORD",
+                                    width: 80,
+                                    align: "center",
+                                    editor: {type: "password"}
+                                },
+                                {
+                                    key: "addr",
+                                    label: "ADDRESS",
+                                    align: "left",
+                                    editor: {type: "text"}
+                                },
+                                {
+                                    key: "sex",
+                                    label: "SEX",
+                                    editor: {
+                                        type: "select",             /* 수정시 셀렉트 박스 */
+                                        config: {
+                                            options: [              /* 셀렉트 박스에서 보여줄 데이터 */
+                                                {CD: "M", NM: "M: Man"},
+                                                {CD: "F", NM: "F: Female"}
+                                            ],
+                                            columnKeys: {
+                                                optionValue: "CD", optionText: "NM"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        };
+                        firstGrid = $('[data-ax5grid="first-grid"]');
+                        firstGrid = firstGrid.initGrid(gridOptions);
+                        firstGrid.setData(gridList);
+                    }
+                });
+            });
+
+            /* 등록 버튼 */
+            $('#submitBtn').click(function(){
+
+                /* validate  st */
+                if( isNullChk("inputEmail4") ) return false;
+                if( isNullChk("inputPassword4") ) return false;
+                if( isNullChk("inputAddress") ) return false;
+                if( isNullChk("inputAddress2") ) return false;
+                if( isNullChk("inputCity") ) return false;
+
+                if( isEmpty($('#inputState').val()) || $('#inputState').val() == "Choose..." ){
+                    alert("국가를 선택하세요.");
+                    $('#inputState').focus();
+                    return false;
+                }
+
+                if( isNullChk("inputZip") ) return false;
+                if( isNullChk("gridCheck1") ) return false;
+                if( !$('#gridCheck1').is(":checked") && !$('#gridCheck2').is(":checked") ){
+                    alert("성별을 선택하세요.");
+                    $('#gridCheck1').focus();
+                    return false;
+                }
+
+                alert("valid 종료");
+                /* validate  ed */
+
+                $('#formDiv').ajaxCall({
+                    method : 'POST',
+                    url : '/emp/insert_ajax/post',
+                    callbackFn : function(data){
+                        var html = '';
+                        html += '<dl class="row">';
+                        html += '<dt class="col-sm-3">Status</dt>';
+                        html += '<dd class="col-sm-9">' + data.status + '</dd>';
+                        html += '<dt class="col-sm-3">Msg</dt>';
+                        html += '<dd class="col-sm-9">' + data.msg + '</dd>';
+                        html += '</dl>';
+
+                        $('#ajaxResult').html(html);
+                    }
+                });
+            });
+        });
+
+        function fncNm(name,value){
+            $("input[type=checkbox][name="+name+"]").prop("checked",false);
+            $("input[name=chk][value="+value+"]").prop("checked",true);
+        }
+
+        /**
+        * 문자열이 빈 문자열인지 체크하여 결과값을 리턴한다.
+        * @param str       : 체크할 문자열
+        */
+        function isEmpty(str){
+            if(typeof str == "undefined" || str == null || str == "")
+                return true;
+            else
+                return false;
+        }
+
+        function isNullChk( objId ) {
+            var objVal = document.getElementById( objId ).value;
+            if( typeof objVal == "undefined" || objVal == null || objVal == "" ){
+                 alert($("label[for="+objId+"]").text()+"을(를) 입력하세요.");
+                 document.getElementById( objId ).focus();
+                 return true;
+            }else{
+                return false;
+            }
+        }
+
+    </script>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="alert alert-info" role="alert">
+                    Emp index : {{ result }}
+                </div>
+                <div class="alert alert-info" role="alert">
+                    <div id="formDiv">
+                         {% csrf_token %}
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                <label for="inputEmail4">Email</label>
+                                <input type="email" class="form-control" id="inputEmail4" name="email" placeholder="example@example.com" maxlength="70">
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label for="inputPassword4">Password</label>
+                                <input type="password" class="form-control" id="inputPassword4" name="password" maxlength="20">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="inputAddress">Address</label>
+                            <input type="text" class="form-control" id="inputAddress" placeholder="1234 Main St" name="addr" maxlength="100">
+                        </div>
+                        <div class="form-group">
+                            <label for="inputAddress2">Address 2</label>
+                            <input type="text" class="form-control" id="inputAddress2" placeholder="Apartment, studio, or floor" name="addrDetl" maxlength="100">
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                <label for="inputCity">City</label>
+                                <input type="text" class="form-control" id="inputCity" name="city" maxlength="50">
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label for="inputState">State</label>
+                                <select id="inputState" class="form-control" name="state">
+                                    <option selected>Choose...</option>
+                                    <option value="1">KOR</option>
+                                    <option value="2">USA</option>
+                                </select>
+                            </div>
+                            <div class="form-group col-md-2">
+                                <label for="inputZip">Zip</label>
+                                <input type="text" class="form-control" id="inputZip" name="zip" maxlength="5">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="gridCheck1" name="chk" value="M" onclick="fncNm(this.name, this.value)"/>
+                                <label class="form-check-label" for="gridCheck1" style="margin-left:20px;">
+                                    Male
+                                </label>
+                                <input class="form-check-input" type="checkbox" id="gridCheck2" name="chk" value="F" onclick="fncNm(this.name, this.value)"/>
+                                <label class="form-check-label" for="gridCheck2" style="margin-left:20px;">
+                                    Female
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button class="btn btn-primary" id="submitBtn">Sign in</button>
+                <div id="ajaxResult">
+
+                </div>
+            </div>
+            <div class="col-sm-12">
+
+            </div>
+            <div class="col-sm-12">
+                <div id="formSearchDiv">
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <input type="email" class="form-control" id="inputSearchEmail4" name="searchemail" placeholder="example@example.com" maxlength="70"/>
+                        </div>
+                        <div class="form-group col-md-4">
+
+                        </div>
+                        <div class="form-group col-md-2">
+                            <button class="btn btn-primary" id="searchBtn">Search</button>
+                            <button class="btn btn-primary" id="saveBtn">Save</button>
+                        </div>
+                    </div>
+                </div>
+                <h3>Grid <a href="http://ax5.io/ax5ui-grid/api/index.html" class="badge badge-info">Info</a></h3>
+                <div style="position: relative;height:400px;" id="grid-parent">
+                    <div data-ax5grid="first-grid" style="height: 100%;"></div>
+                </div>
+                <div>
+                    <button class="btn btn-primary" id="rowDelBtn">rowDelete</button>
+                </div>
+                <div id="ajaxUpdateResult">
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

@@ -1,46 +1,32 @@
 from flask import Flask, jsonify, request
 from flask_restful import Api, Resource
 from pymongo import MongoClient
+import logging
+logging.basicConfig(level=logging.DEBUG)
 import bcrypt
+
+from bson.json_util import dumps
+import json
 
 app = Flask(__name__)
 api = Api(app)
+logger = logging.getLogger(__name__)
 
 client = MongoClient("mongodb://emp_db:27017")
-db = client.projectDB
-users = db["Users"]
+db = client.local
+foxTestDb = db["foxTest"]
+
 
 """ 
 HELPER FUNCTIONS
 """
 
-
-def userExist(username):
-    if users.find({"Username": username}).count() == 0:
+def existsEmail(email):
+    logging.debug(foxTestDb.find({"email": email}).count())
+    if foxTestDb.find({"email": email}).count() == 0:
         return False
     else:
         return True
-
-
-def verifyUser(username, password):
-    if not userExist(username):
-        return False
-
-    user_hashed_pw = users.find({
-        "Username": username
-    })[0]["Password"]
-
-    if bcrypt.checkpw(password.encode('utf8'), user_hashed_pw):
-        return True
-    else:
-        return False
-
-
-def getUserMessages(username):
-    # get the messages
-    return users.find({
-        "Username": username,
-    })[0]["Messages"]
 
 
 """
@@ -50,144 +36,153 @@ RESOURCES
 
 class Hello(Resource):
     def get(self):
-        return "This is Employee Management API!"
-
-
-class Register(Resource):
-    def post(self):
-        # Get posted data from request
-        data = request.get_json()
-
-        # get data
-        username = data["username"]
-        password = data["password"]
-
-        # check if user exists
-        if userExist(username):
-            retJson = {
-                "status": 301,
-                "msg": "Invalid Username"
-            }
-            return jsonify(retJson)
-
-        # encrypt password
-        hashed_pw = bcrypt.hashpw(password.encode('utf8'), bcrypt.gensalt())
-
-        # Insert record
-        users.insert({
-            "Username": username,
-            "Password": hashed_pw,
-            "Messages": []
-        })
-
-        # Return successful result
-        retJosn = {
-            "status": 200,
-            "msg": "Registration successful"
-        }
-        return jsonify(retJosn)
-
-
-class Retrieve(Resource):
-    def post(self):
-         # Get posted data from request
-        data = request.get_json()
-
-        # get data
-        username = data["username"]
-        password = data["password"]
-
-        # check if user exists
-        if not userExist(username):
-            retJson = {
-                "status": 301,
-                "msg": "Invalid Username"
-            }
-            return jsonify(retJson)
-
-        # check password
-        correct_pw = verifyUser(username, password)
-        if not correct_pw:
-            retJson = {
-                "status": 302,
-                "msg": "Invalid password"
-            }
-            return jsonify(retJson)
-
-        # get the messages
-        messages = getUserMessages(username)
-
-        # Build successful response
-        retJson = {
-            "status": 200,
-            "obj": messages
-        }
-
-        return jsonify(retJson)
-
+        logging.debug("test")
+        return "This is Employee Management API! hohoho"
 
 class Save(Resource):
     def post(self):
+        # Get posted data from request
+        logging.debug("save start")
+        # logging.debug(request)
+        # logging.debug(request.get_json())
+        # logging.debug(request.get_data())
+        # logging.debug(request.form['email'])
 
-         # Get posted data from request
-        data = request.get_json()
-
+        #data = request.get_json()
         # get data
-        username = data["username"]
-        password = data["password"]
-        message = data["message"]
+        email = request.form['email']
+        password = request.form['password']
+        addr = request.form['addr']
+        sex = request.form['sex']
 
-        # check if user exists
-        if not userExist(username):
+        logging.debug('--------------------------------------')
+        logging.debug('email : ' + email)
+        logging.debug('password : ' + password)
+        logging.debug('addr : ' + addr)
+        logging.debug('sex : ' + sex)
+        logging.debug('--------------------------------------')
+
+        # logging.debug(existsEmail(email))
+        if existsEmail(email):
+            logging.debug("!!! WARNING !!! email Exists!!")
             retJson = {
                 "status": 301,
-                "msg": "Invalid Username"
+                "msg": "Already Exists EMAIL"
             }
-            return jsonify(retJson)
-
-        # check password
-        correct_pw = verifyUser(username, password)
-        if not correct_pw:
+        else:
+            foxTestDb.insert({
+                "email": email,
+                "password": password,
+                "addr": addr,
+                "sex": sex
+            })
             retJson = {
-                "status": 302,
-                "msg": "Invalid password"
+                "status": 200,
+                "msg": "Data has been saved successfully"
             }
-            return jsonify(retJson)
 
-        if not message:
+        return jsonify(retJson)
+
+class Update(Resource):
+    def post(self):
+        # Get posted data from request
+        logging.debug("update start")
+        # logging.debug(request)
+        logging.debug(request.get_json())
+        # logging.debug(request.get_data())
+        # logging.debug(request.form['email'])
+
+        upData = request.get_json()
+        # get data
+
+        logging.debug(len(upData['data']))
+
+        if len(upData['data']) == 0:
             retJson = {
-                "status": 303,
-                "msg": "Please supply a valid message"
+                "status": 500,
+                "msg": "Update Data Not Found"
             }
             return jsonify(retJson)
 
-        # get the messages
-        messages = getUserMessages(username)
+        for data in upData['data']:
 
-        # add new message
-        messages.append(message)
+            email = data['email']
+            password = data['password']
+            addr = data['addr']
+            sex = data['sex']
 
-        # save the new user message
-        users.update({
-            "Username": username
-        }, {
-            "$set": {
-                "Messages": messages
-            }
-        })
+            logging.debug(data)
+            logging.debug('--------------------------------------')
+            logging.debug('email : ' + email)
+            logging.debug('password : ' + password)
+            logging.debug('addr : ' + addr)
+            logging.debug('sex : ' + sex)
+            logging.debug('flag : ' + data['flag'])
+            logging.debug('--------------------------------------')
+
+            if data['flag'] == "U":
+                foxTestDb.update({
+                    "email": email
+                },
+                {'$set':    {
+                            "password":password,
+                            "addr":addr,
+                            "sex":sex
+                            }
+                })
+            elif data['flag'] == "D":
+                foxTestDb.remove({
+                    "email": email
+                })
 
         retJson = {
             "status": 200,
-            "msg": "Message has been saved successfully"
+            "msg": "Data has been update successfully"
         }
 
         return jsonify(retJson)
 
+class Search(Resource):
+    def get(self):
+        # Get posted data from request
+        logging.debug("search start")
 
+        # get data
+        email = request.args.get('email')
+
+        logging.debug('---------------SEARCH---------------')
+        logging.debug('email : ' + email)
+        logging.debug('------------------------------------')
+
+        if email is None or email == "":
+            logging.debug("is None")
+            result = foxTestDb.find()
+        else:
+            logging.debug("is not null")
+            result = foxTestDb.find({
+                "email": email
+            })
+
+        logging.debug('---------------RESULT---------------')
+        logging.debug(result)
+        logging.debug('------------------------------------')
+        array = list(result) #결과를 리스트로
+        logging.debug(array)
+        logging.debug(dumps(array)) #리스트파일은 dumps
+        logging.debug(jsonify(dumps(array))) #dumps한 파일은 jsonify
+
+        # retJson = {
+        #     "status": 200,
+        #     "msg": "Data has been saved successfully"
+        # }
+
+        return jsonify(dumps(array))
+
+#
 api.add_resource(Hello, '/hello')
-api.add_resource(Register, '/register')
-api.add_resource(Retrieve, '/retrieve')
 api.add_resource(Save, '/save')
+api.add_resource(Update, '/update')
+api.add_resource(Search, '/search')
 
 
 if __name__ == "__main__":

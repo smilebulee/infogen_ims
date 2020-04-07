@@ -50,7 +50,7 @@ RESOURCES
 
 class Hello(Resource):
     def get(self):
-        return "This is KPI Management API!"
+        return "This is KPI Management API! TEST FOX"
 
 
 class Register(Resource):
