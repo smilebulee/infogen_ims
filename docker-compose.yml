@@ -5,6 +5,8 @@ version: "3"
 volumes:
   data-postgressql:
     external: true
+  src-front:
+    external: true
 services:
   # 최초 설치시 DB(ifg_ims)와 사용자(infogen / infogen) 생성해야 함
   postgres:
@@ -42,6 +44,8 @@ services:
       - DJANGO_DB_NAME=ifg_ims
       - DJANGO_DB_USERNAME=infogen
       - DJANGO_DB_PASSWORD=infogen
+#    volumes:
+#      - src-front:/app
   # 1.직원관리
   emp_api: 
     build: "./api_containers/emp/api"
