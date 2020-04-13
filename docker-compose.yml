@@ -5,8 +5,8 @@ version: "3"
 volumes:
   data-postgressql:
     external: true
-  src-front:
-    external: true
+#  src-front:
+#    external: true
 services:
   # 최초 설치시 DB(ifg_ims)와 사용자(infogen / infogen) 생성해야 함
   postgres:
