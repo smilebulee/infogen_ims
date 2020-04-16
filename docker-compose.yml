@@ -50,7 +50,7 @@ services:
   emp_api: 
     build: "./api_containers/emp/api"
     ports: 
-      - "5001:5000"
+      - "5001:5001"
     links: 
       - emp_db
   emp_db:

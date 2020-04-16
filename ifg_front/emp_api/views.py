@@ -17,7 +17,7 @@ class Emp_api_index(generic.TemplateView):
     def get(self, request, *args, **kwargs):
         template_name = 'emp/index.html'
 
-        r = requests.get('http://emp_api:5000/hello')
+        r = requests.get('http://emp_api:5001/hello')
         rr = {
             "result":r.text
         }
@@ -29,7 +29,7 @@ class Emp_api_testFox(generic.TemplateView):
     def get(self, request, *args, **kwargs):
         template_name = 'emp/testFox.html'
 
-        r = requests.get('http://emp_api:5000/hello')
+        r = requests.get('http://emp_api:5001/hello')
         rr = {
             "result": r.text
         }
@@ -50,7 +50,7 @@ def insert_ajax(request):
     logger.info('request.post : ' + request.POST['param'])
     logger.info(datas)
     #r = requests.post('http://emp_api:5000/save',data=json.dumps(datas))
-    r = requests.post('http://emp_api:5000/save', data=datas)
+    r = requests.post('http://emp_api:5001/save', data=datas)
     logger.info(r)
     logger.info(r.text)
     logger.info(r.json())
@@ -69,7 +69,7 @@ def update_ajax(request):
     # }
     logger.info('request.post : ' + request.POST['param'])
     # logger.info(datas)
-    r = requests.post('http://emp_api:5000/update', json=param)
+    r = requests.post('http://emp_api:5001/update', json=param)
     logger.info(r)
     logger.info(r.text)
     logger.info(r.json())
@@ -83,7 +83,7 @@ def search_ajax(request):
         'email' : param['searchemail']
     }
     logger.info(datas)
-    r = requests.get('http://emp_api:5000/search', params=datas)
+    r = requests.get('http://emp_api:5001/search', params=datas)
     logger.info(r)
     logger.info(r.text)
     logger.info("----------------")
