@@ -154,12 +154,19 @@ class Save(Resource):
 
         return jsonify(retJson)
 
+class Health(Resource):
+    def get(self):
+        retJson = {
+            "status": "UP"
+        }
+        return jsonify(retJson)
+
 
 api.add_resource(Hello, '/hello')
 api.add_resource(Register, '/register')
 api.add_resource(Retrieve, '/retrieve')
 api.add_resource(Save, '/save')
-
+api.add_resource(Health, '/health')
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5002, debug=True)
