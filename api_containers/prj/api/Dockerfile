@@ -1,5 +1,5 @@
 # Pull python 3 image
-FROM python:3
+FROM smilebulee/pyjava:0.2
 
 # Create a work dir
 WORKDIR /usr/src/app
@@ -8,10 +8,11 @@ WORKDIR /usr/src/app
 COPY requirements.txt ./
 
 # Install all requirements
-RUN python3 -m pip --trusted-host pypi.org --trusted-host files.pythonhosted.org install --user --no-cache-dir -r requirements.txt
+RUN python3 -m pip --trusted-host pypi.org --trusted-host pypi.python.org --trusted-host files.pythonhosted.org install --user --no-cache-dir -r requirements.txt
 
 # Copy entire project into workdir
 COPY . .
 
 # Run our app
-CMD ["python", "app.py"]
+#CMD ["python", "app.py"]
+ENTRYPOINT ["./docker-entrypoint.sh"]

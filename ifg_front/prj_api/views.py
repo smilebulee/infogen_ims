@@ -13,7 +13,7 @@ class Prj_api_index(generic.TemplateView):
     def get(self, request, *args, **kwargs):
         template_name = 'prj/index.html'
 
-        r = requests.get('http://prj_api:5000/hello')
+        r = requests.get('http://prj_api:5002/hello')
         rr = {
             "result":r.text
         }
@@ -30,7 +30,7 @@ def retrieve(request):
     }
 
     # requests.get(url, params=params)
-    res = requests.post('http://prj_api:5000/retrieve', headers=headers, json=data)        # data가 다층 구조일 땐 json.dumps(data) 사용
+    res = requests.post('http://prj_api:5002/retrieve', headers=headers, json=data)        # data가 다층 구조일 땐 json.dumps(data) 사용
 
     if res.status_code == requests.codes.ok:
         retVal = res.json()

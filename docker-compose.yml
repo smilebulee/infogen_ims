@@ -60,7 +60,7 @@ services:
   prj_api: 
     build: "./api_containers/prj/api"
     ports: 
-      - "5002:5000"
+      - "5002:5002"
     links: 
       - prj_db
   prj_db:
@@ -70,7 +70,7 @@ services:
 #  skil_api:
 #    build: "./api_containers/skil/api"
 #    ports:
-#      - "5003:5000"
+#      - "5003:5003"
 #    links:
 #      - skil_db
 #  skil_db:
@@ -80,7 +80,7 @@ services:
 #  cmm_api:
 #    build: "./api_containers/cmm/api"
 #    ports:
-#      - "5004:5000"
+#      - "5004:5004"
 #    links:
 #      - cmm_db
 #  cmm_db:
@@ -90,7 +90,7 @@ services:
 #  cnc_api:
 #    build: "./api_containers/cnc/api"
 #    ports:
-#      - "5005:5000"
+#      - "5005:5005"
 #    links:
 #      - cnc_db
 #  cnc_db:
@@ -100,7 +100,7 @@ services:
 #  dili_api:
 #    build: "./api_containers/dili/api"
 #    ports:
-#      - "5006:5000"
+#      - "5006:5006"
 #    links:
 #      - dili_db
 #  dili_db:
@@ -110,7 +110,7 @@ services:
 #  eval_api:
 #    build: "./api_containers/eval/api"
 #    ports:
-#      - "5007:5000"
+#      - "5007:5007"
 #    links:
 #      - eval_db
 #  eval_db:
@@ -120,7 +120,7 @@ services:
 #  kpi_api:
 #    build: "./api_containers/kpi/api"
 #    ports:
-#      - "5008:5000"
+#      - "5008:5008"
 #    links:
 #      - kpi_db
 #  kpi_db:
@@ -130,7 +130,7 @@ services:
 #  stat_api:
 #    build: "./api_containers/stat/api"
 #    ports:
-#      - "5009:5000"
+#      - "5009:5009"
 #    links:
 #      - stat_db
 #  stat_db:
@@ -140,7 +140,7 @@ services:
 #  site_api:
 #    build: "./api_containers/site/api"
 #    ports:
-#      - "5010:5000"
+#      - "5010:5010"
 #    links:
 #      - site_db
 #  site_db:
