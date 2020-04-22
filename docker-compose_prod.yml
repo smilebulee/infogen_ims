@@ -5,7 +5,7 @@ services:
   postgres:
     image: postgres:9.6.6
     volumes:
-      - /c/workspace/postgres_db:/var/lib/postgresql/data
+      - /opt/projects/infogen_ims/postgres_db:/var/lib/postgresql/data
     environment:
       - POSTGRES_DB=ifg_ims
       - POSTGRES_USER=infogen

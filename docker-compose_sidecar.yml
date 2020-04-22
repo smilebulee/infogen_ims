@@ -1,0 +1,21 @@
+version: "3"
+
+services:
+  emp_sidecar:
+    image: smilebulee/sidecar:0.1
+    environment:
+      - SPRING_PROFILES_ACTIVE=local
+      - SPRING_APPLICATION_NAME=emp_api
+      - SIDECAR_HOSTNAME=emp_api
+      - SIDECAR_PORT=5001
+
+  prj_sidecar:
+    image: smilebulee/sidecar:0.1
+    environment:
+      - SPRING_PROFILES_ACTIVE=local
+      - SPRING_APPLICATION_NAME=prj_api
+      - SIDECAR_HOSTNAME=prj_api
+      - SIDECAR_PORT=5002
+
+
+
