@@ -21,6 +21,8 @@ services:
       - POSTGRES_USER=infogen
       - POSTGRES_PASSWORD=infogen
       - POSTGRES_INITDB_ARGS=--encoding=UTF-8
+    ports:
+      - "5432:5432"
   # front ui
   front:
     build: "./ifg_front"
