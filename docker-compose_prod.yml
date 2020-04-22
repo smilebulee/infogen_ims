@@ -1,21 +1,11 @@
 version: "3"
 
-# 윈도우에서 볼륨 지정시 FATAL: data directory "/var/lib/postgresql/data" has wrong ownership 에러 발생하면  아래 스크립트로 도커에 볼류생성한 후 volumes: 태그 등록 후 사용
-# docker volume create --name data-postgressql --driver local
-volumes:
-  data-postgressql:
-    external: true
-#  src-front:
-#    external: true
 services:
   # 최초 설치시 DB(ifg_ims)와 사용자(infogen / infogen) 생성해야 함
   postgres:
     image: postgres:9.6.6
-#    container_name: postgres
     volumes:
-      - data-postgressql:/var/lib/postgresql/data
-#      - /c/workspace/postgres_db:/var/lib/postgresql/data
-
+      - /c/workspace/postgres_db:/var/lib/postgresql/data
     environment:
       - POSTGRES_DB=ifg_ims
       - POSTGRES_USER=infogen
@@ -54,7 +44,7 @@ services:
     links:
       - emp_db
     environment:
-      - SPRING_PROFILES_ACTIVE=local
+      - SPRING_PROFILES_ACTIVE=prod
       - SPRING_APPLICATION_NAME=emp_api
       - SIDECAR_PORT=5001
   emp_db:
@@ -68,7 +58,7 @@ services:
     links:
       - prj_db
     environment:
-      - SPRING_PROFILES_ACTIVE=local
+      - SPRING_PROFILES_ACTIVE=prod
       - SPRING_APPLICATION_NAME=prj_api
       - SIDECAR_PORT=5002
   prj_db:
@@ -81,6 +71,10 @@ services:
 #      - "5003:5003"
 #    links:
 #      - skil_db
+#    environment:
+#      - SPRING_PROFILES_ACTIVE=prod
+#      - SPRING_APPLICATION_NAME=skil_api
+#      - SIDECAR_PORT=5003
 #  skil_db:
 #    build: "./api_containers/skil/db"
 #
@@ -91,6 +85,10 @@ services:
 #      - "5004:5004"
 #    links:
 #      - cmm_db
+#    environment:
+#      - SPRING_PROFILES_ACTIVE=prod
+#      - SPRING_APPLICATION_NAME=cmm_api
+#      - SIDECAR_PORT=5004
 #  cmm_db:
 #    build: "./api_containers/cmm/db"
 #
@@ -101,6 +99,10 @@ services:
 #      - "5005:5005"
 #    links:
 #      - cnc_db
+#    environment:
+#      - SPRING_PROFILES_ACTIVE=prod
+#      - SPRING_APPLICATION_NAME=cnc_api
+#      - SIDECAR_PORT=5005
 #  cnc_db:
 #    build: "./api_containers/cnc/db"
 #
@@ -111,6 +113,10 @@ services:
 #      - "5006:5006"
 #    links:
 #      - dili_db
+#    environment:
+#      - SPRING_PROFILES_ACTIVE=prod
+#      - SPRING_APPLICATION_NAME=dili_api
+#      - SIDECAR_PORT=5006
 #  dili_db:
 #    build: "./api_containers/dili/db"
 #
@@ -121,6 +127,10 @@ services:
 #      - "5007:5007"
 #    links:
 #      - eval_db
+#    environment:
+#      - SPRING_PROFILES_ACTIVE=prod
+#      - SPRING_APPLICATION_NAME=eval_api
+#      - SIDECAR_PORT=5007
 #  eval_db:
 #    build: "./api_containers/eval/db"
 #
@@ -131,6 +141,10 @@ services:
 #      - "5008:5008"
 #    links:
 #      - kpi_db
+#    environment:
+#      - SPRING_PROFILES_ACTIVE=prod
+#      - SPRING_APPLICATION_NAME=kpi_api
+#      - SIDECAR_PORT=5008
 #  kpi_db:
 #    build: "./api_containers/kpi/db"
 #
@@ -141,6 +155,10 @@ services:
 #      - "5009:5009"
 #    links:
 #      - stat_db
+#    environment:
+#      - SPRING_PROFILES_ACTIVE=prod
+#      - SPRING_APPLICATION_NAME=stat_api
+#      - SIDECAR_PORT=5009
 #  stat_db:
 #    build: "./api_containers/stat/db"
 #
@@ -151,6 +169,10 @@ services:
 #      - "5010:5010"
 #    links:
 #      - site_db
+#    environment:
+#      - SPRING_PROFILES_ACTIVE=prod
+#      - SPRING_APPLICATION_NAME=site_api
+#      - SIDECAR_PORT=5010
 #  site_db:
 #    build: "./api_containers/site/db"
 

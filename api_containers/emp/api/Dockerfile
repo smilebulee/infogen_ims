@@ -1,5 +1,5 @@
 # Pull python 3 image
-FROM smilebulee/pyjava:0.2
+FROM smilebulee/pyjava:0.3
 #python:3
 
 # Create a work dir
@@ -13,6 +13,8 @@ RUN python3 -m pip --trusted-host pypi.org --trusted-host pypi.python.org --trus
 
 # Copy entire project into workdir
 COPY . .
+
+RUN chmod +x ./docker-entrypoint.sh
 
 # Run our app
 #CMD ["python", "app.py"]
