@@ -94,7 +94,7 @@ DATABASES = {
         'NAME': 'ifg_ims',
         'USER': 'infogen',
         'PASSWORD': 'infogen',
-        'HOST': 'postgres',
+        'HOST': '218.151.225.142',
         'PORT': 5432,
     }
 }

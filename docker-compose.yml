@@ -2,6 +2,7 @@ version: "3"
 
 # 윈도우에서 볼륨 지정시 FATAL: data directory "/var/lib/postgresql/data" has wrong ownership 에러 발생하면  아래 스크립트로 도커에 볼류생성한 후 volumes: 태그 등록 후 사용
 # docker volume create --name data-postgressql --driver local
+# C:\workspace>docker volume create --driver local -o o=bind -o type=none -o device=/c/workspace/infogen_ims/ifg_front src-front
 volumes:
   data-postgressql:
     external: true
@@ -41,26 +42,26 @@ services:
 #      - stat_api
 #      - site_api
     environment:
-      - DJANGO_DB_HOST=postgres
+      - DJANGO_DB_HOST=218.151.225.142
       - DJANGO_DB_PORT=5432
       - DJANGO_DB_NAME=ifg_ims
       - DJANGO_DB_USERNAME=infogen
       - DJANGO_DB_PASSWORD=infogen
-#    volumes:
-#      - src-front:/app
+ #   volumes:
+ #     - //c/workspace/infogen_ims/ifg_front:/usr/src/app
   # 1.직원관리
   emp_api: 
-    build: "./api_containers/emp/api"
+    build: "./api_containers/emp/api"     # Dockerfile의 경로
     ports: 
-      - "5001:5001"
+      - "5001:5001"     # 로컬의 5001포트로 요청일 들어오면 emp_api 컨테이너의 5001 포트로 연결
     links:
-      - emp_db
+      - emp_db    # emp_api컨테이너는 emp_db 컨테이너로 접속가능
     environment:
-      - SPRING_PROFILES_ACTIVE=local
+      - SPRING_PROFILES_ACTIVE=local      # 이미지 생성시 세팅될 환경변수들
       - SPRING_APPLICATION_NAME=emp_api
       - SIDECAR_PORT=5001
   emp_db:
-    build: "./api_containers/emp/db"
+    build: "./api_containers/emp/db"   # Dockerfile의 경로
 
   # 2.프로젝트 관리
   prj_api: 

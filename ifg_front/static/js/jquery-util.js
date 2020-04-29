@@ -192,7 +192,13 @@ opts : json. url, method, callback
             data: {param : JSON.stringify(data)},
             dataType: 'json',
             error: function(jqXHR, textStatus, errorThrown ){
-                alertMsg(jqXHR.statusText);
+                if(jqXHR.status == '403'){
+                    alertMsg('세션이 종료 되었습니다.<br/>로그인 페이지로 이동합니다.', function(){
+                        location.href = '/main/login/';
+                    });
+                }else{
+                    alertMsg(jqXHR.statusText);
+                }
             },
             success: function(data, textStatus, jqXHR){
                 if(typeof opts.callbackFn == 'function') opts.callbackFn(data);
@@ -346,7 +352,7 @@ check box와 radio의 경우는 div 태그내에 생성되어야 하므로 div�
                             $(this).html(options);
                         }else{
                             var type = $(this).attr('cd-type');
-                            var name = $(this).attr('cd_name');
+                            var name = $(this).attr('cd-name');
                             var html = '';
 
                             if(name == undefined || name == '') name = codes[0].grp_cd;
