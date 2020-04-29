@@ -46,7 +46,7 @@
             {% if 'localhost:8000' in request.build_absolute_uri and '/main/sample/' not in request.build_absolute_uri %}
                 <a class="p-2 text-white" href="{% url 'main:sample' sample='date' %}">Component Sample</a>
             {% endif %}
-            {% if 'localhost:8000' in request.build_absolute_uri and '/main/sample/' in request.build_absolute_uri %}
+            {#{% if 'localhost:8000' in request.build_absolute_uri and '/main/sample/' in request.build_absolute_uri %}#}
                 <nav class="my-2 my-md-0 mr-md-3">
                     <a class="p-2 text-white" href="{% url 'main:sample' sample='date' %}">Calendar & Datepicker</a>
                     <a class="p-2 text-white" href="{% url 'main:sample' sample='select' %}">Select & Combobox</a>
@@ -56,7 +56,7 @@
                       <a class="p-2 text-white" href="{% url 'main:sample' sample='ajax' %}">Ajax</a>
                     <a class="p-2 text-white" href="https://getbootstrap.com/docs/4.4/getting-started/introduction/">Bootstrap</a>
                   </nav>
-            {% endif %}
+            {#{% endif %}#}
             {% if '/main/index' not in request.build_absolute_uri %}
                 <a class="btn btn-outline-primary" href="/" style="margin-left:5px;">Home <i class="fa fa-home"></i></a>
             {% endif %}
