@@ -2,7 +2,8 @@
 FROM python:3
 
 # Create a work dir
-WORKDIR /usr/src/app    # 도커내부경로로
+# 도커내부경로로
+WORKDIR /usr/src/app
 
 # copy requirements.txt into workdir created above
 COPY requirements.txt ./
