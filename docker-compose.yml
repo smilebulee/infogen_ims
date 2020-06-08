@@ -62,6 +62,20 @@ services:
       - SIDECAR_PORT=5001
   emp_db:
     build: "./api_containers/emp/db"   # Dockerfile의 경로
+    container_name: emp_db
+    image: mariadb:latest
+    restart: always
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: '1111'
+      TZ: Asia/Seoul
+    command: # 명령어 실행
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+      - --innodb-use-native-aio=0
+    volumes:
+      - data-postgressql:/var/lib/postgresql/data/mysql
 
   # 2.프로젝트 관리
   prj_api: 

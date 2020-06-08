@@ -8,13 +8,17 @@ import bcrypt
 from bson.json_util import dumps
 import json
 
+import pymysql
+
+db = pymysql.connect(host='emp_db', port=3306, user='root', passwd='1111', db='emp', charset='utf8',autocommit=True)
+
 app = Flask(__name__)
 api = Api(app)
 logger = logging.getLogger(__name__)
 
-client = MongoClient("mongodb://emp_db:27017")
-db = client.local
-foxTestDb = db["foxTest"]
+#client = MongoClient("mongodb://emp_db:27017")
+#db = client.local
+#foxTestDb = db["foxTest"]
 
 
 """ 
