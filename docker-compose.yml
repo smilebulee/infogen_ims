@@ -24,6 +24,7 @@ services:
       - POSTGRES_INITDB_ARGS=--encoding=UTF-8
     ports:
       - "5432:5432"
+      
   # front ui
   front:
     build: "./ifg_front"
@@ -34,8 +35,8 @@ services:
       - prj_api
       - postgres
 #      - skil_api
-      - cmm_api
-      - cnc_api
+#      - cmm_api
+#      - cnc_api
 #      - dili_api
 #      - eval_api
 #      - kpi_api
@@ -62,6 +63,20 @@ services:
       - SIDECAR_PORT=5001
   emp_db:
     build: "./api_containers/emp/db"   # Dockerfile의 경로
+    container_name: emp_db
+    image: mariadb:latest
+    restart: always
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: '1111'
+      TZ: Asia/Seoul
+    command: # 명령어 실행
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+      - --innodb-use-native-aio=0
+    volumes:
+      - data-postgressql:/var/lib/postgresql/data/mysql
 
   # 2.프로젝트 관리
   prj_api: 
@@ -88,24 +103,24 @@ services:
 #    build: "./api_containers/skil/db"
 #
 #  # 4.cmm 관리
-  cmm_api:
-    build: "./api_containers/cmm/api"
-    ports:
-      - "5004:5004"
-    links:
-      - cmm_db
-  cmm_db:
-    build: "./api_containers/cmm/db"
+#  cmm_api:
+#    build: "./api_containers/cmm/api"
+#    ports:
+#      - "5004:5004"
+#    links:
+#      - cmm_db
+#  cmm_db:
+#    build: "./api_containers/cmm/db"
 #
 #  # 5.접속 관리
-  cnc_api:
-    build: "./api_containers/cnc/api"
-    ports:
-      - "5005:5005"
-    links:
-      - cnc_db
-  cnc_db:
-    build: "./api_containers/cnc/db"
+#  cnc_api:
+#    build: "./api_containers/cnc/api"
+#    ports:
+#      - "5005:5005"
+#    links:
+#      - cnc_db
+#  cnc_db:
+#    build: "./api_containers/cnc/db"
 #
 #  # 6.근태 관리
 #  dili_api:
