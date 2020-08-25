@@ -1,0 +1,29 @@
+{% extends 'common/base.html' %}
+
+{% block content %}
+    <script type="text/javascript">
+        $(document).ready(function(){
+                console.log('???')
+                $.ajaxCall({}, {
+                 method : 'get',
+                 url : "{% url 'cnc_api:getTestview' %}",
+                 async : false,
+                 callbackFn : function(data){
+                    console.log('call')
+                    data.list[0]
+                    $('#result').text('id : '+data.list[0].test_id + ' / reg_user : '+data.list[0].reg_user)
+                 }
+            });
+        });
+
+
+    </script>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="alert alert-info" role="alert">
+                    <a id="result"></a>
+                </div>
+            </div>
+        </div>
+
+{% endblock %}
