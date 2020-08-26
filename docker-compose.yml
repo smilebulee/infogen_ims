@@ -16,7 +16,7 @@ services:
     volumes:
       - data-postgressql:/var/lib/postgresql/data
 #      - /c/workspace/postgres_db:/var/lib/postgresql/data
-
+#
     environment:
       - POSTGRES_DB=ifg_ims
       - POSTGRES_USER=infogen
@@ -55,13 +55,30 @@ services:
     ports: 
       - "5001:5001"     # 로컬의 5001포트로 요청일 들어오면 emp_api 컨테이너의 5001 포트로 연결
     links:
-      - emp_db    # emp_api컨테이너는 emp_db 컨테이너로 접속가능
+      - emp_db
+      - emp_db2    # emp_api컨테이너는 emp_db 컨테이너로 접속가능 (maria db 연결 진행)
     environment:
       - SPRING_PROFILES_ACTIVE=local      # 이미지 생성시 세팅될 환경변수들
       - SPRING_APPLICATION_NAME=emp_api
       - SIDECAR_PORT=5001
   emp_db:
     build: "./api_containers/emp/db"   # Dockerfile의 경로
+  emp_db2:
+    build: "./api_containers/emp/db"   # Dockerfile의 경로
+    #container_name: mariadb
+    image: mariadb:latest
+    restart: always
+    ports:
+      - 3306:3306
+    volumes:
+      - data-postgressql:/var/lib/mysql
+    environment:
+      MYSQL_HOST: '218.151.225.142'
+      MYSQL_ROOT_PASSWORD: 'infogen'
+      MYSQL_USER : 'ims2'
+      MYSQL_PASSWORD : '1234'
+      MYSQL_DATABASE : 'IFG_IMS'
+      TZ: Asia/Seoul
 
   # 2.프로젝트 관리
   prj_api: 
@@ -78,16 +95,16 @@ services:
     build: "./api_containers/prj/db"
 
 #  # 3.skill 관리
-#  skil_api:
-#    build: "./api_containers/skil/api"
-#    ports:
-#      - "5003:5003"
-#    links:
-#      - skil_db
-#  skil_db:
-#    build: "./api_containers/skil/db"
-#
-#  # 4.cmm 관리
+  skil_api:
+    build: "./api_containers/skil/api"
+    ports:
+      - "5003:5003"
+    links:
+      - skil_db
+  skil_db:
+    build: "./api_containers/skil/db"
+
+# 4.cmm 관리
   cmm_api:
     build: "./api_containers/cmm/api"
     ports:
@@ -137,23 +154,23 @@ services:
 #  kpi_db:
 #    build: "./api_containers/kpi/db"
 #
-#  # 9.현황 관리
-#  stat_api:
-#    build: "./api_containers/stat/api"
-#    ports:
-#      - "5009:5009"
-#    links:
-#      - stat_db
-#  stat_db:
-#    build: "./api_containers/stat/db"
-#
+  # 9.현황 관리
+  stat_api:
+    build: "./api_containers/stat/api"
+    ports:
+      - "5009:5009"
+    links:
+      - stat_db
+  stat_db:
+    build: "./api_containers/stat/db"
+
 #  # 10.사이트맵 관리
-#  site_api:
-#    build: "./api_containers/site/api"
-#    ports:
-#      - "5010:5010"
-#    links:
-#      - site_db
-#  site_db:
-#    build: "./api_containers/site/db"
+  site_api:
+    build: "./api_containers/site/api"
+    ports:
+      - "5010:5010"
+    links:
+      - site_db
+  site_db:
+    build: "./api_containers/site/db"
 

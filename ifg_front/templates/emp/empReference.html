@@ -1,0 +1,269 @@
+{% extends 'common/base.html' %}
+
+{% block content %}
+    <script type="text/javascript">
+        var smgGrid;
+        var selectValueMap;
+        $(document).ready(function(){
+            var smgGridOpt = {
+                columns: [
+                    {key : "EMP_ID",        label : 'ID',          editor : {type : 'text'}},
+                    {key : "AUTH_ID",        label : '권한ID',       editor : {type : 'text'}},
+                    {key : "EMP_NAME",   label : '이름',         editor : {type : 'text'}},
+                    {key : "DEPT_NAME",   label : '부서',         editor : {type : 'text'}},
+                    {key : "POS_NAME",    label : '직위(직급)',    editor : {type : 'text'}},
+                    {key : "EMP_ADDR",    label : '거주지역',      editor : {type : 'text'}},
+                    {key : "EMP_TEL",    label : '연락처',        editor : {type : 'text'}},
+                    {key : "EMP_EMAIL",    label : '이메일',        editor : {type : 'text'}},
+                    {key : "CTRT_DV",    label : '계약구분',      editor : {type : 'text'}},
+                    {key : "JOB_DV",    label : '업무구분',      editor : {type : 'text'}},
+                    {key : "CLASS_CD",    label : '등급',          editor : {type : 'text'}},
+                    {key : "WORK_LOC",    label : '근무지',        editor : {type : 'text'}},
+                    {key : "CSTM_CMP",    label : '고객사',        editor : {type : 'text'}},
+                    {key : "CSTM_CMP_PART",    label : '고객사파트',     editor : {type : 'text'}},
+                    {key : "WORK_YN",    label : '재직여부',      editor : {type : 'text'}},
+                    {key : "REMARK",    label : '비고',         editor : {type : 'text'}},
+
+                ],
+            };
+
+            smgGrid = $('[data-ax5grid="grp-grid"]').initGrid(smgGridOpt);
+
+            $('#grpAddBtn').click(function(){
+                smgGrid.addRow({grp_cd: '', grp_nm: '', sort_ord: smgGrid.list.length + 1}, 'last');
+            });
+            $('#screenSave').click(function(){
+                if(smgGrid.getList("modified").length == 0){
+                    alertMsg('수정 및 추가된 행이 없습니다.');
+                    return false;
+                }
+
+                confirmMsg('저장 하시겠습니까?', function(){
+                    var updateList = smgGrid.getList('modified');
+
+                    $.ajaxCall(updateList, {
+                        url : '{% url 'cmm_api:saveScreenMng' %}',
+                        method : 'post',
+                        callbackFn : function(data){
+                            g_toast.push('저장 되었습니다.');
+                            //getSmgList(1);
+                        }
+                    });
+                });
+            });
+            $('#grpDelBtn').click(function(){
+                if(smgGrid.getList("selected").length == 0){
+                    alertMsg('선택된 행이 없습니다.');
+                    return false;
+                }
+
+                confirmMsg('삭제 하시겠습니까?', function(){
+                    if(smgGrid.getList("selected")[0].__created__) smgGrid.removeRow("selected");
+                    else{
+                        var delList = smgGrid.getList('selected');
+
+                        $.ajaxCall(delList, {
+                            url : '{% url 'cmm_api:deleteScreenMng' %}',
+                            method : 'post',
+                            callbackFn : function(data){
+                                smgGrid.removeRow("selected");
+                                g_toast.push('삭제 되었습니다.');
+                                //getSmgList(1);
+                            }
+                        });
+                    }
+                });
+            });
+            getSmgList(1);
+            $('#screenSearch').click(function(){
+                var page_nm = document.getElementById('screenTitle').value;
+                var job_dv = document.getElementById('divisionType').value;
+                var data = {
+                    page_nm : page_nm,
+                    page : 1,
+                    job_dv : job_dv
+                }
+                var options = {
+                    method : 'get',
+                    url : "{% url 'cmm_api:searchMng' %}",
+                    callbackFn :  function(ret){
+                        if(ret.list.length == 0){
+                            alertMsg('데이터가 없습니다.');
+                            smgGrid.setData([]);
+                            return false;
+                        }
+                        console.log('grid data');
+                        for(var i = 0; i<ret.list.length; i++){
+                            ret.list[i].no = i+1;
+                            //ret.list[i].page_id = ret.list[i].job_dv
+                        }
+                        smgGrid.setData(ret.list);
+                        smgGrid.select(0);
+
+                        makePaging(ret);
+                    }
+                };
+                $.ajaxCall(data, options);
+            });
+        });
+
+        function makePaging(ret){
+            $('#paging_navi').makePagingNavi(ret, 'getSmgList');
+        }
+        function getSmgList(page){
+            var options = {
+                method : 'get',
+                url : "{% url 'emp_api:getPage' %}",
+                async: false,
+                callbackFn :  function(ret){
+                    console.log("test")
+                    //원복
+                    if(ret.list.length == 0){
+                        alertMsg('데이터가 없습니다.');
+                        smgGrid.setData([]);
+                        return false;
+                    }
+                    smgGrid.setData(ret.list);
+                    smgGrid.select(0);
+
+                    makePaging(ret);
+
+                }
+            };
+
+            $.ajaxCall({page : page}, options);
+        }
+
+        function getCodeList(){
+            if(smgGrid.getList().length == 0) return;
+
+            var grp = new Array();
+            grp.push(smgGrid.getList('selected')[0].grp_cd);
+            getPage(grp, function(data){
+
+            });
+        }
+
+
+
+    </script>
+        <div class="row">
+            <div class="col-sm-12">
+                <blockquote class="blockquote">
+                  <p class="h1">EMP!!!!</p>
+                  <footer class="blockquote-footer">COMMON Part in <cite title="Source Title">IFG-IMS</cite></footer>
+                </blockquote>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="alert alert-info" role="alert">
+                    <div id="formSearchDiv">
+                        <div class="form-row">
+                            <div class="form-group col-md-1">
+                                <label for="empName">이름</label>
+                            </div>
+                            <div class="form-group col-md-3">
+                                <input type="text" class="form-control" id="empName" name="empName" maxlength="100">
+                            </div>
+                            <div class="form-group col-md-1">
+                                <label for="deptName">부서</label>
+                            </div>
+                            <div class="form-group col-md-3">
+                                <select id="deptName" class="form-control" name="deptName">
+                                    <option selected value="">--선택--</option>
+                                </select>
+                            </div>
+                            <div class="form-group col-md-1">
+                            </div>
+                            <div class="form-group col-md-2" style="text-align:right; margin-bottom:5px;">
+                                <button id="empSearch" type="button" class="btn btn-primary">조회</button>
+                                <!--<button id="screenSave" type="button" class="btn btn-primary">저장</button>-->
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-1">
+                                <label for="posName">직위(직급)</label>
+                            </div>
+                            <div class="form-group col-md-3">
+                                <select id="posName" class="form-control" name="posName">
+                                    <option selected value="">--선택--</option>
+                                </select>
+                            </div>
+                            <div class="form-group col-md-1">
+                                <label for="ctrtDv">계약구분</label>
+                            </div>
+                            <div class="form-group col-md-3">
+                                <!-- 히든처리 필요 -->
+                                <select id="ctrtDv" class="form-control" name="ctrtDv">
+                                    <option selected value="">--선택--</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-1">
+                                <label for="jobDv">업무구분</label>
+                            </div>
+                            <div class="form-group col-md-3">
+                                <!-- 히든처리 필요 -->
+                                <select id="jobDv" class="form-control" name="jobDv">
+                                    <option selected value="">--선택--</option>
+                                </select>
+                            </div>
+                            <div class="form-group col-md-1">
+                                <label for="classCd">등급</label>
+                            </div>
+                            <div class="form-group col-md-3">
+                                <input type="text" class="form-control" id="classCd" name="classCd" maxlength="100">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-1">
+                                <label for="cstmCmp">고객사</label>
+                            </div>
+                            <div class="form-group col-md-3">
+                                <input type="text" class="form-control" id="cstmCmp" name="cstmCmp" maxlength="100">
+                            </div>
+                            <div class="form-group col-md-1">
+                                <label for="workYn">재직여부</label>
+                            </div>
+                            <div class="form-group col-md-3">
+                                <!-- 히든처리 필요 -->
+                                <select id="workYn" class="form-control" name="workYn">
+                                    <option selected value="">--선택--</option>
+                                    <option value="Y">Y</option>
+                                    <option value="N">N</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="row">
+                    <div class="col-sm-12" style="text-align:right; margin-bottom:5px;">
+                        <button id="grpAddBtn" type="button" class="btn btn-primary">행추가</button>
+                        <button id="grpDelBtn" type="button" class="btn btn-danger">행삭제</button>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div data-ax5grid="grp-grid" style="height: 442px;"></div>
+                        <div id="paging_navi"></div>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+
+
+{% endblock %}
+<!--
+<div class="container-fluid">
+    <div data-ax5grid="grp-grid" style="height: 442px; width: 3000px;"></div>
+    <div id="paging_navi"></div>
+</div>-->
