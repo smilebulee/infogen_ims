@@ -12,6 +12,7 @@ urlpatterns = [
 #mariadb 연결 샘플
     url(r'^mariatest/', views.mariatest.as_view(), name='mariatest'),
     url(r'^getMaria/', views.getMaria, name='getMaria'),
+    url(r'^scheduleMgmt/', views.scheduleMgmt.as_view(), name='scheduleMgmt'),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
