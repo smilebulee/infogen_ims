@@ -1,18 +1,18 @@
 from flask import Flask, jsonify, request
 from flask_restful import Api, Resource
-from pymongo import MongoClient
+#from pymongo import MongoClient
+import logging
+logging.basicConfig(level=logging.DEBUG)
 import bcrypt
+
+#from bson.json_util import dumps
+import json
+import pymysql
 
 app = Flask(__name__)
 api = Api(app)
+logger = logging.getLogger(__name__)
 
-client = MongoClient("mongodb://dili_db:27017")
-db = client.projectDB
-users = db["Users"]
-
-""" 
-HELPER FUNCTIONS
-"""
 
 
 def userExist(username):
@@ -186,8 +186,11 @@ class Save(Resource):
 
 class mariatestDB(Resource): # Mariadb 연결 진행
     def get(self):
+
+        logging.debug('app py Start')
+
         #requirements pymysql import 후 커넥트 사용
-        mysql_con = pymysql.connect(host='218.151.225.142', port=3307, db='IFG_IMS', user='ims2', password='1234',
+        mysql_con = pymysql.connect(host='218.151.225.142', port=3306, db='IFG_IMS', user='ims2', password='1234',
                                         charset='utf8')
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
@@ -197,6 +200,10 @@ class mariatestDB(Resource): # Mariadb 연결 진행
 
         finally:
             mysql_con.close()
+
+        logging.debug('====== result Start ====')
+        logging.debug(result2)
+        logging.debug('====== result End ====')
 
         result2 = cursor.fetchall()
         for row in result2:

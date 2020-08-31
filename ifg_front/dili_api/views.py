@@ -27,31 +27,27 @@ class scheduleMgmt(generic.TemplateView):
     def get(self, request, *args, **kwargs):
         template_name = 'dili/diliScheduleMgmt.html'
 
-        r = requests.get('http://dili_api:5006/hello')
-        rr = {
-            "result": r.text
-        }
+        # r = requests.get('http://dili_api:5006/hello')
+        # rr = {
+        #     "result": r.text
+        # }
 
-        return render(request, template_name, rr)
+        return render(request, template_name)
+        # return render(request, template_name, rr)
 
 class mariatest(generic.TemplateView):
     def get(self, request, *args, **kwargs):
         template_name = 'dili/mariatest.html'
-        #화면 호출
-        r = requests.get('http://dili_api:5006/hello')
-        rr = {
-            "result": "123"
-        }
 
-        return render(request, template_name, rr)
+        return render(request, template_name)
 
 def getMaria(request):
     param = json.loads(request.GET['param'])
 
     #api 호출
-    r = requests.get('http://dili_api:5001/mariatestDB')
+    r = requests.get('http://dili_api:5006/mariatestDB')
     logger.info(r)
     logger.info(r.text)
-    logger.info(r.json())
-    logger.info(json.loads(r.text))
-    return JsonResponse(r.json(), safe=False)
+
+    return JsonResponse({"id":"123"}, safe=False)
+    # return JsonResponse(r.json(), safe=False)

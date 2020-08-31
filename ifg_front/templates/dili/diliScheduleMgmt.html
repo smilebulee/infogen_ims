@@ -7,7 +7,6 @@
 
             $('#grp_grid').hide();
 
-
             <!--Grid Btn Click Event-->
             $('#btn_showGrd').click(function(){
                 console.log("Grid Btn Click Event");
@@ -20,6 +19,21 @@
                 console.log("Calendar Btn Click Event");
                 $('#grp_grid').hide();
                 $('#grp_calendar').show('');
+            });
+
+            <!--search Btn Click Event-->
+            $('#searchBtn').click(function(){
+
+                var name = $('#ipt_searchName').val();
+                alert("이름["+name+"]기준 직원조회 팝업 호출 연동하기.");
+            });
+
+            <!--ipt_searchName EnterKey Event-->
+            $('#ipt_searchName').keydown(function(e){
+                if ( e.keyCode == 13 && $('#ipt_searchName').val() != 'undefined' && $('#ipt_searchName').val() != "" ) {
+                    var name = $('#ipt_searchName').val();
+                    alert("이름["+name+"]기준 직원조회 팝업 호출 연동하기.");
+                }
             });
 
         });
@@ -50,7 +64,7 @@
                             <div class="card-body flex-height d-flex m-0 p-2">
                                 <div class="align-self-start align-self-center mr-3">성명</div>
                                 <div class="align-self-center mr-3">
-                                    <input type="text" class="form-control" id="ipt_searchName" name="ipt_searchName" placeholder="황이성" maxlength="10"/>
+                                    <input type="text" class="form-control" id="ipt_searchName" name="ipt_searchName" placeholder="이름을 입혁해주세요." maxlength="10"/>
                                 </div>
                                 <div class="align-self-end align-self-center">
                                     <button class="btn btn-primary" id="searchBtn">Search</button>
