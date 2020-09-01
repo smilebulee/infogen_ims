@@ -187,7 +187,7 @@ class Save(Resource):
 class mariatestDB(Resource): # Mariadb 연결 진행
     def get(self):
 
-        logging.debug('app py Start')
+        logging.debug(request.get_json())
 
         #requirements pymysql import 후 커넥트 사용
         mysql_con = pymysql.connect(host='218.151.225.142', port=3306, db='IFG_IMS', user='ims2', password='1234',
@@ -211,12 +211,46 @@ class mariatestDB(Resource): # Mariadb 연결 진행
         return result2
 
 
+class wrkTimeInfoByEml(Resource): # Mariadb 연결 진행
+    def get(self):
+
+        data = request.get_json()
+
+        logging.debug('================== App Start ==================')
+        logging.debug(data)
+        logging.debug(data["email"])
+        logging.debug('================== App End ==================')
+
+        #requirements pymysql import 후 커넥트 사용
+        mysql_con = pymysql.connect(host='218.151.225.142', port=3306, db='IFG_IMS', user='ims2', password='1234',
+                                        charset='utf8')
+        try:
+            with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+                #쿼리문 실행
+                sql = "SELECT * FROM TB_WRK_TM_MGMT_M WHERE EMP_EMAL_ADDR = '" + data["email"] + "'"
+                logging.debug(sql)
+                cursor.execute(sql)
+
+        finally:
+            mysql_con.close()
+
+        result2 = cursor.fetchall()
+        for row in result2:
+            logging.debug('====== row====')
+            logging.debug(row)
+            logging.debug('===============')
+        array = list(result2)  # 결과를 리스트로
+
+        return result2
+
+
 api.add_resource(Hello, '/hello')
 api.add_resource(Register, '/register')
 api.add_resource(Retrieve, '/retrieve')
 api.add_resource(Save, '/save')
 
 api.add_resource(mariatestDB,'/mariatestDB') #api 선언
+api.add_resource(wrkTimeInfoByEml,'/wrkTimeInfoByEml') #api 선언
 
 
 if __name__ == "__main__":

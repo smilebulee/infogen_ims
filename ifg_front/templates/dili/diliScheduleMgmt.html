@@ -7,6 +7,24 @@
 
             $('#grp_grid').hide();
 
+            var param = {
+                "email" : 'ishwang@ingofen.co.kr'
+            }
+
+            <!--화면 OnLoad시 Email 기준 WrkTime Table 조회.-->
+            $.ajaxCall( param, {
+                 'method' : 'GET',
+                 'url' : "{% url 'dili_api:getWrkTimeInfoByEml' %}",
+                 'dataType' : 'json',
+                 'data' : JSON.stringify(param),
+                 'async' : false,
+                 'callbackFn' : function(data, status, xhr){
+                    console.log("data : ",data)
+                    console.log("status : ",status)
+                    console.log("xhr : ",xhr)
+                 }
+            });
+
             <!--Grid Btn Click Event-->
             $('#btn_showGrd').click(function(){
                 console.log("Grid Btn Click Event");
@@ -31,7 +49,7 @@
             <!--ipt_searchName EnterKey Event-->
             $('#ipt_searchName').keydown(function(e){
                 if ( e.keyCode == 13 && $('#ipt_searchName').val() != 'undefined' && $('#ipt_searchName').val() != "" ) {
-                    var name = $('#ipt_searchName').val();
+
                     alert("이름["+name+"]기준 직원조회 팝업 호출 연동하기.");
                 }
             });
