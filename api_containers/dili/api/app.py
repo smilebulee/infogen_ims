@@ -201,10 +201,6 @@ class mariatestDB(Resource): # Mariadb 연결 진행
         finally:
             mysql_con.close()
 
-        logging.debug('====== result Start ====')
-        logging.debug(result2)
-        logging.debug('====== result End ====')
-
         result2 = cursor.fetchall()
         for row in result2:
             logging.debug('====== row====')

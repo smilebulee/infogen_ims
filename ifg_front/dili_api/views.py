@@ -48,6 +48,7 @@ def getMaria(request):
     r = requests.get('http://dili_api:5006/mariatestDB')
     logger.info(r)
     logger.info(r.text)
-
-    return JsonResponse({"id":"123"}, safe=False)
+    logger.info(r.json())
+    logger.info(json.loads(r.text))
+    return JsonResponse(r.json(), safe=False)
     # return JsonResponse(r.json(), safe=False)
