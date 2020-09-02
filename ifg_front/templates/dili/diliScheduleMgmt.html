@@ -1,17 +1,35 @@
+
+<!--
+■■■■■■■ 황이성 TO-DO List  ■■■■■■■
+1. 화면 Onload시 Session User Info를 통해 현재일이 포함된 주 근무시간 가져오기.
+   - 조회 후 해당 데이터를 정상근무/ 초과근무(승인)/ 초과근무(미승인) 값을 기준해서 차트 그리기.
+   - 동적 데이터 대상 : 근무시간 값 / 총 근무시간 / 범례 Label /
+   - 차트 색 디자인 변경.
+
+2. 직원 조회 팝업 연동 [연경씨 화면으로 이름 전달 후 Email회신]
+3. Start To End Date 기준 근무시간 가져오기 함수 개발.
+
+-->
+
+
 {% extends 'common/base.html' %}
 
 {% block content %}
     <div class="container">
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
         <script type="text/javascript">
         $(document).ready(function(){
 
-            $('#grp_grid').hide();
+            $('#grp_grid').hide();                                                  // Calendar UI를 Default로 한다.
 
+
+            /*********************************************************************
+            *   Session Email 값 기준 현재일 포함 주 근무시간 조회
+            *********************************************************************/
             var param = {
-                "email" : 'ishwang@ingofen.co.kr'
+                "email" : 'ishwang@ingofen.co.kr'                                   // 추후 Session Value 연동.
             }
 
-            <!--화면 OnLoad시 Email 기준 WrkTime Table 조회.-->
             $.ajaxCall( param, {
                  'method' : 'GET',
                  'url' : "{% url 'dili_api:getWrkTimeInfoByEml' %}",
@@ -22,39 +40,168 @@
                     console.log("data : ",data)
                     console.log("status : ",status)
                     console.log("xhr : ",xhr)
+
+                    // 해당 근무시간을 데이터로 차트를 그린다.
+                    drawChart(34,7,9.4);
                  }
             });
 
-            <!--Grid Btn Click Event-->
+
+            /*********************************************************************
+            *   Grid Btn Click Event - 그리드 버튼 클릭
+            *********************************************************************/
             $('#btn_showGrd').click(function(){
                 console.log("Grid Btn Click Event");
                 $('#grp_grid').show('');
                 $('#grp_calendar').hide();
             });
 
-            <!--Calendar Btn Click Event-->
+            /*********************************************************************
+            *   Calendar Btn Click Event - 캘린더 버튼 클릭
+            *********************************************************************/
             $('#btn_showCal').click(function(){
                 console.log("Calendar Btn Click Event");
                 $('#grp_grid').hide();
                 $('#grp_calendar').show('');
             });
 
-            <!--search Btn Click Event-->
+            /*********************************************************************
+            *   search Btn Click Event - 검색 버튼 클릭
+            *********************************************************************/
             $('#searchBtn').click(function(){
 
                 var name = $('#ipt_searchName').val();
-                alert("이름["+name+"]기준 직원조회 팝업 호출 연동하기.");
+                alert("이름["+name+"]기준 직원조회 팝업 호출 연동하기.");                   //직원 조회 화면으로 Name값 전달
             });
 
-            <!--ipt_searchName EnterKey Event-->
-            $('#ipt_searchName').keydown(function(e){
-                if ( e.keyCode == 13 && $('#ipt_searchName').val() != 'undefined' && $('#ipt_searchName').val() != "" ) {
 
-                    alert("이름["+name+"]기준 직원조회 팝업 호출 연동하기.");
+            /*********************************************************************
+            *   ipt_searchName EnterKey Event - 직원 조회 엔터키 이벤트
+            *********************************************************************/
+            $('#ipt_searchName').keydown(function(e){
+
+                //엔터키 입력 + 이름컬럼에 값이 있는 경우.
+                if ( e.keyCode == 13 && $('#ipt_searchName').val() != 'undefined' && $('#ipt_searchName').val() != "" ) {
+                    var name = $('#ipt_searchName').val();
+                    alert("이름["+name+"]기준 직원조회 팝업 호출 연동하기.")
                 }
             });
 
         });
+
+
+
+
+
+        /*********************************************************************
+        *   Draw Chart Event - 근무누적시간 누적막대그래프 그리기
+        *   nmlWrkTime      - 정상근무시간
+        *   aprvWrkTime     - 초과근무시간(승인)
+        *   notAprvWrkTime  - 초과근무시간(미승인)
+        *********************************************************************/
+        function drawChart(nmlWrkTime, aprvWrkTime, notAprvWrkTime) {
+
+            var arr = [nmlWrkTime, aprvWrkTime, notAprvWrkTime]
+
+            var barOptions_stacked = {
+                title: {
+                    display: true,
+                    text: '총 근무시간 : ' + (nmlWrkTime + aprvWrkTime + notAprvWrkTime) + 'H',
+                    fontSize: 15,
+                    padding: 0
+                },
+                tooltips: {
+                    enabled: false
+                },
+                hover :{
+                    animationDuration:0
+                },
+                scales: {
+                    xAxes: [{
+                        ticks: {
+                            beginAtZero:true,
+                            display:false,
+                            max : 52
+                        },
+                        scaleLabel:{
+                            display:false
+                        },
+                        gridLines: {
+                            display:false
+                        },
+                        stacked: true
+                    }],
+                    yAxes: [{
+                        gridLines: {
+                            display:false,
+                            color: "#fff",
+                            zeroLineColor: "#fff",
+                            zeroLineWidth: 0
+                        },
+                        stacked: true
+                    }]
+                },
+                legend:{
+                    display:true,
+                    position : 'right',
+                    fontColor: 'rgb(255, 99, 132)'
+                },
+
+                animation: {
+                    onComplete: function () {
+                        var chartInstance = this.chart;
+                        var ctx = chartInstance.ctx;
+                        ctx.textAlign = "left";
+                        ctx.font = "13px Open Sans";
+                        ctx.fillStyle = "#fff";
+
+                        Chart.helpers.each(this.data.datasets.forEach(function (dataset, i) {
+                            var meta = chartInstance.controller.getDatasetMeta(i);
+                            Chart.helpers.each(meta.data.forEach(function (bar, index) {
+                                data = dataset.data[index];
+                                if( i==0 && arr[i] >= 1){
+                                    ctx.fillText(data, bar._model.x-25 - (bar._model.x * 0.5)+20, bar._model.y+1);
+                                } else if ( i >0 && arr[i] >= 1){
+                                    ctx.fillText(data, bar._model.x-25 - ( (bar._model.x - bar._model.base ) * 0.5)+20, bar._model.y+1);
+                                }
+                            }),this)
+                        }),this);
+                    }
+                },
+                responsive : true,
+                maintainAspectRatio: false,
+                pointLabelFontFamily : "Quadon Extra Bold",
+                scaleFontFamily : "Quadon Extra Bold",
+            };
+
+            var ctx = document.getElementById("Chart1");
+
+            var myChart = new Chart(ctx, {
+                type: 'horizontalBar',
+                data: {
+                    datasets: [{
+                        label: "정상근무 : " + nmlWrkTime + "H",
+                        data: [nmlWrkTime],
+                        backgroundColor: "rgba(63,103,126,1)",
+                        hoverBackgroundColor: "rgba(50,90,100,1)",
+                        barPercentage: 0.4
+                    },{
+                        label: "초과근무(승인) : " + aprvWrkTime + "H",
+                        data: [aprvWrkTime],
+                        backgroundColor: "rgba(163,103,126,1)",
+                        hoverBackgroundColor: "rgba(140,85,100,1)",
+                        barPercentage: 0.4
+                    },{
+                        label: "초과근무(미승인) : " + notAprvWrkTime + "H",
+                        data: [notAprvWrkTime],
+                        backgroundColor: "rgba(63,203,226,1)",
+                        hoverBackgroundColor: "rgba(46,185,235,1)",
+                        barPercentage: 0.4
+                    }]
+                },
+                options: barOptions_stacked,
+            });
+        }
 
     </script>
         <div class="row">
@@ -74,7 +221,7 @@
                                     <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-caret-down-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                                         <path d="M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z"/>
                                     </svg>
-                                    조회설정
+                                    직원조회
                                 </button>
                             </h2>
                         </div>
@@ -82,7 +229,7 @@
                             <div class="card-body flex-height d-flex m-0 p-2">
                                 <div class="align-self-start align-self-center mr-3">성명</div>
                                 <div class="align-self-center mr-3">
-                                    <input type="text" class="form-control" id="ipt_searchName" name="ipt_searchName" placeholder="이름을 입혁해주세요." maxlength="10"/>
+                                    <input type="text" class="form-control" id="ipt_searchName" name="ipt_searchName" placeholder="이름을 입력해주세요." maxlength="10"/>
                                 </div>
                                 <div class="align-self-end align-self-center">
                                     <button class="btn btn-primary" id="searchBtn">Search</button>
@@ -97,7 +244,7 @@
                     <div class="card">
                         <div class="card-header p-0" id="head_totWrkTime">
                             <h2 class="mb-0">
-                                <button class="btn btn-link btn-block text-left text-dark" type="button" data-toggle="collapse" data-target="#col_totWrkTime" aria-expanded="true" aria-controls="collapseOne">
+                                <button id="btn_acdTotWrkTime" class="btn btn-link btn-block text-left text-dark" type="button" data-toggle="collapse" data-target="#col_totWrkTime" aria-expanded="true" aria-controls="collapseOne">
                                     <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-caret-down-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                                         <path d="M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z"/>
                                     </svg>
@@ -106,12 +253,11 @@
                             </h2>
                         </div>
                         <div id="col_totWrkTime" class="collapse show" aria-labelledby="head_totWrkTime" data-parent="#grp_totWrkTime">
-                            <div class="card-body flex-height d-flex m-0 p-2">
-                                <div class="bg-light p-5">
-                                Graph Area
+                            <div class="mt-3" style="width:100%;">
+                                <div class="chart-container" style="display:block; width:100%; height:120px;">
+                                    <canvas id="Chart1"></canvas>
                                 </div>
                             </div>
-
                         </div>
                     </div>
                 </div>
