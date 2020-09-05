@@ -1,24 +1,34 @@
 from flask import Flask, jsonify, request
 from flask_restful import Api, Resource
-from pymongo import MongoClient
+
 import logging
 logging.basicConfig(level=logging.DEBUG)
 import bcrypt
 
-from bson.json_util import dumps
 import json
-
 import pymysql
-
-db = pymysql.connect(host='emp_db', port=3306, user='root', passwd='1111', db='emp', charset='utf8',autocommit=True)
 
 app = Flask(__name__)
 api = Api(app)
 logger = logging.getLogger(__name__)
 
-#client = MongoClient("mongodb://emp_db:27017")
-#db = client.local
-#foxTestDb = db["foxTest"]
+
+# logging.debug("1")
+# mysql_con = pymysql.connect(host='mariadb', port=3306, db='test11', user='root', password='infogen')
+#
+# logging.debug("2")
+# cursor = mysql_con.cursor()
+#
+# logging.debug("3")
+# sql = "SELECT * FROM testpark where a=%s and b=%s"
+# cursor.execute(sql ,(a,b,c,))
+#
+# logging.debug("4")
+# result =  cursor.fetchall()
+# logging.debug(result)
+# mysql_con.close()
+#
+# print(result)
 
 
 """ 
@@ -26,10 +36,7 @@ HELPER FUNCTIONS
 """
 
 def existsEmail(email):
-    logging.debug(foxTestDb.find({"email": email}).count())
-    if foxTestDb.find({"email": email}).count() == 0:
-        return False
-    else:
+
         return True
 
 
@@ -54,12 +61,14 @@ class Save(Resource):
 
         #data = request.get_json()
         # get data
+        #id = request.form['id']
         email = request.form['email']
         password = request.form['password']
         addr = request.form['addr']
         sex = request.form['sex']
 
         logging.debug('--------------------------------------')
+        #logging.debug('id : ' + id)
         logging.debug('email : ' + email)
         logging.debug('password : ' + password)
         logging.debug('addr : ' + addr)
@@ -74,16 +83,12 @@ class Save(Resource):
                 "msg": "Already Exists EMAIL"
             }
         else:
-            foxTestDb.insert({
-                "email": email,
-                "password": password,
-                "addr": addr,
-                "sex": sex
-            })
+
             retJson = {
                 "status": 200,
                 "msg": "Data has been saved successfully"
             }
+
 
         return jsonify(retJson)
 
@@ -124,20 +129,21 @@ class Update(Resource):
             logging.debug('flag : ' + data['flag'])
             logging.debug('--------------------------------------')
 
-            if data['flag'] == "U":
-                foxTestDb.update({
-                    "email": email
-                },
-                {'$set':    {
-                            "password":password,
-                            "addr":addr,
-                            "sex":sex
-                            }
-                })
-            elif data['flag'] == "D":
-                foxTestDb.remove({
-                    "email": email
-                })
+            # if data['flag'] == "U":
+            #     #
+            #     .update({
+            #     #     "email": email
+            #     # },
+            #     # {'$set':    {
+            #     #             "password":password,
+            #     #             "addr":addr,
+            #     #             "sex":sex
+            #     #             }
+            #     # })
+            # elif data['flag'] == "D":
+                # foxTestDb.remove({
+                #     "email": email
+                # })
 
         retJson = {
             "status": 200,
@@ -158,27 +164,42 @@ class Search(Resource):
         logging.debug('email : ' + email)
         logging.debug('------------------------------------')
 
+        # if email is None or email == "":
+        #     logging.debug("is None")
+        #     # result = foxTestDb.find()
+        # else:
+        #     logging.debug("is not null")
+        #     # result = foxTestDb.find({
+        #     #     "email": email
+        #     # })
+
+        mysql_con = pymysql.connect(host='mariadb', port=3306, db='test11', user='root', password='infogen')
+        cursor = mysql_con.cursor()
+
+        logging.debug("3")
         if email is None or email == "":
-            logging.debug("is None")
-            result = foxTestDb.find()
+            sql = "SELECT EMP_ID AS EMAIL FROM TB_EMP where EMP_ID=%s and b=%s"
+            cursor.execute(sql, (email))
         else:
             logging.debug("is not null")
-            result = foxTestDb.find({
-                "email": email
-            })
+            sql = "SELECT EMP_ID AS EMAIL FROM TB_EMP "
+            cursor.execute(sql)
 
+        result = cursor.fetchall()
+        logging.debug(result)
+        mysql_con.close()
         logging.debug('---------------RESULT---------------')
         logging.debug(result)
         logging.debug('------------------------------------')
-        array = list(result) #결과를 리스트로
+        array = list(result)  # 결과를 리스트로
         logging.debug(array)
-        logging.debug(dumps(array)) #리스트파일은 dumps
-        logging.debug(jsonify(dumps(array))) #dumps한 파일은 jsonify
+        logging.debug(dumps(array))  # 리스트파일은 dumps
+        logging.debug(jsonify(dumps(array)))  # dumps한 파일은 jsonify
 
-        # retJson = {
-        #     "status": 200,
-        #     "msg": "Data has been saved successfully"
-        # }
+        retJson = {
+            "status": 200,
+            "msg": "Data has been saved successfully"
+        }
 
         return jsonify(dumps(array))
 
@@ -189,13 +210,227 @@ class Health(Resource):
         }
         return jsonify(retJson)
 
+class Id(Resource):
+    def get(self):
+        logging.debug("idChektest start")
+
+        logging.debug(request)
+        id = request.args.get('id')
+        # logging.debug(foxTestDb.find({"id": id}).count())
+
+        # if foxTestDb.find({"id": id}).count() == 0:
+        #     result = {"result" : "False"}
+        # else:
+        #     result = {"result" : "True"}
+        result = "";
+        logging.debug(result)
+
+        return result
+
+class SignUp(Resource):
+    def post(self):
+        # Get posted data from request
+        logging.debug("save start")
+
+        #data = request.get_json()
+        # get data
+        id = request.form['id']
+        email = request.form['email']
+        password = request.form['password']
+        phone = request.form['phone']
+
+        logging.debug('--------------------------------------')
+        logging.debug('id : ' + id)
+        logging.debug('email : ' + email)
+        logging.debug('password : ' + password)
+        logging.debug('phone : ' + phone)
+        logging.debug('--------------------------------------')
+
+        # logging.debug(existsEmail(email))
+        if existsEmail(email):
+            logging.debug("!!! WARNING !!! email Exists!!")
+            retJson = {
+                "status": 301,
+                "msg": "Already Exists EMAIL"
+            }
+        else:
+            # foxTestDb.insert({
+            #     "id" : id,
+            #     "email": email,
+            #     "password": password,
+            #     "phone" : phone
+            # })
+            retJson = {
+                "status": 200,
+                "msg": "Data has been saved successfully"
+            }
+
+        return jsonify(retJson)
+
+
+class Search2(Resource):
+    def get(self):
+        # Get posted data from request
+        logging.debug("search start")
+
+        # get data
+        id = request.args.get('id')
+        email = request.args.get('email')
+        passwd = request.args.get('password')
+
+        logging.debug('---------------SEARCH---------------')
+        logging.debug('email : ' + email)
+        logging.debug('id : ' + id)
+        logging.debug('passwd : ' + passwd)
+        logging.debug('------------------------------------')
+
+        logging.debug("is not null id")
+
+        mysql_con = pymysql.connect(host='mariadb', port='3306:3306', db='test11', user='root', password='infogen',charset ='utf8')
+
+        try :
+            with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+                if email is None or email == "":
+                    logging.debug("search2 all data")
+                    sql = "SELECT * FROM TB_EMP "
+                    cursor.execute(sql)
+                else:
+                    logging.debug("is not null")
+                    sql = "SELECT EMP_ID AS EMAIL FROM TB_EMP where EMP_ID=%s "
+                    cursor.execute(sql, (email))
+
+        finally:
+            mysql_con.close()
+
+        result = cursor.fetchall()
+        for row in result :
+            logging.debug('====== row====')
+            logging.debug(row)
+            logging.debug('===============')
+        logging.debug('---------------RESULT---------------')
+        logging.debug(result)
+        logging.debug('------------------------------------')
+        array = list(result)  # 결과를 리스트로
+        logging.debug(array)
+        logging.debug(dumps(array))  # 리스트파일은 dumps
+        logging.debug(jsonify(dumps(array)))  # dumps한 파일은 jsonify
+
+        # retJson = {
+        #     "status": 200,
+        #     "msg": "Data has been saved successfully"
+        # }
+        return jsonify(dumps(array))
+class empReferenceInit(Resource):
+    def get(self):
+        # Get posted data from request
+        logging.debug("empReferenceInit")
+
+        # get data
+        id = request.args.get('id')
+        email = request.args.get('email')
+        passwd = request.args.get('password')
+
+        logging.debug('---------------SEARCH---------------')
+        logging.debug('id : ' + id)
+        logging.debug('------------------------------------')
+
+
+        mysql_con = pymysql.connect(host='mariadb', port='3306', db='test11', user='root', password='infogen',charset ='utf8')
+        logging.debug('init sql end')
+        try :
+            with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+                sql = "SELECT * FROM EMP_API_TB_EMP "
+                cursor.execute(sql)
+
+        finally:
+            mysql_con.close()
+
+        result = cursor.fetchall()
+        for row in result :
+            logging.debug('====== row====')
+            logging.debug(row)
+            logging.debug('===============')
+        logging.debug('---------------RESULT---------------')
+        logging.debug(result)
+        logging.debug('------------------------------------')
+        array = list(result)  # 결과를 리스트로
+        logging.debug(array)
+        logging.debug(dumps(array))  # 리스트파일은 dumps
+        logging.debug(jsonify(dumps(array)))  # dumps한 파일은 jsonify
+
+        # retJson = {
+        #     "status": 200,
+        #     "msg": "Data has been saved successfully"
+        # }
+        #return jsonify(dumps(array))
+        return result
+
+class testDB(Resource):
+    def get(self):
+        mysql_con = pymysql.connect(host='218.151.225.142', port=3306, db='IFG_IMS', user='ims2', password='1234',
+                                        charset='utf8')
+
+        try:
+            with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+                sql = "SELECT * FROM WEB_CONN_TEST "
+                cursor.execute(sql)
+
+        finally:
+            mysql_con.close()
+
+        result2 = cursor.fetchall()
+        for row in result2:
+            logging.debug('====== row====')
+            logging.debug(row)
+            logging.debug('===============')
+        array = list(result2)  # 결과를 리스트로
+
+        return result2
+
+class mariatestDB(Resource):
+    def get(self):
+        # mysql_con = pymysql.connect(host='218.151.225.142', port=3306, db='IFG_IMS', user='ims2', password='1234',
+        #                                 charset='utf8')
+        mysql_con = pymysql.connect(host='218.151.225.142',
+                                    port=3306,
+                                    db='IFG_IMS',
+                                    user='ims2',
+                                    password='1234',
+                                    charset='utf8')
+
+        try:
+            with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+                sql = "SELECT * FROM WEB_CONN_TEST "
+                # sql = "SELECT * FROM SKIL_TEST "
+                # sql = "UPDATE SKIL_TEST SET RANK = 'B' WHERE NAME = 'test'"
+                cursor.execute(sql)
+
+                mysql_con.commit();
+
+        finally:
+            mysql_con.close()
+
+        result2 = cursor.fetchall()
+        for row in result2:
+            logging.debug('====== row====')
+            logging.debug(row)
+            logging.debug('===============')
+        array = list(result2)  # 결과를 리스트로
+
+        return result2
 #
 api.add_resource(Hello, '/hello')
 api.add_resource(Save, '/save')
 api.add_resource(Update, '/update')
 api.add_resource(Search, '/search')
 api.add_resource(Health, '/health')
-
+#신규 추가
+api.add_resource(Id,'/idChektest')
+api.add_resource(SignUp,'/signUp')
+api.add_resource(Search2,'/search2')
+api.add_resource(empReferenceInit,'/empReferenceInit')
+api.add_resource(testDB,'/testDB')
+api.add_resource(mariatestDB,'/mariatestDB')
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5001, debug=True)

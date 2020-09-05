@@ -16,7 +16,7 @@ services:
     volumes:
       - data-postgressql:/var/lib/postgresql/data
 #      - /c/workspace/postgres_db:/var/lib/postgresql/data
-
+#
     environment:
       - POSTGRES_DB=ifg_ims
       - POSTGRES_USER=infogen
@@ -24,7 +24,35 @@ services:
       - POSTGRES_INITDB_ARGS=--encoding=UTF-8
     ports:
       - "5432:5432"
-      
+
+
+  #mariadb(test)
+#  postgres:
+#    image: mariadb:latest
+#####    container_name: mariadb
+#    volumes:
+#      - data-postgressql:/var/lib/mysql
+#    environment:
+#      - MYSQL_DATABASE=IFG_IMS
+#      - MYSQL_USER=ims2
+#      - MYSQL_PASSWORD=1234
+#      - MYSQL_ROOT_PASSWORD=infogen
+#      MYSQL_ROOT_PASSWORD: 'infogen'
+#      MYSQL_USER : 'ims2'
+#      MYSQL_PASSWORD : '1234'
+#      MYSQL_DATABASE : 'IFG_IMS'
+#    ports:
+#      - "3306:3306"
+#
+#  mariadb:
+#    image: mariadb:latest
+#    restart: always
+#    environment:
+#      MYSQL_ROOT_PASSWORD: 'infogen'
+#    volumes:
+#      - data-postgressql:/var/lib/mysql
+#    ports:
+#      - '3306:3306'
   # front ui
   front:
     build: "./ifg_front"
@@ -32,10 +60,10 @@ services:
       - "8000:8000"
     links:
       - emp_api
-      - prj_api
+#      - prj_api
       - postgres
-#      - skil_api
-#      - cmm_api
+      - skil_api
+      - cmm_api
       - cnc_api
 #      - dili_api
 #      - eval_api
@@ -43,6 +71,11 @@ services:
 #      - stat_api
 #      - site_api
     environment:
+#      - MYSQL_HOST=218.151.225.142
+#      - MYSQL_DATABASE=IFG_IMS
+#      - MYSQL_USER=ims2
+#      - MYSQL_PASSWORD=1234
+#      - MYSQL_ROOT_PASSWORD=infogen
       - DJANGO_DB_HOST=218.151.225.142
       - DJANGO_DB_PORT=5432
       - DJANGO_DB_NAME=ifg_ims
@@ -56,27 +89,30 @@ services:
     ports: 
       - "5001:5001"     # 로컬의 5001포트로 요청일 들어오면 emp_api 컨테이너의 5001 포트로 연결
     links:
-      - emp_db    # emp_api컨테이너는 emp_db 컨테이너로 접속가능
+      - emp_db
+      - emp_db2    # emp_api컨테이너는 emp_db 컨테이너로 접속가능
     environment:
       - SPRING_PROFILES_ACTIVE=local      # 이미지 생성시 세팅될 환경변수들
       - SPRING_APPLICATION_NAME=emp_api
       - SIDECAR_PORT=5001
   emp_db:
     build: "./api_containers/emp/db"   # Dockerfile의 경로
-    container_name: emp_db
+  emp_db2:
+    build: "./api_containers/emp/db"   # Dockerfile의 경로
+    #container_name: mariadb
     image: mariadb:latest
     restart: always
     ports:
       - 3306:3306
-    environment:
-      MYSQL_ROOT_PASSWORD: '1111'
-      TZ: Asia/Seoul
-    command: # 명령어 실행
-      - --character-set-server=utf8mb4
-      - --collation-server=utf8mb4_unicode_ci
-      - --innodb-use-native-aio=0
     volumes:
-      - data-postgressql:/var/lib/postgresql/data/mysql
+      - data-postgressql:/var/lib/mysql
+    environment:
+      MYSQL_HOST: '218.151.225.142'
+      MYSQL_ROOT_PASSWORD: 'infogen'
+      MYSQL_USER : 'ims2'
+      MYSQL_PASSWORD : '1234'
+      MYSQL_DATABASE : 'IFG_IMS'
+      TZ: Asia/Seoul
 
   # 2.프로젝트 관리
   prj_api: 
@@ -93,24 +129,41 @@ services:
     build: "./api_containers/prj/db"
 
 #  # 3.skill 관리
-#  skil_api:
-#    build: "./api_containers/skil/api"
-#    ports:
-#      - "5003:5003"
-#    links:
-#      - skil_db
-#  skil_db:
-#    build: "./api_containers/skil/db"
-#
-#  # 4.cmm 관리
-#  cmm_api:
-#    build: "./api_containers/cmm/api"
-#    ports:
-#      - "5004:5004"
-#    links:
-#      - cmm_db
-#  cmm_db:
-#    build: "./api_containers/cmm/db"
+  skil_api:
+    build: "./api_containers/skil/api"
+    ports:
+      - "5003:5003"
+    links:
+      - skil_db
+      - skil_db2
+  skil_db:
+    build: "./api_containers/skil/db"
+  skil_db2:
+    build: "./api_containers/skil/db"   # Dockerfile의 경로
+    #container_name: mariadb
+    image: mariadb:latest
+    restart: always
+    ports:
+      - 9876:3306
+    volumes:
+      - data-postgressql:/var/lib/mysql
+    environment:
+      MYSQL_HOST: '218.151.225.142'
+      MYSQL_ROOT_PASSWORD: 'infogen'
+      MYSQL_USER: 'ims2'
+      MYSQL_PASSWORD: '1234'
+      MYSQL_DATABASE: 'testdb'
+
+
+# 4.cmm 관리
+  cmm_api:
+    build: "./api_containers/cmm/api"
+    ports:
+      - "5004:5004"
+    links:
+      - cmm_db
+  cmm_db:
+    build: "./api_containers/cmm/db"
 #
 #  # 5.접속 관리
   cnc_api:
@@ -152,23 +205,23 @@ services:
 #  kpi_db:
 #    build: "./api_containers/kpi/db"
 #
-#  # 9.현황 관리
-#  stat_api:
-#    build: "./api_containers/stat/api"
-#    ports:
-#      - "5009:5009"
-#    links:
-#      - stat_db
-#  stat_db:
-#    build: "./api_containers/stat/db"
-#
+  # 9.현황 관리
+  stat_api:
+    build: "./api_containers/stat/api"
+    ports:
+      - "5009:5009"
+    links:
+      - stat_db
+  stat_db:
+    build: "./api_containers/stat/db"
+
 #  # 10.사이트맵 관리
-#  site_api:
-#    build: "./api_containers/site/api"
-#    ports:
-#      - "5010:5010"
-#    links:
-#      - site_db
-#  site_db:
-#    build: "./api_containers/site/db"
+  site_api:
+    build: "./api_containers/site/api"
+    ports:
+      - "5010:5010"
+    links:
+      - site_db
+  site_db:
+    build: "./api_containers/site/db"
 
