@@ -1,14 +1,20 @@
 from flask import Flask, jsonify, request
 from flask_restful import Api, Resource
-from pymongo import MongoClient
+
+import logging
+logging.basicConfig(level=logging.DEBUG)
 import bcrypt
+
+import json
+import pymysql
 
 app = Flask(__name__)
 api = Api(app)
+logger = logging.getLogger(__name__)
 
-client = MongoClient("mongodb://skil_db:27017")
-db = client.projectDB
-users = db["Users"]
+##client = MongoClient("mongodb://skil_db:27017")
+#db = client.projectDB
+#users = db["Users"]
 
 """ 
 HELPER FUNCTIONS
@@ -16,9 +22,9 @@ HELPER FUNCTIONS
 
 
 def userExist(username):
-    if users.find({"Username": username}).count() == 0:
-        return False
-    else:
+    # if users.find({"Username": username}).count() == 0:
+    #     return False
+    # else:
         return True
 
 
@@ -50,6 +56,23 @@ RESOURCES
 
 class Hello(Resource):
     def get(self):
+        mysql_con = pymysql.connect(host='218.151.225.142', port=9876, db='testdb', user='ims2', password='1234',
+                                    charset='utf8')
+
+        try:
+            with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+                sql = "SELECT * FROM SKIL_TEST "
+                cursor.execute(sql)
+
+        finally:
+            mysql_con.close()
+
+        result2 = cursor.fetchall()
+        for row in result2:
+            logging.debug('====== row====')
+            logging.debug(row)
+            logging.debug('===============')
+        array = list(result2)  # 결과를 리스트로
         return "This is Skill Management API!"
 
 
@@ -183,12 +206,35 @@ class Save(Resource):
 
         return jsonify(retJson)
 
+class mariaClass(Resource):
+    def get(self):
+        mysql_con = pymysql.connect(host='218.151.225.142', port=9876, db='testdb', user='ims2', password='1234',
+                                        charset='utf8')
+
+        try:
+            with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+                sql = "SELECT * FROM SKIL_TEST "
+                cursor.execute(sql)
+
+        finally:
+            mysql_con.close()
+
+        result2 = cursor.fetchall()
+        for row in result2:
+            logging.debug('====== row====')
+            logging.debug(row)
+            logging.debug('===============')
+        array = list(result2)  # 결과를 리스트로
+
+        return result2
 
 api.add_resource(Hello, '/hello')
 api.add_resource(Register, '/register')
 api.add_resource(Retrieve, '/retrieve')
 api.add_resource(Save, '/save')
 
+api.add_resource(mariaClass,'/mariaClass')
+mariaClass
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5003, debug=True)

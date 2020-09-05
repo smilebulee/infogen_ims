@@ -1,11 +1,15 @@
 from flask import Flask, jsonify, request
 from flask_restful import Api, Resource
+
 #from pymongo import MongoClient
+
 import logging
 logging.basicConfig(level=logging.DEBUG)
 import bcrypt
 
+
 #from bson.json_util import dumps
+
 import json
 import pymysql
 
@@ -13,9 +17,23 @@ app = Flask(__name__)
 api = Api(app)
 logger = logging.getLogger(__name__)
 
-#client = MongoClient("mongodb://emp_db:27017")
-#db = client.local
-#foxTestDb = db["foxTest"]
+
+# logging.debug("1")
+# mysql_con = pymysql.connect(host='mariadb', port=3306, db='test11', user='root', password='infogen')
+#
+# logging.debug("2")
+# cursor = mysql_con.cursor()
+#
+# logging.debug("3")
+# sql = "SELECT * FROM testpark where a=%s and b=%s"
+# cursor.execute(sql ,(a,b,c,))
+#
+# logging.debug("4")
+# result =  cursor.fetchall()
+# logging.debug(result)
+# mysql_con.close()
+#
+# print(result)
 
 
 """ 
@@ -27,6 +45,7 @@ def existsEmail(email):
     # if foxTestDb.find({"email": email}).count() == 0:
     #     return False
     # else:
+
         return True
 
 
@@ -387,6 +406,26 @@ class mariatestDB(Resource): # Mariadb 연결 진행
                 #쿼리문 실행
                 sql = "SELECT * FROM WEB_CONN_TEST "
                 cursor.execute(sql)
+
+class mariatestDB(Resource):
+    def get(self):
+        # mysql_con = pymysql.connect(host='218.151.225.142', port=3306, db='IFG_IMS', user='ims2', password='1234',
+        #                                 charset='utf8')
+        mysql_con = pymysql.connect(host='218.151.225.142',
+                                    port=3306,
+                                    db='IFG_IMS',
+                                    user='ims2',
+                                    password='1234',
+                                    charset='utf8')
+
+        try:
+            with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+                sql = "SELECT * FROM WEB_CONN_TEST "
+                # sql = "SELECT * FROM SKIL_TEST "
+                # sql = "UPDATE SKIL_TEST SET RANK = 'B' WHERE NAME = 'test'"
+                cursor.execute(sql)
+
+                mysql_con.commit();
 
         finally:
             mysql_con.close()

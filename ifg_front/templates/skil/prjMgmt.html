@@ -1,0 +1,217 @@
+{% extends 'common/base.html' %}
+
+{% block content %}
+
+
+ <style>
+#modal {
+  display:none;
+  position:relative;
+  width:100%;
+  height:100%;
+  z-index:1;
+}
+
+#modal h2 {
+  margin:0;
+}
+
+#modal button {
+  display:inline-block;
+  width:100px;
+  margin-left:calc(100% - 100px - 10px);
+}
+
+#modal .modal_content {
+  width:600px;
+  margin:100px auto;
+  padding:20px 10px;
+  background:#fff;
+  border:2px solid #666;
+}
+
+#modal .modal_layer {
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:rgb(0, 0, 0, 0.5);
+  z-index:-1;
+}
+</style>
+
+
+
+
+<div id="root">
+   
+    <button type="button" id="modal_open_btn">프로젝트 상세 관리</button>
+       
+</div>
+
+<div id="modal">
+
+    <div class="modal_content">
+            <h2 style = "font-weight:bold"><U>프로젝트 상세 관리</U></h2><br>
+    <span style="color: blue;
+                 font-size: 1.0em;
+                 padding:20px;">
+
+        <p>프로젝트 명<br>
+            <input type = "text" name = "prjNm" placeholder="input text"></p>
+
+        <p>고객사 계약 코드<br>
+            <input type = "text" name = "rank" placeholder="input text"></p>
+
+        <p>원청사<br>
+            <input type = "text" name = "rank" placeholder="input text"></p>
+
+        <p>계약사<br>
+           <input type = "text" name = "agency" placeholder="input text"></p>
+
+        <p>계약 금액<br>
+            <input type = "text" name = "birth" placeholder="input text"></p>
+
+        <p>비고<br>
+            <input type = "text" name = "remark" placeholder="input text"></p>
+
+        <p>매출 사업부<br>
+            <select size ="1" style="width:200px">
+                <option value = "01">01</option>
+                <option value = "02">02</option>
+                <option value = "03">03</option>
+            </select>
+        </p>
+
+        <p>업무 구분<br>
+            <select size ="1" style="width:200px">
+                <option value = "SM">SM</option>
+                <option value = "SI">SI</option>
+            </select>
+        </p>
+
+        <p>진행 상태<br>
+            <select size ="1" style="width:200px">
+                <option value = "예정">예정</option>
+                <option value = "진행 중">진행 중</option>
+                <option value = "종료">종료</option>
+            </select>
+        </p>
+
+    </span>
+
+
+    <td><input type="button" style="float:right" id="del" value="-" onclick="tableDelete()"/></td>
+    <td><input type="button" style="float:right" id="add" value="+" onclick="tableCreate()"/></td>
+
+    <table id="dynamicTable" class="table" style="margin-top: 20px;">
+        <colgroup>
+            <col width="33%"/>
+            <col width="33%"/>
+            <col width="33%"/>
+        </colgroup>
+
+	<thead>
+		<tr>
+			<th>순번</th>
+			<th>구분</th>
+			<th>스킬</th>
+		</tr>
+	</thead>
+
+    <tbody id="dynamicTbody">
+		<tr>
+			<td> <input type="number" class="form-control" id="num" placeholder="순번">  </td>
+			<td> <input type="text" class="form-control" id="division" placeholder="구분">  </td>
+			<td> <input type="text" class="form-control" id="skill" placeholder="스킬">  </td>
+		</tr>
+	</tbody>
+</table>
+
+         <div style="float: left; padding: 10px; width: 30%;">
+            <button type="button" id="modal_close_btn">취소</button>
+        </div>
+        <div style="float: left; padding: 10px; width: 30%;">
+            <button type="button" id="modal_save_btn">저장</button>
+        </div>
+        <div style="float: left; padding: 10px; width: 30%;">
+            <button type="button" id="modal_delete_btn">삭제</button>
+        </div>
+
+
+        <br>
+<!--        <div style="float: left; padding: 10px; width: 30%;">-->
+<!--            <button type="button" id="modal_close_btn">취소</button>-->
+<!--        </div>-->
+<!--        <div style="float: left; padding: 10px; width: 30%;">-->
+<!--            <button type="button" id="modal_save_btn">저장</button>-->
+<!--        </div>-->
+<!--        <div style="float: left; padding: 10px; width: 30%;">-->
+<!--            <button type="button" id="modal_delete_btn">삭제</button>-->
+<!--        </div>-->
+
+<!--        <div class="button">-->
+<!--            <button type="button" id="modal_close_btn">취소</button>-->
+<!--            <button type="button" id="modal_save_btn">저장</button>-->
+<!--            <button type="button" id="modal_delete_btn">삭제</button>-->
+<!--        </div>-->
+     
+    </div>
+
+
+
+   
+    <div class="modal_layer"></div>
+</div>
+
+
+
+
+
+
+<script>
+    document.getElementById("modal_open_btn").onclick = function() {
+        document.getElementById("modal").style.display="block";
+    }
+
+    document.getElementById("modal_close_btn").onclick = function() {
+        document.getElementById("modal").style.display="none";
+    }
+
+
+    function tableCreate(){
+        var tc = new Array();
+        var html = '';
+
+        var num = $("#num").val();
+        var skill = $("#skill").val();
+        var division = $("#division").val();
+
+        html += '<tr>';
+        html += '<td>'+num+'</td>';
+        html += '<td>'+division+'</td>';
+        html += '<td>'+skill+'</td>';
+        html += '</tr>';
+
+        $("#dynamicTable").append(html);
+
+        $("#num").val('');
+        $("#skill").val('');
+        $("#division").val('');
+    }
+
+    function tableDelete(){
+        var table = document.getElementById('dynamicTbody');
+        if (table.rows.length < 2) return;
+
+        $('#dynamicTable tbody tr:last').remove();
+    }
+
+
+
+</script>
+
+
+
+{% endblock %}

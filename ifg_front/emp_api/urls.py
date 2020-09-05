@@ -26,6 +26,7 @@ urlpatterns = [
     url(r'^getPage/', views.getPage, name='getPage'),
 
     #mariadb 연결 샘플
+    #mariadb test
     url(r'^mariatest/', views.mariatest.as_view(), name='mariatest'),
     url(r'^getMaria/', views.getMaria, name='getMaria'),
 ]
