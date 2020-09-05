@@ -407,24 +407,6 @@ class mariatestDB(Resource): # Mariadb 연결 진행
                 sql = "SELECT * FROM WEB_CONN_TEST "
                 cursor.execute(sql)
 
-class mariatestDB(Resource):
-    def get(self):
-        # mysql_con = pymysql.connect(host='218.151.225.142', port=3306, db='IFG_IMS', user='ims2', password='1234',
-        #                                 charset='utf8')
-        mysql_con = pymysql.connect(host='218.151.225.142',
-                                    port=3306,
-                                    db='IFG_IMS',
-                                    user='ims2',
-                                    password='1234',
-                                    charset='utf8')
-
-        try:
-            with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
-                sql = "SELECT * FROM WEB_CONN_TEST "
-                # sql = "SELECT * FROM SKIL_TEST "
-                # sql = "UPDATE SKIL_TEST SET RANK = 'B' WHERE NAME = 'test'"
-                cursor.execute(sql)
-
                 mysql_con.commit();
 
         finally:

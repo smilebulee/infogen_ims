@@ -20,26 +20,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="069bc5b9-482e-4fff-a242-76dbf771ee42" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/ifg_front/templates/skil/devEnrl.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ifg_front/templates/skil/index.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ifg_front/templates/skil/maria.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ifg_front/templates/skil/prjMgmt.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/api_containers/emp/api/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/api_containers/emp/api/app.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/api_containers/emp/api/docker-entrypoint.sh" beforeDir="false" afterPath="$PROJECT_DIR$/api_containers/emp/api/docker-entrypoint.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api_containers/emp/api/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/api_containers/emp/api/requirements.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api_containers/skil/api/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/api_containers/skil/api/app.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/api_containers/skil/api/docker-entrypoint.sh" beforeDir="false" afterPath="$PROJECT_DIR$/api_containers/skil/api/docker-entrypoint.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api_containers/skil/api/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/api_containers/skil/api/requirements.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api_containers/skil/db/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/api_containers/skil/db/Dockerfile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/docker-compose.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ifg_front/emp_api/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/ifg_front/emp_api/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ifg_front/emp_api/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/ifg_front/emp_api/urls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ifg_front/emp_api/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/ifg_front/emp_api/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ifg_front/skil_api/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/ifg_front/skil_api/urls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ifg_front/skil_api/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/ifg_front/skil_api/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ifg_front/templates/emp/mariatest.html" beforeDir="false" afterPath="$PROJECT_DIR$/ifg_front/templates/emp/mariatest.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ifg_front/templates/main/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/ifg_front/templates/main/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ifg_front/templates/skil/devEnrl.html" beforeDir="false" afterPath="$PROJECT_DIR$/ifg_front/templates/skil/devEnrl.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ifg_front/templates/skil/prjMgmt.html" beforeDir="false" afterPath="$PROJECT_DIR$/ifg_front/templates/skil/prjMgmt.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/산출물/설계/AND-001.화면설계서/20200806_IMS_AND-07_화면설계서_개발자 등록_v0.1.pptx" beforeDir="false" afterPath="$PROJECT_DIR$/산출물/설계/AND-001.화면설계서/20200806_IMS_AND-07_화면설계서_개발자 등록_v0.1.pptx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/산출물/설계/AND-04.DB설계산출물/20200813_개발자 등록_AND-04_테이블정의서_v0.1.xlsx" beforeDir="false" afterPath="$PROJECT_DIR$/산출물/설계/AND-04.DB설계산출물/20200813_개발자 등록_AND-04_테이블정의서_v0.1.xlsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
