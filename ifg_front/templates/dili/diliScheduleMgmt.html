@@ -45,6 +45,16 @@
                     drawChart(34,7,9.4);
                  }
             });
+            $.ajaxCall( param, {
+                 'method' : 'GET',
+                 'url' : "{% url 'dili_api:getYryMgmt' %}",
+                 'dataType' : 'json',
+                 'data' : JSON.stringify(param),
+                 'async' : false,
+                 'callbackFn' : function(data){
+                    console.log("data : ",data)
+                 }
+            });
 
 
             /*********************************************************************
@@ -312,7 +322,6 @@
                         <span> / 남은연차일수 : </span>
                         <span id="txt_rmnAnhoDays">0</span>
                     </div>
-
                 </div>
 
                 <!-- 3. 사원 Schedule Grid 영역 -->
@@ -326,17 +335,14 @@
                                 <span class="badge badge-warning" id="btn_showWeek">Week</span>
                             </div>
                         </div>
-
+                        <!-- 3-1. 사원 Schedule Grid 영역 주단위 -->
                         <div id="grp_showWeek">
-
                             <div class="d-flex justify-content-center">
-
                                 <button type="button" id="btn_weekGridDtDfr">
                                     <svg width="0.6em" height="0.6em" viewBox="0 0 16 16" class="bi bi-caret-left-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                                         <path d="M3.86 8.753l5.482 4.796c.646.566 1.658.106 1.658-.753V3.204a1 1 0 0 0-1.659-.753l-5.48 4.796a1 1 0 0 0 0 1.506z"/>
                                     </svg>
                                 </button>
-
                                 <div style="margin-right: 10px;margin-left: 10px;">
                                     <h5>
                                         <span id="txt_weekYy">2020</span>
@@ -348,27 +354,21 @@
                                         <span id="txt_weekEndDd">12</span>
                                     </h5>
                                 </div>
-
                                 <button type="button" id="btn_weekGridDtNxt">
                                     <svg width="0.6em" height="0.6em" viewBox="0 0 16 16" class="bi bi-caret-right-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                                         <path d="M12.14 8.753l-5.482 4.796c-.646.566-1.658.106-1.658-.753V3.204a1 1 0 0 1 1.659-.753l5.48 4.796a1 1 0 0 1 0 1.506z"/>
                                     </svg>
                                 </button>
-
                             </div>
-
                         </div>
-
+                        <!-- 3-2. 사원 Schedule Grid 영역 월단위 -->
                         <div id="grp_showMonth">
-
                             <div class="d-flex justify-content-center">
-
                                 <button type="button" id="btn_mmGridDtDfr">
                                     <svg width="0.6em" height="0.6em" viewBox="0 0 16 16" class="bi bi-caret-left-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                                         <path d="M3.86 8.753l5.482 4.796c.646.566 1.658.106 1.658-.753V3.204a1 1 0 0 0-1.659-.753l-5.48 4.796a1 1 0 0 0 0 1.506z"/>
                                     </svg>
                                 </button>
-
                                 <div style="margin-right: 10px;margin-left: 10px;">
                                     <h5>
                                         <span id="txt_mmYy">2020</span>
@@ -376,20 +376,15 @@
                                         <span id="txt_mmMm">09</span>
                                     </h5>
                                 </div>
-
                                 <button type="button" id="btn_mmGridDtNxt">
                                     <svg width="0.6em" height="0.6em" viewBox="0 0 16 16" class="bi bi-caret-right-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                                         <path d="M12.14 8.753l-5.482 4.796c-.646.566-1.658.106-1.658-.753V3.204a1 1 0 0 1 1.659-.753l5.48 4.796a1 1 0 0 1 0 1.506z"/>
                                     </svg>
                                 </button>
-
                             </div>
-
                         </div>
-
                     </div>
                 </div>
-
                 <!-- 4. 사원 Schedule Calendar 영역 -->
                 <div id="grp_calendar">
                     <div class="bg-light p-5">

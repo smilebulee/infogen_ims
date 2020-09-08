@@ -14,6 +14,7 @@ urlpatterns = [
     url(r'^mariatest/', views.mariatest.as_view(), name='mariatest'),
     url(r'^getMaria/', views.getMaria, name='getMaria'),
     url(r'^getWrkTimeInfoByEml/', views.getWrkTimeInfoByEml, name='getWrkTimeInfoByEml'),
+    url(r'^getYryMgmt/', views.getYryMgmt, name='getYryMgmt'),
     url(r'^scheduleMgmt/', views.scheduleMgmt.as_view(), name='scheduleMgmt'),
 ]
 
