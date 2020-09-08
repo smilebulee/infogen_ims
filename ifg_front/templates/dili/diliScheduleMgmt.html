@@ -21,7 +21,7 @@
         $(document).ready(function(){
 
             $('#grp_grid').hide();                                                  // Calendar UI를 Default로 한다.
-
+            $('#grp_showMonth').hide();                                             // Grid UI의 week를 Default로 한다.
 
             /*********************************************************************
             *   Session Email 값 기준 현재일 포함 주 근무시간 조회
@@ -64,6 +64,29 @@
                 $('#grp_grid').hide();
                 $('#grp_calendar').show('');
             });
+            /*********************************************************************
+            *   Week Btn Click Event - 주 버튼 클릭
+            *********************************************************************/
+            $('#btn_showWeek').click(function(){
+                console.log("Grid Btn Click Event");
+                $('#grp_showWeek').show('');
+                $('#grp_showMonth').hide();
+            });
+
+            /*********************************************************************
+            *   Month Btn Click Event - 월 버튼 클릭
+            *********************************************************************/
+            $('#btn_showMonth').click(function(){
+                console.log("Calendar Btn Click Event");
+                $('#grp_showWeek').hide();
+                $('#grp_showMonth').show('');
+            });
+            /*********************************************************************
+            *   anhoReg Btn Click Event - 연차등록 버튼 클릭
+            *********************************************************************/
+            $('#btn_anhoReg').click(function(){
+                alert("연차결제화면 연결");                   //연차결제 화면 모달 띄우기
+            });
 
             /*********************************************************************
             *   search Btn Click Event - 검색 버튼 클릭
@@ -88,10 +111,6 @@
             });
 
         });
-
-
-
-
 
         /*********************************************************************
         *   Draw Chart Event - 근무누적시간 누적막대그래프 그리기
@@ -282,12 +301,92 @@
                             </svg>
                         </button>
                     </div>
+                    <!-- 연차등록 버튼 -->
+                    <div style="margin-right: 20px;">
+                        <button type="button" class="badge badge-danger" id="btn_anhoReg">연차등록</button>
+                    </div>
+                    <!-- 전체연차일수/ 남은연차일수 표기 -->
+                    <div style="margin-right: 20px;">
+                        <span>전체연차일수 : </span>
+                        <span id="txt_allAnhoDays">0</span>
+                        <span> / 남은연차일수 : </span>
+                        <span id="txt_rmnAnhoDays">0</span>
+                    </div>
+
                 </div>
 
                 <!-- 3. 사원 Schedule Grid 영역 -->
                 <div id="grp_grid">
                     <div class="bg-light p-5">
-                        Grid Area
+                        <div class="d-flex flex-row-reverse">
+                            <div>
+                                <span class="badge badge-success" id="btn_showMonth">Month</span>
+                            </div>
+                            <div>
+                                <span class="badge badge-warning" id="btn_showWeek">Week</span>
+                            </div>
+                        </div>
+
+                        <div id="grp_showWeek">
+
+                            <div class="d-flex justify-content-center">
+
+                                <button type="button" id="btn_weekGridDtDfr">
+                                    <svg width="0.6em" height="0.6em" viewBox="0 0 16 16" class="bi bi-caret-left-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M3.86 8.753l5.482 4.796c.646.566 1.658.106 1.658-.753V3.204a1 1 0 0 0-1.659-.753l-5.48 4.796a1 1 0 0 0 0 1.506z"/>
+                                    </svg>
+                                </button>
+
+                                <div style="margin-right: 10px;margin-left: 10px;">
+                                    <h5>
+                                        <span id="txt_weekYy">2020</span>
+                                        <span>.</span>
+                                        <span id="txt_weekMm">09</span>
+                                        <span>.</span>
+                                        <span id="txt_weekStrtDd">06</span>
+                                        <span> - </span>
+                                        <span id="txt_weekEndDd">12</span>
+                                    </h5>
+                                </div>
+
+                                <button type="button" id="btn_weekGridDtNxt">
+                                    <svg width="0.6em" height="0.6em" viewBox="0 0 16 16" class="bi bi-caret-right-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M12.14 8.753l-5.482 4.796c-.646.566-1.658.106-1.658-.753V3.204a1 1 0 0 1 1.659-.753l5.48 4.796a1 1 0 0 1 0 1.506z"/>
+                                    </svg>
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                        <div id="grp_showMonth">
+
+                            <div class="d-flex justify-content-center">
+
+                                <button type="button" id="btn_mmGridDtDfr">
+                                    <svg width="0.6em" height="0.6em" viewBox="0 0 16 16" class="bi bi-caret-left-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M3.86 8.753l5.482 4.796c.646.566 1.658.106 1.658-.753V3.204a1 1 0 0 0-1.659-.753l-5.48 4.796a1 1 0 0 0 0 1.506z"/>
+                                    </svg>
+                                </button>
+
+                                <div style="margin-right: 10px;margin-left: 10px;">
+                                    <h5>
+                                        <span id="txt_mmYy">2020</span>
+                                        <span>.</span>
+                                        <span id="txt_mmMm">09</span>
+                                    </h5>
+                                </div>
+
+                                <button type="button" id="btn_mmGridDtNxt">
+                                    <svg width="0.6em" height="0.6em" viewBox="0 0 16 16" class="bi bi-caret-right-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M12.14 8.753l-5.482 4.796c-.646.566-1.658.106-1.658-.753V3.204a1 1 0 0 1 1.659-.753l5.48 4.796a1 1 0 0 1 0 1.506z"/>
+                                    </svg>
+                                </button>
+
+                            </div>
+
+                        </div>
+
                     </div>
                 </div>
 
