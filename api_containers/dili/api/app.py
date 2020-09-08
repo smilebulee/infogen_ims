@@ -277,7 +277,7 @@ api.add_resource(Save, '/save')
 
 api.add_resource(mariatestDB,'/mariatestDB') #api 선언
 api.add_resource(wrkTimeInfoByEml,'/wrkTimeInfoByEml') #api 선언
-
+api.add_resource(yryMgmt,'/yryMgmt') #api 선언
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5006, debug=True)
