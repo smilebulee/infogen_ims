@@ -14,10 +14,6 @@ from django.views.decorators.csrf import csrf_exempt
 import requests
 import logging
 import json
-import ast
-
-
-
 
 logger = logging.getLogger(__name__)
 
@@ -91,6 +87,6 @@ def getWrkTimeInfoByEml(request):
     r = requests.get('http://dili_api:5006/wrkTimeInfoByEml', json=param)
     logger.info(r)
     logger.info(r.text)
-    logger.info(ast.literal_eval(r.json()))
+    logger.info(r.json())
     logger.info(json.loads(r.text))
-    return JsonResponse(ast.literal_eval(r.json()), safe=False)
+    return JsonResponse(r.json(), safe=False)

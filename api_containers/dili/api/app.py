@@ -8,22 +8,12 @@ import bcrypt
 #from bson.json_util import dumps
 import json
 import pymysql
+
 app = Flask(__name__)
 api = Api(app)
 logger = logging.getLogger(__name__)
 
-import datetime
-from json import JSONEncoder
 
-class DateTimeEncoder(JSONEncoder):
-    # Override the default method
-    def default(self, obj):
-        if isinstance(obj, (datetime.date, datetime.datetime)):
-            return obj.isoformat()
-
-def dateConverter(param):
-    if isinstance(param, datetime.datetime):
-        return param.__str__()
 
 def userExist(username):
     if users.find({"Username": username}).count() == 0:
@@ -271,14 +261,14 @@ class wrkTimeInfoByEml(Resource): # Mariadb 연결 진행
             mysql_con.close()
 
         result2 = cursor.fetchall()
-
         for row in result2:
             logging.debug('====== row====')
             logging.debug(row)
             logging.debug('===============')
         array = list(result2)  # 결과를 리스트로
 
-        return json.dumps(result2, indent=4, cls=DateTimeEncoder)
+        return result2
+
 
 api.add_resource(Hello, '/hello')
 api.add_resource(Register, '/register')
@@ -287,7 +277,6 @@ api.add_resource(Save, '/save')
 
 api.add_resource(mariatestDB,'/mariatestDB') #api 선언
 api.add_resource(wrkTimeInfoByEml,'/wrkTimeInfoByEml') #api 선언
-api.add_resource(yryMgmt,'/yryMgmt') #api 선언
 
 
 if __name__ == "__main__":
