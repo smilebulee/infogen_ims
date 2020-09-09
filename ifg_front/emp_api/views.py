@@ -258,10 +258,7 @@ def getMaria(request):
     param = json.loads(request.GET['param'])
 
     #api 호출
-    r = requests.get('http://emp_api:5001/mariatestDB')
-    logger.info(r)
-    logger.info(r.text)
-    logger.info(r.json())
+
     #
     r = requests.get('http://emp_api:5001/mariatestDB')
     logger.info("r log")

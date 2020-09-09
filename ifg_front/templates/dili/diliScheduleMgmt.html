@@ -53,6 +53,7 @@
                  'async' : false,
                  'callbackFn' : function(data){
                     console.log("data : ",data)
+                   // $('#txt_allAnhoDays').text()
                  }
             });
 
@@ -78,7 +79,7 @@
             *   Week Btn Click Event - 주 버튼 클릭
             *********************************************************************/
             $('#btn_showWeek').click(function(){
-                console.log("Grid Btn Click Event");
+                console.log("Week Btn Click Event");
                 $('#grp_showWeek').show('');
                 $('#grp_showMonth').hide();
             });
@@ -87,7 +88,7 @@
             *   Month Btn Click Event - 월 버튼 클릭
             *********************************************************************/
             $('#btn_showMonth').click(function(){
-                console.log("Calendar Btn Click Event");
+                console.log("Month Btn Click Event");
                 $('#grp_showWeek').hide();
                 $('#grp_showMonth').show('');
             });

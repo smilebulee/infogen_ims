@@ -22,12 +22,8 @@
     <list default="true" id="069bc5b9-482e-4fff-a242-76dbf771ee42" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/api_containers/emp/api/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/api_containers/emp/api/app.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api_containers/emp/api/docker-entrypoint.sh" beforeDir="false" afterPath="$PROJECT_DIR$/api_containers/emp/api/docker-entrypoint.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api_containers/skil/api/docker-entrypoint.sh" beforeDir="false" afterPath="$PROJECT_DIR$/api_containers/skil/api/docker-entrypoint.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ifg_front/ifg_front/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/ifg_front/ifg_front/settings.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ifg_front/templates/skil/devEnrl.html" beforeDir="false" afterPath="$PROJECT_DIR$/ifg_front/templates/skil/devEnrl.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ifg_front/templates/skil/prjMgmt.html" beforeDir="false" afterPath="$PROJECT_DIR$/ifg_front/templates/skil/prjMgmt.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/산출물/설계/AND-001.화면설계서/20200806_IMS_AND-07_화면설계서_개발자 등록_v0.1.pptx" beforeDir="false" afterPath="$PROJECT_DIR$/산출물/설계/AND-001.화면설계서/20200806_IMS_AND-07_화면설계서_개발자 등록_v0.1.pptx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/산출물/설계/AND-04.DB설계산출물/20200813_개발자 등록_AND-04_테이블정의서_v0.1.xlsx" beforeDir="false" afterPath="$PROJECT_DIR$/산출물/설계/AND-04.DB설계산출물/20200813_개발자 등록_AND-04_테이블정의서_v0.1.xlsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -57,14 +53,12 @@
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/ifg_front/templates/dili" />
-    <property name="settings.editor.selected.configurable" value="preferences.keymap" />
+    <property name="settings.editor.selected.configurable" value="reference.settingsDialog.application.dockerMachine" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\workspace\infogen_ims\infogen_ims\ifg_front\templates\dili" />
     </key>
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
-    <property name="settings.editor.selected.configurable" value="terminal" />
   </component>
   <component name="RunManager" selected="Docker.docker-compose.yml: Compose Deployment">
     <configuration name="views" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
@@ -158,26 +152,24 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="794" y="355" width="440" height="463" key="FileChooserDialogImpl/-1920.0.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1594891731945" />
-    <state x="461" y="164" key="SettingsEditor" timestamp="1598868550649">
+    <state x="794" y="355" key="FileChooserDialogImpl/0.0.1920.1040/62.-1080.1858.1080@0.0.1920.1040" timestamp="1598577676516" />
+    <state x="461" y="164" key="SettingsEditor" timestamp="1599470092494">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="461" y="164" key="SettingsEditor/-1920.0.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1595207575809" />
     <state x="461" y="164" key="SettingsEditor/0.0.1920.1040/-1920.98.1920.1040@0.0.1920.1040" timestamp="1598868550649" />
+    <state x="461" y="164" key="SettingsEditor/0.0.1920.1040/62.-1080.1858.1080@0.0.1920.1040" timestamp="1599470092494" />
     <state width="498" height="446" key="SwitcherDM" timestamp="1597798807421">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state width="498" height="446" key="SwitcherDM/0.0.1920.1040/-1600.0.1600.860@0.0.1920.1040" timestamp="1597798807421" />
-    <state x="668" y="223" width="584" height="594" key="find.popup" timestamp="1598950212258">
+    <state x="668" y="223" width="584" height="594" key="find.popup" timestamp="1599455993324">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="668" y="223" width="584" height="594" key="find.popup/0.0.1920.1040/-1600.0.1600.860@0.0.1920.1040" timestamp="1598576784500" />
     <state x="668" y="223" width="584" height="594" key="find.popup/0.0.1920.1040/-1920.98.1920.1040@0.0.1920.1040" timestamp="1598950212258" />
-    <state x="794" y="355" key="FileChooserDialogImpl/0.0.1920.1040/62.-1080.1858.1080@0.0.1920.1040" timestamp="1598577676516" />
-    <state x="461" y="164" key="SettingsEditor" timestamp="1598577677194">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="461" y="164" key="SettingsEditor/-1920.0.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1595207575809" />
-    <state x="461" y="164" key="SettingsEditor/0.0.1920.1040/62.-1080.1858.1080@0.0.1920.1040" timestamp="1598577677194" />
+    <state x="668" y="223" width="584" height="594" key="find.popup/0.0.1920.1040/62.-1080.1858.1080@0.0.1920.1040" timestamp="1599455993324" />
+    <state x="668" y="223" width="584" height="594" key="find.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1599392780526" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
