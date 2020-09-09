@@ -13,6 +13,18 @@ app = Flask(__name__)
 api = Api(app)
 logger = logging.getLogger(__name__)
 
+import datetime
+from json import JSONEncoder
+
+class DateTimeEncoder(JSONEncoder):
+    # Override the default method
+    def default(self, obj):
+        if isinstance(obj, (datetime.date, datetime.datetime)):
+            return obj.isoformat()
+
+def dateConverter(param):
+    if isinstance(param, datetime.datetime):
+        return param.__str__()
 
 
 def userExist(username):
@@ -267,7 +279,7 @@ class wrkTimeInfoByEml(Resource): # Mariadb 연결 진행
             logging.debug('===============')
         array = list(result2)  # 결과를 리스트로
 
-        return result2
+        return json.dumps(result2, indent=4, cls=DateTimeEncoder)
 
 
 api.add_resource(Hello, '/hello')
