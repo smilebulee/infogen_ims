@@ -165,6 +165,11 @@ LOGGING = {
 			'handlers': ['console'],
 			'propagate': False,  # required to avoid double logging with root logger
 		},
+        'skil_api': {  # django app
+			'level': 'INFO',
+			'handlers': ['console'],
+			'propagate': False,  # required to avoid double logging with root logger
+		},
         'dili_api': {  # django app
 			'level': 'INFO',
 			'handlers': ['console'],

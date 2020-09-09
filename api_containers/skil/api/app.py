@@ -232,9 +232,7 @@ api.add_resource(Hello, '/hello')
 api.add_resource(Register, '/register')
 api.add_resource(Retrieve, '/retrieve')
 api.add_resource(Save, '/save')
-
 api.add_resource(mariaClass,'/mariaClass')
-mariaClass
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5003, debug=True)

@@ -16,16 +16,28 @@
   margin:0;
 }
 
+#modal input {
+  border: 0;
+  border-bottom: 1px solid #0489B1;
+  outline : 0;
+}
+
 #modal button {
   display:inline-block;
-  width:100px;
-  margin-left:calc(100% - 100px - 10px);
+  width:33%;
+  margin-center:calc(100% - 100px - 10px);
+  float:left;
+  color: blue;
+  background-color: rgba(0,0,0,0);
+  border: 0;
+  outline : 0;
+
 }
 
 #modal .modal_content {
   width:600px;
   margin:100px auto;
-  padding:20px 10px;
+  padding:0px 40px;
   background:#fff;
   border:2px solid #666;
 }
@@ -39,9 +51,8 @@
   background:rgb(0, 0, 0, 0.5);
   z-index:-1;
 }
+
 </style>
-
-
 
 
 <div id="root">
@@ -54,7 +65,7 @@
 
     <div class="modal_content">
             <h2 style = "font-weight:bold"><U>프로젝트 상세 관리</U></h2><br>
-    <span style="color: blue;
+    <span style="color: #0489B1;
                  font-size: 1.0em;
                  padding:20px;">
 
@@ -77,7 +88,7 @@
             <input type = "text" name = "remark" placeholder="input text"></p>
 
         <p>매출 사업부<br>
-            <select size ="1" style="width:200px" name = ""salesDepartment>
+            <select size ="1" style="width:200px" name = "salesDepartment" class="col-sm-2">
                 <option value = "01">01</option>
                 <option value = "02">02</option>
                 <option value = "03">03</option>
@@ -85,14 +96,14 @@
         </p>
 
         <p>업무 구분<br>
-            <select size ="1" style="width:200px" name = "task">
+            <select size ="1" style="width:200px" name = "task" class="col-sm-2">
                 <option value = "SM">SM</option>
                 <option value = "SI">SI</option>
             </select>
         </p>
 
         <p>진행 상태<br>
-            <select size ="1" style="width:200px" name = "process">
+            <select size ="1" style="width:200px" name = "process" class="col-sm-2">
                 <option value = "예정">예정</option>
                 <option value = "진행 중">진행 중</option>
                 <option value = "종료">종료</option>
