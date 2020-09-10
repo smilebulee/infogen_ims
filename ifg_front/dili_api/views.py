@@ -114,3 +114,15 @@ class yryApvlReq(generic.TemplateView):
         # }
         return render(request, template_name)
         # return render(request, template_name, rr)
+
+class noticeLst(generic.TemplateView):
+    def get(self, request, *args, **kwargs):
+        template_name = 'dili/noticeLst.html'
+
+
+        # r = requests.get('http://dili_api:5006/hello')
+        # rr = {
+        #     "result": r.text
+        # }
+        return render(request, template_name)
+        # return render(request, template_name, rr)
