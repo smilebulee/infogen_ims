@@ -1,0 +1,82 @@
+
+
+{% extends 'common/base_popup.html' %}
+
+{% block content %}
+    <div class="container">
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+        <script type="text/javascript">
+        $(document).ready(function(){
+
+
+        });
+
+    </script>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="mb-4" role="alert">
+                    <h5>
+                        <b>근무결재 요청</b>
+                    </h5>
+                </div>
+
+                <div class="accordion mb-4" id="grp_wrkApvlReq">
+                    <div class="card">
+                        <div class="card-header p-0" id="head_wrkApvlReq">
+                            <h2 class="mb-0">
+                                <button class="btn btn-link btn-block text-left text-dark" type="button" data-toggle="collapse" data-target="#col_wrkApvlReq" aria-expanded="true" aria-controls="collapseOne">
+                                    <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-caret-down-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z"/>
+                                    </svg>
+                                    근무결재 요청
+                                </button>
+                            </h2>
+                        </div>
+                        <div style="position: relative;height:400px;" id="grid-parent">
+                            <div id="grd_wrkApvlReq" style="height: 100%;">grid</div>
+                        </div>
+
+                        <div id="col_wrkApvlReq" class="collapse show" aria-labelledby="head_wrkApvlReq" data-parent="#grp_wrkApvlReq">
+                            <div class="card-body flex-height d-flex m-0 p-2">
+                                <div class="align-self-start align-self-center mr-3">일자</div>
+                                <div class="align-self-center mr-5">
+                                    <input type="text" class="form-control" id="ipt_wrkDt" name="ipt_wrkDt" placeholder="" maxlength="24"/>
+                                </div>
+                            </div>
+
+                            <div class="card-body flex-height d-flex m-0 p-2">
+                                <div class="align-self-start align-self-center mr-3">구분</div>
+                                <div class="align-self-center mr-5">
+                                    <select id="sbx_type" class="form-control" name="type">
+                                        <option selected>선택</option>
+                                        <option value="01">휴일근무</option>
+                                        <option value="02">야근근무</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="card-body flex-height d-flex m-0 p-2">
+                                <div class="align-self-start align-self-center mr-3">사유</div>
+                                <div class="align-self-center mr-7">
+                                    <textarea id="txa_reqRsn" name="reqRsn" maxlength="500" placeholder="사유를 입력해주세요.">
+                                    </textarea>
+                                </div>
+                            </div>
+
+                            <div class="card-body flex-height d-flex m-0 p-2">
+                                <div class="align-self-start align-self-center mr-3"></div>
+                                <div class="align-self-center mr-7">
+                                    <button class="btn btn-primary" id="btn_req">요청</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

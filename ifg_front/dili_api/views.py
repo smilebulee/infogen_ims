@@ -94,12 +94,23 @@ def getWrkTimeInfoByEml(request):
 
 class wrkApvlReq(generic.TemplateView):
     def get(self, request, *args, **kwargs):
-        template_name = 'dili/wrkApvlReqPopu.html'
+        template_name = 'dili/wrkApvlReqPopup.html'
 
         # r = requests.get('http://dili_api:5006/hello')
         # rr = {
         #     "result": r.text
         # }
 
+        return render(request, template_name)
+        # return render(request, template_name, rr)
+    
+class yryApvlReq(generic.TemplateView):
+    def get(self, request, *args, **kwargs):
+        template_name = 'dili/yryApvlReqPopup.html'
+
+        # r = requests.get('http://dili_api:5006/hello')
+        # rr = {
+        #     "result": r.text
+        # }
         return render(request, template_name)
         # return render(request, template_name, rr)
