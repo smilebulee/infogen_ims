@@ -62,3 +62,54 @@ def getMariaDB(request):
     logger.info("json.loads log")
     logger.info(json.loads(r.text))
     return JsonResponse(r.json(), safe=False)
+
+def devSave(request):
+
+    param = json.loads(request.POST['param'])
+
+    datas = {
+        'name' : param['name'],
+        'rank' : param['rank'],
+        'grd'  : param['grd'],
+        'tlno1': param['tlno1'],
+        'tlno2': param['tlno2'],
+        'tlno3': param['tlno3'],
+        'divs' : param['divs'],
+        'blco' : param['blco'],
+        'bday' : param['bday'],
+        'rmks' : param['rmks'],
+
+    }
+    logger.info('request.post : ' + request.POST['param'])
+    logger.info(datas)
+    r = requests.post('http://skil_api:5003/devSave', data=datas)
+    logger.info(r)
+    logger.info(r.text)
+    logger.info(r.json())
+    return JsonResponse(r.json())
+
+def prjSave(request):
+
+    param = json.loads(request.POST['param'])
+
+    datas = {
+        'prj_nm' : param['prj_nm'],
+        'cnct_cd' : param['cnct_cd'],
+        'gnr_ctro'  : param['gnr_ctro'],
+        'ctro': param['ctro'],
+        'cnct_amt': param['cnct_amt'],
+        'slin_bzdp': param['slin_bzdp'],
+        'job_divs': param['job_divs'],
+        'prgrs_stus' : param['prgrs_stus'],
+        # 'req_skil' : param['req_skil'],
+        'rmks' : param['rmks'],
+
+    }
+    logger.info('request.post : ' + request.POST['param'])
+    logger.info(datas)
+    r = requests.post('http://skil_api:5003/prjSave', data=datas)
+    logger.info(r)
+    logger.info(r.text)
+    logger.info(r.json())
+    return JsonResponse(r.json())
+

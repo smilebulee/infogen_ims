@@ -81,46 +81,46 @@
                     <input type = "text" name = "rank" placeholder="input text"></p>
 
                 <p>등급<br>
-                    <select size ="1" width="50px" name = "rating" class = "col-sm-2">
-                        <option value = "초">초</option>
+                    <select size ="1" width="50px" name = "grd" class = "col-sm-2">
+                        <option value = "01">초</option>
                         <option value = "중">중</option>
                         <option value = "고">고</option>
                     </select></p>
 
                 <p>구분<br>
-                    <select size ="1" width="50px" name = "div" class="col-sm-2">
-                        <option value = "프리">프리</option>
+                    <select size ="1" width="50px" name = "divs" class="col-sm-2">
+                        <option value = "01">프리</option>
                         <option value = "외주">외주</option>
                     </select></p>
 
                 <p>연락처<br>
-                    <select size ="1" name = "phoneNumber" class = "col-sm-2">
-                        <option value = "010">010</option>
-                        <option value = "011">011</option>
-                        <option value = "016">012</option>
-                    </select>
-                    - <input type = "text" placeholder="0000" size="6">
-                    - <input type = "text" placeholder="0000" size="6"></p>
+                        <select size ="1" name = "tlno1" class = "col-sm-2">
+                            <option value = "010">010</option>
+                            <option value = "011">011</option>
+                            <option value = "016">012</option>
+                        </select>
+                        - <input type = "text" name = "tlno2" placeholder="0000" size="6">
+                        - <input type = "text" name = "tlno3" placeholder="0000" size="6"></p>
 
                 <p>소속사<br>
-                    <input type = "text" name = "agency" placeholder="input text"></p>
+                    <input type = "text" name = "blco" placeholder="input text"></p>
 
                 <p>생년월일<br>
-                    <input type = "date" name = "birth"></p>
+                    <input type = "date" name = "bday"></p>
 
                 <p>비고<br>
-                    <input type = "text" name = "remark" placeholder="input text" style="width:500px"></p>
+                    <input type = "text" name = "rmks" placeholder="input text" style="width:500px"></p>
 
 
             </span>
-
+            </div>
             <hr>
 
                     <button type="button" id="modal_close_btn">취소</button>
-                    <button type="submit" id="modal_save_btn">저장</button>
+                    <button type="button" id="modal_save_btn">저장</button>
                     <button type="button" id="modal_delete_btn" style="color:red">삭제</button>
 
-        </div>
+
      
     </div>
 
@@ -133,11 +133,43 @@
         document.getElementById("modal").style.display="none";
     }
 
-    $('#modal_save_btn').click(function(){
-            confirmMsg('저장 하시겠습니까?', function(){
 
+     $('#modal_save_btn').click(function(){
+            console.log('저장');
+
+                    $('#developerEnrollment').ajaxCall({
+                    method : 'POST',
+                    url : '/skil/devSave/post',
+                    callbackFn : function(data){
+                        var html = '';
+                        html += '<dl class="row">';
+                        html += '<dt class="col-sm-3">NAME</dt>';
+                        html += '<dd class="col-sm-9">' + data.name + '</dd>';
+                        html += '<dt class="col-sm-3">RANK</dt>';
+                        html += '<dd class="col-sm-9">' + data.rank + '</dd>';
+                        html += '<dt class="col-sm-3">GRADE</dt>';
+                        html += '<dd class="col-sm-9">' + data.grd + '</dd>';
+                        html += '<dt class="col-sm-3">TELNO1</dt>';
+                        html += '<dd class="col-sm-9">' + data.tlno1 + '</dd>';
+                        html += '<dt class="col-sm-3">TELNO2</dt>';
+                        html += '<dd class="col-sm-9">' + data.tlno2 + '</dd>';
+                        html += '<dt class="col-sm-3">TELNO3</dt>';
+                        html += '<dd class="col-sm-9">' + data.tlno3 + '</dd>';
+                        html += '<dt class="col-sm-3">DIVS</dt>';
+                        html += '<dd class="col-sm-9">' + data.divs + '</dd>';
+                        html += '<dt class="col-sm-3">BLCO</dt>';
+                        html += '<dd class="col-sm-9">' + data.blco + '</dd>';
+                        html += '<dt class="col-sm-3">BDAY</dt>';
+                        html += '<dd class="col-sm-9">' + data.bday + '</dd>';
+                        html += '<dt class="col-sm-3">REMARK</dt>';
+                        html += '<dd class="col-sm-9">' + data.rmks + '</dd>';
+
+                        html += '</dl>';
+
+                        $('#ajaxResult').html(html);
+                    }
+                });
             });
-    });
 
 
 </script>

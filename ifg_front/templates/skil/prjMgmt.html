@@ -65,53 +65,54 @@
 
     <div class="modal_content">
             <h2 style = "font-weight:bold"><U>프로젝트 상세 관리</U></h2><br>
-    <span style="color: #0489B1;
-                 font-size: 1.0em;
-                 padding:20px;">
+    <div id = "projectInfo">
+        <span style="color: #0489B1;
+                     font-size: 1.0em;
+                     padding:20px;">
 
-        <p>프로젝트 명<br>
-            <input type = "text" name = "projectName" placeholder="input text"></p>
+            <p>프로젝트 명<br>
+                <input type = "text" name = "prj_nm" placeholder="input text"></p>
 
-        <p>고객사 계약 코드<br>
-            <input type = "text" name = "contractCode" placeholder="input text"></p>
+            <p>고객사 계약 코드<br>
+                <input type = "text" name = "cnct_cd" placeholder="input text"></p>
 
-        <p>원청사<br>
-            <input type = "text" name = "mainContract" placeholder="input text"></p>
+            <p>원청사<br>
+                <input type = "text" name = "gnr_ctro" placeholder="input text"></p>
 
-        <p>계약사<br>
-           <input type = "text" name = "contractor" placeholder="input text"></p>
+            <p>계약사<br>
+               <input type = "text" name = "ctro" placeholder="input text"></p>
 
-        <p>계약 금액<br>
-            <input type = "text" name = "contractAmount" placeholder="input text"></p>
+            <p>계약 금액<br>
+                <input type = "text" name = "cnct_amt" placeholder="input text"></p>
 
-        <p>비고<br>
-            <input type = "text" name = "remark" placeholder="input text"></p>
+            <p>매출 사업부<br>
+                <select size ="1" style="width:200px" name = "slin_bzdp" class="col-sm-2">
+                    <option value = "01">01</option>
+                    <option value = "02">02</option>
+                    <option value = "03">03</option>
+                </select>
+            </p>
 
-        <p>매출 사업부<br>
-            <select size ="1" style="width:200px" name = "salesDepartment" class="col-sm-2">
-                <option value = "01">01</option>
-                <option value = "02">02</option>
-                <option value = "03">03</option>
-            </select>
-        </p>
+            <p>업무 구분<br>
+                <select size ="1" style="width:200px" name = "job_divs" class="col-sm-2">
+                    <option value = "SM">SM</option>
+                    <option value = "SI">SI</option>
+                </select>
+            </p>
 
-        <p>업무 구분<br>
-            <select size ="1" style="width:200px" name = "task" class="col-sm-2">
-                <option value = "SM">SM</option>
-                <option value = "SI">SI</option>
-            </select>
-        </p>
+            <p>진행 상태<br>
+                <select size ="1" style="width:200px" name = "prgrs_stus" class="col-sm-2">
+                    <option value = "01">예정</option>
+                    <option value = "진행 중">진행 중</option>
+                    <option value = "종료">종료</option>
+                </select>
+            </p>
 
-        <p>진행 상태<br>
-            <select size ="1" style="width:200px" name = "process" class="col-sm-2">
-                <option value = "예정">예정</option>
-                <option value = "진행 중">진행 중</option>
-                <option value = "종료">종료</option>
-            </select>
-        </p>
+            <p>비고<br>
+                <input type = "text" name = "rmks" placeholder="input text"></p>
 
-    </span>
-
+        </span>
+    </div>
 
     <td><input type="button" style="float:right" id="del" value="-" onclick="tableDelete()"/></td>
     <td><input type="button" style="float:right" id="add" value="+" onclick="tableCreate()"/></td>
@@ -123,50 +124,30 @@
             <col width="33%"/>
         </colgroup>
 
-	<thead>
-		<tr>
-			<th>순번</th>
-			<th>구분</th>
-			<th>스킬</th>
-		</tr>
-	</thead>
+        <thead>
+            <tr>
+                <th>순번</th>
+                <th>구분</th>
+                <th>스킬</th>
+            </tr>
+        </thead>
 
-    <tbody id="dynamicTbody">
-		<tr>
-			<td> <input type="number" class="form-control" id="num" placeholder="순번">  </td>
-			<td> <input type="text" class="form-control" id="division" placeholder="구분">  </td>
-			<td> <input type="text" class="form-control" id="skill" placeholder="스킬">  </td>
-		</tr>
-	</tbody>
-</table>
+        <tbody id="dynamicTbody" name = "req_skil">
+            <tr>
+                <td> <input type="number" class="form-control" id="num" placeholder="순번">  </td>
+                <td> <input type="text" class="form-control" id="division" placeholder="구분">  </td>
+                <td> <input type="text" class="form-control" id="skill" placeholder="스킬">  </td>
+            </tr>
+        </tbody>
+    </table>
 
-         <div style="float: left; padding: 10px; width: 30%;">
+
+        <hr>
             <button type="button" id="modal_close_btn">취소</button>
-        </div>
-        <div style="float: left; padding: 10px; width: 30%;">
             <button type="button" id="modal_save_btn">저장</button>
-        </div>
-        <div style="float: left; padding: 10px; width: 30%;">
-            <button type="button" id="modal_delete_btn">삭제</button>
-        </div>
-
+            <button type="button" id="modal_delete_btn" style="color:red">삭제</button>
 
         <br>
-<!--        <div style="float: left; padding: 10px; width: 30%;">-->
-<!--            <button type="button" id="modal_close_btn">취소</button>-->
-<!--        </div>-->
-<!--        <div style="float: left; padding: 10px; width: 30%;">-->
-<!--            <button type="button" id="modal_save_btn">저장</button>-->
-<!--        </div>-->
-<!--        <div style="float: left; padding: 10px; width: 30%;">-->
-<!--            <button type="button" id="modal_delete_btn">삭제</button>-->
-<!--        </div>-->
-
-<!--        <div class="button">-->
-<!--            <button type="button" id="modal_close_btn">취소</button>-->
-<!--            <button type="button" id="modal_save_btn">저장</button>-->
-<!--            <button type="button" id="modal_delete_btn">삭제</button>-->
-<!--        </div>-->
      
     </div>
 
@@ -219,6 +200,43 @@
         $('#dynamicTable tbody tr:last').remove();
     }
 
+    $('#modal_save_btn').click(function(){
+            console.log('저장');
+
+                    $('#projectInfo').ajaxCall({
+                    method : 'POST',
+                    url : '/skil/prjSave/post',
+                    callbackFn : function(data){
+                        var html = '';
+                        html += '<dl class="row">';
+                        html += '<dt class="col-sm-3">PRJ_NM</dt>';
+                        html += '<dd class="col-sm-9">' + data.prj_nm + '</dd>';
+                        html += '<dt class="col-sm-3">CNCT_CD</dt>';
+                        html += '<dd class="col-sm-9">' + data.cnct_cd + '</dd>';
+                        html += '<dt class="col-sm-3">GNR_CTRO</dt>';
+                        html += '<dd class="col-sm-9">' + data.gnr_ctro + '</dd>';
+                        html += '<dt class="col-sm-3">CTRO</dt>';
+                        html += '<dd class="col-sm-9">' + data.ctro + '</dd>';
+                        html += '<dt class="col-sm-3">CNCT_AMT</dt>';
+                        html += '<dd class="col-sm-9">' + data.cnct_amt + '</dd>';
+                        html += '<dt class="col-sm-3">slin_bzdp</dt>';
+                        html += '<dd class="col-sm-9">' + data.slin_bzdp + '</dd>';
+                        html += '<dt class="col-sm-3">JOB_DIVS</dt>';
+                        html += '<dd class="col-sm-9">' + data.job_divs + '</dd>';
+                        html += '<dt class="col-sm-3">PRGRS_STUS</dt>';
+                        html += '<dd class="col-sm-9">' + data.prgrs_stus + '</dd>';
+<!--                        html += '<dt class="col-sm-3">REQ_SKIL</dt>';-->
+<!--                        html += '<dd class="col-sm-9">' + data.req_skil + '</dd>';-->
+                        html += '<dt class="col-sm-3">REMARK</dt>';
+                        html += '<dd class="col-sm-9">' + data.rmks + '</dd>';
+
+                        html += '</dl>';
+
+                        $('#ajaxResult').html(html);
+                    }
+                });
+            });
+
 
 
 </script>
@@ -226,3 +244,4 @@
 
 
 {% endblock %}
+

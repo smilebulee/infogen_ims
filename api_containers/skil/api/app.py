@@ -228,11 +228,123 @@ class mariaClass(Resource):
 
         return result2
 
+class devSave(Resource):
+        def post(self):
+
+            params = request.get_json()
+
+            logging.debug("save start")
+
+            name = request.form['name']
+            rank = request.form['rank']
+            grd  = request.form['grd']
+            tlno = request.form['tlno1'] + request.form['tlno2'] + request.form['tlno3']
+            divs = request.form['divs']
+            blco = request.form['blco']
+            bday = request.form['bday']
+            rmks = request.form['rmks']
+            use_yn= 'T'
+
+            logging.debug('--------------------------------------')
+            logging.debug(name)
+            logging.debug(rank)
+            logging.debug('--------------------------------------')
+
+
+            logging.debug('================== App Start ==================')
+            logging.debug(params)
+            logging.debug('================== App End ==================')
+
+            mysql_con = pymysql.connect(host='218.151.225.142', port=3306, db='IFG_IMS', user='ims2', password='1234',
+                                            charset='utf8')
+
+            try:
+                with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+                    sql = "INSERT INTO TB_FRLC_DEVP_INFO VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s)"
+                    cursor.execute(sql, (name, rank, grd, tlno, divs, blco, bday, rmks, use_yn))
+                    mysql_con.commit()
+
+            finally:
+                mysql_con.close()
+
+            result2 = cursor.fetchall()
+            for row in result2:
+                logging.debug('====== row====')
+                logging.debug(row)
+                logging.debug('===============')
+            # array = list(result2)  # 결과를 리스트로
+            #
+            # return json.dumps(result2)
+
+            retJson = {
+                "status": 200,
+                "msg": "Data has been saved successfully"
+            }
+
+            return jsonify(retJson)
+
+class prjSave(Resource):
+        def post(self):
+
+            params = request.get_json()
+
+            logging.debug("save start")
+
+            prj_nm = request.form['prj_nm']
+            cnct_cd = request.form['cnct_cd']
+            gnr_ctro = request.form['gnr_ctro']
+            ctro = request.form['ctro']
+            cnct_amt = request.form['cnct_amt']
+            slin_bzdp = request.form['slin_bzdp']
+            job_divs = request.form['job_divs']
+            prgrs_stus = request.form['prgrs_stus']
+            # req_skil = request.form['req_skil']
+            rmks = request.form['rmks']
+            use_yn = 'T'
+
+            logging.debug('--------------------------------------')
+            logging.debug(prj_nm)
+            logging.debug('--------------------------------------')
+
+            logging.debug('================== App Start ==================')
+            logging.debug(params)
+            logging.debug('================== App End ==================')
+
+            mysql_con = pymysql.connect(host='218.151.225.142', port=3306, db='IFG_IMS', user='ims2', password='1234',
+                                        charset='utf8')
+
+            try:
+                with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+                    sql = "INSERT INTO TB_PRJ_INFO VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+                    cursor.execute(sql, (prj_nm, cnct_cd, gnr_ctro, ctro, cnct_amt, slin_bzdp, job_divs, prgrs_stus, rmks, '1', use_yn))
+                    mysql_con.commit()
+
+            finally:
+                mysql_con.close()
+
+            result2 = cursor.fetchall()
+            for row in result2:
+                logging.debug('====== row====')
+                logging.debug(row)
+                logging.debug('===============')
+            # array = list(result2)  # 결과를 리스트로
+            #
+            # return json.dumps(result2)
+
+            retJson = {
+                "status": 200,
+                "msg": "Data has been saved successfully"
+            }
+
+            return jsonify(retJson)
+
 api.add_resource(Hello, '/hello')
 api.add_resource(Register, '/register')
 api.add_resource(Retrieve, '/retrieve')
 api.add_resource(Save, '/save')
 api.add_resource(mariaClass,'/mariaClass')
+api.add_resource(devSave, '/devSave')
+api.add_resource(prjSave, '/prjSave')
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5003, debug=True)

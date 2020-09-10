@@ -21,8 +21,11 @@
   <component name="ChangeListManager">
     <list default="true" id="069bc5b9-482e-4fff-a242-76dbf771ee42" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api_containers/dili/api/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/api_containers/dili/api/app.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ifg_front/dili_api/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/ifg_front/dili_api/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api_containers/skil/api/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/api_containers/skil/api/app.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ifg_front/skil_api/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/ifg_front/skil_api/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ifg_front/skil_api/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/ifg_front/skil_api/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ifg_front/templates/skil/devEnrl.html" beforeDir="false" afterPath="$PROJECT_DIR$/ifg_front/templates/skil/devEnrl.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ifg_front/templates/skil/prjMgmt.html" beforeDir="false" afterPath="$PROJECT_DIR$/ifg_front/templates/skil/prjMgmt.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

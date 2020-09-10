@@ -15,6 +15,8 @@ urlpatterns = [
     # mariadb test
     url(r'^maria/', views.maria.as_view(), name='maria'),
     url(r'^getMariaDB/', views.getMariaDB, name='getMariaDB'),
+    url(r'^devSave/post', views.devSave, name='devSave'),
+    url(r'^prjSave/post', views.prjSave, name='prjSave'),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
