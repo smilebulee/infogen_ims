@@ -18,6 +18,7 @@ urlpatterns = [
     url(r'^scheduleMgmt/', views.scheduleMgmt.as_view(), name='scheduleMgmt'),
     url(r'^wrkApvlReq/', views.wrkApvlReq.as_view(), name='wrkApvlReq'),
     url(r'^yryApvlReq/', views.yryApvlReq.as_view(), name='yryApvlReq'),
+    url(r'^noticeLst/', views.noticeLst.as_view(), name='noticeLst'),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
