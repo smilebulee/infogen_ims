@@ -16,6 +16,7 @@ urlpatterns = [
     url(r'^getWrkTimeInfoByEml/', views.getWrkTimeInfoByEml, name='getWrkTimeInfoByEml'),
     url(r'^getYryMgmt/', views.getYryMgmt, name='getYryMgmt'),
     url(r'^scheduleMgmt/', views.scheduleMgmt.as_view(), name='scheduleMgmt'),
+    url(r'^wrkApvlReq/', views.wrkApvlReq.as_view(), name='wrkApvlReq'),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

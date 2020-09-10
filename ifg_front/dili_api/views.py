@@ -91,3 +91,15 @@ def getWrkTimeInfoByEml(request):
     logger.info(logger.info(ast.literal_eval(r.json())))
     logger.info(json.loads(r.text))
     return JsonResponse(ast.literal_eval(r.json()), safe=False)
+
+class wrkApvlReq(generic.TemplateView):
+    def get(self, request, *args, **kwargs):
+        template_name = 'dili/wrkApvlReqPopu.html'
+
+        # r = requests.get('http://dili_api:5006/hello')
+        # rr = {
+        #     "result": r.text
+        # }
+
+        return render(request, template_name)
+        # return render(request, template_name, rr)
