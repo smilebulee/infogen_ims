@@ -1,0 +1,42 @@
+{% extends 'common/base.html' %}
+
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="mb-4" role="alert">
+                    <h5>
+                        <b>공지사항</b>
+                    </h5>
+                </div>
+
+                <div class="accordion mb-4" id="grp_search">
+                    <div class="card">
+                        <div class="card-header p-0" id="head_search">
+                            <h2 class="mb-0">
+                                <button class="btn btn-link btn-block text-left text-dark" type="button" data-toggle="collapse" data-target="#col_search" aria-expanded="true" aria-controls="collapseOne">
+                                    <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-caret-down-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z"/>
+                                    </svg>
+                                    [검색]
+                                </button>
+                            </h2>
+                        </div>
+                        <div id="col_search" class="collapse show" aria-labelledby="head_search" data-parent="#grp_search">
+                            <div class="card-body flex-height d-flex m-0 p-2">
+                                <div class="align-self-start align-self-center mr-3">검색어</div>
+                                <div class="align-self-center mr-3">
+                                    <input type="text" class="form-control" id="ipt_searchName" name="ipt_searchName" placeholder="검색어를 입력해주세요." maxlength="10"/>
+                                </div>
+                                <div class="align-self-end align-self-center">
+                                    <button class="btn btn-primary" id="searchBtn">조회</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
