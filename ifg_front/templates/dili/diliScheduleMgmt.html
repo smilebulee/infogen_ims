@@ -44,12 +44,10 @@
                 if(day == i){
 
                     strtDate = date - i;
-                    var endDateTemp = date + 6 - i
-                    console.log("lastDate : ",lastDate);
-                    console.log("endDateTemp : ",endDateTemp);
+                    var endDateTemp = date + 6 - i;
+
 
                     if(lastDate < endDateTemp) {
-                        console.log("if : true");
                         endDate = endDateTemp - lastDate;
                         var endToday = new Date();
 
@@ -61,7 +59,6 @@
                         $('#txt_weekEndMm').text(endMonth); //그리드 주tab 종료월 초기값 입력
 
                     }else {
-                        console.log("if : false");
                         endDate = endDateTemp;
                         $('#txt_weekEndYy').text(year); //그리드 주tab 종료년도 초기값 입력
                         $('#txt_weekEndMm').text(month); //그리드 주tab 종료월 초기값 입력
@@ -136,6 +133,10 @@
                     drawChart(34,7,9.4);
                  }
             });
+
+            /*********************************************************************
+            *   Session Email 값 기준 연차정보 조회
+            *********************************************************************/
             $.ajaxCall( param, {
                  'method' : 'GET',
                  'url' : "{% url 'dili_api:getYryMgmt' %}",
@@ -144,7 +145,8 @@
                  'async' : false,
                  'callbackFn' : function(data){
                     console.log("data : ",data)
-                   // $('#txt_allAnhoDays').text()
+                    $('#txt_allAnhoDays').text(data[0].ALL_YRY_DAYS)
+                    $('#txt_rmnAnhoDays').text(data[0].USE_YRY_DAYS)
                  }
             });
 
