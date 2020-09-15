@@ -79,18 +79,65 @@
             *   weekGridDtDfr Btn Click Event - 주 그리드 날짜 이전 버튼 클릭
             *********************************************************************/
             $('#btn_weekGridDtDfr').click(function(){
+
                 console.log("weekGridDtDfr Btn Click Event");
 
+                var dfrWeekEndYy = $('#txt_weekEndYy').text(); //현재 종료 년도
+                var dfrWeekEndMm = $('#txt_weekEndMm').text()-1; //현재 종료 월
+                var dfrWeekEndDd = $('#txt_weekEndDd').text(); //현재 종료 일
 
+                var dfrWeekStrtYy = $('#txt_weekStrtYy').text(); // 현재 시작 년도
+                var dfrWeekStrtMm = $('#txt_weekStrtMm').text()-1; //현재 시작 월
+                var dfrWeekStrtDd = $('#txt_weekStrtDd').text(); // 현재 시작 일
+
+                var dfrEndDate = new Date(dfrWeekEndYy, dfrWeekEndMm, dfrWeekEndDd); //현재 종료 날짜 등록
+
+                var dfrStrtDate = new Date(dfrWeekStrtYy, dfrWeekStrtMm, dfrWeekStrtDd); //현재 시작 날짜 등록
+
+
+                dfrEndDate.setDate(dfrEndDate.getDate()-7); //종료 날짜 이전 주
+                dfrStrtDate.setDate(dfrStrtDate.getDate()-7); //시작 날짜 이전 주
+
+
+                $('#txt_weekEndYy').text(dfrEndDate.getFullYear());
+                $('#txt_weekEndMm').text(dfrEndDate.getMonth()+1);
+                $('#txt_weekEndDd').text(dfrEndDate.getDate());
+
+                $('#txt_weekStrtYy').text(dfrStrtDate.getFullYear());
+                $('#txt_weekStrtMm').text(dfrStrtDate.getMonth()+1);
+                $('#txt_weekStrtDd').text(dfrStrtDate.getDate());
             });
+
+
 
             /*********************************************************************
             *   weekGridDtNxt Btn Click Event - 주 그리드 날짜 이후 버튼 클릭
             *********************************************************************/
             $('#btn_weekGridDtNxt').click(function(){
+
                 console.log("weekGridDtNxt Btn Click Event");
 
+                var nxtWeekEndYy = $('#txt_weekEndYy').text(); //현재 종료 년도
+                var nxtWeekEndMm = $('#txt_weekEndMm').text()-1; //현재 종료 월
+                var nxtWeekEndDd = $('#txt_weekEndDd').text(); //현재 종료 일
 
+                var nxtWeekStrtYy = $('#txt_weekStrtYy').text(); //현재 시작 년도
+                var nxtWeekStrtMm = $('#txt_weekStrtMm').text()-1; //현재 시작 월
+                var nxtWeekStrtDd = $('#txt_weekStrtDd').text(); //현재 시작 일
+
+                nxtEndDate = new Date(nxtWeekEndYy, nxtWeekEndMm, nxtWeekEndDd); //종료 날짜 다음 주
+                nxtStrtDate = new Date(nxtWeekStrtYy, nxtWeekStrtMm, nxtWeekStrtDd); //시작 날짜 다음 주
+
+                nxtEndDate.setDate(nxtEndDate.getDate()+7);
+                nxtStrtDate.setDate(nxtStrtDate.getDate()+7);
+
+                $('#txt_weekEndYy').text(nxtEndDate.getFullYear());
+                $('#txt_weekEndMm').text(nxtEndDate.getMonth()+1);
+                $('#txt_weekEndDd').text(nxtEndDate.getDate());
+
+                $('#txt_weekStrtYy').text(nxtStrtDate.getFullYear());
+                $('#txt_weekStrtMm').text(nxtStrtDate.getMonth()+1);
+                $('#txt_weekStrtDd').text(nxtStrtDate.getDate());
             });
 
             /*********************************************************************
@@ -145,8 +192,8 @@
                  'async' : false,
                  'callbackFn' : function(data){
                     console.log("data : ",data)
-                    $('#txt_allAnhoDays').text(data[0].ALL_YRY_DAYS)
-                    $('#txt_rmnAnhoDays').text(data[0].USE_YRY_DAYS)
+                    $('#txt_allAnhoDays').text(data[0].ALL_YRY_DAYS) //전체연차일수
+                    $('#txt_rmnAnhoDays').text(data[0].ALL_YRY_DAYS - data[0].USE_YRY_DAYS) //남은연차일수
                  }
             });
 
