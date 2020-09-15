@@ -5,7 +5,7 @@
 
  <style>
 #modal {
-  display:none;
+<!--  display:none;-->
   position:relative;
   width:100%;
   height:100%;
@@ -101,7 +101,7 @@
             </p>
 
             <p>진행 상태<br>
-                <select size ="1" style="width:200px" name = "prgrs_stus" class="col-sm-2">
+                <select size ="1" style="width:200px" name = "pgrs_stus" class="col-sm-2">
                     <option value = "01">예정</option>
                     <option value = "진행 중">진행 중</option>
                     <option value = "종료">종료</option>
@@ -163,12 +163,8 @@
 
 
 <script>
-    document.getElementById("modal_open_btn").onclick = function() {
-        document.getElementById("modal").style.display="block";
-    }
-
     document.getElementById("modal_close_btn").onclick = function() {
-        document.getElementById("modal").style.display="none";
+        window.history.back();
     }
 
 
@@ -202,40 +198,17 @@
 
     $('#modal_save_btn').click(function(){
             console.log('저장');
+                confirmMsg('저장 하시겠습니까?', function(){
 
                     $('#projectInfo').ajaxCall({
                     method : 'POST',
                     url : '/skil/prjSave/post',
                     callbackFn : function(data){
-                        var html = '';
-                        html += '<dl class="row">';
-                        html += '<dt class="col-sm-3">PRJ_NM</dt>';
-                        html += '<dd class="col-sm-9">' + data.prj_nm + '</dd>';
-                        html += '<dt class="col-sm-3">CNCT_CD</dt>';
-                        html += '<dd class="col-sm-9">' + data.cnct_cd + '</dd>';
-                        html += '<dt class="col-sm-3">GNR_CTRO</dt>';
-                        html += '<dd class="col-sm-9">' + data.gnr_ctro + '</dd>';
-                        html += '<dt class="col-sm-3">CTRO</dt>';
-                        html += '<dd class="col-sm-9">' + data.ctro + '</dd>';
-                        html += '<dt class="col-sm-3">CNCT_AMT</dt>';
-                        html += '<dd class="col-sm-9">' + data.cnct_amt + '</dd>';
-                        html += '<dt class="col-sm-3">slin_bzdp</dt>';
-                        html += '<dd class="col-sm-9">' + data.slin_bzdp + '</dd>';
-                        html += '<dt class="col-sm-3">JOB_DIVS</dt>';
-                        html += '<dd class="col-sm-9">' + data.job_divs + '</dd>';
-                        html += '<dt class="col-sm-3">PRGRS_STUS</dt>';
-                        html += '<dd class="col-sm-9">' + data.prgrs_stus + '</dd>';
-<!--                        html += '<dt class="col-sm-3">REQ_SKIL</dt>';-->
-<!--                        html += '<dd class="col-sm-9">' + data.req_skil + '</dd>';-->
-                        html += '<dt class="col-sm-3">REMARK</dt>';
-                        html += '<dd class="col-sm-9">' + data.rmks + '</dd>';
-
-                        html += '</dl>';
-
-                        $('#ajaxResult').html(html);
+                        g_toast.push('저장 되었습니다.');
                     }
                 });
             });
+    });
 
 
 
