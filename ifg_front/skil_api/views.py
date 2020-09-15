@@ -113,3 +113,50 @@ def prjSave(request):
     logger.info(r.json())
     return JsonResponse(r.json())
 
+def prjInpuMgmt(request):
+    template_name = 'skil/prjInpuMgmt.html'
+
+    return render(request, template_name)
+
+def skilMgmt(request):
+    template_name = 'skil/skilMgmt.html'
+
+    return render(request, template_name)
+
+def prjInpuSearch(request):
+
+    param = json.loads(request.GET['param'])
+    logger.info("prjInpuSearch : skil/views.py")
+    datas = {
+        'proCode': param['proCode']
+    }
+
+    logger.info(datas)
+    r = requests.get('http://skil_api:5003/prjInpuSearch', params=datas)
+    logger.info(r)
+    logger.info(r.text)
+    logger.info("----------------")
+    logger.info(r.json())
+    logger.info(json.loads(r.text))
+    return JsonResponse(r.json(), safe=False)
+
+def skilMgmtSearch(request):
+
+    param = json.loads(request.GET['param'])
+    logger.info("skilMgmtSearch : skil/views.py")
+    datas = {
+        'dept': param['dept'],
+        'name': param['name'],
+        'skilKind': param['skilKind'],
+        'skil': param['skil']
+    }
+
+    logger.info(datas)
+    r = requests.get('http://skil_api:5003/skilMgmtSearch', params=datas)
+    logger.info(r)
+    logger.info(r.text)
+    logger.info("----------------")
+    logger.info(r.json())
+    logger.info(json.loads(r.text))
+    # return JsonResponse(r.json())
+    return JsonResponse(r.json(), safe=False)

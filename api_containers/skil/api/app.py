@@ -338,6 +338,86 @@ class prjSave(Resource):
 
             return jsonify(retJson)
 
+class prjInpuSearch(Resource):
+    def get(self):
+        # Get posted data from request
+        logging.debug("search start")
+
+        # get data
+        proCode = request.args.get('proCode')
+
+        logging.debug('---------------SEARCH---------------')
+        logging.debug('proCode : ' + proCode)
+        logging.debug('------------------------------------')
+
+        mysql_con = pymysql.connect(host='218.151.225.142', port=3306, db='IFG_IMS', user='ims2', password='1234',
+                                    charset='utf8')
+
+        try:
+            with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+                if proCode is None or proCode == "":
+                    sql = "SELECT * FROM TB_PRO_MGMT_P"
+                    cursor.execute(sql)
+                else:
+                    logging.debug("is not null")
+                    sql = "SELECT * FROM TB_PRO_MGMT_P WHERE PRO_CODE=%s"
+                    cursor.execute(sql, (proCode))
+        finally:
+            mysql_con.close()
+
+        result2 = cursor.fetchall()
+        for row in result2:
+            logging.debug('====== row====')
+            logging.debug(row)
+            logging.debug('===============')
+        array = list(result2)  # 결과를 리스트로
+
+        return result2
+
+class skilMgmtSearch(Resource):
+    def get(self):
+        # Get posted data from request
+        logging.debug("search start")
+
+        # get data
+        dept = request.args.get('dept')
+        name = request.args.get('name')
+        skilKind = request.args.get('skilKind')
+        skil = request.args.get('skil')
+
+        logging.debug('---------------SEARCH---------------')
+        logging.debug('dept : ' + dept)
+        logging.debug('name : ' + name)
+        logging.debug('skilKind : ' + skilKind)
+        logging.debug('skil : ' + skil)
+        logging.debug('------------------------------------')
+
+        mysql_con = pymysql.connect(host='218.151.225.142', port=3306, db='IFG_IMS', user='ims2', password='1234',
+                                    charset='utf8')
+
+        sql = ""
+
+        try:
+            with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+                if name is None and name == "" :
+                    sql = "SELECT * FROM TB_SKIL_MGNT_TEST"
+                    cursor.execute(sql)
+                else:
+                    logging.debug("is not null")
+                    sql = "SELECT * FROM TB_SKIL_MGNT_TEST WHERE EMP_NAME = %s AND EMP_DEPT = %s "
+                    cursor.execute(sql, (name,dept))
+        finally:
+            mysql_con.close()
+
+        result2 = cursor.fetchall()
+        for row in result2:
+            logging.debug('====== row====')
+            logging.debug(row)
+            logging.debug('===============')
+        array = list(result2)  # 결과를 리스트로
+
+        return result2
+
 api.add_resource(Hello, '/hello')
 api.add_resource(Register, '/register')
 api.add_resource(Retrieve, '/retrieve')
@@ -345,6 +425,12 @@ api.add_resource(Save, '/save')
 api.add_resource(mariaClass,'/mariaClass')
 api.add_resource(devSave, '/devSave')
 api.add_resource(prjSave, '/prjSave')
+
+# 프로젝트 투입 관리
+api.add_resource(prjInpuSearch, '/prjInpuSearch')
+
+# 스킬관리
+api.add_resource(skilMgmtSearch, '/skilMgmtSearch')
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5003, debug=True)
