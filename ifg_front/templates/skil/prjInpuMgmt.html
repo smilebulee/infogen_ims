@@ -6,8 +6,49 @@ history
 {% extends 'common/base.html' %}
 
 {% block content %}
+<style>
+#modal {
+  display:none;
+  position:relative;
+  width:100%;
+  height:100%;
+  z-index:1;
+}
+
+#modal h2 {
+  margin:0;
+}
+
+#modal input {
+  border: 0;
+  border-bottom: 1px solid #0489B1;
+  outline : 0;
+}
+
+#modal .popup {
+  width:1000px;
+  margin:100px auto;
+  padding:0px 40px;
+  background:#fff;
+  border:2px solid #666;
+}
+
+.modal_layer {
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:rgb(0, 0, 0, 0.5);
+  z-index:-1;
+}
+
+</style>
+
     <script type="text/javascript">
         $(document).ready(function(){
+            document.getElementById("modal").style.display="block";
+
             var firstGrid = $('[data-ax5grid="first-grid"]');
 
             getGridList(1);
@@ -123,56 +164,66 @@ history
                 });
             });
 
+             /* 팝업 취소 버튼 (수정필요.)*/
+            document.getElementById("closeBtn").onclick = function() {
+                history.back()
+            }
+
         });
     </script>
 
     <style>
 
     </style>
-    <div class="row">
-                <div class="col-sm-12">
-                    <div id="formSearchDiv">
-                        <h3>프로젝트 별 투입 현황 관리 <a href="http://ax5.io/ax5ui-grid/api/index.html" class="badge badge-info"></a></h3>
-                        <div id="formDiv">
-                            <div>
-                                <div class="col-md-10">
-                                    <label>프로젝트 명 : </label>
-                                    <label name="proNm">1111</label>
-                                </div>
-                                <div class="col-md-10">
-                                    <label>계약코드 : </label>
-                                    <input type="email" name="proCode" placeholder="계약코드 입력 ex)1111" maxlength="70"/>
-                                </div>
-                                <div class="col-md-10">
-                                    <label>업무구분 : </label>
-                                    <label>SI</label>
-                                </div>
-                                <div class="col-md-10">
-                                    <label>프로젝트 계약기간 : </label>
-                                    <label>2020-07-01 ~ 2020-09-30</label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <hr>
-                    <div>
-                        <h3>투입 인력 조회<a class="badge badge-info"></a>
-                        <div style="float: right;">
-                            <button class="btn btn-primary btn-sm" id="grpAddBtn"> + </button>
-                            <button class="btn btn-primary btn-sm" id="grpDelBtn"> - </button>
-                        </div>
-                        </h3>
-                    </div>
-                    <div style="position: relative;height:400px;" id="grid-parent">
-                        <div data-ax5grid="first-grid" style="height: 100%;"></div>
-                    </div>
-                    <div style="float: right;">
-                        <button class="btn btn-primary" id="submitBtn1">업로드 양식 다운</button>
-                        <button class="btn btn-primary" id="submitBtn2">개발자 일괄 업로드</button>
-                        <button class="btn btn-primary" id="submitBtn3">개발자 추가</button>
-                        <button class="btn btn-primary" id="submitBtn4">저장</button>
-                        <button class="btn btn-primary" id="searchBtn">임시 조회</button>
-                    </div>
+    <div class="row" id="modal">
+        <div class="col-sm-12" id = "popup" style="background : #fff;">
+            <div id="formSearchDiv" style="padding-top :20px;">
+                <h3>프로젝트 별 투입 현황 관리 <a href="http://ax5.io/ax5ui-grid/api/index.html" class="badge badge-info"></a></h3>
+                <div id="formDiv">
+                    <div class="bs-example" data-example-id="simple-table">
+                        <table class="table table-bordered">
+                          <tbody>
+                            <tr>
+                              <th scope="row">프로젝트 명</th>
+                              <td>1111</td>
+                              <th scope="row">계약코드</th>
+                              <td><input type="email" name="proCode" placeholder="계약코드 입력 ex)1111" maxlength="70"/></td>
+                            </tr>
+                            <tr>
+                              <th scope="row">업무구분</th>
+                              <td>SI</td>
+                              <th scope="row">프로젝트 계약기간</th>
+                              <td>2020-07-01 ~ 2020-09-30</td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
                 </div>
+            </div>
+            <hr>
+            <div>
+                <h4>투입 인력 조회<a class="badge badge-info"></a>
+                <div style="float: right;">
+                    <button class="btn btn-primary btn-sm" id="grpAddBtn"> + </button>
+                    <button class="btn btn-primary btn-sm" id="grpDelBtn"> - </button>
+                </div>
+                </h4>
+
+                <div style="position: relative;height:510px;">
+                    <div data-ax5grid="first-grid" style="height: 90%;"/>
+                </div>
+                <div style="float: right; float: right; padding-top :5px;" id="btn">
+                    <button class="btn btn-primary" id="submitBtn1">업로드 양식 다운</button>
+                    <button class="btn btn-primary" id="submitBtn2">개발자 일괄 업로드</button>
+                    <button class="btn btn-primary" id="submitBtn3">개발자 추가</button>
+                    <button class="btn btn-primary" id="submitBtn4">저장</button>
+                    <button class="btn btn-primary" id="searchBtn">임시 조회</button>
+                    <button class="btn btn-primary" id="closeBtn">닫기</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal_layer"></div>
     </div>
+
 {% endblock %}
