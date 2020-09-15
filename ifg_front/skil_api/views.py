@@ -100,7 +100,7 @@ def prjSave(request):
         'cnct_amt': param['cnct_amt'],
         'slin_bzdp': param['slin_bzdp'],
         'job_divs': param['job_divs'],
-        'prgrs_stus' : param['prgrs_stus'],
+        'pgrs_stus' : param['pgrs_stus'],
         # 'req_skil' : param['req_skil'],
         'rmks' : param['rmks'],
 

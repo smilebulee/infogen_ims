@@ -260,8 +260,8 @@ class devSave(Resource):
 
             try:
                 with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
-                    sql = "INSERT INTO TB_FRLC_DEVP_INFO VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s)"
-                    cursor.execute(sql, (name, rank, grd, tlno, divs, blco, bday, rmks, use_yn))
+                    sql = "INSERT INTO TB_FRLC_DEVP_INFO (`EMP_NO`, `EMP_NAME`, `DEVP_RANK_CD`, `DEVP_GRD_CD`, `DEVP_TLNO`, `DEVP_DIVS_CD`, `DEVP_BLCO`, `DEVP_BDAY`, `REG_EMP_NO`, `REG_DATE`, `CHG_EMP_NO`, `CHG_DATE`, `RMKS`, `DEVP_USE_YN`)  VALUES((SELECT CONCAT('F','_',(SELECT LPAD(COUNT(*)+1,6,'0') FROM TB_FRLC_DEVP_INFO A))), %s, %s, %s, %s, %s, %s, %s, %s, NOW(), %s, NOW(), %s, %s)"
+                    cursor.execute(sql, (name, rank, grd, tlno, divs, blco, bday, 'admin', 'admin', rmks, use_yn))
                     mysql_con.commit()
 
             finally:
@@ -297,7 +297,7 @@ class prjSave(Resource):
             cnct_amt = request.form['cnct_amt']
             slin_bzdp = request.form['slin_bzdp']
             job_divs = request.form['job_divs']
-            prgrs_stus = request.form['prgrs_stus']
+            pgrs_stus = request.form['pgrs_stus']
             # req_skil = request.form['req_skil']
             rmks = request.form['rmks']
             use_yn = 'T'
@@ -315,8 +315,8 @@ class prjSave(Resource):
 
             try:
                 with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
-                    sql = "INSERT INTO TB_PRJ_INFO VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
-                    cursor.execute(sql, (prj_nm, cnct_cd, gnr_ctro, ctro, cnct_amt, slin_bzdp, job_divs, prgrs_stus, rmks, '1', use_yn))
+                    sql = "INSERT INTO TB_PRJ_INFO VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+                    cursor.execute(sql, (prj_nm, cnct_cd, gnr_ctro, ctro, cnct_amt, slin_bzdp, job_divs, pgrs_stus, rmks, use_yn))
                     mysql_con.commit()
 
             finally:
