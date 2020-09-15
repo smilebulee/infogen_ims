@@ -152,7 +152,7 @@ services:
       MYSQL_ROOT_PASSWORD: 'infogen'
       MYSQL_USER: 'ims2'
       MYSQL_PASSWORD: '1234'
-      MYSQL_DATABASE: 'testdb'
+      MYSQL_DATABASE: 'IFG_IMS'
 
 # 4.cmm 관리
   cmm_api:

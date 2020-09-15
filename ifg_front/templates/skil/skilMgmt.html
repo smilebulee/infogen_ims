@@ -1,0 +1,149 @@
+<!--  ********************************************
+grid sample
+history
+    - 2020.08 김은희 최초작성
+*********************************************** -->
+{% extends 'common/base.html' %}
+
+{% block content %}
+<script type="text/javascript" xmlns:max-width="http://www.w3.org/1999/xhtml">
+        $(document).ready(function(){
+            var firstGrid = $('[data-ax5grid="first-grid"]');
+
+            getGridList(1);
+            var gridList = [        /* 그리드에 세팅할 데이터는 JSON 배열 형태 */
+                {"EMP_NO":"홍길동", "dept":"통신", "skillGrade":"고급", "division":"정규직", "db":"orcle", "lang":"java,c,c#", "web":"", "frameWork":"spring,django", "midWare":"apache,docker","mobile":"010-1234-5678", "birth":"2000-01-01"},
+            ];
+
+            function getGridList(page){
+                $('#formSearchDiv').ajaxCall({
+                    method : 'GET',
+                    url : "{% url 'skil_api:skilMgmtSearch' %}",
+                    callbackFn : function(data){
+
+                    var gridList = data; /* 그리드에 세팅할 데이터는 JSON 배열 형태 */
+
+                    var gridOptions = {
+                        columns: [              /* columns : 그리드 헤더 및 매핑 시킬 컬럼 및 컬럼 속성 설정 항목(필수) */
+                        {
+                            key: "EMP_NAME",
+                            label: "성명",
+                            width: 100,
+                            align: "center"
+                        },
+                        {
+                            key: "EMP_DEPT",
+                            label: "부서",
+                            width: 80,
+                            align: "center"
+                        },
+                        {
+                            key: "EMP_GRD",
+                            label: "구분",
+                            width: 80,
+                            align: "center"
+                        },
+                        {
+                            key: "SKIL_DB",
+                            label: "DB",
+                            width: 80,
+                            align: "center"
+                        },
+                        {
+                            key: "SKIL_LANG",
+                            label: "언어",
+                            width: 120,
+                            align: "center"
+                        },
+                        {
+                            key: "SKIL_WEB",
+                            label: "WEB",
+                            width: 120,
+                            align: "center"
+                        },
+                        {
+                            key: "SKIL_FRAME",
+                            label: "FRAME WORK",
+                            width: 120,
+                            align: "center"
+                        },
+                        {
+                            key: "SKIL_MID",
+                            label: "MID-WARE",
+                            width: 120,
+                            align: "center"
+                        },
+                        {
+                            key: "EMP_PHONE",
+                            label: "연락처",
+                            width: 80,
+                            align: "center"
+                        },
+                        {
+                            key: "EMP_BIRTH",
+                            label: "생년월일",
+                            width: 80,
+                            align: "center"
+                        }
+                        ]
+                    };
+                    firstGrid = $('[data-ax5grid="first-grid"]');
+                    firstGrid = firstGrid.initGrid(gridOptions);
+                    firstGrid.setData(gridList);
+                    }
+                });
+            }
+
+            $('#searchBtn').click(function(){
+                getGridList(1);
+            });
+
+        });
+    </script>
+
+    <style>
+
+    </style>
+    <div class="row">
+                <div class="col-sm-12">
+                    <div id="formSearchDiv">
+                        <h3>스킬 관리 <a href="http://ax5.io/ax5ui-grid/api/index.html" class="badge badge-info"></a></h3>
+                        <div id="formDiv">
+                            <div class="form-row" style="padding-bottom:9px">
+                                <label class="col-sm-1" style="max-width:50px;">부서</label>
+                                <select class="col-sm-2" name="dept">
+                                    <option selected></option>
+                                    <option value="1">통신</option>
+                                    <option value="2">전자</option>
+                                </select>
+                                <label class="col-sm-1" style="padding-left :30px; max-width:80px;">성명</label>
+                                <input class="col-sm-2" type="text" name="name" maxlength="50" placeholder="이름을 입력해주세요." >
+                                <div class="col-sm-1" style="float: right;">
+                                <button class="btn btn-primary" id="searchBtn">조회</button>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <label class="col-sm-1" style="max-width:50px;">스킬</label>
+                                <select class="col-sm-2" name="skilKind">
+                                    <option selected></option>
+                                    <option value="1">DB</option>
+                                    <option value="2">언어</option>
+                                </select>
+                                <label style="width:30px"></label>
+                                <input style="width:237px" type="text" name="skil" maxlength="50" placeholder="내용을 입력해주세요." >
+                            </div>
+                        </div>
+                    </div>
+                    <hr>
+                    <div>
+                        <h3>목록조회<a class="badge badge-info"></a></h3>
+                    </div>
+                    <div style="position: relative;height:400px;" id="grid-parent">
+                        <div data-ax5grid="first-grid" style="height: 100%;"></div>
+                    </div>
+                    <div style="float: right; padding-top :10px;">
+                        <button class="btn btn-primary" id="skillDetlMentBtn" >스킬상세관리</button>
+                    </div>
+                </div>
+    </div>
+{% endblock %}

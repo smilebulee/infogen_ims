@@ -1,0 +1,229 @@
+<!--  ********************************************
+grid sample
+history
+    - 2020.08 김은희 최초작성
+*********************************************** -->
+{% extends 'common/base.html' %}
+
+{% block content %}
+<style>
+#modal {
+  display:none;
+  position:relative;
+  width:100%;
+  height:100%;
+  z-index:1;
+}
+
+#modal h2 {
+  margin:0;
+}
+
+#modal input {
+  border: 0;
+  border-bottom: 1px solid #0489B1;
+  outline : 0;
+}
+
+#modal .popup {
+  width:1000px;
+  margin:100px auto;
+  padding:0px 40px;
+  background:#fff;
+  border:2px solid #666;
+}
+
+.modal_layer {
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:rgb(0, 0, 0, 0.5);
+  z-index:-1;
+}
+
+</style>
+
+    <script type="text/javascript">
+        $(document).ready(function(){
+            document.getElementById("modal").style.display="block";
+
+            var firstGrid = $('[data-ax5grid="first-grid"]');
+
+            getGridList(1);
+
+        $('#searchBtn').click(function(){
+            getGridList(1);
+        });
+            function getGridList(page){
+                $('#formSearchDiv').ajaxCall({
+                        method : 'GET',
+                        url : "{% url 'skil_api:prjInpuSearch' %}",
+                        callbackFn : function(data){
+
+                        var gridList = data; /* 그리드에 세팅할 데이터는 JSON 배열 형태 */
+
+                        var gridOptions = {
+                            columns: [              /* columns : 그리드 헤더 및 매핑 시킬 컬럼 및 컬럼 속성 설정 항목(필수) */
+                                {
+                                    key: "EMP_NO",
+                                    label: "성명",
+                                    width: 100,
+                                    align: "center"
+                                },
+                                {
+                                    key: "PRO_CODE",
+                                    label: "소속구분",
+                                    width: 80,
+                                    align: "center"
+                                },
+                                {
+                                    key: "SALE_GRADE",
+                                    label: "스킬등급",
+                                    width: 80,
+                                    align: "center"
+                                },
+                                {
+                                    key: "DIVISION",
+                                    label: "구분",
+                                    width: 80,
+                                    align: "center"
+                                },
+                                {
+                                    key: "SALE_GRADE",
+                                    label: "매출등급",
+                                    width: 80,
+                                    align: "center"
+                                },
+                                {
+                                    key: "PUT_STR_DT",
+                                    label: "투입시작일",
+                                    width: 80,
+                                    align: "center",
+                                    editor: {type: "text"}
+                                },
+                                {
+                                    key: "PUT_END_DT",
+                                    label: "투입종료일",
+                                    width: 80,
+                                    align: "center",
+                                    editor: {type: "text"}
+                                },
+                                {
+                                    key: "CON_STR_DT",
+                                    label: "계약시작일",
+                                    width: 80,
+                                    align: "center",
+                                    editor: {type: "text"}
+                                },
+                                {
+                                    key: "CON_END_DT",
+                                    label: "계약종료일",
+                                    width: 80,
+                                    align: "center",
+                                    editor: {type: "text"}
+                                },
+                                {
+                                    key: "WORK",
+                                    label: "담당업무",
+                                    width: 80,
+                                    align: "center",
+                                    editor: {type: "text"}
+                                },
+                                {
+                                    key: "PRO_DETL",
+                                    label: "비고",
+                                    width: 80,
+                                    align: "center",
+                                    editor: {type: "text"}
+                                }
+                            ]
+                        };
+                        firstGrid = $('[data-ax5grid="first-grid"]');
+                        firstGrid = firstGrid.initGrid(gridOptions);
+                        firstGrid.setData(gridList);
+                    }
+                });
+            }
+
+            /* 행 추가 버튼 */
+            $('#grpAddBtn').click(function(){
+                firstGrid.addRow({EMP_NO: '',PRO_CODE : '',DIVISION: '',SALE_GRADE: '',PUT_STR_DT: '',PUT_END_DT: '',CON_STR_DT: '',CON_END_DT: '',WORK: '',PRO_DETL: ''});
+            });
+
+            /* 행 삭제 버튼 */
+            $('#grpDelBtn').click(function(){
+
+                if(firstGrid.getList("selected").length == 0){
+                    alertMsg("선택된 행이 없습니다.");
+                    return false;
+                }
+                confirmMsg('삭제 하시겠습니까?', function(){
+                    firstGrid.deleteRow(firstGrid.selectedDataIndexs[0]); //선택한 행 삭제
+                });
+            });
+
+             /* 팝업 취소 버튼 (수정필요.)*/
+            document.getElementById("closeBtn").onclick = function() {
+                history.back()
+            }
+
+        });
+    </script>
+
+    <style>
+
+    </style>
+    <div class="row" id="modal">
+        <div class="col-sm-12" id = "popup" style="background : #fff;">
+            <div id="formSearchDiv" style="padding-top :20px;">
+                <h3>프로젝트 별 투입 현황 관리 <a href="http://ax5.io/ax5ui-grid/api/index.html" class="badge badge-info"></a></h3>
+                <div id="formDiv">
+                    <div class="bs-example" data-example-id="simple-table">
+                        <table class="table table-bordered">
+                          <tbody>
+                            <tr>
+                              <th scope="row">프로젝트 명</th>
+                              <td>1111</td>
+                              <th scope="row">계약코드</th>
+                              <td><input type="email" name="proCode" placeholder="계약코드 입력 ex)1111" maxlength="70"/></td>
+                            </tr>
+                            <tr>
+                              <th scope="row">업무구분</th>
+                              <td>SI</td>
+                              <th scope="row">프로젝트 계약기간</th>
+                              <td>2020-07-01 ~ 2020-09-30</td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                </div>
+            </div>
+            <hr>
+            <div>
+                <h4>투입 인력 조회<a class="badge badge-info"></a>
+                <div style="float: right;">
+                    <button class="btn btn-primary btn-sm" id="grpAddBtn"> + </button>
+                    <button class="btn btn-primary btn-sm" id="grpDelBtn"> - </button>
+                </div>
+                </h4>
+
+                <div style="position: relative;height:510px;">
+                    <div data-ax5grid="first-grid" style="height: 90%;"/>
+                </div>
+                <div style="float: right; float: right; padding-top :5px;" id="btn">
+                    <button class="btn btn-primary" id="submitBtn1">업로드 양식 다운</button>
+                    <button class="btn btn-primary" id="submitBtn2">개발자 일괄 업로드</button>
+                    <button class="btn btn-primary" id="submitBtn3">개발자 추가</button>
+                    <button class="btn btn-primary" id="submitBtn4">저장</button>
+                    <button class="btn btn-primary" id="searchBtn">임시 조회</button>
+                    <button class="btn btn-primary" id="closeBtn">닫기</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal_layer"></div>
+    </div>
+
+{% endblock %}
