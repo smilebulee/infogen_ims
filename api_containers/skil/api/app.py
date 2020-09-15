@@ -382,14 +382,14 @@ class skilMgmtSearch(Resource):
         # get data
         dept = request.args.get('dept')
         name = request.args.get('name')
-        skilKind = request.args.get('skilKind')
-        skil = request.args.get('skil')
+        #skilKind = request.args.get('skilKind')
+        #skil = request.args.get('skil')
 
         logging.debug('---------------SEARCH---------------')
         logging.debug('dept : ' + dept)
         logging.debug('name : ' + name)
-        logging.debug('skilKind : ' + skilKind)
-        logging.debug('skil : ' + skil)
+        #logging.debug('skilKind : ' + skilKind)
+        #logging.debug('skil : ' + skil)
         logging.debug('------------------------------------')
 
         mysql_con = pymysql.connect(host='218.151.225.142', port=3306, db='IFG_IMS', user='ims2', password='1234',
