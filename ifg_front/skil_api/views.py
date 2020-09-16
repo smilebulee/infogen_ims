@@ -92,6 +92,8 @@ def prjSave(request):
 
     param = json.loads(request.POST['param'])
 
+    logger.info(param)
+
     datas = {
         'prj_nm' : param['prj_nm'],
         'cnct_cd' : param['cnct_cd'],
@@ -101,7 +103,8 @@ def prjSave(request):
         'slin_bzdp': param['slin_bzdp'],
         'job_divs': param['job_divs'],
         'pgrs_stus' : param['pgrs_stus'],
-        # 'req_skil' : param['req_skil'],
+        'req_skil_divs' : param['req_skil_divs'],
+        'req_skil_name' : param['req_skil_name'],
         'rmks' : param['rmks'],
 
     }

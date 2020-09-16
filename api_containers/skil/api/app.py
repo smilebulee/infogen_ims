@@ -260,7 +260,11 @@ class devSave(Resource):
 
             try:
                 with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
-                    sql = "INSERT INTO TB_FRLC_DEVP_INFO (`EMP_NO`, `EMP_NAME`, `DEVP_RANK_CD`, `DEVP_GRD_CD`, `DEVP_TLNO`, `DEVP_DIVS_CD`, `DEVP_BLCO`, `DEVP_BDAY`, `REG_EMP_NO`, `REG_DATE`, `CHG_EMP_NO`, `CHG_DATE`, `RMKS`, `DEVP_USE_YN`)  VALUES((SELECT CONCAT('F','_',(SELECT LPAD(COUNT(*)+1,6,'0') FROM TB_FRLC_DEVP_INFO A))), %s, %s, %s, %s, %s, %s, %s, %s, NOW(), %s, NOW(), %s, %s)"
+                    sql = "INSERT INTO TB_FRLC_DEVP_INFO (`EMP_NO`, " \
+                          "`EMP_NAME`, `DEVP_RANK_CD`, `DEVP_GRD_CD`, `DEVP_TLNO`, `DEVP_DIVS_CD`, " \
+                          "`DEVP_BLCO`, `DEVP_BDAY`, `REG_EMP_NO`, `REG_DATE`, `CHG_EMP_NO`, `CHG_DATE`, `RMKS`, `DEVP_USE_YN`)  " \
+                          "VALUES((SELECT CONCAT('F','_',(SELECT LPAD(COUNT(*)+1,6,'0') FROM TB_FRLC_DEVP_INFO A)))," \
+                          "%s, %s, %s, %s, %s, %s, %s, %s, NOW(), %s, NOW(), %s, %s)"
                     cursor.execute(sql, (name, rank, grd, tlno, divs, blco, bday, 'admin', 'admin', rmks, use_yn))
                     mysql_con.commit()
 
@@ -298,7 +302,8 @@ class prjSave(Resource):
             slin_bzdp = request.form['slin_bzdp']
             job_divs = request.form['job_divs']
             pgrs_stus = request.form['pgrs_stus']
-            # req_skil = request.form['req_skil']
+            req_skil_divs = request.form['req_skil_divs']
+            req_skil_name = request.form['req_skil_name']
             rmks = request.form['rmks']
             use_yn = 'T'
 
@@ -315,9 +320,25 @@ class prjSave(Resource):
 
             try:
                 with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
-                    sql = "INSERT INTO TB_PRJ_INFO VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+                    sql = "INSERT INTO TB_PRJ_INFO(`PRJ_CD`, `PRJ_NM`, `PRJ_CNCT_CD`, `GNR_CTRO`, `CTRO`, `CNCT_AMT`," \
+                          " `SLIN_BZDP`, `JOB_DIVS_CD`, `PRGRS_STUS_CD`, `REG_EMP_NO`, `REG_DATE`, `CHG_EMP_NO`," \
+                          " `CHG_DATE`, `RMKS`, `USE_YN`) " \
+                          "VALUES((SELECT CONCAT('PRJ','_',(SELECT LPAD(COUNT(*)+1,6,'0') FROM TB_PRJ_INFO A))), " \
+                          "%s, %s, %s, %s, %s, %s, %s, %s, 'admin', NOW(), 'admin', NOW(), %s, %s)"
                     cursor.execute(sql, (prj_nm, cnct_cd, gnr_ctro, ctro, cnct_amt, slin_bzdp, job_divs, pgrs_stus, rmks, use_yn))
                     mysql_con.commit()
+
+                    logging.debug('PRJ_INFO SUCCESS')
+                    logging.debug(prj_nm + req_skil_divs + req_skil_name)
+
+                    sql = "INSERT INTO TB_PRJ_REQ_SKIL(`PRJ_CD`, `SKIL_DIVS`, `SKIL_NAME`, `REG_EMP_NO`, `REG_DATE`," \
+                          " `CHG_EMP_NO`, `CHG_DATE`) " \
+                          "VALUES ((SELECT PRJ_CD FROM TB_PRJ_INFO A WHERE PRJ_NM = %s)," \
+                          " %s, %s, 'admin', NOW(), 'admin', NOW())"
+                    cursor.execute(sql, (prj_nm, req_skil_divs, req_skil_name))
+                    mysql_con.commit()
+
+                    logging.debug('REQ_SKIL SUCCESS')
 
             finally:
                 mysql_con.close()
