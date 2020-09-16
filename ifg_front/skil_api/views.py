@@ -92,6 +92,8 @@ def prjSave(request):
 
     param = json.loads(request.POST['param'])
 
+    logger.info(param)
+
     datas = {
         'prj_nm' : param['prj_nm'],
         'cnct_cd' : param['cnct_cd'],
@@ -100,8 +102,9 @@ def prjSave(request):
         'cnct_amt': param['cnct_amt'],
         'slin_bzdp': param['slin_bzdp'],
         'job_divs': param['job_divs'],
-        'prgrs_stus' : param['prgrs_stus'],
-        # 'req_skil' : param['req_skil'],
+        'pgrs_stus' : param['pgrs_stus'],
+        'req_skil_divs' : param['req_skil_divs'],
+        'req_skil_name' : param['req_skil_name'],
         'rmks' : param['rmks'],
 
     }
@@ -147,8 +150,8 @@ def skilMgmtSearch(request):
     datas = {
         'dept': param['dept'],
         'name': param['name'],
-        'skilKind': param['skilKind'],
-        'skil': param['skil']
+        #'skilKind': param['skilKind'],
+        #'skil': param['skil']
     }
 
     logger.info(datas)

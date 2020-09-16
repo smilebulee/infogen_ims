@@ -5,7 +5,7 @@
 
  <style>
 #modal {
-  display:none;
+<!--  display:none;-->
   position:relative;
   width:100%;
   height:100%;
@@ -55,15 +55,6 @@
 
 </style>
 
-
-
-
-<div id="root">
-   
-    <button type="button" id="modal_open_btn">개발자 등록</button>
-       
-</div>
-
 <div id="modal">
 
     <div class="modal_content">
@@ -72,8 +63,6 @@
             <span style="color: #0489B1;
                          font-size: 1.0em;
                          padding:20px;">
-    <!--            마리아 DB 연동-->
-    <!--            <a id="result"></a><br>-->
                 <p>성명<br>
                     <input type = "text" name = "name" placeholder="input text"></p>
 
@@ -125,51 +114,25 @@
     </div>
 
 <script>
-    document.getElementById("modal_open_btn").onclick = function() {
-        document.getElementById("modal").style.display="block";
-    }
 
     document.getElementById("modal_close_btn").onclick = function() {
-        document.getElementById("modal").style.display="none";
+        window.history.back();
     }
 
 
      $('#modal_save_btn').click(function(){
             console.log('저장');
-
+            confirmMsg('저장 하시겠습니까?', function(){
                     $('#developerEnrollment').ajaxCall({
                     method : 'POST',
                     url : '/skil/devSave/post',
                     callbackFn : function(data){
-                        var html = '';
-                        html += '<dl class="row">';
-                        html += '<dt class="col-sm-3">NAME</dt>';
-                        html += '<dd class="col-sm-9">' + data.name + '</dd>';
-                        html += '<dt class="col-sm-3">RANK</dt>';
-                        html += '<dd class="col-sm-9">' + data.rank + '</dd>';
-                        html += '<dt class="col-sm-3">GRADE</dt>';
-                        html += '<dd class="col-sm-9">' + data.grd + '</dd>';
-                        html += '<dt class="col-sm-3">TELNO1</dt>';
-                        html += '<dd class="col-sm-9">' + data.tlno1 + '</dd>';
-                        html += '<dt class="col-sm-3">TELNO2</dt>';
-                        html += '<dd class="col-sm-9">' + data.tlno2 + '</dd>';
-                        html += '<dt class="col-sm-3">TELNO3</dt>';
-                        html += '<dd class="col-sm-9">' + data.tlno3 + '</dd>';
-                        html += '<dt class="col-sm-3">DIVS</dt>';
-                        html += '<dd class="col-sm-9">' + data.divs + '</dd>';
-                        html += '<dt class="col-sm-3">BLCO</dt>';
-                        html += '<dd class="col-sm-9">' + data.blco + '</dd>';
-                        html += '<dt class="col-sm-3">BDAY</dt>';
-                        html += '<dd class="col-sm-9">' + data.bday + '</dd>';
-                        html += '<dt class="col-sm-3">REMARK</dt>';
-                        html += '<dd class="col-sm-9">' + data.rmks + '</dd>';
-
-                        html += '</dl>';
-
-                        $('#ajaxResult').html(html);
+                       g_toast.push('저장 되었습니다.');
                     }
                 });
+
             });
+     });
 
 
 </script>
