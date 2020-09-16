@@ -23,6 +23,10 @@
             $('#grp_grid').hide();                                                  // Calendar UI를 Default로 한다.
             $('#grp_showMonth').hide();                                             // Grid UI의 week를 Default로 한다.
 
+
+            /*********************************************************************
+            *   Grid UI (월,주)tab 현재 날짜로 세팅
+            *********************************************************************/
             //현재 날짜 가져오기
             var today = new Date();
             var year = today.getFullYear(); // 년도
@@ -75,6 +79,52 @@
             $('#txt_mmYy').text(year); //그리드 월tab 년도 초기값 입력
             $('#txt_mmMm').text(month); //그리드 월tab 월 초기값 입력
 
+            crteWeekGrid();
+
+            /*********************************************************************
+            *   Week Grid 생성
+            *********************************************************************/
+            function crteWeekGrid(){
+
+                var weekTable = '<table class="table table-bordered table-responsive-md table-striped text-center">';
+                weekTable += '<thead>';
+                weekTable += '<tr>';
+                weekTable += '<th class="text-center">일자</th>';
+                weekTable += '<th class="text-center">업무시작시간</th>';
+                weekTable += '<th class="text-center">업무종료시간</th>';
+                weekTable += '<th class="text-center">총근무시간</th>';
+                weekTable += '<th class="text-center">근무시간상세</th>';
+                weekTable += '<th class="text-center">결재상태</th>';
+                weekTable += '</tr>';
+                weekTable += '</thead>';
+                weekTable += '<tbody>';
+
+                var weekGridStrtYy = $('#txt_weekStrtYy').text(); //현재 시작 년도
+                var weekGridStrtMm = $('#txt_weekStrtMm').text()-1; //현재 시작 월
+                var weekGridStrtDd = $('#txt_weekStrtDd').text(); //현재 시작 일
+
+                var weekGridStrtDate = new Date(weekGridStrtYy, weekGridStrtMm, weekGridStrtDd); //시작 날짜
+
+                for(var i = 0; i < 7; i++){
+                    weekTable += '<tr>';
+                    weekTable += '<td class="pt-3-half" contenteditable="true">'+weekGridStrtDate.getDate()+'</td>';
+                    weekTable += '<td class="pt-3-half" contenteditable="true"></td>';
+                    weekTable += '<td class="pt-3-half" contenteditable="true"></td>';
+                    weekTable += '<td class="pt-3-half" contenteditable="true"></td>';
+                    weekTable += '<td class="pt-3-half" contenteditable="true">정상근무 :  / 초과근무 : </td>';
+                    weekTable += '<td class="pt-3-half" contenteditable="true"></td>';
+                    weekTable += '</tr>';
+                    weekGridStrtDate.setDate(weekGridStrtDate.getDate()+1);
+                }
+
+                weekTable += '</tbody>';
+                weekTable += '</table>';
+
+                document.getElementById('grid_week').innerHTML = weekTable;
+            }
+
+
+
             /*********************************************************************
             *   weekGridDtDfr Btn Click Event - 주 그리드 날짜 이전 버튼 클릭
             *********************************************************************/
@@ -106,9 +156,8 @@
                 $('#txt_weekStrtYy').text(dfrStrtDate.getFullYear());
                 $('#txt_weekStrtMm').text(dfrStrtDate.getMonth()+1);
                 $('#txt_weekStrtDd').text(dfrStrtDate.getDate());
+                crteWeekGrid();
             });
-
-
 
             /*********************************************************************
             *   weekGridDtNxt Btn Click Event - 주 그리드 날짜 이후 버튼 클릭
@@ -138,6 +187,7 @@
                 $('#txt_weekStrtYy').text(nxtStrtDate.getFullYear());
                 $('#txt_weekStrtMm').text(nxtStrtDate.getMonth()+1);
                 $('#txt_weekStrtDd').text(nxtStrtDate.getDate());
+                crteWeekGrid();
             });
 
             /*********************************************************************
@@ -467,7 +517,7 @@
 
                 <!-- 3. 사원 Schedule Grid 영역 -->
                 <div id="grp_grid">
-                    <div class="bg-light p-5">
+                    <div class="p-5">
                         <div class="d-flex flex-row-reverse">
                             <div>
                                 <span class="badge badge-success" id="btn_showMonth">Month</span>
@@ -478,7 +528,7 @@
                         </div>
                         <!-- 3-1. 사원 Schedule Grid 영역 주단위 -->
                         <div id="grp_showWeek">
-                            <div class="d-flex justify-content-center">
+                            <div class="d-flex justify-content-center mb-5">
                                 <button type="button" id="btn_weekGridDtDfr">
                                     <svg width="0.6em" height="0.6em" viewBox="0 0 16 16" class="bi bi-caret-left-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                                         <path d="M3.86 8.753l5.482 4.796c.646.566 1.658.106 1.658-.753V3.204a1 1 0 0 0-1.659-.753l-5.48 4.796a1 1 0 0 0 0 1.506z"/>
@@ -505,10 +555,12 @@
                                     </svg>
                                 </button>
                             </div>
+                            <!--week table 영역 -->
+                            <div id="grid_week"></div>
                         </div>
                         <!-- 3-2. 사원 Schedule Grid 영역 월단위 -->
                         <div id="grp_showMonth">
-                            <div class="d-flex justify-content-center">
+                            <div class="d-flex justify-content-center mb-5">
                                 <button type="button" id="btn_mmGridDtDfr">
                                     <svg width="0.6em" height="0.6em" viewBox="0 0 16 16" class="bi bi-caret-left-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                                         <path d="M3.86 8.753l5.482 4.796c.646.566 1.658.106 1.658-.753V3.204a1 1 0 0 0-1.659-.753l-5.48 4.796a1 1 0 0 0 0 1.506z"/>
@@ -528,6 +580,7 @@
                                 </button>
                             </div>
                         </div>
+
                     </div>
                 </div>
                 <!-- 4. 사원 Schedule Calendar 영역 -->
