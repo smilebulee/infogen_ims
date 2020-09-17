@@ -63,26 +63,29 @@
             <span style="color: #0489B1;
                          font-size: 1.0em;
                          padding:20px;">
-                <p>성명<br>
+
+                    <input type = "text" name = "emp_no" style = "display:none"></p>
+
+                <p>*성명<br>
                     <input type = "text" name = "name" placeholder="input text"></p>
 
                 <p>직급<br>
                     <input type = "text" name = "rank" placeholder="input text"></p>
 
-                <p>등급<br>
+                <p>*등급<br>
                     <select size ="1" width="50px" name = "grd" class = "col-sm-2">
                         <option value = "01">초</option>
                         <option value = "중">중</option>
                         <option value = "고">고</option>
                     </select></p>
 
-                <p>구분<br>
+                <p>*구분<br>
                     <select size ="1" width="50px" name = "divs" class="col-sm-2">
                         <option value = "01">프리</option>
                         <option value = "외주">외주</option>
                     </select></p>
 
-                <p>연락처<br>
+                <p>*연락처<br>
                         <select size ="1" name = "tlno1" class = "col-sm-2">
                             <option value = "010">010</option>
                             <option value = "011">011</option>
@@ -91,10 +94,10 @@
                         - <input type = "text" name = "tlno2" placeholder="0000" size="6">
                         - <input type = "text" name = "tlno3" placeholder="0000" size="6"></p>
 
-                <p>소속사<br>
+                <p>*소속사<br>
                     <input type = "text" name = "blco" placeholder="input text"></p>
 
-                <p>생년월일<br>
+                <p>*생년월일<br>
                     <input type = "date" name = "bday"></p>
 
                 <p>비고<br>
@@ -128,6 +131,20 @@
                     url : '/skil/devSave/post',
                     callbackFn : function(data){
                        g_toast.push('저장 되었습니다.');
+                    }
+                });
+
+            });
+     });
+
+     $('#modal_delete_btn').click(function(){
+            console.log('삭제');
+            confirmMsg('삭제 하시겠습니까?', function(){
+                    $('#developerEnrollment').ajaxCall({
+                    method : 'POST',
+                    url : '/skil/devDelete/post',
+                    callbackFn : function(data){
+                       g_toast.push('삭제 되었습니다.');
                     }
                 });
 

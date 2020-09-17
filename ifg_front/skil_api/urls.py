@@ -15,8 +15,14 @@ urlpatterns = [
     # mariadb test
     url(r'^maria/', views.maria.as_view(), name='maria'),
     url(r'^getMariaDB/', views.getMariaDB, name='getMariaDB'),
+
+    # 개발자 등록
     url(r'^devSave/post', views.devSave, name='devSave'),
+    url(r'^devDelete/post', views.devDelete, name='devDelete'),
+
+    # 프로젝트 등록
     url(r'^prjSave/post', views.prjSave, name='prjSave'),
+    url(r'^prjDelete/post', views.prjDelete, name='prjDelete'),
 
     # 프로젝트 투입 관리
     url(r'^prjInpuMgmt/', views.prjInpuMgmt, name='prjInpuMgmt'),

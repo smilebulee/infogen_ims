@@ -26,7 +26,7 @@
   display:inline-block;
   width:33%;
   margin-center:calc(100% - 100px - 10px);
-  float:left;
+  float:right;
   color: blue;
   background-color: rgba(0,0,0,0);
   border: 0;
@@ -70,6 +70,8 @@ tbody>tr>td:first-child:before {
             <span style="color: #0489B1;
                          font-size: 1.0em;
                          padding:20px;">
+
+                    <input type = "text" name = "prj_cd" style = "display:none"></p>
 
                 <p>프로젝트 명<br>
                     <input type = "text" name = "prj_nm" placeholder="input text"></p>
@@ -117,8 +119,11 @@ tbody>tr>td:first-child:before {
 
 
 
-        <button name="addStaff" style="float:right color:blue">추가</button>
-        <button name="delStaff" style="float:right color:red">삭제</button>
+<!--        <button name="addStaff" class = "btn btn-primary style="float:right">추가</button>-->
+<!--        <button name="delStaff" class = "btn btn-primary style="float:right color:red">삭제</button>-->
+        <td><input type="button" style="float:right" id="add" name="addStaff" value="추가" class = "btn btn-danger"/></td>
+        <td><input type="button" style="float:right" id="del" name="delStaff" value="삭제" class = "btn btn-primary"/></td>
+
         <br>
             <table id="reqSkil" class="table" style="margin-top: 20px;">
                 <colgroup>
@@ -139,8 +144,15 @@ tbody>tr>td:first-child:before {
                     <tr name="trSkil">
         <!--                <td> <input type="text" class="form-control" name="staff_name" placeholder="순번"> </td>-->
                         <td id="staff_name"></td>
-                        <td> <input type="text" class="form-control" name="req_skil_divs" placeholder="구분"></td>
-                        <td> <input type="text" class="form-control" name="req_skil_name" placeholder="스킬명"></td>
+                        <td><select size="1" class="form-control" id="req_skil_divs" name="req_skil_divs" onchange="skil_chg()">
+                            <option value = "00">선택</option>
+                            <option value = "01">DB</option>
+                            <option value = "02">언어</option>
+                            <option value = "03">WEB</option>
+                            <option value = "04">Framework</option>
+                        </select></td>
+<!--                        <td> <input type="text" class="form-control" id = "req_skil_name" name="req_skil_name" placeholder="스킬명"></td>-->
+                        <td><select class="form-control" id = "req_skil_name" name = "req_skil_name"></select></td>
                     </tr>
                 </tbody>
             </table>
@@ -176,8 +188,14 @@ tbody>tr>td:first-child:before {
         var count = 0;
         var addStaffText =     '<tr name="trSkil">'+
             '        <td id="staff_name"></td>'+
-            '        <td> <input type="text" class="form-control" name="req_skil_divs" placeholder="구분"></td>'+
-            '        <td> <input type="text" class="form-control" name="req_skil_name" placeholder="스킬"></td>'+
+            '        <td><select size ="1" class="form-control" id = "req_skil_divs" name = "req_skil_divs">'+
+            '                <option value = "00">선택</option>'+
+            '                <option value = "01">DB</option>'+
+            '                <option value = "02">언어</option>'+
+            '                <option value = "03">WEB</option>'+
+            '                <option value = "04">Framework</option>'+
+            '            </select></td>'+
+            '        <td> <input type="text" class="form-control" id = "req_skil_name" name="req_skil_name" placeholder="스킬명"></td>'+
             '</tr>';
 
         var trHtml = $( "tr[name=trSkil]:last" );
@@ -197,16 +215,67 @@ tbody>tr>td:first-child:before {
     $('#modal_save_btn').click(function(){
             console.log('저장');
                 confirmMsg('저장 하시겠습니까?', function(){
-
-                    $('#projectInfo').ajaxCall({
-                    method : 'POST',
-                    url : '/skil/prjSave/post',
-                    callbackFn : function(data){
-                        g_toast.push('저장 되었습니다.');
-                    }
+                        $('#projectInfo').ajaxCall({
+                        method : 'POST',
+                        url : '/skil/prjSave/post',
+                        callbackFn : function(data){
+                            g_toast.push('저장 되었습니다.');
+                        }
                 });
             });
     });
+
+    $('#modal_delete_btn').click(function(){
+            console.log('삭제');
+            confirmMsg('삭제 하시겠습니까?', function(){
+                    $('#projectInfo').ajaxCall({
+                    method : 'POST',
+                    url : '/skil/prjDelete/post',
+                    callbackFn : function(data){
+                       g_toast.push('삭제 되었습니다.');
+                    }
+                });
+
+            });
+     });
+
+     function skil_chg(){
+        console.log('스킬 변경');
+        var DB = ["Oracle","MySql","MsSql"];
+        var Language = ["C","C++","C#","JAVA","Python"];
+        var WEB = ["HTML","JavaScript","CSS"];
+        var Framework = [".net", "Spring"];
+
+        var selectSkill = $("#req_skil_divs").val();
+
+        console.log(selectSkill);
+
+        var changeSkill;
+
+        if(selectSkill == "01"){
+          changeSkill = DB;
+        }
+        else if(selectSkill == "02"){
+          changeSkill = Language;
+        }
+        else if(selectSkill == "03"){
+          changeSkill =  WEB;
+        }
+        else if(selectSkill == "04"){
+          changeSkill =  Framework;
+        }
+
+        console.log(changeSkill);
+        console.log(changeSkill.length);
+
+        $('#req_skil_name').empty();
+
+        for(var count = 0; count < changeSkill.length; count++){
+                        var option = $("<option>"+changeSkill[count]+"</option>");
+                        $('#req_skil_name').append(option);
+                    }
+
+     };
 
 
 
