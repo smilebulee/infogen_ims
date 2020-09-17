@@ -17,6 +17,13 @@
 {% block content %}
     <div class="container">
         <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+        <script src="https://uicdn.toast.com/tui.code-snippet/v1.5.2/tui-code-snippet.min.js"></script>
+        <script src="https://uicdn.toast.com/tui.time-picker/latest/tui-time-picker.min.js"></script>
+        <script src="https://uicdn.toast.com/tui.date-picker/latest/tui-date-picker.min.js"></script>
+        <script src="https://uicdn.toast.com/tui-calendar/latest/tui-calendar.js"></script>
+
+
+
         <script type="text/javascript">
         $(document).ready(function(){
 
@@ -423,6 +430,53 @@
             });
         }
 
+
+        /*********************************************************************
+        *   Draw  calendar Event - 캘린더 API 그리기
+        *********************************************************************/
+        function calendar() {
+            var calendar = new tui.Calendar(document.getElementById('calendar'), {
+                defaultView: 'month',
+                taskView: true,    // Can be also ['milestone', 'task']
+                scheduleView: true,  // Can be also ['allday', 'time']
+                template: {
+                    milestone: function(schedule) {
+                        return '<span style="color:red;"><i class="fa fa-flag"></i> ' + schedule.title + '</span>';
+                    },
+                    milestoneTitle: function() {
+                        return 'Milestone';
+                    },
+                    task: function(schedule) {
+                        return '&nbsp;&nbsp;#' + schedule.title;
+                    },
+                    taskTitle: function() {
+                        return '<label><input type="checkbox" />Task</label>';
+                    },
+                    allday: function(schedule) {
+                        return schedule.title + ' <i class="fa fa-refresh"></i>';
+                    },
+                    alldayTitle: function() {
+                        return 'All Day';
+                    },
+                    time: function(schedule) {
+                        return schedule.title + ' <i class="fa fa-refresh"></i>' + schedule.start;
+                    }
+                },
+                month: {
+                    daynames: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+                    startDayOfWeek: 0,
+                    narrowWeekend: true
+                },
+                week: {
+                    daynames: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+                    startDayOfWeek: 0,
+                    narrowWeekend: true
+                }
+            });
+
+
+        }
+
     </script>
         <div class="row">
             <div class="col-sm-12">
@@ -586,7 +640,7 @@
                 <!-- 4. 사원 Schedule Calendar 영역 -->
                 <div id="grp_calendar">
                     <div class="bg-light p-5">
-                        Calendar Area
+                        <div id="calendar" style="height: 800px;"></div>
                     </div>
                 </div>
 
