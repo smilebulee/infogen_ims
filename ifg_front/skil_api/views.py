@@ -150,8 +150,9 @@ def skilMgmtSearch(request):
     datas = {
         'dept': param['dept'],
         'name': param['name'],
-        #'skilKind': param['skilKind'],
-        #'skil': param['skil']
+        'division': param['division'],
+        'skilKind': param['skilKind'],
+        'skil': param['skil']
     }
 
     logger.info(datas)

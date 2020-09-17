@@ -403,30 +403,46 @@ class skilMgmtSearch(Resource):
         # get data
         dept = request.args.get('dept')
         name = request.args.get('name')
-        #skilKind = request.args.get('skilKind')
-        #skil = request.args.get('skil')
+        division = request.args.get('division')
+        skilKind = request.args.get('skilKind')
+        skil = request.args.get('skil')
 
         logging.debug('---------------SEARCH---------------')
         logging.debug('dept : ' + dept)
         logging.debug('name : ' + name)
-        #logging.debug('skilKind : ' + skilKind)
-        #logging.debug('skil : ' + skil)
+        logging.debug('division : ' + division)
+        logging.debug('skilKind : ' + skilKind)
+        logging.debug('skil : ' + skil)
         logging.debug('------------------------------------')
 
         mysql_con = pymysql.connect(host='218.151.225.142', port=3306, db='IFG_IMS', user='ims2', password='1234',
                                     charset='utf8')
-
-        sql = ""
-
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
-                if name is None and name == "" :
+                if dept =="" and name == "" and  division =="" and skilKind == "" and skil == "":
                     sql = "SELECT * FROM TB_SKIL_MGNT_TEST"
                     cursor.execute(sql)
                 else:
-                    logging.debug("is not null")
-                    sql = "SELECT * FROM TB_SKIL_MGNT_TEST WHERE EMP_NAME = %s AND EMP_DEPT = %s "
-                    cursor.execute(sql, (name,dept))
+                    sql = "SELECT * FROM TB_SKIL_MGNT_TEST WHERE 1=1 "
+                    if dept != "":
+                        sql = sql + "AND EMP_DEPT = %s "
+                    if name != "":
+                        sql = sql + """AND EMP_NAME LIKE %s """
+                    if division != "":
+                        sql = sql + "AND DIVISION = %s "
+                    if skilKind == "1":
+                        sql += """AND SKIL_DB LIKE %s"""
+                    if skilKind == "2":
+                        sql += """AND SKIL_LANG LIKE %s"""
+                    if skilKind == "3":
+                        sql += """AND SKIL_WEB LIKE %s"""
+                    if skilKind == "4":
+                        sql += """AND SKIL_FRAME LIKE %s"""
+                    if skilKind == "5":
+                        sql += """AND SKIL_MID LIKE %s"""
+                    logging.debug(sql)
+
+                    cursor.execute(sql, (dept,'%'+name+'%',division,'%'+skil+'%'))
         finally:
             mysql_con.close()
 
