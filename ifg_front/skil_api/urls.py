@@ -21,10 +21,12 @@ urlpatterns = [
     # 프로젝트 투입 관리
     url(r'^prjInpuMgmt/', views.prjInpuMgmt, name='prjInpuMgmt'),
     url(r'^prjInpuSearch/get', views.prjInpuSearch, name='prjInpuSearch'),
+    url(r'^prjInpuDelete/', views.prjInpuDelete, name='prjInpuDelete'),
 
     # 스킬관리
     url(r'^skilMgmt/', views.skilMgmt, name='skilMgmt'),
     url(r'^skilMgmtSearch/get', views.skilMgmtSearch, name='skilMgmtSearch'),
+    url(r'^skilMgmtDetl/', views.skilMgmtDetl.as_view(), name='skilMgmtDetl'),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

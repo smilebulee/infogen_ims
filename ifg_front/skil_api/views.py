@@ -131,11 +131,31 @@ def prjInpuSearch(request):
     param = json.loads(request.GET['param'])
     logger.info("prjInpuSearch : skil/views.py")
     datas = {
-        'proCode': param['proCode']
+        'prjCd': param['prjCd']
     }
 
     logger.info(datas)
     r = requests.get('http://skil_api:5003/prjInpuSearch', params=datas)
+    logger.info(r)
+    logger.info(r.text)
+    logger.info("----------------")
+    logger.info(r.json())
+    logger.info(json.loads(r.text))
+    return JsonResponse(r.json(), safe=False)
+
+def prjInpuDelete(request):
+
+    param = json.loads(request.POST['param'])
+    logger.info(param)
+    logger.info("prjInpuDelete : skil/views.py")
+    datas = {
+        'prjCd': param['PRJ_CD'],
+        'empNo': param['EMP_NO'],
+    }
+
+    logger.info('request.post : ' + request.POST['param'])
+
+    r = requests.post('http://skil_api:5003/prjInpuDelete', data=datas)
     logger.info(r)
     logger.info(r.text)
     logger.info("----------------")
@@ -164,3 +184,15 @@ def skilMgmtSearch(request):
     logger.info(json.loads(r.text))
     # return JsonResponse(r.json())
     return JsonResponse(r.json(), safe=False)
+
+class skilMgmtDetl(generic.TemplateView):
+    def get(self, request, *args, **kwargs):
+        template_name = 'skil/skilMgmtDetl.html'
+        logger.info("skilMgmtDetl : skil/views.py")
+        #화면 호출
+        r = requests.get('http://skil_api:5003/skilMgmtDetl')
+        rr = {
+            "result": r.text
+        }
+
+        return render(request, template_name, rr)

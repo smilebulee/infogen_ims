@@ -365,10 +365,10 @@ class prjInpuSearch(Resource):
         logging.debug("search start")
 
         # get data
-        proCode = request.args.get('proCode')
+        prjCd = request.args.get('prjCd')
 
         logging.debug('---------------SEARCH---------------')
-        logging.debug('proCode : ' + proCode)
+        logging.debug('prjCd : ' + prjCd)
         logging.debug('------------------------------------')
 
         mysql_con = pymysql.connect(host='218.151.225.142', port=3306, db='IFG_IMS', user='ims2', password='1234',
@@ -376,13 +376,48 @@ class prjInpuSearch(Resource):
 
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
-                if proCode is None or proCode == "":
-                    sql = "SELECT * FROM TB_PRO_MGMT_P"
+                if prjCd is None or prjCd == "":
+                    sql = "SELECT PRJ_CD, EMP_NO,DIVS, SLIN_GRD, INPU_STRT_DAY, INPU_END_DAY, CNTC_STRT_DAY, CNTC_END_DAY, CRGE_JOB, RMKS FROM TB_PRJ_INPU_STAT_MGMT "
                     cursor.execute(sql)
                 else:
                     logging.debug("is not null")
-                    sql = "SELECT * FROM TB_PRO_MGMT_P WHERE PRO_CODE=%s"
-                    cursor.execute(sql, (proCode))
+                    sql = "SELECT PRJ_CD, EMP_NO,DIVS, SLIN_GRD, INPU_STRT_DAY, INPU_END_DAY, CNTC_STRT_DAY, CNTC_END_DAY, CRGE_JOB, RMKS FROM TB_PRJ_INPU_STAT_MGMT WHERE PRJ_CD=%s"
+                    cursor.execute(sql, (prjCd))
+        finally:
+            mysql_con.close()
+
+        result2 = cursor.fetchall()
+        for row in result2:
+            logging.debug('====== row====')
+            logging.debug(row)
+            logging.debug('===============')
+        array = list(result2)  # 결과를 리스트로
+
+        return result2
+
+
+class prjInpuDelete(Resource):
+
+    def post(self):
+        # Get posted data from request
+
+        # get data
+        prjCd = request.form["prjCd"]
+        empNo = request.form["empNo"]
+
+        logging.debug('---------------SEARCH---------------')
+        logging.debug('prjCd : ' + prjCd)
+        logging.debug('empNo : ' + empNo)
+        logging.debug('------------------------------------')
+
+        mysql_con = pymysql.connect(host='218.151.225.142', port=3306, db='IFG_IMS', user='ims2', password='1234',
+                                    charset='utf8')
+
+        try:
+            with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+                sql = "DELETE FROM TB_PRJ_INPU_STAT_MGMT WHERE EMP_NO= %s AND PRJ_CD = %s"
+                cursor.execute(sql, (empNo, prjCd))
+                mysql_con.commit()
         finally:
             mysql_con.close()
 
@@ -455,6 +490,10 @@ class skilMgmtSearch(Resource):
 
         return result2
 
+class skilMgmtDetl(Resource):
+    def get(self):
+        return "This is SkilDetail Management API! hohoho"
+
 api.add_resource(Hello, '/hello')
 api.add_resource(Register, '/register')
 api.add_resource(Retrieve, '/retrieve')
@@ -465,8 +504,10 @@ api.add_resource(prjSave, '/prjSave')
 
 # 프로젝트 투입 관리
 api.add_resource(prjInpuSearch, '/prjInpuSearch')
+api.add_resource(prjInpuDelete, '/prjInpuDelete')
 
 # 스킬관리
+api.add_resource(skilMgmtDetl, '/skilMgmtDetl')
 api.add_resource(skilMgmtSearch, '/skilMgmtSearch')
 
 if __name__ == "__main__":

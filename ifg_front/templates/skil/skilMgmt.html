@@ -84,7 +84,15 @@ history
                             key: "EMP_BIRTH",
                             label: "생년월일",
                             width: 80,
-                            align: "center"
+                            align: "center",
+                            /* 숨김처리 hidden : true */
+                        },
+                        {
+                            key: "EMP_NO",
+                            label: "사번",
+                            width: 80,
+                            align: "center",
+                            hidden : true
                         }
                         ]
                     };
@@ -107,6 +115,8 @@ history
                     return false;
                 } else{
                     alertMsg("(작성예정)선택된 행 값 넘겨주기");
+                    var empNo = firstGrid.getList("selected")[0].EMP_NO;
+                    location.href = '/skil/skilMgmtDetl?empNo='+empNo
                 }
             });
         });

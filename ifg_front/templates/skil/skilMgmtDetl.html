@@ -1,0 +1,36 @@
+{% extends 'common/base.html' %}
+
+{% block content %}
+    <script type="text/javascript">
+        $(document).ready(function(){
+                console.log('???')
+                $.ajaxCall({}, {
+                 method : 'get',
+                 url : "{% url 'emp_api:getMaria' %}",
+                 async : false,
+                 callbackFn : function(data){
+                    console.log('call')
+                    data[0]
+                    $('#result').text('skil~~~~~~~~~~~~~~~~~~~~~~~~ : '+data[0].SEQ + ' / RMKS : '+data[0].RMKS)
+
+                    console.log('call')
+                    data[1]
+                    $('#result3').text(location.search.substr(location.search.indexOf("?") + 1))
+                 }
+            });
+
+        });
+
+
+    </script>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="alert alert-info" role="alert">
+                    <a id="result"></a>
+                    <a id="result2"></a><br>
+                    <a id="result3"></a><br>
+                </div>
+            </div>
+        </div>
+
+{% endblock %}
