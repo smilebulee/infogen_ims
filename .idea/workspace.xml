@@ -20,13 +20,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="069bc5b9-482e-4fff-a242-76dbf771ee42" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/ifg_front/templates/skil/skilMgmtDetl.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/api_containers/skil/api/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/api_containers/skil/api/app.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ifg_front/skil_api/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/ifg_front/skil_api/urls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ifg_front/skil_api/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/ifg_front/skil_api/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ifg_front/templates/skil/prjInpuMgmt.html" beforeDir="false" afterPath="$PROJECT_DIR$/ifg_front/templates/skil/prjInpuMgmt.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ifg_front/templates/skil/skilMgmt.html" beforeDir="false" afterPath="$PROJECT_DIR$/ifg_front/templates/skil/skilMgmt.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ifg_front/templates/skil/devEnrl.html" beforeDir="false" afterPath="$PROJECT_DIR$/ifg_front/templates/skil/devEnrl.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ifg_front/templates/skil/prjMgmt.html" beforeDir="false" afterPath="$PROJECT_DIR$/ifg_front/templates/skil/prjMgmt.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -109,18 +106,6 @@
       </list>
     </recent_temporary>
   </component>
-  <component name="ServiceViewManager">
-    <option name="viewStates">
-      <list>
-        <serviceView>
-          <treeState>
-            <expand />
-            <select />
-          </treeState>
-        </serviceView>
-      </list>
-    </option>
-  </component>
   <component name="SvnConfiguration">
     <configuration />
   </component>
@@ -139,13 +124,12 @@
       <map>
         <entry key="MAIN">
           <value>
-            <State>
-              <option name="COLUMN_ORDER" />
-            </State>
+            <State />
           </value>
         </entry>
       </map>
     </option>
+    <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="WindowStateProjectService">
     <state x="414" y="175" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1594891292327">

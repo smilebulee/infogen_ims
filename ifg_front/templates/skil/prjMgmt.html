@@ -26,7 +26,7 @@
   display:inline-block;
   width:33%;
   margin-center:calc(100% - 100px - 10px);
-  float:left;
+  float:right;
   color: blue;
   background-color: rgba(0,0,0,0);
   border: 0;
@@ -71,41 +71,49 @@ tbody>tr>td:first-child:before {
                          font-size: 1.0em;
                          padding:20px;">
 
-                <p>프로젝트 명<br>
+                    <input type = "text" name = "prj_cd" style = "display:none"></p>
+
+                <p>*프로젝트 명<br>
                     <input type = "text" name = "prj_nm" placeholder="input text"></p>
 
-                <p>고객사 계약 코드<br>
+                <p>*고객사 계약 코드<br>
                     <input type = "text" name = "cnct_cd" placeholder="input text"></p>
 
-                <p>원청사<br>
+                <p>*원청사<br>
                     <input type = "text" name = "gnr_ctro" placeholder="input text"></p>
 
-                <p>계약사<br>
+                <p>*계약사<br>
                    <input type = "text" name = "ctro" placeholder="input text"></p>
 
                 <p>계약 금액<br>
                     <input type = "text" name = "cnct_amt" placeholder="input text"></p>
 
-                <p>매출 사업부<br>
+                <p>*매출 사업부<br>
                     <select size ="1" style="width:200px" name = "slin_bzdp" class="col-sm-2">
-                        <option value = "01">01</option>
-                        <option value = "02">02</option>
-                        <option value = "03">03</option>
+                        <option>선택</option>
+                        <option value = "01">FIC</option>
+                        <option value = "02">전자/제조</option>
+                        <option value = "03">통신</option>
+                        <option value = "04">화학</option>
+                        <option value = "05">전략</option>
+                        <option value = "06">DX</option>
                     </select>
                 </p>
 
-                <p>업무 구분<br>
+                <p>*업무 구분<br>
                     <select size ="1" style="width:200px" name = "job_divs" class="col-sm-2">
-                        <option value = "SM">SM</option>
-                        <option value = "SI">SI</option>
+                        <option>선택</option>
+                        <option value = "01">SM</option>
+                        <option value = "02">SI</option>
                     </select>
                 </p>
 
-                <p>진행 상태<br>
+                <p>*진행 상태<br>
                     <select size ="1" style="width:200px" name = "pgrs_stus" class="col-sm-2">
+                        <option>선택</option>
                         <option value = "01">예정</option>
-                        <option value = "진행 중">진행 중</option>
-                        <option value = "종료">종료</option>
+                        <option value = "02">진행 중</option>
+                        <option value = "03">종료</option>
                     </select>
                 </p>
 
@@ -117,8 +125,11 @@ tbody>tr>td:first-child:before {
 
 
 
-        <button name="addStaff" style="float:right color:blue">추가</button>
-        <button name="delStaff" style="float:right color:red">삭제</button>
+        <button name="addStaff" class = "btn btn-primary style="float:right">추가</button>
+        <button name="delStaff" class = "btn btn-primary style="float:right color:red">삭제</button>
+<!--        <td><input type="button" style="float:right" id="add" name="addStaff" value="추가" class = "btn btn-danger"/></td>-->
+<!--        <td><input type="button" style="float:right" id="del" name="delStaff" value="삭제" class = "btn btn-primary"/></td>-->
+
         <br>
             <table id="reqSkil" class="table" style="margin-top: 20px;">
                 <colgroup>
@@ -137,10 +148,15 @@ tbody>tr>td:first-child:before {
 
                 <tbody id="reqSkilBody" name = "req_skil">
                     <tr name="trSkil">
-        <!--                <td> <input type="text" class="form-control" name="staff_name" placeholder="순번"> </td>-->
                         <td id="staff_name"></td>
-                        <td> <input type="text" class="form-control" name="req_skil_divs" placeholder="구분"></td>
-                        <td> <input type="text" class="form-control" name="req_skil_name" placeholder="스킬명"></td>
+                        <td><select size="1" class="form-control" id="req_skil_divs1" name="req_skil_divs1" onchange="skil_chg(1)">
+                            <option>선택</option>
+                            <option value = "01">DB</option>
+                            <option value = "02">언어</option>
+                            <option value = "03">WEB</option>
+                            <option value = "04">Framework</option>
+                        </select></td>
+                        <td><select class="form-control" id = "req_skil_name1" name = "req_skil_name1"></select></td>
                     </tr>
                 </tbody>
             </table>
@@ -171,13 +187,22 @@ tbody>tr>td:first-child:before {
     document.getElementById("modal_close_btn").onclick = function() {
         window.history.back();
     }
-
+    var count = 1;
     $(document).on("click","button[name=addStaff]",function(){
-        var count = 0;
-        var addStaffText =     '<tr name="trSkil">'+
+        console.log('add');
+        count += 1;
+
+        var addStaffText =
+            '<tr name="trSkil">'+
             '        <td id="staff_name"></td>'+
-            '        <td> <input type="text" class="form-control" name="req_skil_divs" placeholder="구분"></td>'+
-            '        <td> <input type="text" class="form-control" name="req_skil_name" placeholder="스킬"></td>'+
+            '        <td><select size ="1" class="form-control" id = "req_skil_divs'+count+'" name = "req_skil_divs'+count+'" onchange="skil_chg('+count+')">'+
+            '                <option>선택</option>'+
+            '                <option value = "01">DB</option>'+
+            '                <option value = "02">언어</option>'+
+            '                <option value = "03">WEB</option>'+
+            '                <option value = "04">Framework</option>'+
+            '            </select></td>'+
+            '        <td><select class="form-control" id = "req_skil_name'+count+'" name = "req_skil_name'+count+'"></select></td>'+
             '</tr>';
 
         var trHtml = $( "tr[name=trSkil]:last" );
@@ -187,26 +212,88 @@ tbody>tr>td:first-child:before {
     });
 
     $(document).on("click","button[name=delStaff]",function(){
-        var table = document.getElementById('reqSkilBody');
-        if (table.rows.length < 2) return;
+<!--        var table = document.getElementById('reqSkilBody');-->
+<!--        if (table.rows.length < 2) return;-->
 
-        $('#reqSkil tbody tr:last').remove();
+<!--        $('#reqSkil tbody tr:last').remove();-->
+        console.log('del')
+        var trHtml = $(this).parent().parent();
+
+        trHtml.remove();
     });
 
 
     $('#modal_save_btn').click(function(){
             console.log('저장');
                 confirmMsg('저장 하시겠습니까?', function(){
-
-                    $('#projectInfo').ajaxCall({
-                    method : 'POST',
-                    url : '/skil/prjSave/post',
-                    callbackFn : function(data){
-                        g_toast.push('저장 되었습니다.');
-                    }
+                        $('#projectInfo').ajaxCall({
+                        method : 'POST',
+                        url : '/skil/prjSave/post',
+                        callbackFn : function(data){
+                            g_toast.push('저장 되었습니다.');
+                        }
                 });
             });
     });
+
+    $('#modal_delete_btn').click(function(){
+            console.log('삭제');
+            confirmMsg('삭제 하시겠습니까?', function(){
+                    $('#projectInfo').ajaxCall({
+                    method : 'POST',
+                    url : '/skil/prjDelete/post',
+                    callbackFn : function(data){
+                       g_toast.push('삭제 되었습니다.');
+                    }
+                });
+
+            });
+     });
+
+    function skil_chg(a){
+        console.log('스킬 변경');
+        console.log(a);
+        var DB = ["Oracle","MySql","MsSql"];
+        var DBValue = ["01","02","03"];
+        var Language = ["C","C++","C#","JAVA","Python"];
+        var LanguageValue = ["01","02","03","04","05"];
+        var WEB = ["HTML","JavaScript","CSS"];
+        var WEBValue = ["01","02","03"];
+        var Framework = [".net", "Spring"];
+        var FrameworkValue = ["01", "02"];
+
+        var selectSkill = $("#req_skil_divs"+a).val();
+        console.log(selectSkill);
+
+        var changeSkill;
+        var changeSkillValue;
+
+        if(selectSkill == "01"){
+          changeSkill = DB;
+          changeSkillValue = DBValue;
+        }
+        else if(selectSkill == "02"){
+          changeSkill = Language;
+          changeSkillValue = LanguageValue;
+        }
+        else if(selectSkill == "03"){
+          changeSkill =  WEB;
+          changeSkillValue = WEBValue;
+        }
+        else if(selectSkill == "04"){
+          changeSkill =  Framework;
+          changeSkillValue = FrameworkValue;
+        }
+
+        $("#req_skil_name"+a).empty();
+
+        for(var count = 0; count < changeSkill.length; count++){
+                        var option = $("<option value ="+changeSkillValue[count]+">"+changeSkill[count]+"</option>");
+                        console.log(option);
+                        $('#req_skil_name'+a).append(option);
+                    }
+
+    };
 
 
 
