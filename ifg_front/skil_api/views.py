@@ -122,20 +122,33 @@ def prjSave(request):
     logger.info(param)
 
     datas = {
-        'prj_cd': param['prj_cd'],
-        'prj_nm' : param['prj_nm'],
-        'cnct_cd' : param['cnct_cd'],
-        'gnr_ctro'  : param['gnr_ctro'],
-        'ctro': param['ctro'],
-        'cnct_amt': param['cnct_amt'],
-        'slin_bzdp': param['slin_bzdp'],
-        'job_divs': param['job_divs'],
-        'pgrs_stus' : param['pgrs_stus'],
-        'req_skil_divs' : param['req_skil_divs1'],
-        'req_skil_name' : param['req_skil_name1'],
-        'rmks' : param['rmks'],
+        # 'prj_cd': param['prj_cd'],
+        # 'prj_nm': param['prj_nm'],
+        # 'cnct_cd': param['cnct_cd'],
+        # 'gnr_ctro': param['gnr_ctro'],
+        # 'ctro': param['ctro'],
+        # 'cnct_amt': param['cnct_amt'],
+        # 'slin_bzdp': param['slin_bzdp'],
+        # 'job_divs': param['job_divs'],
+        # 'pgrs_stus': param['pgrs_stus'],
+        # 'req_skil_divs': param['req_skil_divs1'],
+        # 'req_skil_name': param['req_skil_name1'],
+        # 'rmks': param['rmks'],
 
     }
+
+
+    for row in param:
+        # logger.info("'"+row+"'"+':'+"'"+param[row]+"'"+',')
+        # logger.info(dat)
+        datas.setdefault(row, param[row])
+
+
+
+
+
+
+
     logger.info('request.post : ' + request.POST['param'])
     logger.info(datas)
     r = requests.post('http://skil_api:5003/prjSave', data=datas)
