@@ -35,8 +35,8 @@ urlpatterns = [
     url(r'^skilMgmtDetl/', views.skilMgmtDetl.as_view(), name='skilMgmtDetl'),
     
     # 스킬관리상세팝업
-    url(r'^skilRegPopup/', views.skilMgmt, name='skilRegPopup'),
-    url(r'^skilRegPopupSearch/', views.skilRegPopup, name='skilRegPopupSearch'),
+    url(r'^skilRegPopup/', views.skilRegPopup, name='skilRegPopup'),
+    url(r'^skilRegPopupSearch/', views.skilRegPopupSearch, name='skilRegPopupSearch'),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

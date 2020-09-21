@@ -92,17 +92,18 @@ tbody>tr>td:first-child:before {
 
 
 
-        <button name="addStaff" class = "btn btn-primary" style="float:right">추가</button>
-        <button name="delStaff" class = "btn btn-primary" style="float:right color:red">삭제</button>
-<!--        <td><input type="button" style="float:right" id="add" name="addStaff" value="추가" class = "btn btn-danger"/></td>-->
-<!--        <td><input type="button" style="float:right" id="del" name="delStaff" value="삭제" class = "btn btn-primary"/></td>-->
+        <!--<button name="addStaff" class = "btn btn-primary" style="float:right">추가</button>
+        <button name="delStaff" class = "btn btn-primary" style="float:right color:red">삭제</button>-->
+        <td><input type="button" style="float:right" id="add" name="addStaff" value="추가" class = "btn btn-danger"/></td>
+        <td><input type="button" style="float:right" id="del" name="delStaff" value="삭제" class = "btn btn-primary"/></td>
 
         <br>
             <table id="hldSkil" class="table" style="margin-top: 20px;">
                 <colgroup>
                     <col width="20%"/>
-                    <col width="40%"/>
-                    <col width="40%"/>
+                    <col width="20%"/>
+                    <col width="30%"/>
+                    <col width="30%"/>
                 </colgroup>
 
                 <thead>
@@ -134,7 +135,6 @@ tbody>tr>td:first-child:before {
                             <option value = "02">중</option>
                             <option value = "03">고</option>
                         </select></td>
-                        <td><select class="form-control" id = "hld_skil_name1" name = "hld_skil_name1"></select></td>
                     </tr>
                 </tbody>
             </table>
@@ -173,7 +173,7 @@ tbody>tr>td:first-child:before {
         var addStaffText =
             '<tr name="trSkil">'+
             '        <td id="staff_name"></td>'+
-            '        <td><select size ="1" class="form-control" id = "hld_skil_divs'+count+'" name = "hld_skil_divs'+count+'" onchange="skil_chg('+count+')">'+
+            '        <td><select size ="1" class="form-control" id = "hld_skil_divs1'+count+'" name = "hld_skil_divs1'+count+'" onchange="skil_chg('+count+')">'+
             '                <option>선택</option>'+
             '                <option value = "01">DB</option>'+
             '                <option value = "02">언어</option>'+
@@ -240,7 +240,7 @@ tbody>tr>td:first-child:before {
         var Framework = [".net", "Spring"];
         var FrameworkValue = ["01", "02"];
 
-        var selectSkill = $("#hld_skil_divs"+a).val();
+        var selectSkill = $("#hld_skil_divs1"+a).val();
         console.log(selectSkill);
 
         var changeSkill;
