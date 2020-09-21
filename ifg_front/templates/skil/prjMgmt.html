@@ -17,6 +17,7 @@
 }
 
 #modal input {
+  width:100%;
   border: 0;
   border-bottom: 1px solid #0489B1;
   outline : 0;
@@ -121,28 +122,28 @@ tbody>tr>td:first-child:before {
                     <input type = "text" name = "rmks" placeholder="input text"></p>
 
             </span>
+<!--        </div>-->
 
 
 
 
         <button name="addStaff" class = "btn btn-primary style="float:right">추가</button>
-        <button name="delStaff" class = "btn btn-primary style="float:right color:red">삭제</button>
-<!--        <td><input type="button" style="float:right" id="add" name="addStaff" value="추가" class = "btn btn-danger"/></td>-->
-<!--        <td><input type="button" style="float:right" id="del" name="delStaff" value="삭제" class = "btn btn-primary"/></td>-->
-
         <br>
+<!--        <div id = "reqSkilInfo">-->
             <table id="reqSkil" class="table" style="margin-top: 20px;">
                 <colgroup>
-                    <col width="20%"/>
-                    <col width="40%"/>
-                    <col width="40%"/>
+                    <col width="10%"/>
+                    <col width="30%"/>
+                    <col width="45%"/>
+                    <col width="15%"/>
                 </colgroup>
 
                 <thead>
-                <tr>
+                <tr style = "float : center">
                     <th>순번</th>
                     <th>구분</th>
                     <th>스킬명</th>
+                    <th>삭제</th>
                 </tr>
                 </thead>
 
@@ -160,6 +161,9 @@ tbody>tr>td:first-child:before {
                     </tr>
                 </tbody>
             </table>
+
+            <input type = "text" name = "trCount"></p>
+
 
         </div>
 
@@ -184,6 +188,13 @@ tbody>tr>td:first-child:before {
 
 
 <script>
+
+     $(document).ready(function() {
+        $('#trCount').val($('#reqSkil tbody tr').length);
+     });
+
+<script type="text/javascript">
+
     document.getElementById("modal_close_btn").onclick = function() {
         window.history.back();
     }
@@ -203,15 +214,18 @@ tbody>tr>td:first-child:before {
             '                <option value = "04">Framework</option>'+
             '            </select></td>'+
             '        <td><select class="form-control" id = "req_skil_name'+count+'" name = "req_skil_name'+count+'"></select></td>'+
+            '        <td><input type="button" style="float:right" id="del" name="delStaff" value="삭제" class = "btn btn-primary"/></td>'+
             '</tr>';
 
         var trHtml = $( "tr[name=trSkil]:last" );
 
         trHtml.after(addStaffText);
 
+        console.log($('#reqSkil tbody tr').length);
+
     });
 
-    $(document).on("click","button[name=delStaff]",function(){
+    $(document).on("click","input[name=delStaff]",function(){
 <!--        var table = document.getElementById('reqSkilBody');-->
 <!--        if (table.rows.length < 2) return;-->
 
@@ -224,6 +238,8 @@ tbody>tr>td:first-child:before {
 
 
     $('#modal_save_btn').click(function(){
+
+
             console.log('저장');
                 confirmMsg('저장 하시겠습니까?', function(){
                         $('#projectInfo').ajaxCall({
