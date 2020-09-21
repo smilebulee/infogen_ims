@@ -52,11 +52,12 @@
     <property name="DefaultHtmlFileTemplate" value="HTML File" />
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/ifg_front/skil_api" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/ifg_front/templates/skil" />
     <property name="settings.editor.selected.configurable" value="reference.settingsDialog.application.dockerMachine" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\user\Documents\GitHub\infogen_ims\ifg_front\templates\skil" />
       <recent name="C:\workspace\infogen_ims\infogen_ims\ifg_front\templates\dili" />
     </key>
   </component>

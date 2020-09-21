@@ -1,0 +1,283 @@
+{% extends 'common/base.html' %}
+
+{% block content %}
+
+
+ <style>
+#modal {
+<!--  display:none;-->
+  position:relative;
+  width:100%;
+  height:100%;
+  z-index:1;
+}
+
+#modal h2 {
+  margin:0;
+}
+
+#modal input {
+  border: 0;
+  border-bottom: 1px solid #0489B1;
+  outline : 0;
+}
+
+#modal button {
+  display:inline-block;
+  width:33%;
+  margin-center:calc(100% - 100px - 10px);
+  float:right;
+  color: blue;
+  background-color: rgba(0,0,0,0);
+  border: 0;
+  outline : 0;
+
+}
+
+#modal .modal_content {
+  width:600px;
+  margin:100px auto;
+  padding:0px 40px;
+  background:#fff;
+  border:2px solid #666;
+}
+
+#modal .modal_layer {
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:rgb(0, 0, 0, 0.5);
+  z-index:-1;
+}
+
+tbody>tr {
+  counter-increment: aaa;
+}
+tbody>tr>td:first-child:before {
+  content: counter(aaa) " ";
+}
+
+</style>
+
+
+<div id="modal">
+
+    <div class="modal_content">
+            <h2 style = "font-weight:bold"><U>스킬 관리 상세</U></h2><br>
+        <div id = "skilMgmtInfo">
+            <span style="color: #0489B1;
+                         font-size: 1.0em;
+                         padding:20px;">
+
+
+                <p>성명<br>
+                    <input type = "text" name = "emp_nm" placeholder="input text"></p>
+
+                <p>부서<br>
+                    <input type = "text" name = "cnct_cd" placeholder="input text"></p>
+
+                <p>구분<br>
+                   <input type = "text" name = "ctro" placeholder="input text"></p>
+
+                <p>직급<br>
+                    <input type = "text" name = "cnct_amt" placeholder="input text"></p>
+
+                <p>비고<br>
+                    <input type = "text" name = "rmks" placeholder="input text"></p>
+
+            </span>
+
+
+
+
+        <!--<button name="addStaff" class = "btn btn-primary" style="float:right">추가</button>
+        <button name="delStaff" class = "btn btn-primary" style="float:right color:red">삭제</button>-->
+        <td><input type="button" style="float:right" id="add" name="addStaff" value="추가" class = "btn btn-danger"/></td>
+        <td><input type="button" style="float:right" id="del" name="delStaff" value="삭제" class = "btn btn-primary"/></td>
+
+        <br>
+            <table id="hldSkil" class="table" style="margin-top: 20px;">
+                <colgroup>
+                    <col width="20%"/>
+                    <col width="20%"/>
+                    <col width="30%"/>
+                    <col width="30%"/>
+                </colgroup>
+
+                <thead>
+                <tr>
+                    <th>순번</th>
+                    <th>구분</th>
+                    <th>스킬명</th>
+                    <th>숙련도</th>
+
+                </tr>
+                </thead>
+
+                <tbody id="hldSkilBody" name = "hld_skil">
+                    <tr name="trSkil">
+                        <td id="staff_name"></td>
+                        <td><select size="1" class="form-control" id="hld_skil_divs1" name="hld_skil_divs1" onchange="skil_chg(1)">
+                            <option value = "01">DB</option>
+                            <option value = "02">언어</option>
+                            <option value = "03">WEB</option>
+                            <option value = "04">Framework</option>
+                        </select></td>
+                        <td><select size="1" class="form-control" id="hld_skil_divs2" name="hld_skil_divs1">
+                            <option value = "01">ORACLE</option>
+                            <option value = "02">MYSQL</option>
+                            <option value = "03">PL/SQL</option>
+                        </select></td>
+                        <td><select size="1" class="form-control" id="hld_skil_divs3" name="hld_skil_divs1">
+                            <option value = "01">초</option>
+                            <option value = "02">중</option>
+                            <option value = "03">고</option>
+                        </select></td>
+                    </tr>
+                </tbody>
+            </table>
+
+        </div>
+
+        <hr>
+            <button type="button" id="modal_close_btn">취소</button>
+            <button type="button" id="modal_save_btn">저장</button>
+            <button type="button" id="modal_delete_btn" style="color:red">삭제</button>
+
+        <br>
+     
+    </div>
+
+
+
+   
+    <div class="modal_layer"></div>
+</div>
+
+
+
+
+
+
+<script>
+    document.getElementById("modal_close_btn").onclick = function() {
+        window.history.back();
+    }
+    var count = 1;
+    $(document).on("click","button[name=addStaff]",function(){
+        console.log('add');
+        count += 1;
+
+        var addStaffText =
+            '<tr name="trSkil">'+
+            '        <td id="staff_name"></td>'+
+            '        <td><select size ="1" class="form-control" id = "hld_skil_divs1'+count+'" name = "hld_skil_divs1'+count+'" onchange="skil_chg('+count+')">'+
+            '                <option>선택</option>'+
+            '                <option value = "01">DB</option>'+
+            '                <option value = "02">언어</option>'+
+            '                <option value = "03">WEB</option>'+
+            '                <option value = "04">Framework</option>'+
+            '            </select></td>'+
+            '        <td><select class="form-control" id = "hld_skil_name'+count+'" name = "hld_skil_name'+count+'"></select></td>'+
+            '</tr>';
+
+        var trHtml = $( "tr[name=trSkil]:last" );
+
+        trHtml.after(addStaffText);
+
+    });
+
+    $(document).on("click","button[name=delStaff]",function(){
+<!--        var table = document.getElementById('hldSkilBody');-->
+<!--        if (table.rows.length < 2) return;-->
+
+<!--        $('#hldSkil tbody tr:last').remove();-->
+        console.log('del')
+        var trHtml = $(this).parent().parent();
+
+        trHtml.remove();
+    });
+
+
+    $('#modal_save_btn').click(function(){
+            console.log('저장');
+                confirmMsg('저장 하시겠습니까?', function(){
+                        $('#projectInfo').ajaxCall({
+                        method : 'POST',
+                        url : '/skil/prjSave/post',
+                        callbackFn : function(data){
+                            g_toast.push('저장 되었습니다.');
+                        }
+                });
+            });
+    });
+
+    $('#modal_delete_btn').click(function(){
+            console.log('삭제');
+            confirmMsg('삭제 하시겠습니까?', function(){
+                    $('#projectInfo').ajaxCall({
+                    method : 'POST',
+                    url : '/skil/prjDelete/post',
+                    callbackFn : function(data){
+                       g_toast.push('삭제 되었습니다.');
+                    }
+                });
+
+            });
+     });
+
+    function skil_chg(a){
+        console.log('스킬 변경');
+        console.log(a);
+        var DB = ["Oracle","MySql","PL/SQL"];
+        var DBValue = ["01","02","03"];
+        var Language = ["C","C++","C#","JAVA","Python"];
+        var LanguageValue = ["01","02","03","04","05"];
+        var WEB = ["HTML","JavaScript","CSS"];
+        var WEBValue = ["01","02","03"];
+        var Framework = [".net", "Spring"];
+        var FrameworkValue = ["01", "02"];
+
+        var selectSkill = $("#hld_skil_divs1"+a).val();
+        console.log(selectSkill);
+
+        var changeSkill;
+        var changeSkillValue;
+
+        if(selectSkill == "01"){
+          changeSkill = DB;
+          changeSkillValue = DBValue;
+        }
+        else if(selectSkill == "02"){
+          changeSkill = Language;
+          changeSkillValue = LanguageValue;
+        }
+        else if(selectSkill == "03"){
+          changeSkill =  WEB;
+          changeSkillValue = WEBValue;
+        }
+        else if(selectSkill == "04"){
+          changeSkill =  Framework;
+          changeSkillValue = FrameworkValue;
+        }
+
+        $("#req_skil_name"+a).empty();
+
+        for(var count = 0; count < changeSkill.length; count++){
+                        var option = $("<option value ="+changeSkillValue[count]+">"+changeSkill[count]+"</option>");
+                        console.log(option);
+                        $('#hld_skil_name'+a).append(option);
+                    }
+
+    };
+
+
+
+</script>
+
+
+
+{% endblock %}
+
