@@ -15,11 +15,17 @@
 {% extends 'common/base.html' %}
 
 {% block content %}
+{% load static %}
     <div class="container">
 
         <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
         <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.9.2/i18n/jquery.ui.datepicker-ko.min.js"></script>
+
+        <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+        <!-- // jquery UI -->
+        <script type="text/javascript" src="{% static 'js/jquery.mtz.monthpicker.js' %}"></script>
+
         <script src="https://uicdn.toast.com/tui.code-snippet/v1.5.2/tui-code-snippet.min.js"></script>
         <script src="https://uicdn.toast.com/tui.time-picker/latest/tui-time-picker.min.js"></script>
         <script src="https://uicdn.toast.com/tui.date-picker/latest/tui-date-picker.min.js"></script>
@@ -44,6 +50,8 @@
             $('#txt_mmMm').text(month + 1); //그리드 월tab 월 초기값 입력
 
             crteTodayShow(year, month, date, day);                                                        // Grid UI(주) 날짜 세팅
+
+
 
             /*********************************************************************
             *   Grid UI(주) 날짜 세팅
@@ -281,7 +289,7 @@
             });
 
             /*********************************************************************
-            *   btn_datepicker Btn Click Event - 달력호출
+            *   btn_datepicker Btn Click Event - 일달력호출
             *********************************************************************/
             $('#btn_datepicker').click(function(){
 
@@ -306,6 +314,36 @@
                     date = selectDatepickerDate.getDate();  // 날짜
                     day = selectDatepickerDate.getDay();  // 요일 (0~6으로 출력, 0:일요일, 1:월요일, 6:토요일)
                     crteTodayShow(year, month, date, day);
+                }
+	        });
+
+	        /*********************************************************************
+            *   btn_monthpicker Btn Click Event - 월달력호출
+            *********************************************************************/
+            $('#btn_monthpicker').click(function(){
+                 $('#monthpickerData').monthpicker('show');
+
+
+            });
+
+            /*********************************************************************
+            *   클릭한 달력monthpickerData에 value 값 담기
+            *********************************************************************/
+            $("#monthpickerData").monthpicker({
+                onSelect:function(dateText, inst) {
+                    console.log(dateText);
+                    console.log(inst);
+
+<!--                    var tempData = $('#datepickerData').val().split('-');
+                    var selectDatepickerDate = new Date(tempData[0], Number(tempData[1])-1, tempData[2]);
+
+                    //날짜 세팅
+                    year = selectDatepickerDate.getFullYear(); // 년도
+                    month = selectDatepickerDate.getMonth();  // 월 (today.getMonth()는 0~11로 출력)
+                    date = selectDatepickerDate.getDate();  // 날짜
+                    day = selectDatepickerDate.getDay();  // 요일 (0~6으로 출력, 0:일요일, 1:월요일, 6:토요일)
+                    crteTodayShow(year, month, date, day);
+                    -->
                 }
 	        });
 
@@ -635,7 +673,8 @@
                                         <path d="M3.86 8.753l5.482 4.796c.646.566 1.658.106 1.658-.753V3.204a1 1 0 0 0-1.659-.753l-5.48 4.796a1 1 0 0 0 0 1.506z"/>
                                     </svg>
                                 </button>
-                                <div style="margin-right: 10px;margin-left: 10px;">
+                                <input type="hidden" name="date" id="monthpickerData"/>
+                                <div id="btn_monthpicker" style="margin-right: 10px;margin-left: 10px;">
                                     <h5>
                                         <span id="txt_mmYy"></span>
                                         <span>.</span>
