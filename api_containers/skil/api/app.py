@@ -324,14 +324,6 @@ class devDelete(Resource):
         finally:
             mysql_con.close()
 
-        result2 = cursor.fetchall()
-        for row in result2:
-            logging.debug('====== row====')
-            logging.debug(row)
-            logging.debug('===============')
-        # array = list(result2)  # 결과를 리스트로
-        #
-        # return json.dumps(result2)
 
         retJson = {
             "status": 200,
@@ -346,28 +338,31 @@ class prjSave(Resource):
             params = request.get_json()
 
             logging.debug("save start")
+            logging.debug(request.form)
+
+            for row in request.form:
+                logging.debug(row+':'+request.form[row])
+                datass.setdefault(row, request.form[row])
+                globals()[row] = request.form[row]
 
             prj_cd = request.form['prj_cd']
-            prj_nm = request.form['prj_nm']
-            cnct_cd = request.form['cnct_cd']
-            gnr_ctro = request.form['gnr_ctro']
-            ctro = request.form['ctro']
-            cnct_amt = request.form['cnct_amt']
-            slin_bzdp = request.form['slin_bzdp']
-            job_divs = request.form['job_divs']
-            pgrs_stus = request.form['pgrs_stus']
-            req_skil_divs = request.form['req_skil_divs']
-            req_skil_name = request.form['req_skil_name']
-            rmks = request.form['rmks']
+            # prj_nm = request.form['prj_nm']
+            # cnct_cd = request.form['cnct_cd']
+            # gnr_ctro = request.form['gnr_ctro']
+            # ctro = request.form['ctro']
+            # cnct_amt = request.form['cnct_amt']
+            # slin_bzdp = request.form['slin_bzdp']
+            # job_divs = request.form['job_divs']
+            # pgrs_stus = request.form['pgrs_stus']
+            # req_skil_divs1 = request.form['req_skil_divs1']
+            # req_skil_name1 = request.form['req_skil_name1']
+            # rmks = request.form['rmks']
             use_yn = 'Y'
 
             logging.debug('--------------------------------------')
-            logging.debug(prj_nm)
+            logging.debug(prj_cd + prj_nm + cnct_cd + gnr_ctro + ctro + cnct_amt + slin_bzdp + job_divs + pgrs_stus)
             logging.debug('--------------------------------------')
 
-            logging.debug('================== App Start ==================')
-            logging.debug(params)
-            logging.debug('================== App End ==================')
 
             mysql_con = pymysql.connect(host='218.151.225.142', port=3306, db='IFG_IMS', user='ims2', password='1234',
                                         charset='utf8')
@@ -381,7 +376,6 @@ class prjSave(Resource):
 
                     else:
                         logging.debug('prj_cd is null')
-                        logging.debug(prj_cd)
                         sql = "SELECT CONCAT('PRJ','_',( SELECT LPAD((SELECT NVL(SUBSTR(MAX(PRJ_CD), 5)+1, 1) " \
                               "FROM TB_PRJ_INFO),6,'0'))) AS PRJ_CD"
                         cursor.execute(sql)
@@ -402,16 +396,16 @@ class prjSave(Resource):
                     mysql_con.commit()
 
                     logging.debug('PRJ_INFO SUCCESS')
-                    logging.debug(prj_nm + req_skil_divs + req_skil_name)
 
-                    sql = "INSERT INTO TB_PRJ_REQ_SKIL(`PRJ_CD`, `SKIL_DIVS`, `SKIL_NAME`, `REG_EMP_NO`, `REG_DATE`," \
-                          " `CHG_EMP_NO`, `CHG_DATE`) " \
-                          "VALUES ((SELECT PRJ_CD FROM TB_PRJ_INFO A WHERE PRJ_NAME = %s)," \
-                          " %s, %s, 'admin', NOW(), 'admin', NOW())"
-                    cursor.execute(sql, (prj_nm, req_skil_divs, req_skil_name))
-                    mysql_con.commit()
+                    if not req_skil_divs1 and not "00":
 
-                    logging.debug('REQ_SKIL SUCCESS')
+                        sql = "INSERT INTO TB_PRJ_REQ_SKIL(`PRJ_CD`, `SKIL_DIVS`, `SKIL_NAME`, `REG_EMP_NO`, `REG_DATE`," \
+                              " `CHG_EMP_NO`, `CHG_DATE`) " \
+                              "VALUES ((SELECT PRJ_CD FROM TB_PRJ_INFO A WHERE PRJ_NAME = %s)," \
+                              " %s, %s, 'admin', NOW(), 'admin', NOW())"
+                        cursor.execute(sql, (prj_nm, req_skil_divs1, req_skil_name1))
+                        mysql_con.commit()
+                        logging.debug('REQ_SKIL SUCCESS')
 
             finally:
                 mysql_con.close()

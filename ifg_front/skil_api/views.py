@@ -122,20 +122,33 @@ def prjSave(request):
     logger.info(param)
 
     datas = {
-        'prj_cd': param['prj_cd'],
-        'prj_nm' : param['prj_nm'],
-        'cnct_cd' : param['cnct_cd'],
-        'gnr_ctro'  : param['gnr_ctro'],
-        'ctro': param['ctro'],
-        'cnct_amt': param['cnct_amt'],
-        'slin_bzdp': param['slin_bzdp'],
-        'job_divs': param['job_divs'],
-        'pgrs_stus' : param['pgrs_stus'],
-        'req_skil_divs' : param['req_skil_divs1'],
-        'req_skil_name' : param['req_skil_name1'],
-        'rmks' : param['rmks'],
+        # 'prj_cd': param['prj_cd'],
+        # 'prj_nm': param['prj_nm'],
+        # 'cnct_cd': param['cnct_cd'],
+        # 'gnr_ctro': param['gnr_ctro'],
+        # 'ctro': param['ctro'],
+        # 'cnct_amt': param['cnct_amt'],
+        # 'slin_bzdp': param['slin_bzdp'],
+        # 'job_divs': param['job_divs'],
+        # 'pgrs_stus': param['pgrs_stus'],
+        # 'req_skil_divs': param['req_skil_divs1'],
+        # 'req_skil_name': param['req_skil_name1'],
+        # 'rmks': param['rmks'],
 
     }
+
+
+    for row in param:
+        # logger.info("'"+row+"'"+':'+"'"+param[row]+"'"+',')
+        # logger.info(dat)
+        datas.setdefault(row, param[row])
+
+
+
+
+
+
+
     logger.info('request.post : ' + request.POST['param'])
     logger.info(datas)
     r = requests.post('http://skil_api:5003/prjSave', data=datas)
@@ -220,6 +233,33 @@ def prjInpuDelete(request):
     logger.info(json.loads(r.text))
     return JsonResponse(r.json(), safe=False)
 
+def skilRegPopup(request):
+    template_name = 'skil/skilRegPopup.html'
+
+    return render(request, template_name)
+
+def skilRegPopupSearch(request):
+
+    param = json.loads(request.GET['param'])
+    logger.info("skilRegPopup : skil/views.py")
+    datas = {
+        'dept': param['dept'],
+        'name': param['name'],
+        'division': param['division'],
+        'level': param['level'],
+        'empNo': param['EMP_NO'],
+    }
+
+    logger.info(datas)
+    r = requests.get('http://skil_api:5003/skilRegPopup.html', params=datas)
+    logger.info(r)
+    logger.info(r.text)
+    logger.info("----------------")
+    logger.info(r.json())
+    logger.info(json.loads(r.text))
+    # return JsonResponse(r.json())
+    return JsonResponse(r.json(), safe=False)
+
 def skilMgmtSearch(request):
 
     param = json.loads(request.GET['param'])
@@ -253,3 +293,5 @@ class skilMgmtDetl(generic.TemplateView):
         }
 
         return render(request, template_name, rr)
+
+
