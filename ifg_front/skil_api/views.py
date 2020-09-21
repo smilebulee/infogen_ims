@@ -233,6 +233,33 @@ def prjInpuDelete(request):
     logger.info(json.loads(r.text))
     return JsonResponse(r.json(), safe=False)
 
+def skilRegPopup(request):
+    template_name = 'skil/skilRegPopup.html'
+
+    return render(request, template_name)
+
+def skilRegPopupSearch(request):
+
+    param = json.loads(request.GET['param'])
+    logger.info("skilRegPopup : skil/views.py")
+    datas = {
+        'dept': param['dept'],
+        'name': param['name'],
+        'division': param['division'],
+        'level': param['level'],
+        'empNo': param['EMP_NO'],
+    }
+
+    logger.info(datas)
+    r = requests.get('http://skil_api:5003/skilRegPopup.html', params=datas)
+    logger.info(r)
+    logger.info(r.text)
+    logger.info("----------------")
+    logger.info(r.json())
+    logger.info(json.loads(r.text))
+    # return JsonResponse(r.json())
+    return JsonResponse(r.json(), safe=False)
+
 def skilMgmtSearch(request):
 
     param = json.loads(request.GET['param'])
@@ -266,3 +293,5 @@ class skilMgmtDetl(generic.TemplateView):
         }
 
         return render(request, template_name, rr)
+
+
