@@ -32,61 +32,43 @@
 
             $('#grp_grid').hide();                                                  // Calendar UI를 Default로 한다.
             $('#grp_showMonth').hide();                                             // Grid UI의 week를 Default로 한다.
-            crteTodayShow();                                                        // Grid UI (월,주)tab 현재 날짜로 세팅
+
+            //현재 날짜 가져오기
+            var today = new Date();
+            var year = today.getFullYear(); // 년도
+            var month = today.getMonth();  // 월 (today.getMonth()는 0~11로 출력)
+            var date = today.getDate();  // 날짜
+            var day = today.getDay();  // 요일 (0~6으로 출력, 0:일요일, 1:월요일, 6:토요일)
+
+            $('#txt_mmYy').text(year); //그리드 월tab 년도 초기값 입력
+            $('#txt_mmMm').text(month + 1); //그리드 월tab 월 초기값 입력
+
+            crteTodayShow(year, month, date, day);                                                        // Grid UI(주) 날짜 세팅
 
             /*********************************************************************
-            *   Grid UI (월,주)tab 현재 날짜로 세팅
+            *   Grid UI(주) 날짜 세팅
             *********************************************************************/
-            function crteTodayShow(){
-                //현재 날짜 가져오기
-                var today = new Date();
-                var year = today.getFullYear(); // 년도
-                var month = today.getMonth() + 1;  // 월 (today.getMonth()는 0~11로 출력)
-                var date = today.getDate();  // 날짜
-                var day = today.getDay();  // 요일 (0~6으로 출력, 0:일요일, 1:월요일, 6:토요일)
-
-
-                var strtDate = 0;
-                var endDate = 0;
-
-                //말일 구하기
-                var lastDateTemp = new Date(year, month, 0);
-                var lastDate =  lastDateTemp.getDate();
+            function crteTodayShow(year, month, date, day){
+                var strtDate = null;
+                var endDate = null;
 
                 //주tab 시작일, 종료일 입력 날짜 계산
                 for(var i = 0; i < 7; i++ ){
 
                     if(day == i){
 
-                        strtDate = date - i;
-                        var endDateTemp = date + 6 - i;
-
-                        if(lastDate < endDateTemp) {
-                            endDate = endDateTemp - lastDate;
-                            var endToday = new Date();
-
-                            endToday.setDate(endToday.getDate() + endDateTemp);
-                            var endYear = endToday.getFullYear();
-                            var endMonth = endToday.getMonth() + 1;
-
-                            $('#txt_weekEndYy').text(endYear); //그리드 주tab 종료년도 초기값 입력
-                            $('#txt_weekEndMm').text(endMonth); //그리드 주tab 종료월 초기값 입력
-
-                        }else {
-                            endDate = endDateTemp;
-                            $('#txt_weekEndYy').text(year); //그리드 주tab 종료년도 초기값 입력
-                            $('#txt_weekEndMm').text(month); //그리드 주tab 종료월 초기값 입력
-                        }
+                        strtDate = new Date(year, Number(month), Number(date) - i);
+                        endDate = new Date(year, Number(month), Number(date) + 6 - i);
                     }
                 }
 
-                $('#txt_weekStrtYy').text(year); //그리드 주tab 년도 초기값 입력
-                $('#txt_weekStrtMm').text(month); //그리드 주tab 월 초기값 입력
-                $('#txt_weekStrtDd').text(strtDate); //그리드 주tab 시작일 초기값 입력
-                $('#txt_weekEndDd').text(endDate); //그리드 주tab 종료일 초기값 입력
+                $('#txt_weekStrtYy').text(strtDate.getFullYear()); //그리드 주tab 시작년도 입력
+                $('#txt_weekStrtMm').text(strtDate.getMonth() + 1); //그리드 주tab 시작월 입력
+                $('#txt_weekStrtDd').text(strtDate.getDate()); //그리드 주tab 시작일 입력
 
-                $('#txt_mmYy').text(year); //그리드 월tab 년도 초기값 입력
-                $('#txt_mmMm').text(month); //그리드 월tab 월 초기값 입력
+                $('#txt_weekEndYy').text(endDate.getFullYear()); //그리드 주tab 종료년도 입력
+                $('#txt_weekEndMm').text(endDate.getMonth() + 1); //그리드 주tab 종료월 입력
+                $('#txt_weekEndDd').text(endDate.getDate()); //그리드 주tab 종료일 입력
 
                 crteWeekGrid();
             }
@@ -314,6 +296,16 @@
                 onSelect:function(dateText, inst) {
                     console.log(dateText);
                     console.log(inst);
+
+                    var tempData = $('#datepickerData').val().split('-');
+                    var selectDatepickerDate = new Date(tempData[0], Number(tempData[1])-1, tempData[2]);
+
+                    //날짜 세팅
+                    year = selectDatepickerDate.getFullYear(); // 년도
+                    month = selectDatepickerDate.getMonth();  // 월 (today.getMonth()는 0~11로 출력)
+                    date = selectDatepickerDate.getDate();  // 날짜
+                    day = selectDatepickerDate.getDay();  // 요일 (0~6으로 출력, 0:일요일, 1:월요일, 6:토요일)
+                    crteTodayShow(year, month, date, day);
                 }
 	        });
 
