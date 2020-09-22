@@ -229,56 +229,186 @@ class mariaClass(Resource):
         return result2
 
 class devSave(Resource):
+    def post(self):
+        params = request.get_json()
+
+        logging.debug("save start")
+        emp_no = request.form['emp_no']
+        name = request.form['name']
+        rank = request.form['rank']
+        grd = request.form['grd']
+        tlno = request.form['tlno1'] + request.form['tlno2'] + request.form['tlno3']
+        divs = request.form['divs']
+        blco = request.form['blco']
+        bday = request.form['bday']
+        rmks = request.form['rmks']
+        use_yn = 'Y'
+
+        logging.debug('--------------------------------------')
+        logging.debug(name)
+        logging.debug(rank)
+        logging.debug('--------------------------------------')
+
+        logging.debug('================== App Start ==================')
+        logging.debug(params)
+        logging.debug('================== App End ==================')
+
+        mysql_con = pymysql.connect(host='218.151.225.142', port=3306, db='IFG_IMS', user='ims2', password='1234',
+                                    charset='utf8')
+
+        try:
+            with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+
+                if emp_no:
+                    logging.debug('emp_no exist')
+                    logging.debug(emp_no)
+
+                else:
+                    logging.debug('emp_no is null')
+                    logging.debug(emp_no)
+                    sql = "SELECT CONCAT('F','_',( SELECT LPAD((SELECT NVL(SUBSTR(MAX(EMP_NO), 3)+1, 1) " \
+                          "FROM TB_FRLC_DEVP_INFO),6,'0'))) AS EMP_NO"
+                    cursor.execute(sql)
+                    empResult = cursor.fetchone()
+                    emp_no = empResult['EMP_NO']
+                    logging.debug(emp_no)
+
+                sql = "INSERT INTO TB_FRLC_DEVP_INFO (`EMP_NO`, " \
+                      "`EMP_NAME`, `EMP_RANK_CD`, `DEVP_GRD_CD`, `DEVP_TEL_NO`, `CNTC_DIVS_CD`, " \
+                      "`DEVP_BLCO`, `DEVP_BDAY`, `REG_EMP_NO`, `REG_DATE`, `CHG_EMP_NO`, `CHG_DATE`, `RMKS`, `DEVP_USE_YN`)  " \
+                      "VALUES(%s," \
+                      "%s, %s, %s, %s, %s, %s, %s, %s, NOW(), %s, NOW(), %s, %s)" \
+                      "ON DUPLICATE KEY UPDATE " \
+                      "EMP_NAME = %s, EMP_RANK_CD = %s, DEVP_GRD_CD = %s, DEVP_TEL_NO = %s, CNTC_DIVS_CD = %s, DEVP_BLCO = %s, " \
+                      "DEVP_BDAY = %s, CHG_EMP_NO = %s, CHG_DATE = NOW(), RMKS = %s"
+
+                cursor.execute(sql, (emp_no, name, rank, grd, tlno, divs, blco, bday, 'admin', 'admin', rmks, use_yn
+                                     , name, rank, grd, tlno, divs, blco, bday, 'admin', rmks))
+                mysql_con.commit()
+
+        finally:
+            mysql_con.close()
+
+        retJson = {
+            "status": 200,
+            "msg": "Data has been saved successfully"
+        }
+
+        return jsonify(retJson)
+
+
+class devDelete(Resource):
+    def post(self):
+
+        params = request.get_json()
+
+        logging.debug("delete start")
+
+        name = request.form['name']
+        bday = request.form['bday']
+
+        logging.debug('================== SQL START ==================')
+
+        mysql_con = pymysql.connect(host='218.151.225.142', port=3306, db='IFG_IMS', user='ims2', password='1234',
+                                    charset='utf8')
+
+        try:
+            with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+                sql = "UPDATE TB_FRLC_DEVP_INFO SET DEVP_USE_YN = 'N' " \
+                      "WHERE 1=1 " \
+                      "AND EMP_NAME = %s " \
+                      "AND DEVP_BDAY = %s"
+                cursor.execute(sql, (name, bday))
+                mysql_con.commit()
+
+        finally:
+            mysql_con.close()
+
+
+        retJson = {
+            "status": 200,
+            "msg": "Data has been saved successfully"
+        }
+
+        return jsonify(retJson)
+
+class prjSave(Resource):
         def post(self):
 
             params = request.get_json()
 
             logging.debug("save start")
+            logging.debug(request.form)
 
-            name = request.form['name']
-            rank = request.form['rank']
-            grd  = request.form['grd']
-            tlno = request.form['tlno1'] + request.form['tlno2'] + request.form['tlno3']
-            divs = request.form['divs']
-            blco = request.form['blco']
-            bday = request.form['bday']
-            rmks = request.form['rmks']
-            use_yn= 'T'
+            for row in request.form:
+                logging.debug(row+':'+request.form[row])
+                datass.setdefault(row, request.form[row])
+                globals()[row] = request.form[row]
+
+            prj_cd = request.form['prj_cd']
+            # prj_nm = request.form['prj_nm']
+            # cnct_cd = request.form['cnct_cd']
+            # gnr_ctro = request.form['gnr_ctro']
+            # ctro = request.form['ctro']
+            # cnct_amt = request.form['cnct_amt']
+            # slin_bzdp = request.form['slin_bzdp']
+            # job_divs = request.form['job_divs']
+            # pgrs_stus = request.form['pgrs_stus']
+            # req_skil_divs1 = request.form['req_skil_divs1']
+            # req_skil_name1 = request.form['req_skil_name1']
+            # rmks = request.form['rmks']
+            use_yn = 'Y'
 
             logging.debug('--------------------------------------')
-            logging.debug(name)
-            logging.debug(rank)
+            logging.debug(prj_cd + prj_nm + cnct_cd + gnr_ctro + ctro + cnct_amt + slin_bzdp + job_divs + pgrs_stus)
             logging.debug('--------------------------------------')
 
-
-            logging.debug('================== App Start ==================')
-            logging.debug(params)
-            logging.debug('================== App End ==================')
 
             mysql_con = pymysql.connect(host='218.151.225.142', port=3306, db='IFG_IMS', user='ims2', password='1234',
-                                            charset='utf8')
+                                        charset='utf8')
 
             try:
                 with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
-                    sql = "INSERT INTO TB_FRLC_DEVP_INFO (`EMP_NO`, " \
-                          "`EMP_NAME`, `DEVP_RANK_CD`, `DEVP_GRD_CD`, `DEVP_TLNO`, `DEVP_DIVS_CD`, " \
-                          "`DEVP_BLCO`, `DEVP_BDAY`, `REG_EMP_NO`, `REG_DATE`, `CHG_EMP_NO`, `CHG_DATE`, `RMKS`, `DEVP_USE_YN`)  " \
-                          "VALUES((SELECT CONCAT('F','_',(SELECT LPAD(COUNT(*)+1,6,'0') FROM TB_FRLC_DEVP_INFO A)))," \
-                          "%s, %s, %s, %s, %s, %s, %s, %s, NOW(), %s, NOW(), %s, %s)"
-                    cursor.execute(sql, (name, rank, grd, tlno, divs, blco, bday, 'admin', 'admin', rmks, use_yn))
+
+                    if prj_cd:
+                        logging.debug('prj_cd exist')
+                        logging.debug(prj_cd)
+
+                    else:
+                        logging.debug('prj_cd is null')
+                        sql = "SELECT CONCAT('PRJ','_',( SELECT LPAD((SELECT NVL(SUBSTR(MAX(PRJ_CD), 5)+1, 1) " \
+                              "FROM TB_PRJ_INFO),6,'0'))) AS PRJ_CD"
+                        cursor.execute(sql)
+                        prjResult = cursor.fetchone()
+                        prj_cd = prjResult['PRJ_CD']
+
+                    sql = "INSERT INTO TB_PRJ_INFO(`PRJ_CD`, `PRJ_NAME`, `PRJ_CNCT_CD`, `GNR_CTRO`, `CTRO`, `CNCT_AMT`," \
+                          " `SLIN_BZDP`, `JOB_DIVS_CD`, `PGRS_STUS_CD`, `REG_EMP_NO`, `REG_DATE`, `CHG_EMP_NO`," \
+                          " `CHG_DATE`, `RMKS`, `USE_YN`) " \
+                          "VALUES(%s, " \
+                          "%s, %s, %s, %s, %s, %s, %s, %s, 'admin', NOW(), 'admin', NOW(), %s, %s)" \
+                          "ON DUPLICATE KEY UPDATE " \
+                          "PRJ_NAME = %s, PRJ_CNCT_CD = %s, GNR_CTRO = %s, CTRO = %s, CNCT_AMT = %s, SLIN_BZDP = %s, " \
+                          "JOB_DIVS_CD = %s, PGRS_STUS_CD = %s, CHG_EMP_NO = 'admin', CHG_DATE = NOW(), RMKS = %s"
+                    cursor.execute(sql, (
+                        prj_cd, prj_nm, cnct_cd, gnr_ctro, ctro, cnct_amt, slin_bzdp, job_divs, pgrs_stus, rmks, use_yn,
+                        prj_nm, cnct_cd, gnr_ctro, ctro, cnct_amt, slin_bzdp, job_divs, pgrs_stus, rmks))
                     mysql_con.commit()
+
+                    logging.debug('PRJ_INFO SUCCESS')
+
+                    if not req_skil_divs1 and not "00":
+
+                        sql = "INSERT INTO TB_PRJ_REQ_SKIL(`PRJ_CD`, `SKIL_DIVS`, `SKIL_NAME`, `REG_EMP_NO`, `REG_DATE`," \
+                              " `CHG_EMP_NO`, `CHG_DATE`) " \
+                              "VALUES ((SELECT PRJ_CD FROM TB_PRJ_INFO A WHERE PRJ_NAME = %s)," \
+                              " %s, %s, 'admin', NOW(), 'admin', NOW())"
+                        cursor.execute(sql, (prj_nm, req_skil_divs1, req_skil_name1))
+                        mysql_con.commit()
+                        logging.debug('REQ_SKIL SUCCESS')
 
             finally:
                 mysql_con.close()
-
-            result2 = cursor.fetchall()
-            for row in result2:
-                logging.debug('====== row====')
-                logging.debug(row)
-                logging.debug('===============')
-            # array = list(result2)  # 결과를 리스트로
-            #
-            # return json.dumps(result2)
 
             retJson = {
                 "status": 200,
@@ -287,70 +417,37 @@ class devSave(Resource):
 
             return jsonify(retJson)
 
-class prjSave(Resource):
+class prjDelete(Resource):
         def post(self):
 
             params = request.get_json()
 
-            logging.debug("save start")
+            logging.debug("delete start")
 
             prj_nm = request.form['prj_nm']
-            cnct_cd = request.form['cnct_cd']
-            gnr_ctro = request.form['gnr_ctro']
-            ctro = request.form['ctro']
-            cnct_amt = request.form['cnct_amt']
-            slin_bzdp = request.form['slin_bzdp']
-            job_divs = request.form['job_divs']
-            pgrs_stus = request.form['pgrs_stus']
-            req_skil_divs = request.form['req_skil_divs']
-            req_skil_name = request.form['req_skil_name']
-            rmks = request.form['rmks']
-            use_yn = 'T'
 
             logging.debug('--------------------------------------')
             logging.debug(prj_nm)
             logging.debug('--------------------------------------')
 
-            logging.debug('================== App Start ==================')
-            logging.debug(params)
-            logging.debug('================== App End ==================')
+            logging.debug('================== SQL Start ==================')
 
-            mysql_con = pymysql.connect(host='218.151.225.142', port=3306, db='IFG_IMS', user='ims2', password='1234',
-                                        charset='utf8')
+            mysql_con = pymysql.connect(host='218.151.225.142', port=3306, db='IFG_IMS', user='ims2',
+                                            password='1234',
+                                            charset='utf8')
 
             try:
                 with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
-                    sql = "INSERT INTO TB_PRJ_INFO(`PRJ_CD`, `PRJ_NM`, `PRJ_CNCT_CD`, `GNR_CTRO`, `CTRO`, `CNCT_AMT`," \
-                          " `SLIN_BZDP`, `JOB_DIVS_CD`, `PRGRS_STUS_CD`, `REG_EMP_NO`, `REG_DATE`, `CHG_EMP_NO`," \
-                          " `CHG_DATE`, `RMKS`, `USE_YN`) " \
-                          "VALUES((SELECT CONCAT('PRJ','_',(SELECT LPAD(COUNT(*)+1,6,'0') FROM TB_PRJ_INFO A))), " \
-                          "%s, %s, %s, %s, %s, %s, %s, %s, 'admin', NOW(), 'admin', NOW(), %s, %s)"
-                    cursor.execute(sql, (prj_nm, cnct_cd, gnr_ctro, ctro, cnct_amt, slin_bzdp, job_divs, pgrs_stus, rmks, use_yn))
+                    sql = "UPDATE TB_PRJ_INFO SET USE_YN = 'N' " \
+                              "WHERE PRJ_NM = %s"
+                    cursor.execute(sql, (prj_nm))
                     mysql_con.commit()
 
                     logging.debug('PRJ_INFO SUCCESS')
-                    logging.debug(prj_nm + req_skil_divs + req_skil_name)
 
-                    sql = "INSERT INTO TB_PRJ_REQ_SKIL(`PRJ_CD`, `SKIL_DIVS`, `SKIL_NAME`, `REG_EMP_NO`, `REG_DATE`," \
-                          " `CHG_EMP_NO`, `CHG_DATE`) " \
-                          "VALUES ((SELECT PRJ_CD FROM TB_PRJ_INFO A WHERE PRJ_NM = %s)," \
-                          " %s, %s, 'admin', NOW(), 'admin', NOW())"
-                    cursor.execute(sql, (prj_nm, req_skil_divs, req_skil_name))
-                    mysql_con.commit()
-
-                    logging.debug('REQ_SKIL SUCCESS')
 
             finally:
                 mysql_con.close()
-
-            result2 = cursor.fetchall()
-            for row in result2:
-                logging.debug('====== row====')
-                logging.debug(row)
-                logging.debug('===============')
-            # array = list(result2)  # 결과를 리스트로
-            #
-            # return json.dumps(result2)
 
             retJson = {
                 "status": 200,
@@ -499,8 +596,14 @@ api.add_resource(Register, '/register')
 api.add_resource(Retrieve, '/retrieve')
 api.add_resource(Save, '/save')
 api.add_resource(mariaClass,'/mariaClass')
+
+# 개발자 등록
 api.add_resource(devSave, '/devSave')
+api.add_resource(devDelete, '/devDelete')
+
+# 프로젝트 등록
 api.add_resource(prjSave, '/prjSave')
+api.add_resource(prjDelete, '/prjDelete')
 
 # 프로젝트 투입 관리
 api.add_resource(prjInpuSearch, '/prjInpuSearch')

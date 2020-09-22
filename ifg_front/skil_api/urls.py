@@ -15,8 +15,14 @@ urlpatterns = [
     # mariadb test
     url(r'^maria/', views.maria.as_view(), name='maria'),
     url(r'^getMariaDB/', views.getMariaDB, name='getMariaDB'),
+
+    # 개발자 등록
     url(r'^devSave/post', views.devSave, name='devSave'),
+    url(r'^devDelete/post', views.devDelete, name='devDelete'),
+
+    # 프로젝트 등록
     url(r'^prjSave/post', views.prjSave, name='prjSave'),
+    url(r'^prjDelete/post', views.prjDelete, name='prjDelete'),
 
     # 프로젝트 투입 관리
     url(r'^prjInpuMgmt/', views.prjInpuMgmt, name='prjInpuMgmt'),
@@ -28,6 +34,10 @@ urlpatterns = [
     url(r'^skilMgmt/', views.skilMgmt, name='skilMgmt'),
     url(r'^skilMgmtSearch/get', views.skilMgmtSearch, name='skilMgmtSearch'),
     url(r'^skilMgmtDetl/', views.skilMgmtDetl.as_view(), name='skilMgmtDetl'),
+    
+    # 스킬관리상세팝업
+    url(r'^skilRegPopup/', views.skilRegPopup, name='skilRegPopup'),
+    url(r'^skilRegPopupSearch/', views.skilRegPopupSearch, name='skilRegPopupSearch'),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

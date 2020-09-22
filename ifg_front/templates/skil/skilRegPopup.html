@@ -65,57 +65,24 @@ tbody>tr>td:first-child:before {
 <div id="modal">
 
     <div class="modal_content">
-            <h2 style = "font-weight:bold"><U>프로젝트 상세 관리</U></h2><br>
-        <div id = "projectInfo">
+            <h2 style = "font-weight:bold"><U>스킬 관리 상세</U></h2><br>
+        <div id = "skilMgmtInfo">
             <span style="color: #0489B1;
                          font-size: 1.0em;
                          padding:20px;">
 
-                    <input type = "text" name = "prj_cd" style = "display:none"></p>
 
-                <p>*프로젝트 명<br>
-                    <input type = "text" name = "prj_nm" placeholder="input text"></p>
+                <p>성명<br>
+                    <input type = "text" name = "emp_nm" placeholder="input text"></p>
 
-                <p>*고객사 계약 코드<br>
+                <p>부서<br>
                     <input type = "text" name = "cnct_cd" placeholder="input text"></p>
 
-                <p>*원청사<br>
-                    <input type = "text" name = "gnr_ctro" placeholder="input text"></p>
-
-                <p>*계약사<br>
+                <p>구분<br>
                    <input type = "text" name = "ctro" placeholder="input text"></p>
 
-                <p>계약 금액<br>
+                <p>직급<br>
                     <input type = "text" name = "cnct_amt" placeholder="input text"></p>
-
-                <p>*매출 사업부<br>
-                    <select size ="1" style="width:200px" name = "slin_bzdp" class="col-sm-2">
-                        <option>선택</option>
-                        <option value = "01">FIC</option>
-                        <option value = "02">전자/제조</option>
-                        <option value = "03">통신</option>
-                        <option value = "04">화학</option>
-                        <option value = "05">전략</option>
-                        <option value = "06">DX</option>
-                    </select>
-                </p>
-
-                <p>*업무 구분<br>
-                    <select size ="1" style="width:200px" name = "job_divs" class="col-sm-2">
-                        <option>선택</option>
-                        <option value = "01">SM</option>
-                        <option value = "02">SI</option>
-                    </select>
-                </p>
-
-                <p>*진행 상태<br>
-                    <select size ="1" style="width:200px" name = "pgrs_stus" class="col-sm-2">
-                        <option>선택</option>
-                        <option value = "01">예정</option>
-                        <option value = "02">진행 중</option>
-                        <option value = "03">종료</option>
-                    </select>
-                </p>
 
                 <p>비고<br>
                     <input type = "text" name = "rmks" placeholder="input text"></p>
@@ -125,17 +92,18 @@ tbody>tr>td:first-child:before {
 
 
 
-        <button name="addStaff" class = "btn btn-primary style="float:right">추가</button>
-        <button name="delStaff" class = "btn btn-primary style="float:right color:red">삭제</button>
-<!--        <td><input type="button" style="float:right" id="add" name="addStaff" value="추가" class = "btn btn-danger"/></td>-->
-<!--        <td><input type="button" style="float:right" id="del" name="delStaff" value="삭제" class = "btn btn-primary"/></td>-->
+        <!--<button name="addStaff" class = "btn btn-primary" style="float:right">추가</button>
+        <button name="delStaff" class = "btn btn-primary" style="float:right color:red">삭제</button>-->
+        <td><input type="button" style="float:right" id="add" name="addStaff" value="추가" class = "btn btn-danger"/></td>
+        <td><input type="button" style="float:right" id="del" name="delStaff" value="삭제" class = "btn btn-primary"/></td>
 
         <br>
-            <table id="reqSkil" class="table" style="margin-top: 20px;">
+            <table id="hldSkil" class="table" style="margin-top: 20px;">
                 <colgroup>
                     <col width="20%"/>
-                    <col width="40%"/>
-                    <col width="40%"/>
+                    <col width="20%"/>
+                    <col width="30%"/>
+                    <col width="30%"/>
                 </colgroup>
 
                 <thead>
@@ -143,20 +111,30 @@ tbody>tr>td:first-child:before {
                     <th>순번</th>
                     <th>구분</th>
                     <th>스킬명</th>
+                    <th>숙련도</th>
+
                 </tr>
                 </thead>
 
-                <tbody id="reqSkilBody" name = "req_skil">
+                <tbody id="hldSkilBody" name = "hld_skil">
                     <tr name="trSkil">
                         <td id="staff_name"></td>
-                        <td><select size="1" class="form-control" id="req_skil_divs1" name="req_skil_divs1" onchange="skil_chg(1)">
-                            <option value = "00">선택</option>
+                        <td><select size="1" class="form-control" id="hld_skil_divs1" name="hld_skil_divs1" onchange="skil_chg(1)">
                             <option value = "01">DB</option>
                             <option value = "02">언어</option>
                             <option value = "03">WEB</option>
                             <option value = "04">Framework</option>
                         </select></td>
-                        <td><select class="form-control" id = "req_skil_name1" name = "req_skil_name1"></select></td>
+                        <td><select size="1" class="form-control" id="hld_skil_divs2" name="hld_skil_divs1">
+                            <option value = "01">ORACLE</option>
+                            <option value = "02">MYSQL</option>
+                            <option value = "03">PL/SQL</option>
+                        </select></td>
+                        <td><select size="1" class="form-control" id="hld_skil_divs3" name="hld_skil_divs1">
+                            <option value = "01">초</option>
+                            <option value = "02">중</option>
+                            <option value = "03">고</option>
+                        </select></td>
                     </tr>
                 </tbody>
             </table>
@@ -195,14 +173,14 @@ tbody>tr>td:first-child:before {
         var addStaffText =
             '<tr name="trSkil">'+
             '        <td id="staff_name"></td>'+
-            '        <td><select size ="1" class="form-control" id = "req_skil_divs'+count+'" name = "req_skil_divs'+count+'" onchange="skil_chg('+count+')">'+
+            '        <td><select size ="1" class="form-control" id = "hld_skil_divs1'+count+'" name = "hld_skil_divs1'+count+'" onchange="skil_chg('+count+')">'+
             '                <option>선택</option>'+
             '                <option value = "01">DB</option>'+
             '                <option value = "02">언어</option>'+
             '                <option value = "03">WEB</option>'+
             '                <option value = "04">Framework</option>'+
             '            </select></td>'+
-            '        <td><select class="form-control" id = "req_skil_name'+count+'" name = "req_skil_name'+count+'"></select></td>'+
+            '        <td><select class="form-control" id = "hld_skil_name'+count+'" name = "hld_skil_name'+count+'"></select></td>'+
             '</tr>';
 
         var trHtml = $( "tr[name=trSkil]:last" );
@@ -212,10 +190,10 @@ tbody>tr>td:first-child:before {
     });
 
     $(document).on("click","button[name=delStaff]",function(){
-<!--        var table = document.getElementById('reqSkilBody');-->
+<!--        var table = document.getElementById('hldSkilBody');-->
 <!--        if (table.rows.length < 2) return;-->
 
-<!--        $('#reqSkil tbody tr:last').remove();-->
+<!--        $('#hldSkil tbody tr:last').remove();-->
         console.log('del')
         var trHtml = $(this).parent().parent();
 
@@ -253,7 +231,7 @@ tbody>tr>td:first-child:before {
     function skil_chg(a){
         console.log('스킬 변경');
         console.log(a);
-        var DB = ["Oracle","MySql","MsSql"];
+        var DB = ["Oracle","MySql","PL/SQL"];
         var DBValue = ["01","02","03"];
         var Language = ["C","C++","C#","JAVA","Python"];
         var LanguageValue = ["01","02","03","04","05"];
@@ -262,7 +240,7 @@ tbody>tr>td:first-child:before {
         var Framework = [".net", "Spring"];
         var FrameworkValue = ["01", "02"];
 
-        var selectSkill = $("#req_skil_divs"+a).val();
+        var selectSkill = $("#hld_skil_divs1"+a).val();
         console.log(selectSkill);
 
         var changeSkill;
@@ -290,7 +268,7 @@ tbody>tr>td:first-child:before {
         for(var count = 0; count < changeSkill.length; count++){
                         var option = $("<option value ="+changeSkillValue[count]+">"+changeSkill[count]+"</option>");
                         console.log(option);
-                        $('#req_skil_name'+a).append(option);
+                        $('#hld_skil_name'+a).append(option);
                     }
 
     };

@@ -15,15 +15,28 @@
 {% extends 'common/base.html' %}
 
 {% block content %}
+{% load static %}
     <div class="container">
 
         <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
         <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.9.2/i18n/jquery.ui.datepicker-ko.min.js"></script>
+
+        <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+        <!-- // jquery UI -->
+        <script type="text/javascript" src="{% static 'js/jquery.mtz.monthpicker.js' %}"></script>
+
         <script src="https://uicdn.toast.com/tui.code-snippet/v1.5.2/tui-code-snippet.min.js"></script>
         <script src="https://uicdn.toast.com/tui.time-picker/latest/tui-time-picker.min.js"></script>
         <script src="https://uicdn.toast.com/tui.date-picker/latest/tui-date-picker.min.js"></script>
         <script src="https://uicdn.toast.com/tui-calendar/latest/tui-calendar.js"></script>
+
+        <link rel="stylesheet" type="text/css" href="https://uicdn.toast.com/tui-calendar/latest/tui-calendar.css" />
+
+        <!-- If you use the default popups, use this. -->
+        <link rel="stylesheet" type="text/css" href="https://uicdn.toast.com/tui.date-picker/latest/tui-date-picker.css" />
+        <link rel="stylesheet" type="text/css" href="https://uicdn.toast.com/tui.time-picker/latest/tui-time-picker.css" />
+
 
         <script type="text/javascript">
 
@@ -32,61 +45,45 @@
 
             $('#grp_grid').hide();                                                  // Calendar UI를 Default로 한다.
             $('#grp_showMonth').hide();                                             // Grid UI의 week를 Default로 한다.
-            crteTodayShow();                                                        // Grid UI (월,주)tab 현재 날짜로 세팅
+
+            //현재 날짜 가져오기
+            var today = new Date();
+            var year = today.getFullYear(); // 년도
+            var month = today.getMonth();  // 월 (today.getMonth()는 0~11로 출력)
+            var date = today.getDate();  // 날짜
+            var day = today.getDay();  // 요일 (0~6으로 출력, 0:일요일, 1:월요일, 6:토요일)
+
+            $('#txt_mmYy').text(year); //그리드 월tab 년도 초기값 입력
+            $('#txt_mmMm').text(month + 1); //그리드 월tab 월 초기값 입력
+
+            crteTodayShow(year, month, date, day);                                                        // Grid UI(주) 날짜 세팅
+
+
 
             /*********************************************************************
-            *   Grid UI (월,주)tab 현재 날짜로 세팅
+            *   Grid UI(주) 날짜 세팅
             *********************************************************************/
-            function crteTodayShow(){
-                //현재 날짜 가져오기
-                var today = new Date();
-                var year = today.getFullYear(); // 년도
-                var month = today.getMonth() + 1;  // 월 (today.getMonth()는 0~11로 출력)
-                var date = today.getDate();  // 날짜
-                var day = today.getDay();  // 요일 (0~6으로 출력, 0:일요일, 1:월요일, 6:토요일)
-
-
-                var strtDate = 0;
-                var endDate = 0;
-
-                //말일 구하기
-                var lastDateTemp = new Date(year, month, 0);
-                var lastDate =  lastDateTemp.getDate();
+            function crteTodayShow(year, month, date, day){
+                var strtDate = null;
+                var endDate = null;
 
                 //주tab 시작일, 종료일 입력 날짜 계산
                 for(var i = 0; i < 7; i++ ){
 
                     if(day == i){
 
-                        strtDate = date - i;
-                        var endDateTemp = date + 6 - i;
-
-                        if(lastDate < endDateTemp) {
-                            endDate = endDateTemp - lastDate;
-                            var endToday = new Date();
-
-                            endToday.setDate(endToday.getDate() + endDateTemp);
-                            var endYear = endToday.getFullYear();
-                            var endMonth = endToday.getMonth() + 1;
-
-                            $('#txt_weekEndYy').text(endYear); //그리드 주tab 종료년도 초기값 입력
-                            $('#txt_weekEndMm').text(endMonth); //그리드 주tab 종료월 초기값 입력
-
-                        }else {
-                            endDate = endDateTemp;
-                            $('#txt_weekEndYy').text(year); //그리드 주tab 종료년도 초기값 입력
-                            $('#txt_weekEndMm').text(month); //그리드 주tab 종료월 초기값 입력
-                        }
+                        strtDate = new Date(year, Number(month), Number(date) - i);
+                        endDate = new Date(year, Number(month), Number(date) + 6 - i);
                     }
                 }
 
-                $('#txt_weekStrtYy').text(year); //그리드 주tab 년도 초기값 입력
-                $('#txt_weekStrtMm').text(month); //그리드 주tab 월 초기값 입력
-                $('#txt_weekStrtDd').text(strtDate); //그리드 주tab 시작일 초기값 입력
-                $('#txt_weekEndDd').text(endDate); //그리드 주tab 종료일 초기값 입력
+                $('#txt_weekStrtYy').text(strtDate.getFullYear()); //그리드 주tab 시작년도 입력
+                $('#txt_weekStrtMm').text(strtDate.getMonth() + 1); //그리드 주tab 시작월 입력
+                $('#txt_weekStrtDd').text(strtDate.getDate()); //그리드 주tab 시작일 입력
 
-                $('#txt_mmYy').text(year); //그리드 월tab 년도 초기값 입력
-                $('#txt_mmMm').text(month); //그리드 월tab 월 초기값 입력
+                $('#txt_weekEndYy').text(endDate.getFullYear()); //그리드 주tab 종료년도 입력
+                $('#txt_weekEndMm').text(endDate.getMonth() + 1); //그리드 주tab 종료월 입력
+                $('#txt_weekEndDd').text(endDate.getDate()); //그리드 주tab 종료일 입력
 
                 crteWeekGrid();
             }
@@ -299,7 +296,7 @@
             });
 
             /*********************************************************************
-            *   btn_datepicker Btn Click Event - 달력호출
+            *   btn_datepicker Btn Click Event - 일달력호출
             *********************************************************************/
             $('#btn_datepicker').click(function(){
 
@@ -314,6 +311,46 @@
                 onSelect:function(dateText, inst) {
                     console.log(dateText);
                     console.log(inst);
+
+                    var tempData = $('#datepickerData').val().split('-');
+                    var selectDatepickerDate = new Date(tempData[0], Number(tempData[1])-1, tempData[2]);
+
+                    //날짜 세팅
+                    year = selectDatepickerDate.getFullYear(); // 년도
+                    month = selectDatepickerDate.getMonth();  // 월 (today.getMonth()는 0~11로 출력)
+                    date = selectDatepickerDate.getDate();  // 날짜
+                    day = selectDatepickerDate.getDay();  // 요일 (0~6으로 출력, 0:일요일, 1:월요일, 6:토요일)
+                    crteTodayShow(year, month, date, day);
+                }
+	        });
+
+	        /*********************************************************************
+            *   btn_monthpicker Btn Click Event - 월달력호출
+            *********************************************************************/
+            $('#btn_monthpicker').click(function(){
+                 $('#monthpickerData').monthpicker('show');
+
+
+            });
+
+            /*********************************************************************
+            *   클릭한 달력monthpickerData에 value 값 담기
+            *********************************************************************/
+            $("#monthpickerData").monthpicker({
+                onSelect:function(dateText, inst) {
+                    console.log(dateText);
+                    console.log(inst);
+
+<!--                    var tempData = $('#datepickerData').val().split('-');
+                    var selectDatepickerDate = new Date(tempData[0], Number(tempData[1])-1, tempData[2]);
+
+                    //날짜 세팅
+                    year = selectDatepickerDate.getFullYear(); // 년도
+                    month = selectDatepickerDate.getMonth();  // 월 (today.getMonth()는 0~11로 출력)
+                    date = selectDatepickerDate.getDate();  // 날짜
+                    day = selectDatepickerDate.getDay();  // 요일 (0~6으로 출력, 0:일요일, 1:월요일, 6:토요일)
+                    crteTodayShow(year, month, date, day);
+                    -->
                 }
 	        });
 
@@ -338,6 +375,51 @@
                     alert("이름["+name+"]기준 직원조회 팝업 호출 연동하기.")
                 }
             });
+
+
+            /*********************************************************************
+            *   Draw  calendar Event - 캘린더 API 그리기
+            *********************************************************************/
+            var calendar = new tui.Calendar(document.getElementById('calendar'), {
+                defaultView: 'month',
+                taskView: true,    // Can be also ['milestone', 'task']
+                scheduleView: true,  // Can be also ['allday', 'time']
+                template: {
+                    milestone: function(schedule) {
+                        return '<span style="color:red;"><i class="fa fa-flag"></i> ' + schedule.title + '</span>';
+                    },
+                    milestoneTitle: function() {
+                        return 'Milestone';
+                    },
+                    task: function(schedule) {
+                        return '&nbsp;&nbsp;#' + schedule.title;
+                    },
+                    taskTitle: function() {
+                        return '<label><input type="checkbox" />Task</label>';
+                    },
+                    allday: function(schedule) {
+                        return schedule.title + ' <i class="fa fa-refresh"></i>';
+                    },
+                    alldayTitle: function() {
+                        return 'All Day';
+                    },
+                    time: function(schedule) {
+                        return schedule.title + ' <i class="fa fa-refresh"></i>' + schedule.start;
+                    }
+                },
+                month: {
+                    daynames: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+                    startDayOfWeek: 0,
+                    narrowWeekend: true
+                },
+                week: {
+                    daynames: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+                    startDayOfWeek: 0,
+                    narrowWeekend: true
+                }
+            });
+
+
 
         });
 
@@ -452,51 +534,7 @@
         }
 
 
-        /*********************************************************************
-        *   Draw  calendar Event - 캘린더 API 그리기
-        *********************************************************************/
-        function calendar() {
-            var calendar = new tui.Calendar(document.getElementById('calendar'), {
-                defaultView: 'month',
-                taskView: true,    // Can be also ['milestone', 'task']
-                scheduleView: true,  // Can be also ['allday', 'time']
-                template: {
-                    milestone: function(schedule) {
-                        return '<span style="color:red;"><i class="fa fa-flag"></i> ' + schedule.title + '</span>';
-                    },
-                    milestoneTitle: function() {
-                        return 'Milestone';
-                    },
-                    task: function(schedule) {
-                        return '&nbsp;&nbsp;#' + schedule.title;
-                    },
-                    taskTitle: function() {
-                        return '<label><input type="checkbox" />Task</label>';
-                    },
-                    allday: function(schedule) {
-                        return schedule.title + ' <i class="fa fa-refresh"></i>';
-                    },
-                    alldayTitle: function() {
-                        return 'All Day';
-                    },
-                    time: function(schedule) {
-                        return schedule.title + ' <i class="fa fa-refresh"></i>' + schedule.start;
-                    }
-                },
-                month: {
-                    daynames: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
-                    startDayOfWeek: 0,
-                    narrowWeekend: true
-                },
-                week: {
-                    daynames: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
-                    startDayOfWeek: 0,
-                    narrowWeekend: true
-                }
-            });
 
-
-        }
 
     </script>
         <div class="row">
@@ -643,7 +681,8 @@
                                         <path d="M3.86 8.753l5.482 4.796c.646.566 1.658.106 1.658-.753V3.204a1 1 0 0 0-1.659-.753l-5.48 4.796a1 1 0 0 0 0 1.506z"/>
                                     </svg>
                                 </button>
-                                <div style="margin-right: 10px;margin-left: 10px;">
+                                <input type="hidden" name="date" id="monthpickerData"/>
+                                <div id="btn_monthpicker" style="margin-right: 10px;margin-left: 10px;">
                                     <h5>
                                         <span id="txt_mmYy"></span>
                                         <span>.</span>
@@ -663,6 +702,18 @@
                 <!-- 4. 사원 Schedule Calendar 영역 -->
                 <div id="grp_calendar">
                     <div class="bg-light p-5">
+                        <div id="menu">
+                          <span id="menu-navi">
+                            <button type="button" class="btn btn-default btn-sm move-today" data-action="move-today">Today</button>
+                            <button type="button" class="btn btn-default btn-sm move-day" data-action="move-prev">
+                              <i class="calendar-icon ic-arrow-line-left" data-action="move-prev"></i>
+                            </button>
+                            <button type="button" class="btn btn-default btn-sm move-day" data-action="move-next">
+                              <i class="calendar-icon ic-arrow-line-right" data-action="move-next"></i>
+                            </button>
+                          </span>
+                          <span id="renderRange" class="render-range"></span>
+                        </div>
                         <div id="calendar" style="height: 800px;"></div>
                     </div>
                 </div>
