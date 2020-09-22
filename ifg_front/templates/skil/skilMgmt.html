@@ -11,9 +11,6 @@ history
             var firstGrid = $('[data-ax5grid="first-grid"]');
 
             getGridList(1);
-            var gridList = [        /* 그리드에 세팅할 데이터는 JSON 배열 형태 */
-                {"EMP_NO":"홍길동", "dept":"통신", "skillGrade":"고급", "division":"정규직", "db":"orcle", "lang":"java,c,c#", "web":"", "frameWork":"spring,django", "midWare":"apache,docker","mobile":"010-1234-5678", "birth":"2000-01-01"},
-            ];
 
             function getGridList(page){
 
@@ -26,74 +23,17 @@ history
 
                     var gridOptions = {
                         columns: [              /* columns : 그리드 헤더 및 매핑 시킬 컬럼 및 컬럼 속성 설정 항목(필수) */
-                        {
-                            key: "EMP_NAME",
-                            label: "성명",
-                            width: 100,
-                            align: "center"
-                        },
-                        {
-                            key: "EMP_DEPT",
-                            label: "부서",
-                            width: 80,
-                            align: "center"
-                        },
-                        {
-                            key: "EMP_GRD",
-                            label: "구분",
-                            width: 80,
-                            align: "center"
-                        },
-                        {
-                            key: "SKIL_DB",
-                            label: "DB",
-                            width: 80,
-                            align: "center"
-                        },
-                        {
-                            key: "SKIL_LANG",
-                            label: "언어",
-                            width: 120,
-                            align: "center"
-                        },
-                        {
-                            key: "SKIL_WEB",
-                            label: "WEB",
-                            width: 120,
-                            align: "center"
-                        },
-                        {
-                            key: "SKIL_FRAME",
-                            label: "FRAME WORK",
-                            width: 120,
-                            align: "center"
-                        },
-                        {
-                            key: "SKIL_MID",
-                            label: "MID-WARE",
-                            width: 120,
-                            align: "center"
-                        },
-                        {
-                            key: "EMP_PHONE",
-                            label: "연락처",
-                            width: 80,
-                            align: "center"
-                        },
-                        {
-                            key: "EMP_BIRTH",
-                            label: "생년월일",
-                            width: 80,
-                            align: "center",
-                            /* 숨김처리 hidden : true */
-                        },
-                        {
-                            key: "EMP_NO",
-                            label: "사번",
-                            width: 80,
-                            align: "center",
-                            hidden : true
-                        }
+                        { key: "EMP_NAME",   label: "성명",       width: 100,  align: "center"},
+                        { key: "EMP_DEPT",   label: "부서",       width: 80,   align: "center"},
+                        { key: "EMP_GRD",    label: "구분",       width: 80,   align: "center"},
+                        { key: "SKIL_DB",    label: "DB",         width: 80,   align: "center"},
+                        { key: "SKIL_LANG",  label: "언어",       width: 120,  align: "center"},
+                        { key: "SKIL_WEB",   label: "WEB",        width: 120,  align: "center"},
+                        { key: "SKIL_FRAME", label: "FRAME WORK", width: 120,  align: "center"},
+                        { key: "SKIL_MID",   label: "MID-WARE",   width: 120,  align: "center"},
+                        { key: "EMP_PHONE",  label: "연락처",     width: 80,   align: "center"},
+                        { key: "EMP_BIRTH",  label: "생년월일",   width: 80,   align: "center", /* 숨김처리 hidden : true */},
+                        { key: "EMP_NO",     label: "사번",       width: 80,   align: "center", hidden : true}
                         ]
                     };
                     firstGrid = $('[data-ax5grid="first-grid"]');
@@ -102,6 +42,12 @@ history
                     }
                 });
             }
+
+            function makePaging(ret){
+                $('#paging_navi').makePagingNavi(ret, 'getGridList');
+
+            }
+
 
             $('#searchBtn').click(function(){
                 getGridList(1);
@@ -116,7 +62,8 @@ history
                 } else{
                     alertMsg("(작성예정)선택된 행 값 넘겨주기");
                     var empNo = firstGrid.getList("selected")[0].EMP_NO;
-                    location.href = '/skil/skilMgmtDetl?empNo='+empNo
+                    var empGrd = firstGrid.getList("selected")[0].EMP_GRD;
+                    location.href = '/skil/skilMgmtDetl?empNo='+empNo+'&empGrd='+empGrd
                 }
             });
         });
@@ -174,6 +121,7 @@ history
                     </div>
                     <div style="position: relative;height:400px;" id="grid-parent">
                         <div data-ax5grid="first-grid" style="height: 100%;"></div>
+                        <div id="paging_navi"></div>
                     </div>
                     <div style="float: right; padding-top :10px;">
                         <button class="btn btn-primary" id="skillDetlMentBtn" >스킬상세관리</button>
