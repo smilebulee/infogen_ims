@@ -185,6 +185,26 @@ def prjDelete(request):
     logger.info(r.json())
     return JsonResponse(r.json())
 
+def reqSkilSave(request):
+
+    param = json.loads(request.POST['param'])
+
+    logger.info(param)
+
+    datas = {
+    }
+
+
+    for row in param:
+        datas.setdefault(row, param[row])
+
+    logger.info('request.post : ' + request.POST['param'])
+    r = requests.post('http://skil_api:5003/reqSkilSave', data=datas)
+    logger.info(r)
+    logger.info(r.text)
+    logger.info(r.json())
+    return JsonResponse(r.json())
+
 
 def prjInpuMgmt(request):
     template_name = 'skil/prjInpuMgmt.html'

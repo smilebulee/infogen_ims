@@ -342,7 +342,6 @@ class prjSave(Resource):
 
             for row in request.form:
                 logging.debug(row+':'+request.form[row])
-                datass.setdefault(row, request.form[row])
                 globals()[row] = request.form[row]
 
             prj_cd = request.form['prj_cd']
@@ -455,6 +454,7 @@ class prjDelete(Resource):
             }
 
             return jsonify(retJson)
+
 
 class prjInpuSearch(Resource):
     def get(self):

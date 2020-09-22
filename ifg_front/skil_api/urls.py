@@ -23,6 +23,7 @@ urlpatterns = [
     # 프로젝트 등록
     url(r'^prjSave/post', views.prjSave, name='prjSave'),
     url(r'^prjDelete/post', views.prjDelete, name='prjDelete'),
+    url(r'^reqSkilSave/post', views.reqSkilSave, name='reqSkilSave'),
 
     # 프로젝트 투입 관리
     url(r'^prjInpuMgmt/', views.prjInpuMgmt, name='prjInpuMgmt'),
