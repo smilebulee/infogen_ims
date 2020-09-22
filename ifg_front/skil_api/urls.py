@@ -23,11 +23,13 @@ urlpatterns = [
     # 프로젝트 등록
     url(r'^prjSave/post', views.prjSave, name='prjSave'),
     url(r'^prjDelete/post', views.prjDelete, name='prjDelete'),
+    url(r'^reqSkilSave/post', views.reqSkilSave, name='reqSkilSave'),
 
     # 프로젝트 투입 관리
     url(r'^prjInpuMgmt/', views.prjInpuMgmt, name='prjInpuMgmt'),
     url(r'^prjInpuSearch/get', views.prjInpuSearch, name='prjInpuSearch'),
     url(r'^prjInpuDelete/', views.prjInpuDelete, name='prjInpuDelete'),
+    url(r'^prjInpuSave/', views.prjInpuSave, name='prjInpuSave'),
 
     # 스킬관리
     url(r'^skilMgmt/', views.skilMgmt, name='skilMgmt'),

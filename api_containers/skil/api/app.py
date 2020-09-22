@@ -342,7 +342,6 @@ class prjSave(Resource):
 
             for row in request.form:
                 logging.debug(row+':'+request.form[row])
-                datass.setdefault(row, request.form[row])
                 globals()[row] = request.form[row]
 
             prj_cd = request.form['prj_cd']
@@ -456,6 +455,7 @@ class prjDelete(Resource):
 
             return jsonify(retJson)
 
+
 class prjInpuSearch(Resource):
     def get(self):
         # Get posted data from request
@@ -557,24 +557,24 @@ class skilMgmtSearch(Resource):
                 else:
                     sql = "SELECT * FROM TB_SKIL_MGNT_TEST WHERE 1=1 "
                     if dept != "":
-                        sql = sql + "AND EMP_DEPT = %s "
+                        sql = sql + "AND EMP_DEPT = '" + dept + "' "
                     if name != "":
-                        sql = sql + """AND EMP_NAME LIKE %s """
+                        sql = sql + "AND EMP_NAME LIKE '%" + name + "%' "
                     if division != "":
-                        sql = sql + "AND DIVISION = %s "
+                        sql = sql + "AND DIVISION = '" + division + "' "
                     if skilKind == "1":
-                        sql += """AND SKIL_DB LIKE %s"""
+                        sql += "AND SKIL_DB LIKE '%" + skil + "%'"
                     if skilKind == "2":
-                        sql += """AND SKIL_LANG LIKE %s"""
+                        sql += "AND SKIL_LANG LIKE '%" + skil + "%'"
                     if skilKind == "3":
-                        sql += """AND SKIL_WEB LIKE %s"""
+                        sql += "AND SKIL_WEB LIKE '%" + skil + "%'"
                     if skilKind == "4":
-                        sql += """AND SKIL_FRAME LIKE %s"""
+                        sql += "AND SKIL_FRAME LIKE '%" + skil + "%'"
                     if skilKind == "5":
-                        sql += """AND SKIL_MID LIKE %s"""
+                        sql += "AND SKIL_MID LIKE '%" + skil + "%'"
                     logging.debug(sql)
 
-                    cursor.execute(sql, (dept,'%'+name+'%',division,'%'+skil+'%'))
+                    cursor.execute(sql)
         finally:
             mysql_con.close()
 

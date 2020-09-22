@@ -20,10 +20,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="069bc5b9-482e-4fff-a242-76dbf771ee42" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/api_containers/skil/api/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/api_containers/skil/api/app.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ifg_front/skil_api/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/ifg_front/skil_api/urls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ifg_front/skil_api/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/ifg_front/skil_api/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ifg_front/templates/skil/devEnrl.html" beforeDir="false" afterPath="$PROJECT_DIR$/ifg_front/templates/skil/devEnrl.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ifg_front/templates/skil/prjMgmt.html" beforeDir="false" afterPath="$PROJECT_DIR$/ifg_front/templates/skil/prjMgmt.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ifg_front/templates/skil/prjInpuMgmt.html" beforeDir="false" afterPath="$PROJECT_DIR$/ifg_front/templates/skil/prjInpuMgmt.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ifg_front/templates/skil/skilMgmt.html" beforeDir="false" afterPath="$PROJECT_DIR$/ifg_front/templates/skil/skilMgmt.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -57,6 +59,7 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\workspace\infogen_ims\ifg_front\templates\skil" />
       <recent name="C:\Users\user\Documents\GitHub\infogen_ims\ifg_front\templates\skil" />
       <recent name="C:\workspace\infogen_ims\infogen_ims\ifg_front\templates\dili" />
     </key>
@@ -107,7 +110,41 @@
       </list>
     </recent_temporary>
   </component>
-  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="ServiceViewManager">
+    <option name="viewStates">
+      <list>
+        <serviceView>
+          <treeState>
+            <expand>
+              <path>
+                <item name="services root" type="e789fda9:ObjectUtils$Sentinel" />
+                <item name="Docker" type="9fbbdea:ServiceModel$ServiceNode" />
+              </path>
+              <path>
+                <item name="services root" type="e789fda9:ObjectUtils$Sentinel" />
+                <item name="Docker" type="9fbbdea:ServiceModel$ServiceNode" />
+                <item name="Compose: docker-compose.yml" type="9fbbdea:ServiceModel$ServiceNode" />
+              </path>
+              <path>
+                <item name="services root" type="e789fda9:ObjectUtils$Sentinel" />
+                <item name="Docker" type="9fbbdea:ServiceModel$ServiceNode" />
+                <item name="Compose: docker-compose.yml" type="9fbbdea:ServiceModel$ServiceNode" />
+                <item name="front" type="9fbbdea:ServiceModel$ServiceNode" />
+              </path>
+              <path>
+                <item name="services root" type="e789fda9:ObjectUtils$Sentinel" />
+                <item name="Docker" type="9fbbdea:ServiceModel$ServiceNode" />
+                <item name="Compose: docker-compose.yml" type="9fbbdea:ServiceModel$ServiceNode" />
+                <item name="skil_api" type="9fbbdea:ServiceModel$ServiceNode" />
+              </path>
+            </expand>
+            <select />
+          </treeState>
+        </serviceView>
+      </list>
+    </option>
+  </component>
+  <component name="SpellCheckerSettings" BundledDictionaries="0" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" Dictionaries="0" CorrectionsLimit="5" DefaultDictionary="application-level" UseSingleDictionary="true" />
   <component name="SvnConfiguration">
     <configuration />
   </component>
@@ -126,12 +163,13 @@
       <map>
         <entry key="MAIN">
           <value>
-            <State />
+            <State>
+              <option name="COLUMN_ORDER" />
+            </State>
           </value>
         </entry>
       </map>
     </option>
-    <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="WindowStateProjectService">
     <state x="414" y="175" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1594891292327">
@@ -165,10 +203,11 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state width="498" height="446" key="SwitcherDM/0.0.1920.1040/-1600.0.1600.860@0.0.1920.1040" timestamp="1597798807421" />
-    <state x="668" y="223" width="584" height="594" key="find.popup" timestamp="1599455993324">
+    <state x="668" y="216" width="745" height="615" key="find.popup" timestamp="1600748084427">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="668" y="223" width="584" height="594" key="find.popup/0.0.1920.1040/-1600.0.1600.860@0.0.1920.1040" timestamp="1598576784500" />
+    <state x="668" y="216" width="745" height="615" key="find.popup/0.0.1920.1040/-1920.2.1920.1040@0.0.1920.1040" timestamp="1600748084427" />
     <state x="668" y="223" width="584" height="594" key="find.popup/0.0.1920.1040/-1920.98.1920.1040@0.0.1920.1040" timestamp="1598950212258" />
     <state x="668" y="223" width="584" height="594" key="find.popup/0.0.1920.1040/62.-1080.1858.1080@0.0.1920.1040" timestamp="1599455993324" />
     <state x="668" y="223" width="584" height="594" key="find.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1599392780526" />

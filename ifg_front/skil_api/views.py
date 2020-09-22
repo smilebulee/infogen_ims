@@ -185,6 +185,26 @@ def prjDelete(request):
     logger.info(r.json())
     return JsonResponse(r.json())
 
+def reqSkilSave(request):
+
+    param = json.loads(request.POST['param'])
+
+    logger.info(param)
+
+    datas = {
+    }
+
+
+    for row in param:
+        datas.setdefault(row, param[row])
+
+    logger.info('request.post : ' + request.POST['param'])
+    r = requests.post('http://skil_api:5003/reqSkilSave', data=datas)
+    logger.info(r)
+    logger.info(r.text)
+    logger.info(r.json())
+    return JsonResponse(r.json())
+
 
 def prjInpuMgmt(request):
     template_name = 'skil/prjInpuMgmt.html'
@@ -293,5 +313,48 @@ class skilMgmtDetl(generic.TemplateView):
         }
 
         return render(request, template_name, rr)
+
+def prjInpuSave(request):
+
+    param = json.loads(request.POST['param'])
+    logger.info(param)
+    for data in param:
+        if '__created__' in data and data['__created__']:
+            logger.info("__created__")
+            datas = {
+                'empNo': data['EMP_NO'],
+                'prjCd': data['PRJ_CD'],
+                'slinGrd': data['SLIN_GRD'],
+                'divs': data['DIVS'],
+                'inpuStrtDay': data['INPU_STRT_DAY'],
+                'inpuEndDay': data['INPU_END_DAY'],
+                'cntcStrtDay': data['CNTC_STRT_DAY'],
+                'cntcEndDay': data['CNTC_END_DAY'],
+                'crgeJob': data['CRGE_JOB'],
+                'rmks': data['RMKS'],
+                'state': 'created'
+            }
+            r = requests.post('http://skil_api:5003/prjInpuCreate', data=datas)
+        else:
+            logger.info("modified")
+            datas = {
+                'empNo': data['EMP_NO'],
+                'prjCd': data['PRJ_CD'],
+                'slinGrd': data['SLIN_GRD'],
+                'divs': data['DIVS'],
+                'inpuStrtDay': data['INPU_STRT_DAY'],
+                'inpuEndDay': data['INPU_END_DAY'],
+                'cntcStrtDay': data['CNTC_STRT_DAY'],
+                'cntcEndDay': data['CNTC_END_DAY'],
+                'crgeJob': data['CRGE_JOB'],
+                'rmks': data['RMKS'],
+                'state': 'modified'
+            }
+            r = requests.post('http://skil_api:5003/prjInpuUpdate', data=datas)
+    logger.info(r)
+    logger.info(r.text)
+    logger.info(r.json())
+    return JsonResponse(r.json())
+
 
 
