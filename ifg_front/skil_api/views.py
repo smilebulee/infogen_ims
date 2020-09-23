@@ -223,14 +223,7 @@ def prjInpuSearch(request):
     datas = {
         'prjCd': param['prjCd']
     }
-
-    logger.info(datas)
     r = requests.get('http://skil_api:5003/prjInpuSearch', params=datas)
-    logger.info(r)
-    logger.info(r.text)
-    logger.info("----------------")
-    logger.info(r.json())
-    logger.info(json.loads(r.text))
     return JsonResponse(r.json(), safe=False)
 
 def prjInpuDelete(request):
@@ -246,11 +239,6 @@ def prjInpuDelete(request):
     logger.info('request.post : ' + request.POST['param'])
 
     r = requests.post('http://skil_api:5003/prjInpuDelete', data=datas)
-    logger.info(r)
-    logger.info(r.text)
-    logger.info("----------------")
-    logger.info(r.json())
-    logger.info(json.loads(r.text))
     return JsonResponse(r.json(), safe=False)
 
 def skilRegPopup(request):
@@ -334,7 +322,6 @@ def prjInpuSave(request):
                 'rmks': data['RMKS'],
                 'state': 'created'
             }
-            r = requests.post('http://skil_api:5003/prjInpuCreate', data=datas)
         else:
             logger.info("modified")
             datas = {
@@ -350,10 +337,7 @@ def prjInpuSave(request):
                 'rmks': data['RMKS'],
                 'state': 'modified'
             }
-            r = requests.post('http://skil_api:5003/prjInpuUpdate', data=datas)
-    logger.info(r)
-    logger.info(r.text)
-    logger.info(r.json())
+        r = requests.post('http://skil_api:5003/prjInpuSave', data=datas)
     return JsonResponse(r.json())
 
 
