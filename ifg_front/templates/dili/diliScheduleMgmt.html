@@ -201,6 +201,13 @@
             $('#btn_mmGridDtDfr').click(function(){
                 console.log("mmGridDtDfr Btn Click Event");
 
+                var txt_mmYyDfr = $('#txt_mmYy').text();
+                var txt_mmMmDfr = $('#txt_mmMm').text()-2;
+                var showMmGridDtDfr = new Date(txt_mmYyDfr, txt_mmMmDfr, 1); //날짜 이전 값 등록
+
+                $('#txt_mmYy').text(showMmGridDtDfr.getFullYear()); //그리드 월tab 년도 이전 값 입력
+                $('#txt_mmMm').text(showMmGridDtDfr.getMonth() + 1); //그리드 월tab 월 이전 값 입력
+
             });
 
             /*********************************************************************
@@ -208,6 +215,13 @@
             *********************************************************************/
             $('#btn_mmGridDtNxt').click(function(){
                 console.log("mmGridDtNxt Btn Click Event");
+
+                var txt_mmYyDfr = $('#txt_mmYy').text();
+                var txt_mmMmDfr = $('#txt_mmMm').text();
+                var showMmGridDtDfr = new Date(txt_mmYyDfr, txt_mmMmDfr, 1); //날짜 이후 값 등록
+
+                $('#txt_mmYy').text(showMmGridDtDfr.getFullYear()); //그리드 월tab 년도 이후 값 입력
+                $('#txt_mmMm').text(showMmGridDtDfr.getMonth() + 1); //그리드 월tab 월 이후 값 입력
 
 
             });
@@ -323,20 +337,10 @@
                 }
 	        });
 
-	       var currentYear = (new Date()).getFullYear();
-           var startYear = currentYear-10;
-           var options = {
-
-                   startYear: startYear,
-                   finalYear: currentYear,
-                   pattern: 'yyyy-mm',
-                   monthNames: ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월']
-           };
-
 	        /*********************************************************************
             *   btn_monthpicker Btn Click Event - 월달력호출
             *********************************************************************/
-            $('#btn_monthpicker').click(function(){
+            $('#btn_monthpicker').bind('click', function(){
 
                $('#monthpickerData').monthpicker('show');
             });
@@ -344,13 +348,15 @@
             /*********************************************************************
             *   클릭한 달력monthpickerData에 value 값 담기
             *********************************************************************/
-            $("#monthpickerData").monthpicker({
-                onSelect:function(dateText, inst) {
-                    console.log("dateText :",dateText);
-                    console.log("inst : ", inst);
 
-                }
+            $('#monthpickerData').monthpicker().bind('monthpicker-click-month', function (e, month) {
+                    var tempMonthpickerData = $('#monthpickerData').val().split('-');
+                    var selectMonthpickerData = new Date(tempMonthpickerData[0], Number(tempMonthpickerData[1])-1, 1);
+
+                    $('#txt_mmYy').text(selectMonthpickerData.getFullYear()); //그리드 월tab 년도 값 입력
+                    $('#txt_mmMm').text(selectMonthpickerData.getMonth() + 1); //그리드 월tab 월 값 입력
             });
+
 
 
 
