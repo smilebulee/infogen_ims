@@ -396,15 +396,19 @@ class prjSave(Resource):
 
                     logging.debug('PRJ_INFO SUCCESS')
 
-                    if not req_skil_divs1 and not "00":
-
+                    for i in range(1, 5):
+                        logger.debug('i : ' + str(i))
+                        req_skil_divs = 'req_skil_divs'+str(i)
+                        req_skil_name = 'req_skil_name'+str(i)
+                        logging.debug('req_skil_divs : ' + req_skil_divs)
+                        # if not req_skil_divs and not "00":
                         sql = "INSERT INTO TB_PRJ_REQ_SKIL(`PRJ_CD`, `SKIL_DIVS`, `SKIL_NAME`, `REG_EMP_NO`, `REG_DATE`," \
-                              " `CHG_EMP_NO`, `CHG_DATE`) " \
-                              "VALUES ((SELECT PRJ_CD FROM TB_PRJ_INFO A WHERE PRJ_NAME = %s)," \
-                              " %s, %s, 'admin', NOW(), 'admin', NOW())"
-                        cursor.execute(sql, (prj_nm, req_skil_divs1, req_skil_name1))
+                                  " `CHG_EMP_NO`, `CHG_DATE`) " \
+                                  "VALUES ((SELECT PRJ_CD FROM TB_PRJ_INFO A WHERE PRJ_NAME = %s)," \
+                                  " %s, %s, 'admin', NOW(), 'admin', NOW())"
+                        cursor.execute(sql, (prj_nm, req_skil_divs, req_skil_name))
                         mysql_con.commit()
-                        logging.debug('REQ_SKIL SUCCESS')
+                        logging.debug('REQ_SKIL'+str(i)+' SUCCESS')
 
             finally:
                 mysql_con.close()
