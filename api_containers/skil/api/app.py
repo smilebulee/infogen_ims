@@ -539,30 +539,67 @@ class skilMgmtSearch(Resource):
                                     charset='utf8')
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
-                if dept =="" and name == "" and  division =="" and skilKind == "" and skil == "":
-                    sql = "SELECT * FROM TB_SKIL_MGNT_TEST"
-                    cursor.execute(sql)
-                else:
-                    sql = "SELECT * FROM TB_SKIL_MGNT_TEST WHERE 1=1 "
-                    if dept != "":
-                        sql = sql + "AND EMP_DEPT = '" + dept + "' "
-                    if name != "":
-                        sql = sql + "AND EMP_NAME LIKE '%" + name + "%' "
-                    if division != "":
-                        sql = sql + "AND DIVISION = '" + division + "' "
-                    if skilKind == "1":
-                        sql += "AND SKIL_DB LIKE '%" + skil + "%'"
-                    if skilKind == "2":
-                        sql += "AND SKIL_LANG LIKE '%" + skil + "%'"
-                    if skilKind == "3":
-                        sql += "AND SKIL_WEB LIKE '%" + skil + "%'"
-                    if skilKind == "4":
-                        sql += "AND SKIL_FRAME LIKE '%" + skil + "%'"
-                    if skilKind == "5":
-                        sql += "AND SKIL_MID LIKE '%" + skil + "%'"
-                    logging.debug(sql)
+                sql = "SELECT A.EMP_NO AS EMP_NO," \
+                             "A.EMP_NAME," \
+                             "CASE WHEN A.DEPT ='01' THEN 'FIC'" \
+                                   "WHEN A.DEPT ='02' THEN '전자/제조' " \
+                                   "WHEN A.DEPT ='03' THEN '통신'" \
+                                   "WHEN A.DEPT ='04' THEN '화학'WHEN A.DEPT ='05' THEN '전략' " \
+                                   "WHEN A.DEPT ='06' THEN  'DX'ELSE '미정' END AS EMP_DEPT, CASE " \
+                                   "WHEN A.DIVS ='1' THEN '정규직' " \
+                                   "WHEN A.DIVS ='2' THEN '프리랜서' ELSE '미정' END AS EMP_GRD, " \
+                             "A.DIVS," \
+                             "A.DEVP_TEL_NO AS EMP_PHONE, " \
+                             "A.DEVP_BDAY AS EMP_BIRTH," \
+                             "A.SKIL_DB,A.SKIL_LANG, " \
+                             "A.SKIL_WEB,A.SKIL_FRAME, " \
+                             "A.SKIL_MID " \
+                      "FROM (SELECT FRLC.EMP_NO AS EMP_NO," \
+                                   "FRLC.EMP_NAME AS EMP_NAME," \
+                                   " '' AS DEPT, '2' AS DIVS," \
+                                   "FRLC.DEVP_TEL_NO AS DEVP_TEL_NO," \
+                                   "FRLC.DEVP_BDAY AS DEVP_BDAY," \
+                                   "GROUP_CONCAT( CASE SKIL.SKIL_DIVS_CD WHEN '01' THEN SKIL.SKIL_NM_CD ELSE NULL END  SEPARATOR  ',' ) AS SKIL_DB, " \
+                                   "GROUP_CONCAT( CASE SKIL.SKIL_DIVS_CD WHEN '02' THEN SKIL.SKIL_NM_CD ELSE NULL END  SEPARATOR  ',' ) AS SKIL_LANG, " \
+                                   "GROUP_CONCAT( CASE SKIL.SKIL_DIVS_CD WHEN '03' THEN SKIL.SKIL_NM_CD ELSE NULL END  SEPARATOR  ',' ) AS SKIL_WEB," \
+                                   "GROUP_CONCAT( CASE SKIL.SKIL_DIVS_CD WHEN '04' THEN SKIL.SKIL_NM_CD ELSE NULL END  SEPARATOR  ',' ) AS SKIL_FRAME," \
+                                   "GROUP_CONCAT( CASE SKIL.SKIL_DIVS_CD WHEN '05' THEN SKIL.SKIL_NM_CD ELSE NULL END  SEPARATOR  ',' ) AS SKIL_MID " \
+                            "FROM TB_FRLC_DEVP_INFO  FRLC LEFT OUTER JOIN TB_SKIL_MGNT_M SKIL ON FRLC.EMP_NO = SKIL.EMP_NO " \
+                            "WHERE 1=1 AND FRLC.DEVP_USE_YN ='Y' " \
+                            "GROUP BY FRLC.EMP_NO " \
+                            "UNION " \
+                            "SELECT EMP.EMP_NO AS EMP_NO, " \
+                                  "EMP.EMP_NAME AS EMP_NAME," \
+                                  "EMP.DEPT AS DEPT,'1' AS DIVS, " \
+                                  "EMP.DEVP_TEL_NO AS DEVP_TEL_NO, " \
+                                  "EMP.DEVP_BDAY AS DEVP_BDAY, " \
+                                  "GROUP_CONCAT( CASE SKIL.SKIL_DIVS_CD WHEN '01' THEN SKIL.SKIL_NM_CD ELSE NULL END  SEPARATOR  ',' ) AS SKIL_DB," \
+                                  "GROUP_CONCAT( CASE SKIL.SKIL_DIVS_CD WHEN '02' THEN SKIL.SKIL_NM_CD ELSE NULL END  SEPARATOR  ',' ) AS SKIL_LANG, " \
+                                  "GROUP_CONCAT( CASE SKIL.SKIL_DIVS_CD WHEN '03' THEN SKIL.SKIL_NM_CD ELSE NULL END  SEPARATOR  ',' ) AS SKIL_WEB, " \
+                                  "GROUP_CONCAT( CASE SKIL.SKIL_DIVS_CD WHEN '04' THEN SKIL.SKIL_NM_CD ELSE NULL END  SEPARATOR  ',' ) AS SKIL_FRAME," \
+                                  "GROUP_CONCAT( CASE SKIL.SKIL_DIVS_CD WHEN '05' THEN SKIL.SKIL_NM_CD ELSE NULL END  SEPARATOR  ',' ) AS SKIL_MID " \
+                            "FROM TB_EMP_TEST EMP LEFT OUTER JOIN TB_SKIL_MGNT_M SKIL ON EMP.EMP_NO = SKIL.EMP_NO " \
+                            "GROUP BY EMP.EMP_NO )A " \
+                      "WHERE 1=1 "
+                if dept != "":
+                    sql += "AND DEPT = '" + dept + "' "
+                if name != "":
+                    sql += "AND EMP_NAME LIKE '%" + name + "%' "
+                if division != "":
+                    sql += "AND DIVS = '" + division + "' "
+                if skilKind == "1":
+                    sql += "AND SKIL_DB LIKE '%" + skil + "%'"
+                if skilKind == "2":
+                    sql += "AND SKIL_LANG LIKE '%" + skil + "%'"
+                if skilKind == "3":
+                    sql += "AND SKIL_WEB LIKE '%" + skil + "%'"
+                if skilKind == "4":
+                    sql += "AND SKIL_FRAME LIKE '%" + skil + "%'"
+                if skilKind == "5":
+                    sql += "AND SKIL_MID LIKE '%" + skil + "%'"
+                logging.debug(sql)
 
-                    cursor.execute(sql)
+                cursor.execute(sql)
         finally:
             mysql_con.close()
 
