@@ -19,7 +19,6 @@ urlpatterns = [
     url(r'^wrkApvlReq/', views.wrkApvlReq.as_view(), name='wrkApvlReq'),
     url(r'^yryApvlReq/', views.yryApvlReq.as_view(), name='yryApvlReq'),
     url(r'^noticeLst/', views.noticeLst.as_view(), name='noticeLst'),
-    url(r'^noticeDtl/', views.noticeDtl.as_view(), name='noticeDtl'),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
