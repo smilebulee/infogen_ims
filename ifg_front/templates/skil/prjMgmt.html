@@ -155,9 +155,10 @@ tbody>tr>td:first-child:before {
                         <td><select size="1" class="form-control" id="req_skil_divs1" name="req_skil_divs1" onchange="skil_chg(1)">
                             <option value = "00">선택</option>
                             <option value = "01">DB</option>
-                            <option value = "02">언어</option>
+                            <option value = "02">LANGUAGE</option>
                             <option value = "03">WEB</option>
-                            <option value = "04">Framework</option>
+                            <option value = "04">MIDWARE</option>
+                            <option value = "05">Framework</option>
                         </select></td>
                         <td><select class="form-control" id = "req_skil_name1" name = "req_skil_name1"></select></td>
                     </tr>
@@ -210,9 +211,10 @@ tbody>tr>td:first-child:before {
             '        <td><select size ="1" class="form-control" id = "req_skil_divs'+count+'" name = "req_skil_divs'+count+'" onchange="skil_chg('+count+')">'+
             '                <option>선택</option>'+
             '                <option value = "01">DB</option>'+
-            '                <option value = "02">언어</option>'+
+            '                <option value = "02">LANGUAGE</option>'+
             '                <option value = "03">WEB</option>'+
-            '                <option value = "04">Framework</option>'+
+            '                <option value = "04">MIDWARE</option>'+
+            '                <option value = "05">Framework</option>'+
             '            </select></td>'+
             '        <td><select class="form-control" id = "req_skil_name'+count+'" name = "req_skil_name'+count+'"></select></td>'+
             '        <td><input type="button" style="float:right" id="del" name="delStaff" value="삭제" class = "btn btn-primary"/></td>'+
@@ -271,13 +273,15 @@ tbody>tr>td:first-child:before {
         console.log('스킬 변경');
         console.log(a);
         var DB = ["Oracle","MySql","MsSql"];
-        var DBValue = ["01","02","03"];
+
         var Language = ["C","C++","C#","JAVA","Python"];
-        var LanguageValue = ["01","02","03","04","05"];
+
         var WEB = ["HTML","JavaScript","CSS"];
-        var WEBValue = ["01","02","03"];
+
+        var MIDWARE = ["RPC", "MOM", "ORB"];
+
         var Framework = [".net", "Spring"];
-        var FrameworkValue = ["01", "02"];
+
 
         var selectSkill = $("#req_skil_divs"+a).val();
         console.log(selectSkill);
@@ -287,25 +291,29 @@ tbody>tr>td:first-child:before {
 
         if(selectSkill == "01"){
           changeSkill = DB;
-          changeSkillValue = DBValue;
+
         }
         else if(selectSkill == "02"){
           changeSkill = Language;
-          changeSkillValue = LanguageValue;
+
         }
         else if(selectSkill == "03"){
           changeSkill =  WEB;
-          changeSkillValue = WEBValue;
+
         }
         else if(selectSkill == "04"){
+          changeSkill =  MIDWARE;
+
+        }
+        else if(selectSkill == "05"){
           changeSkill =  Framework;
-          changeSkillValue = FrameworkValue;
+
         }
 
         $("#req_skil_name"+a).empty();
 
         for(var count = 0; count < changeSkill.length; count++){
-                        var option = $("<option value ="+changeSkillValue[count]+">"+changeSkill[count]+"</option>");
+                        var option = $("<option>"+changeSkill[count]+"</option>");
                         console.log(option);
                         $('#req_skil_name'+a).append(option);
                     }
