@@ -1,0 +1,149 @@
+<!--<link href="//netdna.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">-->
+{% extends 'common/base.html' %}
+
+{% block content %}
+<head>
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+    <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+    <script type="text/javascript">
+        + function($) {
+            'use strict';
+
+            // UPLOAD CLASS DEFINITION
+            // ======================
+
+            var dropZone = document.getElementById('drop-zone');
+            var uploadForm = document.getElementById('js-upload-form');
+
+            var startUpload = function(files) {
+                console.log(files)
+            }
+
+            uploadForm.addEventListener('submit', function(e) {
+                var uploadFiles = document.getElementById('js-upload-files').files;
+                e.preventDefault()
+
+                startUpload(uploadFiles)
+            })
+
+            dropZone.ondrop = function(e) {
+                e.preventDefault();
+                this.className = 'upload-drop-zone';
+
+                startUpload(e.dataTransfer.files)
+            }
+
+            dropZone.ondragover = function() {
+                this.className = 'upload-drop-zone drop';
+                return false;
+            }
+
+            dropZone.ondragleave = function() {
+                this.className = 'upload-drop-zone';
+                return false;
+            }
+
+        }(jQuery);
+
+    $(document).ready(function(){
+
+
+    });
+
+    </script>
+
+</head>
+<style>
+.upload-drop-zone {
+  height: 150px;
+  border-width: 2px;
+  margin-bottom: 20px;
+}
+
+/* skin.css Style*/
+.upload-drop-zone {
+  color: #ccc;
+  border-style: dashed;
+  border-color: #ccc;
+  line-height: 200px;
+  text-align: center
+}
+.upload-drop-zone.drop {
+  color: #222;
+  border-color: #222;
+}
+</style>
+<body>
+
+
+    <div class="container">
+        <h2>공지사항 상세</h2>
+        <br/><br/>
+
+        <form class="form-inline" action="/action_page.php">
+            <h6><label for="title" class="mr-4">제목</label></h6>
+            <input type="text" class="form-control" id="title" placeholder="제목을 입력해주세요." name="title" size="150">
+        </form>
+
+        <div class="form-inline">
+           <h6><label>구분</label></h6>
+           <label class="col-sm-2"><input type="checkbox" class="form-control" id="check1" value="important">중요</label>
+           <label class="col-sm-2"><input type="checkbox" class="form-control" id="check2" value="popYn">공지표출(팝업)</label>
+        </div>
+
+        <div class="mb-3">
+           <h6><label for="content">내용</label></h6>
+           <textarea class="form-control" rows="15" id="content" name="content" placeholder="내용을 입력해주세요."></textarea>
+
+        </div>
+
+        <div class="container">
+          <div class="panel panel-default">
+            <div class="panel-body">
+
+              <!-- Standar Form -->
+              <h4>첨부파일</h4>
+              <form action="" method="post" enctype="multipart/form-data" id="js-upload-form">
+                <div class="form-inline">
+                  <div class="form-group">
+                    <input type="file" name="files[]" id="js-upload-files" multiple>
+                  </div>
+                  <button type="submit" class="btn btn-sm btn-primary" id="js-upload-submit">Upload files</button>
+                </div>
+              </form>
+
+              <!-- Drop Zone -->
+              <h4>Or drag and drop files below</h4>
+              <div class="upload-drop-zone" id="drop-zone">
+                Just drag and drop files here
+              </div>
+
+
+              <!-- Upload Finished -->
+              <div class="js-upload-finished">
+                <h3>Processed files</h3>
+                <div class="list-group">
+                  <a href="#" class="list-group-item list-group-item-success"><span class="badge alert-success pull-right">Success</span>image-01.jpg</a>
+                  <a href="#" class="list-group-item list-group-item-success"><span class="badge alert-success pull-right">Success</span>image-02.jpg</a>
+                </div>
+              </div>
+            </div>
+          </div>
+      </div> <!-- /container -->
+
+
+    </div>
+
+    <div class="container">
+
+        <button type="submit" class="btn btn-sm btn-primary float-right" id="btnSave">등록</button>
+<!--        <button type="button" class="btn btn-sm btn-primary" id="btnList">삭제</button>-->
+<!--        <button type="button" class="btn btn-sm btn-primary" id="btnUpdate">수정</button>-->
+
+    </div>
+
+</body>
+
+{% endblock %}

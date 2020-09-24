@@ -1,7 +1,7 @@
 {% extends 'common/base.html' %}
 
 {% block content %}
-
+<article>
         <div class="row">
             <div class="col-sm-12">
                 <div class="alert alert-info" role="alert">
@@ -44,5 +44,12 @@
                 </div>
             </div>
         </div>
-
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="alert alert-info" role="alert">
+                    <a href="{% url 'dili_api:noticeDtl' %}">공지사항상세</a>
+                </div>
+            </div>
+        </div>
+</article>
 {% endblock %}
