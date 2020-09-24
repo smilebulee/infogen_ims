@@ -228,6 +228,30 @@ class mariaClass(Resource):
 
         return result2
 
+class retrieveDevInfo(Resource):
+    def get(self):
+        params = request.get_json()
+
+        logging.debug('retrieveDevInfo Start')
+        emp_no = request.args.get('emp_no')
+        logging.debug(emp_no)
+
+        mysql_con = pymysql.connect(host='218.151.225.142', port=3306, db='IFG_IMS', user='ims2', password='1234',
+                                    charset='utf8')
+
+        try:
+            with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+                sql = "SELECT * FROM TB_FRLC_DEVP_INFO WHERE EMP_NO = %s"
+                cursor.execute(sql, emp_no)
+                logging.debug('retrieveDevInfo SUCCESS')
+
+        finally:
+            mysql_con.close()
+
+        result2 = cursor.fetchall()
+        logging.debug(result2)
+        return result2
+
 class devSave(Resource):
     def post(self):
         params = request.get_json()
@@ -673,6 +697,7 @@ api.add_resource(Save, '/save')
 api.add_resource(mariaClass,'/mariaClass')
 
 # 개발자 등록
+api.add_resource(retrieveDevInfo, '/retrieveDevInfo')
 api.add_resource(devSave, '/devSave')
 api.add_resource(devDelete, '/devDelete')
 
