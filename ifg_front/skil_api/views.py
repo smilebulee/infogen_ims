@@ -93,11 +93,11 @@ def retrieveDevInfo(request):
     param = json.loads(request.GET['param'])
     logger.info(param)
 
-    datas = {
+    params = {
         'emp_no': param['emp_no'],
     }
 
-    r = requests.get('http://skil_api:5003/retrieveDevInfo', params=datas)
+    r = requests.get('http://skil_api:5003/retrieveDevInfo', params=params)
     logger.info(r)
     logger.info(r.text)
     logger.info(r.json())
@@ -105,7 +105,6 @@ def retrieveDevInfo(request):
     return JsonResponse(r.json(), safe=False)
 
 def devSave(request):
-
     param = json.loads(request.POST['param'])
 
     datas = {
@@ -122,16 +121,15 @@ def devSave(request):
         'rmks' : param['rmks'],
 
     }
-    logger.info('request.post : ' + request.POST['param'])
-    logger.info(datas)
+
     r = requests.post('http://skil_api:5003/devSave', data=datas)
     logger.info(r)
     logger.info(r.text)
     logger.info(r.json())
+
     return JsonResponse(r.json())
 
 def devDelete(request):
-
     param = json.loads(request.POST['param'])
 
     datas = {
@@ -145,50 +143,57 @@ def devDelete(request):
         'blco' : param['blco'],
         'bday' : param['bday'],
         'rmks' : param['rmks'],
-
     }
-    logger.info('request.post : ' + request.POST['param'])
-    logger.info(datas)
+
     r = requests.post('http://skil_api:5003/devDelete', data=datas)
     logger.info(r)
     logger.info(r.text)
     logger.info(r.json())
+
     return JsonResponse(r.json())
 
+def retrievePrjInfo(request):
+    param = json.loads(request.GET['param'])
+
+    params = {
+        'prj_cd': param['prj_cd'],
+    }
+
+    r = requests.get('http://skil_api:5003/retrievePrjInfo', params=params)
+    logger.info(r)
+    logger.info(r.text)
+    logger.info(r.json())
+
+    return JsonResponse(r.json(), safe=False)
+
+def retrieveReqSkil(request):
+    param = json.loads(request.GET['param'])
+
+    params = {
+        'prj_cd': param['prj_cd'],
+    }
+
+    r = requests.get('http://skil_api:5003/retrieveReqSkil', params=params)
+    logger.info(r)
+    logger.info(r.text)
+    logger.info(r.json())
+
+    return JsonResponse(r.json(), safe=False)
 
 def prjSave(request):
-
     param = json.loads(request.POST['param'])
 
     datas = {
-        # 'prj_cd': param['prj_cd'],
-        # 'prj_nm': param['prj_nm'],
-        # 'cnct_cd': param['cnct_cd'],
-        # 'gnr_ctro': param['gnr_ctro'],
-        # 'ctro': param['ctro'],
-        # 'cnct_amt': param['cnct_amt'],
-        # 'slin_bzdp': param['slin_bzdp'],
-        # 'job_divs': param['job_divs'],
-        # 'pgrs_stus': param['pgrs_stus'],
-        # 'req_skil_divs': param['req_skil_divs1'],
-        # 'req_skil_name': param['req_skil_name1'],
-        # 'rmks': param['rmks'],
-
     }
 
-
     for row in param:
-        # logger.info("'"+row+"'"+':'+"'"+param[row]+"'"+',')
-        # logger.info(dat)
         datas.setdefault(row, param[row])
 
-
-    logger.info('request.post : ' + request.POST['param'])
-    logger.info(datas)
     r = requests.post('http://skil_api:5003/prjSave', data=datas)
     logger.info(r)
     logger.info(r.text)
     logger.info(r.json())
+
     return JsonResponse(r.json())
 
 def prjDelete(request):
@@ -207,36 +212,14 @@ def prjDelete(request):
         'req_skil_divs' : param['req_skil_divs1'],
         'req_skil_name' : param['req_skil_name1'],
         'rmks' : param['rmks'],
-
     }
-    logger.info('request.post : ' + request.POST['param'])
-    logger.info(datas)
+
     r = requests.post('http://skil_api:5003/prjDelete', data=datas)
     logger.info(r)
     logger.info(r.text)
     logger.info(r.json())
+
     return JsonResponse(r.json())
-
-def reqSkilSave(request):
-
-    param = json.loads(request.POST['param'])
-
-    logger.info(param)
-
-    datas = {
-    }
-
-
-    for row in param:
-        datas.setdefault(row, param[row])
-
-    logger.info('request.post : ' + request.POST['param'])
-    r = requests.post('http://skil_api:5003/reqSkilSave', data=datas)
-    logger.info(r)
-    logger.info(r.text)
-    logger.info(r.json())
-    return JsonResponse(r.json())
-
 
 def prjInpuMgmt(request):
     template_name = 'skil/prjInpuMgmt.html'

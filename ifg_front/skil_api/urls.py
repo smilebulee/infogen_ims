@@ -16,17 +16,21 @@ urlpatterns = [
     url(r'^maria/', views.maria.as_view(), name='maria'),
     url(r'^getMariaDB/', views.getMariaDB, name='getMariaDB'),
 
-    # 개발자 등록
+    # 개발자 조회
     url(r'^devMgmt/', views.devMgmt, name='devMgmt'),
     url(r'^devMgmtSearch/get', views.devMgmtSearch, name='devMgmtSearch'),
+
+    # 프리 개발자 등록
     url(r'^retrieveDevInfo/get', views.retrieveDevInfo, name='retrieveDevInfo'),
     url(r'^devSave/post', views.devSave, name='devSave'),
     url(r'^devDelete/post', views.devDelete, name='devDelete'),
 
     # 프로젝트 등록
+    url(r'^retrievePrjInfo/get', views.retrievePrjInfo, name='retrievePrjInfo'),
+    url(r'^retrieveReqSkil/get', views.retrieveReqSkil, name='retrieveReqSkil'),
     url(r'^prjSave/post', views.prjSave, name='prjSave'),
     url(r'^prjDelete/post', views.prjDelete, name='prjDelete'),
-    url(r'^reqSkilSave/post', views.reqSkilSave, name='reqSkilSave'),
+
 
     # 프로젝트 투입 관리
     url(r'^prjInpuMgmt/', views.prjInpuMgmt, name='prjInpuMgmt'),
