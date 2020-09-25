@@ -4,7 +4,7 @@ from django.shortcuts import render, redirect
 from django.views import View
 from django.views import generic
 from django.http import JsonResponse
-
+from django.core.paginator import Paginator
 #from .models import Tb_page
 
 from django.views.decorators.csrf import csrf_exempt
@@ -272,6 +272,8 @@ def skilMgmtSearch(request):
 
     param = json.loads(request.GET['param'])
     logger.info("skilMgmtSearch : skil/views.py")
+    logger.info(param)
+
     datas = {
         'dept': param['dept'],
         'name': param['name'],
@@ -282,13 +284,26 @@ def skilMgmtSearch(request):
 
     logger.info(datas)
     r = requests.get('http://skil_api:5003/skilMgmtSearch', params=datas)
+    paginator = Paginator(r.json(), 2)
+    logger.info("----------------")
+    logger.info(paginator)
     logger.info(r)
     logger.info(r.text)
     logger.info("----------------")
-    logger.info(r.json())
-    logger.info(json.loads(r.text))
+
+    result = paginator.get_page(param['page'])
+
+    logger.info(result)
+    data = {
+        'list': list(result.object_list),
+        'total_records': paginator.count,
+        'total_pages': paginator.num_pages,
+        'page': result.number,
+        'has_next': result.has_next(),
+        'has_prev': result.has_previous()
+    }
     # return JsonResponse(r.json())
-    return JsonResponse(r.json(), safe=False)
+    return JsonResponse(data)
 
 class skilMgmtDetl(generic.TemplateView):
     def get(self, request, *args, **kwargs):
