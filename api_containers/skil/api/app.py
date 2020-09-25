@@ -249,21 +249,23 @@ class devMgmtSearch(Resource):
                                     charset='utf8')
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
-                if devpBlco =="" and empName == "" and  devpDivsCd =="":
-                    sql = "SELECT EMP_NAME,DEVP_BLCO,DEVP_GRD_CD,CNTC_DIVS_CD,EMP_NO FROM TB_FRLC_DEVP_INFO"
-                    cursor.execute(sql)
-                else:
-                    sql = "SELECT EMP_NAME,DEVP_BLCO,DEVP_GRD_CD,CNTC_DIVS_CD,EMP_NO FROM TB_FRLC_DEVP_INFO WHERE 1=1 "
-                    if devpBlco != "":
-                        sql = sql + "AND DEVP_BLCO = '" + devpBlco + "' "
-                    if empName != "":
-                        sql = sql + "AND EMP_NAME LIKE '%" + empName + "%' "
-                    if devpDivsCd != "":
-                        sql = sql + "AND CNTC_DIVS_CD = '" + devpDivsCd + "' "
+                sql = "SELECT EMP_NAME,DEVP_BLCO,DEVP_GRD_CD,CNTC_DIVS_CD,EMP_NO FROM TB_FRLC_DEVP_INFO WHERE 1=1 "
+                if devpBlco != "":
+                    sql = sql + "AND DEVP_BLCO = '" + devpBlco + "' "
+                if empName != "":
+                    sql = sql + "AND EMP_NAME LIKE '%" + empName + "%' "
+                if devpDivsCd != "":
+                    sql = sql + "AND CNTC_DIVS_CD = '" + devpDivsCd + "' "
+                logging.debug(sql)
 
-                    logging.debug(sql)
+                cursor.execute(sql)
+        finally:
+            mysql_con.close()
 
-                    cursor.execute(sql)
+        result2 = cursor.fetchall()
+
+        return result2
+
 
 class retrieveDevInfo(Resource):
     def get(self):

@@ -87,6 +87,7 @@ def devMgmtSearch(request):
     logger.info(r.json())
     logger.info(json.loads(r.text))
     # return JsonResponse(r.json())
+    return JsonResponse(r.json(), safe=False)
 
 def retrieveDevInfo(request):
     param = json.loads(request.GET['param'])
