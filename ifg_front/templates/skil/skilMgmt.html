@@ -33,7 +33,8 @@ history
                         { key: "SKIL_MID",   label: "MID-WARE",   width: 120,  align: "center"},
                         { key: "EMP_PHONE",  label: "연락처",     width: 80,   align: "center"},
                         { key: "EMP_BIRTH",  label: "생년월일",   width: 80,   align: "center", /* 숨김처리 hidden : true */},
-                        { key: "EMP_NO",     label: "사번",       width: 80,   align: "center", hidden : true}
+                        { key: "EMP_NO",     label: "사번",       width: 80,   align: "center", hidden : true},
+                        { key: "DIVS",       label: "구분코드",   width: 80,   align: "center", hidden : true}
                         ]
                     };
                     firstGrid = $('[data-ax5grid="first-grid"]');
@@ -62,7 +63,7 @@ history
                 } else{
                     alertMsg("(작성예정)선택된 행 값 넘겨주기");
                     var empNo = firstGrid.getList("selected")[0].EMP_NO;
-                    var empGrd = firstGrid.getList("selected")[0].EMP_GRD;
+                    var empGrd = firstGrid.getList("selected")[0].DIVS;
                     location.href = '/skil/skilMgmtDetl?empNo='+empNo+'&empGrd='+empGrd
                 }
             });
@@ -81,8 +82,12 @@ history
                                 <label class="col-sm-1" style="max-width:50px;">부서</label>
                                 <select class="col-sm-2" name="dept">
                                     <option selected></option>
-                                    <option value="1">통신</option>
-                                    <option value="2">전자</option>
+                                    <option value="01">FIC</option>
+                                    <option value="02">전자/제조</option>
+                                    <option value="03">통신</option>
+                                    <option value="04">화학</option>
+                                    <option value="05">전략</option>
+                                    <option value="06">DX</option>
                                 </select>
                                 <div class="col-sm-1" style="padding-left:760px;">
                                 <button class="btn btn-primary" id="searchBtn" style="width:120px">조회</button>
