@@ -280,7 +280,8 @@ class retrieveDevInfo(Resource):
 
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
-                sql = "SELECT * FROM TB_FRLC_DEVP_INFO WHERE EMP_NO = %s"
+                sql = "SELECT EMP_NAME, EMP_RANK_CD, `DEVP_GRD_CD`, `DEVP_TEL_NO`, `CNTC_DIVS_CD`, " \
+                      "`DEVP_BLCO`, `DEVP_BDAY`, `RMKS` FROM TB_FRLC_DEVP_INFO WHERE EMP_NO = %s"
                 cursor.execute(sql, emp_no)
                 logging.debug('retrieveDevInfo SUCCESS')
 
@@ -305,7 +306,7 @@ class devSave(Resource):
         name = request.form['name']
         rank = request.form['rank']
         grd = request.form['grd']
-        tlno = request.form['tlno1'] + request.form['tlno2'] + request.form['tlno3']
+        tlno = request.form['tlno1'] + '-' + request.form['tlno2'] + '-' + request.form['tlno3']
         divs = request.form['divs']
         blco = request.form['blco']
         bday = request.form['bday']

@@ -51,11 +51,11 @@ history
            $('#devSaveBtn').click(function(){
 
                 if(firstGrid.getList("selected").length == 0){
-                    alertMsg("선택된 행이 없습니다.");
-                    return false;
+                    location.href = '/skil/devEnrl?'
                 } else{
                     alertMsg("(작성예정)선택된 행 값 넘겨주기");
                     var empNo = firstGrid.getList("selected")[0].EMP_NO;
+                    console.log(empNo);
                     location.href = '/skil/devEnrl?emp_No='+empNo
                 }
             });
