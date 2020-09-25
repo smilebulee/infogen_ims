@@ -6,57 +6,35 @@ history
 {% extends 'common/base.html' %}
 
 {% block content %}
-<script type="text/javascript" xmlns:max-width="http://www.w3.org/1999/xhtml">
+    <script type="text/javascript" xmlns:max-width="http://www.w3.org/1999/xhtml">
+        var firstGrid;
         $(document).ready(function(){
-            var firstGrid = $('[data-ax5grid="first-grid"]');
+            firstGrid = $('[data-ax5grid="first-grid"]');
 
-            getGridList(1);
-
-            function getGridList(page){
-
-                $('#formSearchDiv').ajaxCall({
-                    method : 'GET',
-                    url : "{% url 'skil_api:skilMgmtSearch' %}",
-                    callbackFn : function(data){
-
-                    var gridList = data; /* 그리드에 세팅할 데이터는 JSON 배열 형태 */
-
-                    var gridOptions = {
-                        columns: [              /* columns : 그리드 헤더 및 매핑 시킬 컬럼 및 컬럼 속성 설정 항목(필수) */
-                        { key: "EMP_NAME",   label: "성명",       width: 100,  align: "center"},
-                        { key: "EMP_DEPT",   label: "부서",       width: 80,   align: "center"},
-                        { key: "EMP_GRD",    label: "구분",       width: 80,   align: "center"},
-                        { key: "SKIL_DB",    label: "DB",         width: 80,   align: "center"},
-                        { key: "SKIL_LANG",  label: "언어",       width: 120,  align: "center"},
-                        { key: "SKIL_WEB",   label: "WEB",        width: 120,  align: "center"},
-                        { key: "SKIL_FRAME", label: "FRAME WORK", width: 120,  align: "center"},
-                        { key: "SKIL_MID",   label: "MID-WARE",   width: 120,  align: "center"},
-                        { key: "EMP_PHONE",  label: "연락처",     width: 80,   align: "center"},
-                        { key: "EMP_BIRTH",  label: "생년월일",   width: 80,   align: "center", /* 숨김처리 hidden : true */},
-                        { key: "EMP_NO",     label: "사번",       width: 80,   align: "center", hidden : true},
-                        { key: "DIVS",       label: "구분코드",   width: 80,   align: "center", hidden : true}
-                        ]
-                    };
-                    firstGrid = $('[data-ax5grid="first-grid"]');
-                    firstGrid = firstGrid.initGrid(gridOptions);
-                    firstGrid.setData(gridList);
-                    }
-                });
-            }
-
-            function makePaging(ret){
-                $('#paging_navi').makePagingNavi(ret, 'getGridList');
-
-            }
-
+            var gridOptions = {
+                columns: [              /* columns : 그리드 헤더 및 매핑 시킬 컬럼 및 컬럼 속성 설정 항목(필수) */
+                { key: "EMP_NAME",   label: "성명",       width: 100,  align: "center"},
+                { key: "EMP_DEPT",   label: "부서",       width: 80,   align: "center"},
+                { key: "EMP_GRD",    label: "구분",       width: 80,   align: "center"},
+                { key: "SKIL_DB",    label: "DB",         width: 80,   align: "center"},
+                { key: "SKIL_LANG",  label: "언어",       width: 120,  align: "center"},
+                { key: "SKIL_WEB",   label: "WEB",        width: 120,  align: "center"},
+                { key: "SKIL_FRAME", label: "FRAME WORK", width: 120,  align: "center"},
+                { key: "SKIL_MID",   label: "MID-WARE",   width: 120,  align: "center"},
+                { key: "EMP_PHONE",  label: "연락처",     width: 80,   align: "center"},
+                { key: "EMP_BIRTH",  label: "생년월일",   width: 80,   align: "center", /* 숨김처리 hidden : true */},
+                { key: "EMP_NO",     label: "사번",       width: 80,   align: "center", hidden : true},
+                { key: "DIVS",       label: "구분코드",   width: 80,   align: "center", hidden : true}
+                ]
+            };
+            firstGrid = $('[data-ax5grid="first-grid"]').initGrid(gridOptions);
 
             $('#searchBtn').click(function(){
                 getGridList(1);
             });
 
             /* 스킬상세관리 선택 */
-           $('#skillDetlMentBtn').click(function(){
-
+            $('#skillDetlMentBtn').click(function(){
                 if(firstGrid.getList("selected").length == 0){
                     alertMsg("선택된 행이 없습니다.");
                     return false;
@@ -67,7 +45,42 @@ history
                     location.href = '/skil/skilMgmtDetl?empNo='+empNo+'&empGrd='+empGrd
                 }
             });
+
+            getGridList(1);
         });
+
+        function makePaging(ret){
+            $('#paging_navi').makePagingNavi(ret, 'getGridList');
+        }
+
+        function getGridList(page){
+            var options = {
+                method : 'get',
+                url : "{% url 'skil_api:skilMgmtSearch' %}",
+                callbackFn :  function(ret){
+                    if(ret.list.length == 0){
+                        alertMsg('데이터가 없습니다.');
+                        firstGrid.setData([]);
+                        return false;
+                    }
+                    firstGrid.setData(ret.list);
+                    firstGrid.select(0);
+
+                    makePaging(ret);
+                }
+            };
+
+            $.ajaxCall({ page : page,
+                         dept : $('[name="dept"]').val(),
+                         name : $('[name="name"]').val(),
+                         division : $('[name="division"]').val(),
+                         skilKind : $('[name="skilKind"]').val(),
+                         skil : $('[name="skil"]').val()
+                         }, options);
+        }
+
+
+
     </script>
 
     <style>
@@ -119,17 +132,15 @@ history
                                 <input style="width:237px" type="text" id="skil" name="skil" maxlength="50" placeholder="내용을 입력해주세요." >
                             </div>
                         </div>
-                    </div>
-                    <hr>
-                    <div>
-                        <h3>목록조회<a class="badge badge-info"></a></h3>
-                    </div>
-                    <div style="position: relative;height:400px;" id="grid-parent">
-                        <div data-ax5grid="first-grid" style="height: 100%;"></div>
-                        <div id="paging_navi"></div>
-                    </div>
-                    <div style="float: right; padding-top :10px;">
-                        <button class="btn btn-primary" id="skillDetlMentBtn" >스킬상세관리</button>
+                        <hr>
+                        <div>
+                            <h3>목록조회<a class="badge badge-info"></a></h3>
+                        </div>
+                        <div style="position: relative;height:400px;" id="grid-parent">
+                            <div data-ax5grid="first-grid" style="height: 100%;"></div>
+                            <div id="paging_navi"></div>
+                            <button class="btn btn-primary" id="skillDetlMentBtn" style="float: right; padding-top :10px;">스킬상세관리</button>
+                        </div>
                     </div>
                 </div>
     </div>

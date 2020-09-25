@@ -65,7 +65,7 @@
                          font-size: 1.0em;
                          padding:20px;">
                 <p>사번<br>
-                    <input type = "text" id = "emp_no" name = "emp_no"></p>
+                    <input type = "text" id = "emp_no" name = "emp_no" style = "display:none"></p>
 
                 <p>*성명<br>
                     <input type = "text" id = "name" name = "name" placeholder="input text"></p>
@@ -113,36 +113,45 @@
                     <button type="button" id="modal_close_btn">취소</button>
                     <button type="button" id="modal_save_btn">저장</button>
                     <button type="button" id="modal_delete_btn" style="color:red">삭제</button>
-
-
-     
     </div>
 
 <script>
     $(document).ready(function() {
-         $('#emp_no').val('F_000010');
-<!--        $('#emp_no').val(null);-->
-        var emp_no = $('#emp_no').val();
-        console.log(emp_no)
+        temp=location.href.split("?");
+        data = temp[1].split("=");
+        emp_no = data[1];
+        $('#emp_no').val(emp_no);
 
         if(emp_no != null){
             console.log('emp_no is not null');
-            $('#developerEnrollment').ajaxCall({
-                 method : 'GET',
-                 url : "{% url 'skil_api:retrieveDevInfo' %}",
-                 callbackFn : function(data){
-<!--                    $('#result').text('name : '+data[0].EMP_NAME)-->
-<!--                    data-->
-<!--                    console.log(data)-->
-<!--                    console.log(data.EMP_NAME)-->
-
-                 }
-            });
-
+            retrieveDevInfo();
         } else{
             console.log('emp_no is null')
         }
     });
+
+    function retrieveDevInfo(){
+            $('#developerEnrollment').ajaxCall({
+                 method : 'GET',
+                 url : "{% url 'skil_api:retrieveDevInfo' %}",
+                 callbackFn : function(data){
+                    $('#name').val(data[0].EMP_NAME);
+                    $('#rank').val(data[0].EMP_RANK_CD);
+                    $('#grd').val(data[0].DEVP_GRD_CD);
+                    var tlno = data[0].DEVP_TEL_NO.split('-');
+                    var tlno1 = tlno[0];
+                    var tlno2 = tlno[1];
+                    var tlno3 = tlno[2];
+                    $('#tlno1').val(tlno1);
+                    $('#tlno2').val(tlno2);
+                    $('#tlno3').val(tlno3);
+                    $('#divs').val(data[0].CNTC_DIVS_CD);
+                    $('#blco').val(data[0].DEVP_BLCO);
+                    $('#bday').val(data[0].DEVP_BDAY);
+                    $('#rmks').val(data[0].RMKS);
+                 }
+            });
+    };
 
 
     document.getElementById("modal_close_btn").onclick = function() {
@@ -178,19 +187,9 @@
             });
      });
 
-
 </script>
 
     <div class="modal_layer"></div>
 </div>
-
-
-
-
-
-
-
-
-
 
 {% endblock %}
