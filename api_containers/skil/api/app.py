@@ -249,7 +249,13 @@ class devMgmtSearch(Resource):
                                     charset='utf8')
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
-                sql = "SELECT EMP_NAME,DEVP_BLCO,DEVP_GRD_CD,CNTC_DIVS_CD,EMP_NO FROM TB_FRLC_DEVP_INFO WHERE 1=1 "
+                sql = "SELECT EMP_NAME,DEVP_BLCO," \
+                      "CASE WHEN CNTC_DIVS_CD ='01' THEN '정규직' " \
+                      "WHEN CNTC_DIVS_CD ='02' THEN '프리랜서' " \
+                      "WHEN CNTC_DIVS_CD ='03' THEN '외주' END CNTC_DIVS_CD, " \
+                      "DEVP_GRD_CD,EMP_NO " \
+                      "FROM TB_FRLC_DEVP_INFO " \
+                      "WHERE 1=1 "
                 if devpBlco != "":
                     sql = sql + "AND DEVP_BLCO = '" + devpBlco + "' "
                 if empName != "":
