@@ -228,6 +228,7 @@ class mariaClass(Resource):
 
         return result2
 
+
 class devMgmtSearch(Resource):
     def get(self):
         # Get posted data from request
@@ -248,25 +249,50 @@ class devMgmtSearch(Resource):
                                     charset='utf8')
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
-                if devpBlco =="" and empName == "" and  devpDivsCd =="":
-                    sql = "SELECT EMP_NAME,DEVP_BLCO,DEVP_GRD_CD,CNTC_DIVS_CD,EMP_NO FROM TB_FRLC_DEVP_INFO"
-                    cursor.execute(sql)
-                else:
-                    sql = "SELECT EMP_NAME,DEVP_BLCO,DEVP_GRD_CD,CNTC_DIVS_CD,EMP_NO FROM TB_FRLC_DEVP_INFO WHERE 1=1 "
-                    if devpBlco != "":
-                        sql = sql + "AND DEVP_BLCO = '" + devpBlco + "' "
-                    if empName != "":
-                        sql = sql + "AND EMP_NAME LIKE '%" + empName + "%' "
-                    if devpDivsCd != "":
-                        sql = sql + "AND CNTC_DIVS_CD = '" + devpDivsCd + "' "
+                sql = "SELECT EMP_NAME,DEVP_BLCO,DEVP_GRD_CD,CNTC_DIVS_CD,EMP_NO FROM TB_FRLC_DEVP_INFO WHERE 1=1 "
+                if devpBlco != "":
+                    sql = sql + "AND DEVP_BLCO = '" + devpBlco + "' "
+                if empName != "":
+                    sql = sql + "AND EMP_NAME LIKE '%" + empName + "%' "
+                if devpDivsCd != "":
+                    sql = sql + "AND CNTC_DIVS_CD = '" + devpDivsCd + "' "
+                logging.debug(sql)
 
-                    logging.debug(sql)
-
-                    cursor.execute(sql)
+                cursor.execute(sql)
         finally:
             mysql_con.close()
 
         result2 = cursor.fetchall()
+
+        return result2
+
+
+class retrieveDevInfo(Resource):
+    def get(self):
+        params = request.get_json()
+
+        logging.debug('retrieveDevInfo Start')
+        emp_no = request.args.get('emp_no')
+        logging.debug(emp_no)
+
+        mysql_con = pymysql.connect(host='218.151.225.142', port=3306, db='IFG_IMS', user='ims2', password='1234',
+                                    charset='utf8')
+
+        try:
+            with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+                sql = "SELECT * FROM TB_FRLC_DEVP_INFO WHERE EMP_NO = %s"
+                cursor.execute(sql, emp_no)
+                logging.debug('retrieveDevInfo SUCCESS')
+
+
+        finally:
+            mysql_con.close()
+
+        result2 = cursor.fetchall()
+
+
+
+        logging.debug(result2)
 
         return result2
 
@@ -438,15 +464,19 @@ class prjSave(Resource):
 
                     logging.debug('PRJ_INFO SUCCESS')
 
-                    if not req_skil_divs1 and not "00":
-
-                        sql = "INSERT INTO TB_PRJ_REQ_SKIL(`PRJ_CD`, `SKIL_DIVS`, `SKIL_NAME`, `REG_EMP_NO`, `REG_DATE`," \
-                              " `CHG_EMP_NO`, `CHG_DATE`) " \
-                              "VALUES ((SELECT PRJ_CD FROM TB_PRJ_INFO A WHERE PRJ_NAME = %s)," \
-                              " %s, %s, 'admin', NOW(), 'admin', NOW())"
-                        cursor.execute(sql, (prj_nm, req_skil_divs1, req_skil_name1))
-                        mysql_con.commit()
-                        logging.debug('REQ_SKIL SUCCESS')
+                    for i in range(1, int(trCount)+1):
+                        req_skil_divs = request.form['req_skil_divs'+str(i)]
+                        logging.debug('req_skil_divs : ' + req_skil_divs)
+                        req_skil_name = request.form['req_skil_name'+str(i)]
+                        logging.debug('req_skil_name : ' + req_skil_name)
+                        if req_skil_divs != "00":
+                            sql = "INSERT INTO TB_PRJ_REQ_SKIL(`PRJ_CD`, `SKIL_DIVS`, `SKIL_NAME`, `REG_EMP_NO`, `REG_DATE`," \
+                                      " `CHG_EMP_NO`, `CHG_DATE`) " \
+                                      "VALUES ((SELECT PRJ_CD FROM TB_PRJ_INFO A WHERE PRJ_NAME = %s)," \
+                                      " %s, %s, 'admin', NOW(), 'admin', NOW())"
+                            cursor.execute(sql, (prj_nm, req_skil_divs, req_skil_name))
+                            mysql_con.commit()
+                            logging.debug('REQ_SKIL'+str(i)+' SUCCESS')
 
             finally:
                 mysql_con.close()
@@ -581,30 +611,67 @@ class skilMgmtSearch(Resource):
                                     charset='utf8')
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
-                if dept =="" and name == "" and  division =="" and skilKind == "" and skil == "":
-                    sql = "SELECT * FROM TB_SKIL_MGNT_TEST"
-                    cursor.execute(sql)
-                else:
-                    sql = "SELECT * FROM TB_SKIL_MGNT_TEST WHERE 1=1 "
-                    if dept != "":
-                        sql = sql + "AND EMP_DEPT = '" + dept + "' "
-                    if name != "":
-                        sql = sql + "AND EMP_NAME LIKE '%" + name + "%' "
-                    if division != "":
-                        sql = sql + "AND DIVISION = '" + division + "' "
-                    if skilKind == "1":
-                        sql += "AND SKIL_DB LIKE '%" + skil + "%'"
-                    if skilKind == "2":
-                        sql += "AND SKIL_LANG LIKE '%" + skil + "%'"
-                    if skilKind == "3":
-                        sql += "AND SKIL_WEB LIKE '%" + skil + "%'"
-                    if skilKind == "4":
-                        sql += "AND SKIL_FRAME LIKE '%" + skil + "%'"
-                    if skilKind == "5":
-                        sql += "AND SKIL_MID LIKE '%" + skil + "%'"
-                    logging.debug(sql)
+                sql = "SELECT A.EMP_NO AS EMP_NO," \
+                             "A.EMP_NAME," \
+                             "CASE WHEN A.DEPT ='01' THEN 'FIC'" \
+                                   "WHEN A.DEPT ='02' THEN '전자/제조' " \
+                                   "WHEN A.DEPT ='03' THEN '통신'" \
+                                   "WHEN A.DEPT ='04' THEN '화학'WHEN A.DEPT ='05' THEN '전략' " \
+                                   "WHEN A.DEPT ='06' THEN  'DX'ELSE '미정' END AS EMP_DEPT, CASE " \
+                                   "WHEN A.DIVS ='1' THEN '정규직' " \
+                                   "WHEN A.DIVS ='2' THEN '프리랜서' ELSE '미정' END AS EMP_GRD, " \
+                             "A.DIVS," \
+                             "A.DEVP_TEL_NO AS EMP_PHONE, " \
+                             "A.DEVP_BDAY AS EMP_BIRTH," \
+                             "A.SKIL_DB,A.SKIL_LANG, " \
+                             "A.SKIL_WEB,A.SKIL_FRAME, " \
+                             "A.SKIL_MID " \
+                      "FROM (SELECT FRLC.EMP_NO AS EMP_NO," \
+                                   "FRLC.EMP_NAME AS EMP_NAME," \
+                                   " '' AS DEPT, '2' AS DIVS," \
+                                   "FRLC.DEVP_TEL_NO AS DEVP_TEL_NO," \
+                                   "FRLC.DEVP_BDAY AS DEVP_BDAY," \
+                                   "GROUP_CONCAT( CASE SKIL.SKIL_DIVS_CD WHEN '01' THEN SKIL.SKIL_NM_CD ELSE NULL END  SEPARATOR  ',' ) AS SKIL_DB, " \
+                                   "GROUP_CONCAT( CASE SKIL.SKIL_DIVS_CD WHEN '02' THEN SKIL.SKIL_NM_CD ELSE NULL END  SEPARATOR  ',' ) AS SKIL_LANG, " \
+                                   "GROUP_CONCAT( CASE SKIL.SKIL_DIVS_CD WHEN '03' THEN SKIL.SKIL_NM_CD ELSE NULL END  SEPARATOR  ',' ) AS SKIL_WEB," \
+                                   "GROUP_CONCAT( CASE SKIL.SKIL_DIVS_CD WHEN '04' THEN SKIL.SKIL_NM_CD ELSE NULL END  SEPARATOR  ',' ) AS SKIL_FRAME," \
+                                   "GROUP_CONCAT( CASE SKIL.SKIL_DIVS_CD WHEN '05' THEN SKIL.SKIL_NM_CD ELSE NULL END  SEPARATOR  ',' ) AS SKIL_MID " \
+                            "FROM TB_FRLC_DEVP_INFO  FRLC LEFT OUTER JOIN TB_SKIL_MGNT_M SKIL ON FRLC.EMP_NO = SKIL.EMP_NO " \
+                            "WHERE 1=1 AND FRLC.DEVP_USE_YN ='Y' " \
+                            "GROUP BY FRLC.EMP_NO " \
+                            "UNION " \
+                            "SELECT EMP.EMP_NO AS EMP_NO, " \
+                                  "EMP.EMP_NAME AS EMP_NAME," \
+                                  "EMP.DEPT AS DEPT,'1' AS DIVS, " \
+                                  "EMP.DEVP_TEL_NO AS DEVP_TEL_NO, " \
+                                  "EMP.DEVP_BDAY AS DEVP_BDAY, " \
+                                  "GROUP_CONCAT( CASE SKIL.SKIL_DIVS_CD WHEN '01' THEN SKIL.SKIL_NM_CD ELSE NULL END  SEPARATOR  ',' ) AS SKIL_DB," \
+                                  "GROUP_CONCAT( CASE SKIL.SKIL_DIVS_CD WHEN '02' THEN SKIL.SKIL_NM_CD ELSE NULL END  SEPARATOR  ',' ) AS SKIL_LANG, " \
+                                  "GROUP_CONCAT( CASE SKIL.SKIL_DIVS_CD WHEN '03' THEN SKIL.SKIL_NM_CD ELSE NULL END  SEPARATOR  ',' ) AS SKIL_WEB, " \
+                                  "GROUP_CONCAT( CASE SKIL.SKIL_DIVS_CD WHEN '04' THEN SKIL.SKIL_NM_CD ELSE NULL END  SEPARATOR  ',' ) AS SKIL_FRAME," \
+                                  "GROUP_CONCAT( CASE SKIL.SKIL_DIVS_CD WHEN '05' THEN SKIL.SKIL_NM_CD ELSE NULL END  SEPARATOR  ',' ) AS SKIL_MID " \
+                            "FROM TB_EMP_TEST EMP LEFT OUTER JOIN TB_SKIL_MGNT_M SKIL ON EMP.EMP_NO = SKIL.EMP_NO " \
+                            "GROUP BY EMP.EMP_NO )A " \
+                      "WHERE 1=1 "
+                if dept != "":
+                    sql += "AND DEPT = '" + dept + "' "
+                if name != "":
+                    sql += "AND EMP_NAME LIKE '%" + name + "%' "
+                if division != "":
+                    sql += "AND DIVS = '" + division + "' "
+                if skilKind == "1":
+                    sql += "AND SKIL_DB LIKE '%" + skil + "%'"
+                if skilKind == "2":
+                    sql += "AND SKIL_LANG LIKE '%" + skil + "%'"
+                if skilKind == "3":
+                    sql += "AND SKIL_WEB LIKE '%" + skil + "%'"
+                if skilKind == "4":
+                    sql += "AND SKIL_FRAME LIKE '%" + skil + "%'"
+                if skilKind == "5":
+                    sql += "AND SKIL_MID LIKE '%" + skil + "%'"
+                logging.debug(sql)
 
-                    cursor.execute(sql)
+                cursor.execute(sql)
         finally:
             mysql_con.close()
 
@@ -674,6 +741,8 @@ api.add_resource(Save, '/save')
 api.add_resource(mariaClass,'/mariaClass')
 
 # 개발자 등록
+api.add_resource(devMgmtSearch, '/devMgmtSearch')
+api.add_resource(retrieveDevInfo, '/retrieveDevInfo')
 api.add_resource(devSave, '/devSave')
 api.add_resource(devDelete, '/devDelete')
 
