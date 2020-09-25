@@ -17,6 +17,8 @@ urlpatterns = [
     url(r'^getMariaDB/', views.getMariaDB, name='getMariaDB'),
 
     # 개발자 등록
+    url(r'^devMgmt/', views.devMgmt, name='devMgmt'),
+    url(r'^devMgmtSearch/get', views.devMgmtSearch, name='devMgmtSearch'),
     url(r'^devSave/post', views.devSave, name='devSave'),
     url(r'^devDelete/post', views.devDelete, name='devDelete'),
 

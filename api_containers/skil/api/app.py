@@ -228,6 +228,48 @@ class mariaClass(Resource):
 
         return result2
 
+class devMgmtSearch(Resource):
+    def get(self):
+        # Get posted data from request
+        logging.debug("search start")
+
+        # get data
+        devpBlco = request.args.get('devpBlco')
+        empName = request.args.get('empName')
+        devpDivsCd = request.args.get('devpDivsCd')
+
+        logging.debug('---------------SEARCH---------------')
+        logging.debug('devpBlco : ' + devpBlco)
+        logging.debug('empName : ' + empName)
+        logging.debug('devpDivsCd : ' + devpDivsCd)
+        logging.debug('------------------------------------')
+
+        mysql_con = pymysql.connect(host='218.151.225.142', port=3306, db='IFG_IMS', user='ims2', password='1234',
+                                    charset='utf8')
+        try:
+            with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+                if devpBlco =="" and empName == "" and  devpDivsCd =="":
+                    sql = "SELECT EMP_NAME,DEVP_BLCO,DEVP_GRD_CD,CNTC_DIVS_CD,EMP_NO FROM TB_FRLC_DEVP_INFO"
+                    cursor.execute(sql)
+                else:
+                    sql = "SELECT EMP_NAME,DEVP_BLCO,DEVP_GRD_CD,CNTC_DIVS_CD,EMP_NO FROM TB_FRLC_DEVP_INFO WHERE 1=1 "
+                    if devpBlco != "":
+                        sql = sql + "AND DEVP_BLCO = '" + devpBlco + "' "
+                    if empName != "":
+                        sql = sql + "AND EMP_NAME LIKE '%" + empName + "%' "
+                    if devpDivsCd != "":
+                        sql = sql + "AND CNTC_DIVS_CD = '" + devpDivsCd + "' "
+
+                    logging.debug(sql)
+
+                    cursor.execute(sql)
+        finally:
+            mysql_con.close()
+
+        result2 = cursor.fetchall()
+
+        return result2
+
 class devSave(Resource):
     def post(self):
         params = request.get_json()
@@ -632,6 +674,7 @@ api.add_resource(Save, '/save')
 api.add_resource(mariaClass,'/mariaClass')
 
 # 개발자 등록
+api.add_resource(devMgmtSearch, '/devMgmtSearch')
 api.add_resource(devSave, '/devSave')
 api.add_resource(devDelete, '/devDelete')
 
