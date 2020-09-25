@@ -63,18 +63,29 @@ def getMariaDB(request):
     logger.info(json.loads(r.text))
     return JsonResponse(r.json(), safe=False)
 
-def retrieveDevInfo(request):
-    param = json.loads(request.GET['param'])
-    logger.info(param)
+def devMgmt(request):
+    template_name = 'skil/devMgmt.html'
 
+    return render(request, template_name)
+
+def devMgmtSearch(request):
+
+    param = json.loads(request.GET['param'])
+    logger.info("devMgmtSearch : skil/views.py")
     datas = {
-        'emp_no': param['emp_no'],
+        'devpBlco': param['devpBlco'],
+        'empName': param['empName'],
+        'devpDivsCd': param['devpDivsCd']
     }
 
-    r = requests.get('http://skil_api:5003/retrieveDevInfo', params=datas)
+    logger.info(datas)
+    r = requests.get('http://skil_api:5003/devMgmtSearch', params=datas)
     logger.info(r)
     logger.info(r.text)
+    logger.info("----------------")
     logger.info(r.json())
+    logger.info(json.loads(r.text))
+    # return JsonResponse(r.json())
     return JsonResponse(r.json(), safe=False)
 
 def devSave(request):
@@ -133,6 +144,8 @@ def prjSave(request):
 
     param = json.loads(request.POST['param'])
 
+    logger.info(param)
+
     datas = {
         # 'prj_cd': param['prj_cd'],
         # 'prj_nm': param['prj_nm'],
@@ -156,6 +169,11 @@ def prjSave(request):
         datas.setdefault(row, param[row])
 
 
+
+
+
+
+
     logger.info('request.post : ' + request.POST['param'])
     logger.info(datas)
     r = requests.post('http://skil_api:5003/prjSave', data=datas)
@@ -167,6 +185,8 @@ def prjSave(request):
 def prjDelete(request):
 
     param = json.loads(request.POST['param'])
+
+    logger.info(param)
 
     datas = {
         'prj_nm' : param['prj_nm'],
