@@ -20,6 +20,12 @@ urlpatterns = [
     url(r'^yryApvlReq/', views.yryApvlReq.as_view(), name='yryApvlReq'),
     url(r'^noticeLst/', views.noticeLst.as_view(), name='noticeLst'),
     url(r'^noticeDtl/', views.noticeDtl.as_view(), name='noticeDtl'),
+    url(r'^getWrkApvlReq/', views.getWrkApvlReq, name='getWrkApvlReq'),
+    url(r'^saveApvlReq/post', views.saveApvlReq, name='saveApvlReq'),
+    url(r'^apvlReqHist/', views.apvlReqHist.as_view(), name='apvlReqHist'),
+    url(r'^getApvlReqHist/', views.getApvlReqHist, name='getApvlReqHist'),
+
+
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
