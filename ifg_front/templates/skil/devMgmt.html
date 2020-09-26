@@ -42,12 +42,11 @@ history
 
             }
 
-
             $('#searchBtn').click(function(){
                 getGridList(1);
             });
 
-            /* 개발자추가 선택 */
+            /* 개발자 등록 선택 */
            $('#devSaveBtn').click(function(){
 
                 if(firstGrid.getList("selected").length == 0){
@@ -89,8 +88,9 @@ history
                                 <label class="col-sm-1" style="max-width:50px;">구분</label>
                                 <select class="col-sm-2" name="devpDivsCd">
                                     <option selected></option>
-                                    <option value="1">정규직</option>
-                                    <option value="2">프리랜서</option>
+                                    <option value="01">정규직</option>
+                                    <option value="02">프리랜서</option>
+                                    <option value="03">외주</option>
                                 </select>
                             </div>
                         </div>
@@ -104,7 +104,7 @@ history
                         <div id="paging_navi"></div>
                     </div>
                     <div style="float: right; padding-top :10px;">
-                        <button class="btn btn-primary" id="devSaveBtn" >작업자추가</button>
+                        <button class="btn btn-primary" id="devSaveBtn" >개발자 등록</button>
                     </div>
                 </div>
     </div>

@@ -249,7 +249,13 @@ class devMgmtSearch(Resource):
                                     charset='utf8')
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
-                sql = "SELECT EMP_NAME,DEVP_BLCO,DEVP_GRD_CD,CNTC_DIVS_CD,EMP_NO FROM TB_FRLC_DEVP_INFO WHERE 1=1 "
+                sql = "SELECT EMP_NAME,DEVP_BLCO," \
+                      "CASE WHEN CNTC_DIVS_CD ='01' THEN '정규직' " \
+                      "WHEN CNTC_DIVS_CD ='02' THEN '프리랜서' " \
+                      "WHEN CNTC_DIVS_CD ='03' THEN '외주' END CNTC_DIVS_CD, " \
+                      "DEVP_GRD_CD,EMP_NO " \
+                      "FROM TB_FRLC_DEVP_INFO " \
+                      "WHERE 1=1 "
                 if devpBlco != "":
                     sql = sql + "AND DEVP_BLCO = '" + devpBlco + "' "
                 if empName != "":
@@ -266,42 +272,45 @@ class devMgmtSearch(Resource):
 
         return result2
 
-
+#프리 개발자 정보 수정 시 해당 개발자 정보 조회
 class retrieveDevInfo(Resource):
     def get(self):
         params = request.get_json()
 
         logging.debug('retrieveDevInfo Start')
         emp_no = request.args.get('emp_no')
-        logging.debug(emp_no)
 
         mysql_con = pymysql.connect(host='218.151.225.142', port=3306, db='IFG_IMS', user='ims2', password='1234',
                                     charset='utf8')
 
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
-                sql = "SELECT EMP_NAME, EMP_RANK_CD, `DEVP_GRD_CD`, `DEVP_TEL_NO`, `CNTC_DIVS_CD`, " \
-                      "`DEVP_BLCO`, `DEVP_BDAY`, `RMKS` FROM TB_FRLC_DEVP_INFO WHERE EMP_NO = %s"
+                sql = "SELECT EMP_NAME, " \
+                             "EMP_RANK_CD, " \
+                             "DEVP_GRD_CD, " \
+                             "DEVP_TEL_NO, " \
+                             "CNTC_DIVS_CD, " \
+                             "DEVP_BLCO, " \
+                             "DEVP_BDAY, " \
+                             "RMKS " \
+                      "FROM TB_FRLC_DEVP_INFO " \
+                      "WHERE EMP_NO = %s"
                 cursor.execute(sql, emp_no)
                 logging.debug('retrieveDevInfo SUCCESS')
-
-
         finally:
             mysql_con.close()
 
-        result2 = cursor.fetchall()
+        result1 = cursor.fetchall()
+        logging.debug(result1)
 
+        return result1
 
-
-        logging.debug(result2)
-
-        return result2
-
+#프리 개발자 정보 저장
 class devSave(Resource):
     def post(self):
         params = request.get_json()
 
-        logging.debug("save start")
+        logging.debug("save Start")
         emp_no = request.form['emp_no']
         name = request.form['name']
         rank = request.form['rank']
@@ -313,28 +322,17 @@ class devSave(Resource):
         rmks = request.form['rmks']
         use_yn = 'Y'
 
-        logging.debug('--------------------------------------')
-        logging.debug(name)
-        logging.debug(rank)
-        logging.debug('--------------------------------------')
-
-        logging.debug('================== App Start ==================')
-        logging.debug(params)
-        logging.debug('================== App End ==================')
-
         mysql_con = pymysql.connect(host='218.151.225.142', port=3306, db='IFG_IMS', user='ims2', password='1234',
                                     charset='utf8')
 
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
-
-                if emp_no:
+                if emp_no: #개발자 정보 수정
                     logging.debug('emp_no exist')
                     logging.debug(emp_no)
-
-                else:
+                else: #개발자 정보 최초 등록
                     logging.debug('emp_no is null')
-                    logging.debug(emp_no)
+                    #개발자 사번 채번
                     sql = "SELECT CONCAT('F','_',( SELECT LPAD((SELECT NVL(SUBSTR(MAX(EMP_NO), 3)+1, 1) " \
                           "FROM TB_FRLC_DEVP_INFO),6,'0'))) AS EMP_NO"
                     cursor.execute(sql)
@@ -343,13 +341,31 @@ class devSave(Resource):
                     logging.debug(emp_no)
 
                 sql = "INSERT INTO TB_FRLC_DEVP_INFO (`EMP_NO`, " \
-                      "`EMP_NAME`, `EMP_RANK_CD`, `DEVP_GRD_CD`, `DEVP_TEL_NO`, `CNTC_DIVS_CD`, " \
-                      "`DEVP_BLCO`, `DEVP_BDAY`, `REG_EMP_NO`, `REG_DATE`, `CHG_EMP_NO`, `CHG_DATE`, `RMKS`, `DEVP_USE_YN`)  " \
-                      "VALUES(%s," \
-                      "%s, %s, %s, %s, %s, %s, %s, %s, NOW(), %s, NOW(), %s, %s)" \
+                                                     "`EMP_NAME`, " \
+                                                     "`EMP_RANK_CD`, " \
+                                                     "`DEVP_GRD_CD`, " \
+                                                     "`DEVP_TEL_NO`, " \
+                                                     "`CNTC_DIVS_CD`, " \
+                                                     "`DEVP_BLCO`, " \
+                                                     "`DEVP_BDAY`, " \
+                                                     "`REG_EMP_NO`, " \
+                                                     "`REG_DATE`, " \
+                                                     "`CHG_EMP_NO`, " \
+                                                     "`CHG_DATE`, " \
+                                                     "`RMKS`, " \
+                                                     "`DEVP_USE_YN`)  " \
+                      "VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, NOW(), %s, NOW(), %s, %s)" \
                       "ON DUPLICATE KEY UPDATE " \
-                      "EMP_NAME = %s, EMP_RANK_CD = %s, DEVP_GRD_CD = %s, DEVP_TEL_NO = %s, CNTC_DIVS_CD = %s, DEVP_BLCO = %s, " \
-                      "DEVP_BDAY = %s, CHG_EMP_NO = %s, CHG_DATE = NOW(), RMKS = %s"
+                                      "EMP_NAME = %s, " \
+                                      "EMP_RANK_CD = %s, " \
+                                      "DEVP_GRD_CD = %s, " \
+                                      "DEVP_TEL_NO = %s, " \
+                                      "CNTC_DIVS_CD = %s, " \
+                                      "DEVP_BLCO = %s, " \
+                                      "DEVP_BDAY = %s, " \
+                                      "CHG_EMP_NO = %s, " \
+                                      "CHG_DATE = NOW(), " \
+                                      "RMKS = %s"
 
                 cursor.execute(sql, (emp_no, name, rank, grd, tlno, divs, blco, bday, 'admin', 'admin', rmks, use_yn
                                      , name, rank, grd, tlno, divs, blco, bday, 'admin', rmks))
@@ -365,18 +381,15 @@ class devSave(Resource):
 
         return jsonify(retJson)
 
-
+#프리 개발자 정보 삭제
 class devDelete(Resource):
     def post(self):
-
         params = request.get_json()
 
-        logging.debug("delete start")
+        logging.debug("delete Start")
 
         name = request.form['name']
         bday = request.form['bday']
-
-        logging.debug('================== SQL START ==================')
 
         mysql_con = pymysql.connect(host='218.151.225.142', port=3306, db='IFG_IMS', user='ims2', password='1234',
                                     charset='utf8')
@@ -389,10 +402,8 @@ class devDelete(Resource):
                       "AND DEVP_BDAY = %s"
                 cursor.execute(sql, (name, bday))
                 mysql_con.commit()
-
         finally:
             mysql_con.close()
-
 
         retJson = {
             "status": 200,
@@ -401,6 +412,70 @@ class devDelete(Resource):
 
         return jsonify(retJson)
 
+#프로젝트 정보 수정 시 해당 프로젝트 정보 조회
+class retrievePrjInfo(Resource):
+    def get(self):
+        params = request.get_json()
+
+        logging.debug('retrievePrjInfo Start')
+        prj_cd = request.args.get('prj_cd')
+        logging.debug(prj_cd)
+
+        mysql_con = pymysql.connect(host='218.151.225.142', port=3306, db='IFG_IMS', user='ims2', password='1234',
+                                    charset='utf8')
+
+        try:
+            with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+                sql = "SELECT PRJ_NAME, " \
+                             "PRJ_CNCT_CD, " \
+                             "GNR_CTRO, " \
+                             "CTRO, " \
+                             "CNCT_AMT, " \
+                             "SLIN_BZDP, " \
+                             "JOB_DIVS_CD, " \
+                             "PGRS_STUS_CD, " \
+                             "RMKS " \
+                      "FROM TB_PRJ_INFO " \
+                      "WHERE PRJ_CD = %s"
+                cursor.execute(sql, prj_cd)
+                logging.debug('retrievePrjInfo SUCCESS')
+        finally:
+            mysql_con.close()
+
+        result1 = cursor.fetchall()
+        logging.debug(result1)
+
+        return result1
+
+#프로젝트 정보 수정 시 해당 프로젝트 요구 스킬 조회
+class retrieveReqSkil(Resource):
+    def get(self):
+        params = request.get_json()
+
+        logging.debug('retrieveReqSkil Start')
+        prj_cd = request.args.get('prj_cd')
+        logging.debug(prj_cd)
+
+        mysql_con = pymysql.connect(host='218.151.225.142', port=3306, db='IFG_IMS', user='ims2', password='1234',
+                                    charset='utf8')
+
+        try:
+            with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+                sql = "SELECT " \
+                      "PRJ_CD, SKIL_DIVS, SKIL_NAME " \
+                      "FROM TB_PRJ_REQ_SKIL A " \
+                      "WHERE PRJ_CD = %s;"
+                cursor.execute(sql, prj_cd)
+                logging.debug('retrieveReqSkil SUCCESS')
+        finally:
+            mysql_con.close()
+
+        result1 = cursor.fetchall()
+        logging.debug(result1)
+
+        return result1
+
+#프로젝트 저장
 class prjSave(Resource):
         def post(self):
 
@@ -414,36 +489,20 @@ class prjSave(Resource):
                 globals()[row] = request.form[row]
 
             prj_cd = request.form['prj_cd']
-            # prj_nm = request.form['prj_nm']
-            # cnct_cd = request.form['cnct_cd']
-            # gnr_ctro = request.form['gnr_ctro']
-            # ctro = request.form['ctro']
-            # cnct_amt = request.form['cnct_amt']
-            # slin_bzdp = request.form['slin_bzdp']
-            # job_divs = request.form['job_divs']
-            # pgrs_stus = request.form['pgrs_stus']
-            # req_skil_divs1 = request.form['req_skil_divs1']
-            # req_skil_name1 = request.form['req_skil_name1']
-            # rmks = request.form['rmks']
             use_yn = 'Y'
-
-            logging.debug('--------------------------------------')
-            logging.debug(prj_cd + prj_nm + cnct_cd + gnr_ctro + ctro + cnct_amt + slin_bzdp + job_divs + pgrs_stus)
-            logging.debug('--------------------------------------')
-
 
             mysql_con = pymysql.connect(host='218.151.225.142', port=3306, db='IFG_IMS', user='ims2', password='1234',
                                         charset='utf8')
 
             try:
                 with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
-
-                    if prj_cd:
+                    if prj_cd: #프로젝트 정보 수정
                         logging.debug('prj_cd exist')
                         logging.debug(prj_cd)
 
-                    else:
+                    else: #프로젝트 최초 등록
                         logging.debug('prj_cd is null')
+                        #프로젝트 코드 채번
                         sql = "SELECT CONCAT('PRJ','_',( SELECT LPAD((SELECT NVL(SUBSTR(MAX(PRJ_CD), 5)+1, 1) " \
                               "FROM TB_PRJ_INFO),6,'0'))) AS PRJ_CD"
                         cursor.execute(sql)
@@ -462,8 +521,14 @@ class prjSave(Resource):
                         prj_cd, prj_nm, cnct_cd, gnr_ctro, ctro, cnct_amt, slin_bzdp, job_divs, pgrs_stus, rmks, use_yn,
                         prj_nm, cnct_cd, gnr_ctro, ctro, cnct_amt, slin_bzdp, job_divs, pgrs_stus, rmks))
                     mysql_con.commit()
-
                     logging.debug('PRJ_INFO SUCCESS')
+
+                    #프로젝트 수정 시 요구 스킬 삭제 후 업데이트
+                    sql = "DELETE FROM TB_PRJ_REQ_SKIL " \
+                          "WHERE PRJ_CD = %s"
+                    cursor.execute(sql, prj_cd)
+                    mysql_con.commit()
+                    logging.debug('REQ_SKIL DELETE SUCCESS')
 
                     for i in range(1, int(trCount)+1):
                         req_skil_divs = request.form['req_skil_divs'+str(i)]
@@ -489,6 +554,7 @@ class prjSave(Resource):
 
             return jsonify(retJson)
 
+#프로젝트 정보 삭제
 class prjDelete(Resource):
         def post(self):
 
@@ -498,12 +564,6 @@ class prjDelete(Resource):
 
             prj_nm = request.form['prj_nm']
 
-            logging.debug('--------------------------------------')
-            logging.debug(prj_nm)
-            logging.debug('--------------------------------------')
-
-            logging.debug('================== SQL Start ==================')
-
             mysql_con = pymysql.connect(host='218.151.225.142', port=3306, db='IFG_IMS', user='ims2',
                                             password='1234',
                                             charset='utf8')
@@ -511,13 +571,16 @@ class prjDelete(Resource):
             try:
                 with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                     sql = "UPDATE TB_PRJ_INFO SET USE_YN = 'N' " \
-                              "WHERE PRJ_NM = %s"
+                          "WHERE PRJ_NM = %s"
                     cursor.execute(sql, (prj_nm))
                     mysql_con.commit()
-
                     logging.debug('PRJ_INFO SUCCESS')
 
-
+                    sql = "DELETE FROM TB_PRJ_REQ_SKIL " \
+                          "WHERE PRJ_CD = %s"
+                    cursor.execute(sql, prj_cd)
+                    mysql_con.commit()
+                    logging.debug('REQ_SKIL DELETE SUCCESS')
             finally:
                 mysql_con.close()
 
@@ -741,13 +804,17 @@ api.add_resource(Retrieve, '/retrieve')
 api.add_resource(Save, '/save')
 api.add_resource(mariaClass,'/mariaClass')
 
-# 개발자 등록
+# 개발자 조회
 api.add_resource(devMgmtSearch, '/devMgmtSearch')
+
+# 프리 개발자 등록
 api.add_resource(retrieveDevInfo, '/retrieveDevInfo')
 api.add_resource(devSave, '/devSave')
 api.add_resource(devDelete, '/devDelete')
 
 # 프로젝트 등록
+api.add_resource(retrievePrjInfo, '/retrievePrjInfo')
+api.add_resource(retrieveReqSkil, '/retrieveReqSkil')
 api.add_resource(prjSave, '/prjSave')
 api.add_resource(prjDelete, '/prjDelete')
 

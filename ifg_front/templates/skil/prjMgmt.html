@@ -72,25 +72,26 @@ tbody>tr>td:first-child:before {
                          font-size: 1.0em;
                          padding:20px;">
 
-                <p>프로젝트 코드<input type = "text" name = "prj_cd"></p>
+                <p style = "display:none">프로젝트 코드<br>
+                    <input type = "text" id = "prj_cd" name = "prj_cd"></p>
 
                 <p>*프로젝트 명<br>
-                    <input type = "text" name = "prj_nm" placeholder="input text"></p>
+                    <input type = "text" id = "prj_nm" name = "prj_nm" placeholder="input text"></p>
 
                 <p>*고객사 계약 코드<br>
-                    <input type = "text" name = "cnct_cd" placeholder="input text"></p>
+                    <input type = "text" id = "cnct_cd" name = "cnct_cd" placeholder="input text"></p>
 
                 <p>*원청사<br>
-                    <input type = "text" name = "gnr_ctro" placeholder="input text"></p>
+                    <input type = "text" id = "gnr_ctro" name = "gnr_ctro" placeholder="input text"></p>
 
                 <p>*계약사<br>
-                   <input type = "text" name = "ctro" placeholder="input text"></p>
+                    <input type = "text" id = "ctro" name = "ctro" placeholder="input text"></p>
 
                 <p>계약 금액<br>
-                    <input type = "text" name = "cnct_amt" placeholder="input text"></p>
+                    <input type = "text" id = "cnct_amt" name = "cnct_amt" placeholder="input text"></p>
 
                 <p>*매출 사업부<br>
-                    <select size ="1" style="width:200px" name = "slin_bzdp" class="col-sm-2">
+                    <select size ="1" style="width:200px" id = "slin_bzdp" name = "slin_bzdp" class="col-sm-2">
                         <option>선택</option>
                         <option value = "01">FIC</option>
                         <option value = "02">전자/제조</option>
@@ -102,7 +103,7 @@ tbody>tr>td:first-child:before {
                 </p>
 
                 <p>*업무 구분<br>
-                    <select size ="1" style="width:200px" name = "job_divs" class="col-sm-2">
+                    <select size ="1" style="width:200px" id = "job_divs" name = "job_divs" class="col-sm-2">
                         <option>선택</option>
                         <option value = "01">SM</option>
                         <option value = "02">SI</option>
@@ -110,7 +111,7 @@ tbody>tr>td:first-child:before {
                 </p>
 
                 <p>*진행 상태<br>
-                    <select size ="1" style="width:200px" name = "pgrs_stus" class="col-sm-2">
+                    <select size ="1" style="width:200px" id = "pgrs_stus" name = "pgrs_stus" class="col-sm-2">
                         <option>선택</option>
                         <option value = "01">예정</option>
                         <option value = "02">진행 중</option>
@@ -119,83 +120,109 @@ tbody>tr>td:first-child:before {
                 </p>
 
                 <p>비고<br>
-                    <input type = "text" name = "rmks" placeholder="input text"></p>
+                    <input type = "text" id = "rmks" name = "rmks" placeholder="input text"></p>
+                <br>
+                요구스킬  <button id = "addStaff" name="addStaff" class = "btn btn-primary style="float:right">추가</button>
+                <table id="reqSkil" class="table" style="margin-top: 20px;">
+                    <colgroup>
+                        <col width="20%"/>
+                        <col width="30%"/>
+                        <col width="35%"/>
+                        <col width="15%"/>
+                    </colgroup>
 
-<!--            </span>-->
-<!--        </div>-->
-
-
-
-
-
-        <br>
-<!--        <div id = "reqSkilInfo">-->
-        요구스킬  <button name="addStaff" class = "btn btn-primary style="float:right">추가</button>
-<!--                -->
-            <table id="reqSkil" class="table" style="margin-top: 20px;">
-                <colgroup>
-                    <col width="20%"/>
-                    <col width="30%"/>
-                    <col width="35%"/>
-                    <col width="15%"/>
-                </colgroup>
-
-                <thead>
-                <tr style = "float : center">
-                    <th>순번</th>
-                    <th>구분</th>
-                    <th>스킬명</th>
-                    <th></th>
-                </tr>
-                </thead>
-
-                <tbody id="reqSkilBody" name = "req_skil">
-                    <tr name="trSkil">
-                        <td id="staff_name"></td>
-                        <td><select size="1" class="form-control" id="req_skil_divs1" name="req_skil_divs1" onchange="skil_chg(1)">
-                            <option value = "00">선택</option>
-                            <option value = "01">DB</option>
-                            <option value = "02">LANGUAGE</option>
-                            <option value = "03">WEB</option>
-                            <option value = "04">MIDWARE</option>
-                            <option value = "05">Framework</option>
-                        </select></td>
-                        <td><select class="form-control" id = "req_skil_name1" name = "req_skil_name1"></select></td>
+                    <thead>
+                    <tr style = "float : center">
+                        <th>순번</th>
+                        <th>구분</th>
+                        <th>스킬명</th>
+                        <th></th>
                     </tr>
-                </tbody>
-            </table>
+                    </thead>
 
-            <p>trCount<input type = "text" id = "trCount" name = "trCount"></p>
+                    <tbody id="reqSkilBody" name = "req_skil">
+                        <tr name="trSkil">
+                            <td id="staff_name"></td>
+                            <td><select size="1" class="form-control" id="req_skil_divs1" name="req_skil_divs1" onchange="skil_chg(1)">
+                                <option value = "00">선택</option>
+                                <option value = "01">DB</option>
+                                <option value = "02">LANGUAGE</option>
+                                <option value = "03">WEB</option>
+                                <option value = "04">MIDWARE</option>
+                                <option value = "05">Framework</option>
+                            </select></td>
+                            <td><select class="form-control" id = "req_skil_name1" name = "req_skil_name1"></select></td>
+                        </tr>
+                    </tbody>
+                </table>
 
-
+                <p style = "display:none">trCount<br>
+                    <input type = "text" id = "trCount" name = "trCount"></p>
+            </span>
         </div>
 
         <hr>
-            <button type="button" id="modal_close_btn">취소</button>
-            <button type="button" id="modal_save_btn">저장</button>
             <button type="button" id="modal_delete_btn" style="color:red">삭제</button>
-
+            <button type="button" id="modal_save_btn">저장</button>
+            <button type="button" id="modal_close_btn">취소</button>
         <br>
      
     </div>
 
-
-
-   
     <div class="modal_layer"></div>
 </div>
 
-
-
-
-
-
 <script>
 
-     $(document).ready(function() {
+    $(document).ready(function() {
+       $('#prj_cd').val('PRJ_000010');
+       var prj_cd = $('#prj_cd').val();
 
-     });
+       if(prj_cd != null){
+           console.log('prj_cd is not null');
+           retrievePrjInfo();
+           retrieveReqSkil();
+       } else{
+           console.log('prj_cd is null');
+       }
+    });
 
+    function retrievePrjInfo(){
+        $('#projectInfo').ajaxCall({
+            method : 'GET',
+            url : "{% url 'skil_api:retrievePrjInfo' %}",
+            callbackFn : function(data){
+                $('#prj_nm').val(data[0].PRJ_NAME);
+                $('#cnct_cd').val(data[0].PRJ_CNCT_CD);
+                $('#gnr_ctro').val(data[0].GNR_CTRO);
+                $('#ctro').val(data[0].CTRO);
+                $('#cnct_amt').val(data[0].CNCT_AMT);
+                $('#slin_bzdp').val(data[0].SLIN_BZDP);
+                $('#job_divs').val(data[0].JOB_DIVS_CD);
+                $('#pgrs_stus').val(data[0].PGRS_STUS_CD);
+                $('#rmks').val(data[0].RMKS);
+
+            }
+        });
+    };
+
+    function retrieveReqSkil(){
+        $('#projectInfo').ajaxCall({
+            method : 'GET',
+            url : "{% url 'skil_api:retrieveReqSkil' %}",
+            callbackFn : function(data){
+                var length = data.length;
+                for(var i=0; i<length; i++){
+                    if(i != length-1){
+                        $("#addStaff").trigger("click");
+                    }
+                    $('#req_skil_divs'+(i+1)).val(data[i].SKIL_DIVS).trigger('change');
+                    $('#req_skil_name'+(i+1)).val(data[i].SKIL_NAME);
+                }
+            }
+        });
+
+    };
 
     document.getElementById("modal_close_btn").onclick = function() {
         window.history.back();
@@ -271,7 +298,6 @@ tbody>tr>td:first-child:before {
 
     function skil_chg(a){
         console.log('스킬 변경');
-        console.log(a);
         var DB = ["Oracle","MySql","MsSql"];
 
         var Language = ["C","C++","C#","JAVA","Python"];
@@ -284,7 +310,6 @@ tbody>tr>td:first-child:before {
 
 
         var selectSkill = $("#req_skil_divs"+a).val();
-        console.log(selectSkill);
 
         var changeSkill;
         var changeSkillValue;
@@ -314,7 +339,6 @@ tbody>tr>td:first-child:before {
 
         for(var count = 0; count < changeSkill.length; count++){
                         var option = $("<option>"+changeSkill[count]+"</option>");
-                        console.log(option);
                         $('#req_skil_name'+a).append(option);
                     }
 
