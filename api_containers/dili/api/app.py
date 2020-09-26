@@ -281,6 +281,96 @@ class wrkTimeInfoByEml(Resource): # Mariadb 연결 진행
 
         return json.dumps(result2, indent=4, cls=DateTimeEncoder)
 
+class wrkApvlReq(Resource): # Mariadb 연결 진행
+    def get(self):
+
+        data = request.get_json()
+
+        #requirements pymysql import 후 커넥트 사용
+        mysql_con = pymysql.connect(host='218.151.225.142', port=3306, db='IFG_IMS', user='ims2', password='1234',
+                                        charset='utf8')
+        try:
+            with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+                #쿼리문 실행
+                sql = "SELECT *, CASE WHEN HLDY_WRK_TM != 000000 AND NGHT_WRK_TM = 000000 THEN '휴일근무' " \
+                    + "               WHEN HLDY_WRK_TM = 000000 AND NGHT_WRK_TM != 000000 THEN '야근근무' " \
+                    + "               ELSE '' END WRK_TYPE " \
+                    + "  FROM TB_WRK_TM_MGMT_M WHERE EMP_EMAL_ADDR = '" + data["email"] + "'"
+                logging.debug("wrkApvlReq SQL문" + sql)
+                cursor.execute(sql)
+
+        finally:
+            mysql_con.close()
+
+        result2 = cursor.fetchall()
+        for row in result2:
+            logging.debug('====== row====')
+            logging.debug(row)
+            logging.debug('===============')
+        array = list(result2)  # 결과를 리스트로
+
+        return json.dumps(result2, indent=4, cls=DateTimeEncoder)
+    
+class saveApvlReq(Resource): # Mariadb 연결 진행
+    def post(self):
+
+        data = request.get_json()
+
+        #requirements pymysql import 후 커넥트 사용
+        mysql_con = pymysql.connect(host='218.151.225.142', port=3306, db='IFG_IMS', user='ims2', password='1234',
+                                        charset='utf8')
+        try:
+            with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+                #쿼리문 실행
+                sql = "INSERT INTO TB_APVL_REQ_MGMT_M (EMP_EMAL_ADDR)"\
+                    + "VALUES(%s)"
+                logging.debug("saveApvlReq SQL문" + sql)
+                cursor.execute(sql, data["email"] )
+                mysql_con.commit()
+
+        finally:
+            mysql_con.close()
+
+            retJson = {
+                "status": 200,
+                "msg": "Data has been saved successfully"
+            }
+
+        return jsonify(retJson)
+    
+class apvlReqHist(Resource): # Mariadb 연결 진행
+    def get(self):
+
+        data = request.get_json()
+
+        #requirements pymysql import 후 커넥트 사용
+        mysql_con = pymysql.connect(host='218.151.225.142', port=3306, db='IFG_IMS', user='ims2', password='1234',
+                                        charset='utf8')
+        try:
+            with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+                # 쿼리문 실행
+                sql = "SELECT *, CASE WHEN APVL_REQ_DIVS = '01' THEN '휴일근무' " \
+                    + "               WHEN APVL_REQ_DIVS = '02' THEN '야근근무' " \
+                    + "               WHEN APVL_REQ_DIVS = '03' THEN '연차결재'  " \
+                    + "               ELSE '' END APVL_REQ_NM  " \
+                    + "        , CASE WHEN TH1_APRV_STUS != '' AND TH2_APRV_STUS = '' THEN '미승인'" \
+                    + "               WHEN TH1_APRV_STUS != '' AND TH2_APRV_STUS != '' THEN '승인'" \
+                    + "               ELSE '미승인' END APRV_STUS_NM" \
+                    + "  FROM TB_APVL_REQ_MGMT_M WHERE EMP_EMAL_ADDR = '" + data["email"] + "'"
+                logging.debug("apvlReqHist SQL문" + sql)
+                cursor.execute(sql)
+
+        finally:
+            mysql_con.close()
+
+        result2 = cursor.fetchall()
+        for row in result2:
+            logging.debug('====== row====')
+            logging.debug(row)
+            logging.debug('===============')
+        array = list(result2)  # 결과를 리스트로
+
+        return json.dumps(result2, indent=4, cls=DateTimeEncoder)
 
 api.add_resource(Hello, '/hello')
 api.add_resource(Register, '/register')
@@ -290,6 +380,9 @@ api.add_resource(Save, '/save')
 api.add_resource(mariatestDB,'/mariatestDB') #api 선언
 api.add_resource(wrkTimeInfoByEml,'/wrkTimeInfoByEml') #api 선언
 api.add_resource(yryMgmt,'/yryMgmt') #api 선언
+api.add_resource(wrkApvlReq,'/wrkApvlReq') #api 선언
+api.add_resource(saveApvlReq,'/saveApvlReq') #api 선언
+api.add_resource(apvlReqHist,'/apvlReqHist') #api 선언
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5006, debug=True)

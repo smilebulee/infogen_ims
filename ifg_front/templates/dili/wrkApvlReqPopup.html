@@ -8,8 +8,100 @@
         <script type="text/javascript">
         $(document).ready(function(){
 
+            /*********************************************************************
+            *   Session Email 값 기준 근무 결재요청 리스트 조회
+            *********************************************************************/
+            var param = {
+                "email" : 'ishwang@ingofen.co.kr'                                   // 추후 Session Value 연동.
+            }
+
+            $.ajaxCall( param, {
+                 'method' : 'GET',
+                 'url' : "{% url 'dili_api:getWrkApvlReq' %}",
+                 'dataType' : 'json',
+                 'data' : JSON.stringify(param),
+                 'async' : false,
+                 'callbackFn' : function(data){
+
+                    // 리턴
+                    wrkApvlGrd(data);
+                 }
+            });
+
+	        /*********************************************************************
+            *   근무결재요청 Grid 생성
+            *********************************************************************/
+            function wrkApvlGrd(data){
+
+                var wrkApvlTable = '<table class="table table-bordered table-responsive-md text-center">';
+                wrkApvlTable += '<thead>';
+                wrkApvlTable += '<tr>';
+                wrkApvlTable += '<th class="text-center">체크박스</th>';
+                wrkApvlTable += '<th class="text-center">순번</th>';
+                wrkApvlTable += '<th class="text-center">일자</th>';
+                wrkApvlTable += '<th class="text-center">구분</th>';
+                wrkApvlTable += '</tr>';
+                wrkApvlTable += '</thead>';
+                wrkApvlTable += '<tbody>';
+
+                if(data.length > 0) {
+                    for(var i = 0; i < data.length; i++){
+
+                        wrkApvlTable += '<tr onclick="onclickEvt()">';
+                        wrkApvlTable += '<td id="chkBox" class="pt-3-half">'+data[i].EMP_EMAL_ADDR+'</td>';
+                        wrkApvlTable += '<td id="no" class="pt-3-half">'+i+'</td>';
+                        wrkApvlTable += '<td id="wrkDt" class="pt-3-half">'+data[i].WRK_DT+'</td>';
+                        wrkApvlTable += '<td id="wrkType" class="pt-3-half">'+data[i].WRK_TYPE+'</td>';
+                        wrkApvlTable += '</tr>';
+
+                    }
+                }
+
+
+                wrkApvlTable += '</tbody>';
+                wrkApvlTable += '</table>';
+
+                document.getElementById('grd_wrkApvlReq').innerHTML = wrkApvlTable;
+            }
 
         });
+
+        function onclickEvt() {
+            var tr = $(this);
+            //alert(tr);
+			//var td = tr.children();
+
+        }
+
+        function btnReqEvt() {
+            var param = {
+                "email" : 'ishwang@ingofen.co.kr',                                   // 추후 Session Value 연동.
+                "apvlReqDivs" : $("#sbx_type option:selected").val(),    //1: 야근, 2:연차
+                "wrkDt" : $("#ipt_wrkDt").val(),
+                "wrkTme" : "000000",
+                "wrkReqRsn": $("#txa_reqRsn").val(),
+                //"apvlReqDt": ,
+                //"th1AprvStus":,
+                //"th2AprvStus":,
+                //apvlLastAprvDt:
+            }
+
+            $.ajaxCall( param, {
+                 method : 'POST',
+                 'url' : '/dili/saveApvlReq/post',
+                 'dataType' : 'json',
+                 'data' : JSON.stringify(param),
+                 'async' : false,
+                 'callbackFn' : function(data){
+
+                    // 리턴
+
+                 }
+            });
+
+        }
+
+
 
     </script>
         <div class="row">
@@ -32,8 +124,8 @@
                                 </button>
                             </h2>
                         </div>
-                        <div style="position: relative;height:400px;" id="grid-parent">
-                            <div id="grd_wrkApvlReq" style="height: 100%;">grid</div>
+                        <div style="position: relative;" id="grid-parent">
+                            <div id="grd_wrkApvlReq">grid</div>
                         </div>
 
                         <div id="col_wrkApvlReq" class="collapse show" aria-labelledby="head_wrkApvlReq" data-parent="#grp_wrkApvlReq">
@@ -66,7 +158,7 @@
                             <div class="card-body flex-height d-flex m-0 p-2">
                                 <div class="align-self-start align-self-center mr-3"></div>
                                 <div class="align-self-center mr-7">
-                                    <button class="btn btn-primary" id="btn_req">요청</button>
+                                    <button class="btn btn-primary" id="btn_req" onclick="btnReqEvt()">요청</button>
                                 </div>
                             </div>
                         </div>
