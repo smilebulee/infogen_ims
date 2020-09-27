@@ -1,0 +1,82 @@
+{% extends 'common/base.html' %}
+
+{% block content %}
+    <script type="text/javascript">
+        $(document).ready(function(){
+                console.log('???')
+                $.ajaxCall({}, {
+                 method : 'get',
+                 url : "{% url 'dili_api:getMaria' %}",
+                 async : false,
+                 callbackFn : function(data){
+                    console.log('call')
+                    data[0]
+                    $('#result').text('seq : '+data[0].SEQ + ' / RMKS : '+data[0].RMKS)
+                 }
+            });
+        });
+
+
+    </script>
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="mb-4" role="alert">
+                    <h5>
+                        <b>직원관리</b>
+                    </h5>
+                </div>
+
+                <div class="accordion mb-4" id="grp_search">
+                    <div class="card">
+                        <div class="card-header p-0" id="head_search">
+                            <h2 class="mb-4">
+                                <div class="mb-4" style="color: black; text-align: left; font-size: small;">
+                                   [직원검색]
+                                </div>
+                            </h2>
+                        </div>
+                        <div id="col_search" class="collapse show" aria-labelledby="head_search" data-parent="#grp_search">
+                            <div class="card-body flex-height d-flex m-0 p-2">
+                                <div class="align-self-start align-self-center mr-3">E-mail</div>
+                                <div class="align-self-center mr-3">
+                                    <input type="text" class="form-control" id="ipt_searchEmail" name="ipt_searchEmail" placeholder="E-mail을 입력해주세요." maxlength="10"/>
+                                </div>
+                                <div class="align-self-end align-self-center">
+                                    <button class="btn btn-primary" id="searchBtn">조회</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <table class="table table-striped" style="text-align: center; border: 1px solid #dddddd">
+                    <thead>
+                            <tr>
+                                <th style="background-color: #eeeeee; text-align: center;" width ="10%">번호</th>
+                                <th style="background-color: #eeeeee; text-align: center;" width ="40%">E-Mail</th>
+                                <th style="background-color: #eeeeee; text-align: center;" width ="20%">이름</th>
+                                <th style="background-color: #eeeeee; text-align: center;" width ="30%">연락처</th>
+                            </tr>
+                    </thead>
+                    <tbody>
+
+                    </tbody>
+                </table>
+                <center>
+                # 페이징 구현하기
+                    <a href ="" class="btn btn-link text-dark btn-arrow-left">
+                        [이전]
+                    </a>
+
+                    #1 #2 .. #10 최대
+
+                    <a href="" class="btn btn-link text-dark btn-arrow-right">
+                        [다음]
+                    </a>
+                </center>
+
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

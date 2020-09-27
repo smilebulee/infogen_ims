@@ -24,6 +24,7 @@ urlpatterns = [
     url(r'^saveApvlReq/post', views.saveApvlReq, name='saveApvlReq'),
     url(r'^apvlReqHist/', views.apvlReqHist.as_view(), name='apvlReqHist'),
     url(r'^getApvlReqHist/', views.getApvlReqHist, name='getApvlReqHist'),
+    url(r'^empMgmt/', views.empMgmt.as_view(), name='empMgmt'),
 
 
 ]
