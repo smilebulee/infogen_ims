@@ -311,15 +311,13 @@ class devSave(Resource):
         params = request.get_json()
 
         logging.debug("save Start")
+
+        for row in request.form:
+            logging.debug(row + ':' + request.form[row])
+            globals()[row] = request.form[row]
+
         emp_no = request.form['emp_no']
-        name = request.form['name']
-        rank = request.form['rank']
-        grd = request.form['grd']
-        tlno = request.form['tlno1'] + '-' + request.form['tlno2'] + '-' + request.form['tlno3']
-        divs = request.form['divs']
-        blco = request.form['blco']
-        bday = request.form['bday']
-        rmks = request.form['rmks']
+        tel_no = request.form['tel_no1'] + '-' + request.form['tel_no2'] + '-' + request.form['tel_no3']
         use_yn = 'Y'
 
         mysql_con = pymysql.connect(host='218.151.225.142', port=3306, db='IFG_IMS', user='ims2', password='1234',
@@ -367,8 +365,8 @@ class devSave(Resource):
                                       "CHG_DATE = NOW(), " \
                                       "RMKS = %s"
 
-                cursor.execute(sql, (emp_no, name, rank, grd, tlno, divs, blco, bday, 'admin', 'admin', rmks, use_yn
-                                     , name, rank, grd, tlno, divs, blco, bday, 'admin', rmks))
+                cursor.execute(sql, (emp_no, emp_name, emp_rank, devp_grd, tel_no, cntc_divs, devp_blco, devp_bday, 'admin', 'admin', rmks, use_yn
+                                     , emp_name, emp_rank, devp_grd, tel_no, cntc_divs, devp_blco, devp_bday, 'admin', rmks))
                 mysql_con.commit()
 
         finally:
@@ -388,8 +386,8 @@ class devDelete(Resource):
 
         logging.debug("delete Start")
 
-        name = request.form['name']
-        bday = request.form['bday']
+        emp_name = request.form['emp_name']
+        devp_bday = request.form['devp_bday']
 
         mysql_con = pymysql.connect(host='218.151.225.142', port=3306, db='IFG_IMS', user='ims2', password='1234',
                                     charset='utf8')
@@ -400,7 +398,7 @@ class devDelete(Resource):
                       "WHERE 1=1 " \
                       "AND EMP_NAME = %s " \
                       "AND DEVP_BDAY = %s"
-                cursor.execute(sql, (name, bday))
+                cursor.execute(sql, (emp_name, devp_bday))
                 mysql_con.commit()
         finally:
             mysql_con.close()
@@ -798,6 +796,34 @@ class prjInpuSave(Resource):
 
         return jsonify(retJson)
 
+#공통 코드 조회
+class retrieveCmmCd(Resource):
+    def get(self):
+        params = request.get_json()
+
+        logging.debug('retrieveCmmCd Start')
+
+        grp_id = request.args.get('grp_id')
+
+        mysql_con = pymysql.connect(host='218.151.225.142', port=3306, db='IFG_IMS', user='ims2', password='1234',
+                                    charset='utf8')
+
+        try:
+            with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+                sql = "SELECT " \
+                      "CMM_CD, CMM_CD_NAME " \
+                      "FROM TB_CMM_CD_DETL A " \
+                      "WHERE CMM_CD_GRP_ID = %s;"
+                cursor.execute(sql, grp_id)
+                logging.debug('retrieveCmmCd SUCCESS')
+        finally:
+            mysql_con.close()
+
+        result = cursor.fetchall()
+        logging.debug(result)
+
+        return result
+
 api.add_resource(Hello, '/hello')
 api.add_resource(Register, '/register')
 api.add_resource(Retrieve, '/retrieve')
@@ -827,6 +853,9 @@ api.add_resource(prjInpuSave, '/prjInpuSave')
 # 스킬관리
 api.add_resource(skilMgmtDetl, '/skilMgmtDetl')
 api.add_resource(skilMgmtSearch, '/skilMgmtSearch')
+
+#공통 코드 조회
+api.add_resource(retrieveCmmCd, '/retrieveCmmCd')
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5003, debug=True)

@@ -108,19 +108,10 @@ def devSave(request):
     param = json.loads(request.POST['param'])
 
     datas = {
-        'emp_no': param['emp_no'],
-        'name' : param['name'],
-        'rank' : param['rank'],
-        'grd'  : param['grd'],
-        'tlno1': param['tlno1'],
-        'tlno2': param['tlno2'],
-        'tlno3': param['tlno3'],
-        'divs' : param['divs'],
-        'blco' : param['blco'],
-        'bday' : param['bday'],
-        'rmks' : param['rmks'],
-
     }
+
+    for row in param:
+        datas.setdefault(row, param[row])
 
     r = requests.post('http://skil_api:5003/devSave', data=datas)
     logger.info(r)
@@ -133,17 +124,10 @@ def devDelete(request):
     param = json.loads(request.POST['param'])
 
     datas = {
-        'name' : param['name'],
-        'rank' : param['rank'],
-        'grd'  : param['grd'],
-        'tlno1': param['tlno1'],
-        'tlno2': param['tlno2'],
-        'tlno3': param['tlno3'],
-        'divs' : param['divs'],
-        'blco' : param['blco'],
-        'bday' : param['bday'],
-        'rmks' : param['rmks'],
     }
+
+    for row in param:
+        datas.setdefault(row, param[row])
 
     r = requests.post('http://skil_api:5003/devDelete', data=datas)
     logger.info(r)
@@ -154,6 +138,8 @@ def devDelete(request):
 
 def retrievePrjInfo(request):
     param = json.loads(request.GET['param'])
+
+    logger.info(param)
 
     params = {
         'prj_cd': param['prj_cd'],
@@ -370,5 +356,20 @@ def prjInpuSave(request):
         r = requests.post('http://skil_api:5003/prjInpuSave', data=datas)
     return JsonResponse(r.json())
 
+#공통 코드 조회
+def retrieveCmmCd(request):
+    param = json.loads(request.GET['param'])
+    logger.info('param')
+    logger.info(param)
 
+    params = {
+        'grp_id': param['grp_id'],
+    }
+
+    r = requests.get('http://skil_api:5003/retrieveCmmCd', params=params)
+    logger.info(r)
+    logger.info(r.text)
+    logger.info(r.json())
+
+    return JsonResponse(r.json(), safe=False)
 
