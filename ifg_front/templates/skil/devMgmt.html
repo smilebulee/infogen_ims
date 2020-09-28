@@ -42,7 +42,6 @@ history
 
             }
 
-
             $('#searchBtn').click(function(){
                 getGridList(1);
             });
@@ -50,14 +49,14 @@ history
             /* 개발자 등록 선택 */
            $('#devSaveBtn').click(function(){
 
-                //if(firstGrid.getList("selected").length == 0){
-                    //alertMsg("선택된 행이 없습니다.");
-                    //return false;
-                //} else{
-                    //alertMsg("(작성예정)선택된 행 값 넘겨주기");
-                    //var empNo = firstGrid.getList("selected")[0].EMP_NO;
-                    //location.href = '/skil/devEnrl?emp_No='+empNo
-                //}
+                if(firstGrid.getList("selected").length == 0){
+                    location.href = '/skil/devEnrl'
+                } else{
+                    alertMsg("(작성예정)선택된 행 값 넘겨주기");
+                    var empNo = firstGrid.getList("selected")[0].EMP_NO;
+                    console.log(empNo);
+                    location.href = '/skil/devEnrl?emp_No='+empNo
+                }
             });
         });
     </script>
@@ -89,8 +88,9 @@ history
                                 <label class="col-sm-1" style="max-width:50px;">구분</label>
                                 <select class="col-sm-2" name="devpDivsCd">
                                     <option selected></option>
-                                    <option value="1">정규직</option>
-                                    <option value="2">프리랜서</option>
+                                    <option value="01">정규직</option>
+                                    <option value="02">프리랜서</option>
+                                    <option value="03">외주</option>
                                 </select>
                             </div>
                         </div>
