@@ -5,7 +5,6 @@
 
  <style>
 #modal {
-<!--  display:none;-->
   position:relative;
   width:100%;
   height:100%;
@@ -68,39 +67,30 @@
                     <input type = "text" id = "emp_no" name = "emp_no"></p>
 
                 <p>*성명<br>
-                    <input type = "text" id = "name" name = "name" placeholder="input text"></p>
+                    <input type = "text" id = "emp_name" name = "emp_name" placeholder="input text"></p>
 
                 <p>직급<br>
-                    <select size ="1" width="50px" id = "rank" name = "rank" class = "col-sm-2">
-                        <option>선택</option>
-                        <option value = "04">책임</option>
-                        <option value = "05">선임</option>
-                        <option value = "06">사원</option>
+                    <select size ="1" width="50px" id = "emp_rank" name = "emp_rank" class = "col-sm-2">
                     </select></p>
 
                 <p>*등급<br>
-                    <select size ="1" width="50px" id = "grd" name = "grd" class = "col-sm-2">
-                        <option value = "01">초</option>
-                        <option value = "02">중</option>
-                        <option value = "03">고</option>
-                    </select></p>
-
-                <p>*구분<br>
-                    <select size ="1" width="50px" id = "divs" name = "divs" class="col-sm-2">
-                        <option value = "02">프리</option>
-                        <option value = "03">외주</option>
+                    <select size ="1" width="50px" id = "devp_grd" name = "devp_grd" class = "col-sm-2">
                     </select></p>
 
                 <p>*연락처<br>
-                        <input type = "text" id = "tlno1" name = "tlno1" style = "width : 20%" placeholder="000" size="6">
-                        - <input type = "text" id = "tlno2" name = "tlno2" style = "width : 20%" placeholder="0000" size="6">
-                        - <input type = "text" id = "tlno3" name = "tlno3" style = "width : 20%" placeholder="0000" size="6"></p>
+                        <input type = "text" id = "tel_no1" name = "tel_no1" style = "width : 20%" placeholder="000" size="6">
+                        - <input type = "text" id = "tel_no2" name = "tel_no2" style = "width : 20%" placeholder="0000" size="6">
+                        - <input type = "text" id = "tel_no3" name = "tel_no3" style = "width : 20%" placeholder="0000" size="6"></p>
+
+                <p>*구분<br>
+                    <select size ="1" width="50px" id = "cntc_divs" name = "cntc_divs" class="col-sm-2">
+                    </select></p>
 
                 <p>*소속사<br>
-                    <input type = "text" id = "blco" name = "blco" placeholder="input text"></p>
+                    <input type = "text" id = "devp_blco" name = "devp_blco" placeholder="input text"></p>
 
                 <p>*생년월일<br>
-                    <input type = "date" id = "bday" name = "bday" style = "width : 50%"></p>
+                    <input type = "date" id = "devp_bday" name = "devp_bday" style = "width : 50%"></p>
 
                 <p>비고<br>
                     <input type = "text" id = "rmks" name = "rmks" placeholder="input text" style="width:500px"></p>
@@ -110,24 +100,31 @@
             </div>
             <hr>
 
-                    <button type="button" id="modal_close_btn">취소</button>
-                    <button type="button" id="modal_save_btn">저장</button>
-                    <button type="button" id="modal_delete_btn" style="color:red">삭제</button>
+                    <button type="button" id="closeBtn">취소</button>
+                    <button type="button" id="saveBtn">저장</button>
+                    <button type="button" id="deleteBtn" style="color:red">삭제</button>
     </div>
 
 <script>
     $(document).ready(function() {
-        temp=location.href.split("?");
-        data = temp[1].split("=");
-        emp_no = data[1];
-        $('#emp_no').val(emp_no);
+        emp_no = $('#emp_no').val();
+        console.log(emp_no);
 
-        if(emp_no != null){
+        if(emp_no != ""){
             console.log('emp_no is not null');
+            temp=location.href.split("?");
+            data = temp[1].split("=");
+            emp_no = data[1];
+            $('#emp_no').val(emp_no);
+
             retrieveDevInfo();
         } else{
             console.log('emp_no is null')
         }
+        <!--    공통코드 조회    -->
+        retrieveCmmCd('emp_rank', 'EMP_RANK_CD');
+        retrieveCmmCd('devp_grd', 'DEVP_GRD_CD');
+        retrieveCmmCd('cntc_divs', 'JOB_DIVS_CD');
     });
 
     function retrieveDevInfo(){
@@ -135,31 +132,25 @@
                  method : 'GET',
                  url : "{% url 'skil_api:retrieveDevInfo' %}",
                  callbackFn : function(data){
-                    $('#name').val(data[0].EMP_NAME);
-                    $('#rank').val(data[0].EMP_RANK_CD);
-                    $('#grd').val(data[0].DEVP_GRD_CD);
-                    var tlno = data[0].DEVP_TEL_NO.split('-');
-                    var tlno1 = tlno[0];
-                    var tlno2 = tlno[1];
-                    var tlno3 = tlno[2];
-                    $('#tlno1').val(tlno1);
-                    $('#tlno2').val(tlno2);
-                    $('#tlno3').val(tlno3);
-                    $('#divs').val(data[0].CNTC_DIVS_CD);
-                    $('#blco').val(data[0].DEVP_BLCO);
-                    $('#bday').val(data[0].DEVP_BDAY);
+                    $('#emp_name').val(data[0].EMP_NAME);
+                    $('#emp_rank').val(data[0].EMP_RANK_CD);
+                    $('#devp_grd').val(data[0].DEVP_GRD_CD);
+                    var tel_no = data[0].DEVP_TEL_NO.split('-');
+                    var tel_no1 = tel_no[0];
+                    var tel_no2 = tel_no[1];
+                    var tel_no3 = tel_no[2];
+                    $('#cntc_divs').val(data[0].CNTC_DIVS_CD);
+                    $('#tel_no1').val(tel_no1);
+                    $('#tel_no2').val(tel_no2);
+                    $('#tel_no3').val(tel_no3);
+                    $('#devp_blco').val(data[0].DEVP_BLCO);
+                    $('#devp_bday').val(data[0].DEVP_BDAY);
                     $('#rmks').val(data[0].RMKS);
                  }
             });
     };
 
-
-    document.getElementById("modal_close_btn").onclick = function() {
-        window.history.back();
-    }
-
-
-     $('#modal_save_btn').click(function(){
+     $('#saveBtn').click(function(){
             console.log('저장');
             confirmMsg('저장 하시겠습니까?', function(){
                     $('#developerEnrollment').ajaxCall({
@@ -173,7 +164,7 @@
             });
      });
 
-     $('#modal_delete_btn').click(function(){
+     $('#deleteBtn').click(function(){
             console.log('삭제');
             confirmMsg('삭제 하시겠습니까?', function(){
                     $('#developerEnrollment').ajaxCall({
@@ -186,6 +177,31 @@
 
             });
      });
+
+     document.getElementById("closeBtn").onclick = function() {
+        window.history.back();
+    }
+
+     function retrieveCmmCd(sbx_id, grp_id){
+        var param = {
+            "sbx_id" : sbx_id,
+            "grp_id" : grp_id
+        }
+
+         $.ajaxCall( param, {
+                 method : 'GET',
+                 'url' : '/skil/retrieveCmmCd/',
+                 'dataType' : 'json',
+                 'data' : JSON.stringify(param),
+                 'async' : false,
+                 'callbackFn' : function(data){
+                    for(var i = 0; i < data.length; i++){
+                        var option = $("<option value = "+data[i].CMM_CD+">"+data[i].CMM_CD_NAME+"</option>");
+                        $('#'+sbx_id).append(option);
+                    }
+                 }
+            });
+     };
 
 </script>
 
