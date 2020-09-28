@@ -2,7 +2,6 @@
 
 {% block content %}
 
-
  <style>
 #modal {
   position:relative;
@@ -52,11 +51,9 @@
   z-index:-1;
 }
 
-
 </style>
 
 <div id="modal">
-
     <div class="modal_content">
             <h2 style = "font-weight:bold"><U>개발자 등록</U></h2><br>
         <div id = developerEnrollment>
@@ -94,12 +91,9 @@
 
                 <p>비고<br>
                     <input type = "text" id = "rmks" name = "rmks" placeholder="input text" style="width:500px"></p>
-
-
             </span>
             </div>
             <hr>
-
                     <button type="button" id="closeBtn">취소</button>
                     <button type="button" id="saveBtn">저장</button>
                     <button type="button" id="deleteBtn" style="color:red">삭제</button>
@@ -107,18 +101,17 @@
 
 <script>
     $(document).ready(function() {
-        emp_no = $('#emp_no').val();
-        console.log(emp_no);
-
-        if(emp_no != ""){
-            console.log('emp_no is not null');
+        var a = location.href.indexOf('emp_No');
+        <!--   개발자 정보 수정    -->
+        if(a != -1){
+            console.log('emp_no : '+ emp_no);
             temp=location.href.split("?");
             data = temp[1].split("=");
             emp_no = data[1];
             $('#emp_no').val(emp_no);
 
             retrieveDevInfo();
-        } else{
+        } else{  <!--   개발자 최초 등록    -->
             console.log('emp_no is null')
         }
         <!--    공통코드 조회    -->
@@ -150,39 +143,7 @@
             });
     };
 
-     $('#saveBtn').click(function(){
-            console.log('저장');
-            confirmMsg('저장 하시겠습니까?', function(){
-                    $('#developerEnrollment').ajaxCall({
-                    method : 'POST',
-                    url : '/skil/devSave/post',
-                    callbackFn : function(data){
-                       g_toast.push('저장 되었습니다.');
-                    }
-                });
-
-            });
-     });
-
-     $('#deleteBtn').click(function(){
-            console.log('삭제');
-            confirmMsg('삭제 하시겠습니까?', function(){
-                    $('#developerEnrollment').ajaxCall({
-                    method : 'POST',
-                    url : '/skil/devDelete/post',
-                    callbackFn : function(data){
-                       g_toast.push('삭제 되었습니다.');
-                    }
-                });
-
-            });
-     });
-
-     document.getElementById("closeBtn").onclick = function() {
-        window.history.back();
-    }
-
-     function retrieveCmmCd(sbx_id, grp_id){
+    function retrieveCmmCd(sbx_id, grp_id){
         var param = {
             "sbx_id" : sbx_id,
             "grp_id" : grp_id
@@ -202,6 +163,36 @@
                  }
             });
      };
+
+    $('#saveBtn').click(function(){
+        console.log('저장');
+        confirmMsg('저장 하시겠습니까?', function(){
+            $('#developerEnrollment').ajaxCall({
+                method : 'POST',
+                url : '/skil/devSave/post',
+                callbackFn : function(data){
+                    g_toast.push('저장 되었습니다.');
+                }
+            });
+        });
+    });
+
+    $('#deleteBtn').click(function(){
+        console.log('삭제');
+        confirmMsg('삭제 하시겠습니까?', function(){
+            $('#developerEnrollment').ajaxCall({
+                method : 'POST',
+                url : '/skil/devDelete/post',
+                callbackFn : function(data){
+                    g_toast.push('삭제 되었습니다.');
+                }
+            });
+        });
+    });
+
+    document.getElementById("closeBtn").onclick = function() {
+        window.history.back();
+    }
 
 </script>
 

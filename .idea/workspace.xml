@@ -133,7 +133,7 @@
       </list>
     </recent_temporary>
   </component>
-  <component name="SpellCheckerSettings" BundledDictionaries="0" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" Dictionaries="0" CorrectionsLimit="5" DefaultDictionary="application-level" UseSingleDictionary="true" />
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="false" />
   <component name="SvnConfiguration">
     <configuration />
   </component>
@@ -203,9 +203,10 @@
       <screen x="-1920" y="2" width="1920" height="1040" />
     </state>
     <state x="-1800" y="29" width="1736" height="856" key="com.intellij.history.integration.ui.views.FileHistoryDialog/0.0.1920.1040/-1920.2.1920.1040@0.0.1920.1040" timestamp="1600823501771" />
-    <state x="-834" y="330" width="745" height="615" key="find.popup" timestamp="1600913069465">
-      <screen x="-1920" y="2" width="1920" height="1040" />
+    <state x="815" y="230" width="559" height="630" key="find.popup" timestamp="1601292953487">
+      <screen x="0" y="0" width="1440" height="860" />
     </state>
+    <state x="815" y="230" width="559" height="630" key="find.popup/0.0.1440.860/-1680.0.1680.1010@0.0.1440.860" timestamp="1601292953487" />
     <state x="668" y="223" width="584" height="594" key="find.popup/0.0.1920.1040/-1600.0.1600.860@0.0.1920.1040" timestamp="1598576784500" />
     <state x="-834" y="330" width="745" height="615" key="find.popup/0.0.1920.1040/-1920.2.1920.1040@0.0.1920.1040" timestamp="1600913069465" />
     <state x="668" y="223" width="584" height="594" key="find.popup/0.0.1920.1040/-1920.98.1920.1040@0.0.1920.1040" timestamp="1598950212258" />
