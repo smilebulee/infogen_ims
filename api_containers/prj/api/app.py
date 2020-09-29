@@ -161,12 +161,80 @@ class Health(Resource):
         }
         return jsonify(retJson)
 
+#프로젝트 정보 수정 시 해당 프로젝트 정보 조회
+class retrievePrjInfo(Resource):
+    def get(self):
+        params = request.get_json()
+
+        logging.debug('retrievePrjInfo Start')
+        prj_cd = request.args.get('prj_cd')
+
+        mysql_con = pymysql.connect(host='218.151.225.142', port=3306, db='IFG_IMS', user='ims2', password='1234',
+                                    charset='utf8')
+
+        try:
+            with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+                sql = "SELECT PRJ_NAME, " \
+                             "PRJ_CNCT_CD, " \
+                             "GNR_CTRO, " \
+                             "CTRO, " \
+                             "CNCT_AMT, " \
+                             "SLIN_BZDP, " \
+                             "JOB_DIVS_CD, " \
+                             "PGRS_STUS_CD, " \
+                             "RMKS " \
+                      "FROM TB_PRJ_INFO " \
+                      "WHERE PRJ_CD = %s"
+                cursor.execute(sql, prj_cd)
+                logging.debug('retrievePrjInfo SUCCESS')
+        finally:
+            mysql_con.close()
+
+        result = cursor.fetchall()
+        logging.debug(result)
+
+        return result
+
+#프로젝트 정보 수정 시 해당 프로젝트 요구 스킬 조회
+class retrieveReqSkil(Resource):
+    def get(self):
+        params = request.get_json()
+
+        logging.debug('retrieveReqSkil Start')
+        prj_cd = request.args.get('prj_cd')
+
+        mysql_con = pymysql.connect(host='218.151.225.142', port=3306, db='IFG_IMS', user='ims2', password='1234',
+                                    charset='utf8')
+
+        try:
+            with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+                sql = "SELECT " \
+                      "PRJ_CD, SKIL_DIVS, SKIL_NAME " \
+                      "FROM TB_PRJ_REQ_SKIL A " \
+                      "WHERE PRJ_CD = %s;"
+                cursor.execute(sql, prj_cd)
+                logging.debug('retrieveReqSkil SUCCESS')
+        finally:
+            mysql_con.close()
+
+        result = cursor.fetchall()
+        logging.debug(result)
+
+        return result
+
+
 
 api.add_resource(Hello, '/hello')
 api.add_resource(Register, '/register')
 api.add_resource(Retrieve, '/retrieve')
 api.add_resource(Save, '/save')
 api.add_resource(Health, '/health')
+
+# 프로젝트 등록
+api.add_resource(retrievePrjInfo, '/retrievePrjInfo')
+api.add_resource(retrieveReqSkil, '/retrieveReqSkil')
+# api.add_resource(prjSave, '/prjSave')
+# api.add_resource(prjDelete, '/prjDelete')
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5002, debug=True)

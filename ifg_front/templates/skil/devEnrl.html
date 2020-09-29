@@ -81,6 +81,8 @@
 
                 <p>*구분<br>
                     <select size ="1" width="50px" id = "cntc_divs" name = "cntc_divs" class="col-sm-2">
+                        <option value = "02">프리</option>
+                        <option value = "03">외주</option>
                     </select></p>
 
                 <p>*소속사<br>
@@ -101,9 +103,9 @@
 
 <script>
     $(document).ready(function() {
-        var a = location.href.indexOf('emp_No');
+        var emp_no = location.href.indexOf('emp_No');
         <!--   개발자 정보 수정    -->
-        if(a != -1){
+        if(emp_no != -1){
             console.log('emp_no : '+ emp_no);
             temp=location.href.split("?");
             data = temp[1].split("=");
@@ -117,7 +119,6 @@
         <!--    공통코드 조회    -->
         retrieveCmmCd('emp_rank', 'EMP_RANK_CD');
         retrieveCmmCd('devp_grd', 'DEVP_GRD_CD');
-        retrieveCmmCd('cntc_divs', 'JOB_DIVS_CD');
     });
 
     function retrieveDevInfo(){

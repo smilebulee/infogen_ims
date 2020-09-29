@@ -41,3 +41,40 @@ def retrieve(request):
         }
     logger.debug(retVal);
     return JsonResponse(retVal)
+
+
+def prjReg(request):
+    template_name = 'prj/prjReg.html'
+
+    return render(request, template_name)
+
+# 프로젝트 정보 조회
+def retrievePrjInfo(request):
+    param = json.loads(request.GET['param'])
+
+    params = {
+        'prj_cd': param['prj_cd'],
+    }
+
+    r = requests.get('http://prj_api:5002/retrievePrjInfo', params=params)
+    logger.info(r)
+    logger.info(r.text)
+    logger.info(r.json())
+
+    return JsonResponse(r.json(), safe=False)
+
+
+# 프로젝트 요구 스킬 조회
+def retrieveReqSkil(request):
+    param = json.loads(request.GET['param'])
+
+    params = {
+        'prj_cd': param['prj_cd'],
+    }
+
+    r = requests.get('http://prj_api:5002/retrieveReqSkil', params=params)
+    logger.info(r)
+    logger.info(r.text)
+    logger.info(r.json())
+
+    return JsonResponse(r.json(), safe=False)
