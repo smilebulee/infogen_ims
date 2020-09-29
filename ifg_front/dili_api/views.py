@@ -129,6 +129,50 @@ class noticeLst(generic.TemplateView):
         return render(request, template_name)
         # return render(request, template_name, rr)
 
+def getNoticeLst(request):
+
+    param = json.loads(request.GET['param'])
+    logger.info("getNoticeLst : dili/views.py")
+    logger.info(param)
+
+    datas = {
+        'dept': param['dept'],
+        'name': param['name'],
+        'division': param['division'],
+        'skilKind': param['skilKind'],
+        'skil': param['skil'],
+        'category': param['category'],
+        'searchStr': param['searchStr']
+    }
+
+    logger.info(datas)
+
+    # api 호출
+    r = requests.get('http://dili_api:5006/noticeLst', params=datas)
+    logger.info("sql 끝")
+    paginator = Paginator(r.json(), 10)
+    logger.info("----------------")
+    logger.info(paginator)
+    logger.info(r)
+    logger.info(r.text)
+    logger.info("----------------")
+
+    result = paginator.get_page(param['page'])
+    
+    logger.info(result)
+
+    data = {
+        'list': list(result.object_list),
+        'total_records': paginator.count,
+        'total_pages': paginator.num_pages,
+        'page': result.number,
+        'has_next': result.has_next(),
+        'has_prev': result.has_previous()
+    }
+
+    # return JsonResponse(r.json())
+    return JsonResponse(data)
+
 
 class noticeDtl(generic.TemplateView):
     def get(self, request, *args, **kwargs):
