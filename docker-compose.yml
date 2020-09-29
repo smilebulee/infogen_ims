@@ -60,7 +60,7 @@ services:
       - "8000:8000"
     links:
       - emp_api
-#      - prj_api
+      - prj_api
       - postgres
       - skil_api
       - cmm_api
@@ -127,6 +127,22 @@ services:
       - SIDECAR_PORT=5002
   prj_db:
     build: "./api_containers/prj/db"
+  prj_db2:
+    build: "./api_containers/prj/db"   # Dockerfile의 경로
+    #container_name: mariadb
+    image: mariadb:latest
+    restart: always
+    ports:
+      - 9753:3306
+    volumes:
+      - data-postgressql:/var/lib/mysql
+    environment:
+      MYSQL_HOST: '218.151.225.142'
+      MYSQL_ROOT_PASSWORD: 'infogen'
+      MYSQL_USER: 'ims2'
+      MYSQL_PASSWORD: '1234'
+      MYSQL_DATABASE: 'IFG_IMS'
+      TZ: Asia/Seoul
 
 #  # 3.skill 관리
   skil_api:
