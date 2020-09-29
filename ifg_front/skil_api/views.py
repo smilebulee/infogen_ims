@@ -118,7 +118,7 @@ def devSave(request):
     logger.info(r.text)
     logger.info(r.json())
 
-    return JsonResponse(r.json())
+    return JsonResponse(r.json(), safe=False)
 
 def devDelete(request):
     param = json.loads(request.POST['param'])
