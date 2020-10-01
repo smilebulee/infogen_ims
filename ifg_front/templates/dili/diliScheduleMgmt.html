@@ -52,6 +52,8 @@
             $('#txt_mmYy').text(year); //그리드 월tab 년도 초기값 입력
             $('#txt_mmMm').text(month + 1); //그리드 월tab 월 초기값 입력
 
+            crteMonthGrid();                                                                              // Month Grid 생성
+
             crteTodayShow(year, month, date, day);                                                        // Grid UI(주) 날짜 세팅
 
 
@@ -111,12 +113,12 @@
                 for(var i = 0; i < 7; i++){
 
                     weekTable += '<tr>';
-                    weekTable += '<td class="pt-3-half" contenteditable="true">'+weekGridStrtDate.getDate()+'</td>';
-                    weekTable += '<td class="pt-3-half" contenteditable="true"></td>';
-                    weekTable += '<td class="pt-3-half" contenteditable="true"></td>';
-                    weekTable += '<td class="pt-3-half" contenteditable="true"></td>';
-                    weekTable += '<td class="pt-3-half" contenteditable="true">정상근무 :  / 초과근무 : </td>';
-                    weekTable += '<td class="pt-3-half" contenteditable="true"></td>';
+                    weekTable += '<td class="pt-3-half" contenteditable="false">'+weekGridStrtDate.getDate()+'</td>';
+                    weekTable += '<td class="pt-3-half" contenteditable="false"></td>';
+                    weekTable += '<td class="pt-3-half" contenteditable="false"></td>';
+                    weekTable += '<td class="pt-3-half" contenteditable="false"></td>';
+                    weekTable += '<td class="pt-3-half" contenteditable="false">정상근무 :  / 초과근무 : </td>';
+                    weekTable += '<td class="pt-3-half" contenteditable="false"></td>';
                     weekTable += '</tr>';
                     weekGridStrtDate.setDate(weekGridStrtDate.getDate()+1);
                 }
@@ -125,6 +127,50 @@
                 weekTable += '</table>';
 
                 document.getElementById('grid_week').innerHTML = weekTable;
+            }
+
+            /*********************************************************************
+            *   Month Grid 생성
+            *********************************************************************/
+            function crteMonthGrid(){
+
+                var monthTable = '<table class="table table-bordered table-responsive-md table-striped text-center">';
+                monthTable += '<thead>';
+                monthTable += '<tr>';
+                monthTable += '<th class="text-center">일자</th>';
+                monthTable += '<th class="text-center">업무시작시간</th>';
+                monthTable += '<th class="text-center">업무종료시간</th>';
+                monthTable += '<th class="text-center">총근무시간</th>';
+                monthTable += '<th class="text-center">근무시간상세</th>';
+                monthTable += '<th class="text-center">결재상태</th>';
+                monthTable += '</tr>';
+                monthTable += '</thead>';
+                monthTable += '<tbody>';
+
+                var monthGridStrtYy = $('#txt_mmYy').text(); //현재 시작 년도
+                var monthGridStrtMm = $('#txt_mmMm').text()-1; //현재 시작 월
+
+                var monthGridStrtDate = new Date(monthGridStrtYy, monthGridStrtMm, 1); //시작 날짜
+                var tempMonthEndDate = new Date(monthGridStrtYy, monthGridStrtMm, 32); //다음 년도,월 세팅
+                var monthEndDate = new Date(tempMonthEndDate.getFullYear(), tempMonthEndDate.getMonth(), 0); //종료 날짜
+
+                for(var i = 0; i < monthEndDate.getDate(); i++){
+
+                    monthTable += '<tr>';
+                    monthTable += '<td class="pt-3-half" contenteditable="false">'+monthGridStrtDate.getDate()+'</td>';
+                    monthTable += '<td class="pt-3-half" contenteditable="false"></td>';
+                    monthTable += '<td class="pt-3-half" contenteditable="false"></td>';
+                    monthTable += '<td class="pt-3-half" contenteditable="false"></td>';
+                    monthTable += '<td class="pt-3-half" contenteditable="false">정상근무 :  / 초과근무 : </td>';
+                    monthTable += '<td class="pt-3-half" contenteditable="false"></td>';
+                    monthTable += '</tr>';
+                    monthGridStrtDate.setDate(monthGridStrtDate.getDate()+1);
+                }
+
+                monthTable += '</tbody>';
+                monthTable += '</table>';
+
+                document.getElementById('month_week').innerHTML = monthTable;
             }
 
             /*********************************************************************
@@ -206,6 +252,8 @@
                 $('#txt_mmYy').text(showMmGridDtDfr.getFullYear()); //그리드 월tab 년도 이전 값 입력
                 $('#txt_mmMm').text(showMmGridDtDfr.getMonth() + 1); //그리드 월tab 월 이전 값 입력
 
+                crteMonthGrid();
+
             });
 
             /*********************************************************************
@@ -221,6 +269,8 @@
 
                 $('#txt_mmYy').text(showMmGridDtDfr.getFullYear()); //그리드 월tab 년도 이후 값 입력
                 $('#txt_mmMm').text(showMmGridDtDfr.getMonth() + 1); //그리드 월tab 월 이후 값 입력
+
+                crteMonthGrid();
 
 
             });
@@ -794,6 +844,8 @@
                                     </svg>
                                 </button>
                             </div>
+                            <!--week table 영역 -->
+                            <div id="month_week"></div>
                         </div>
 
                     </div>
