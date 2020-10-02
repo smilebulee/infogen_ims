@@ -444,6 +444,8 @@
                 defaultView: 'month',
                 taskView: true,    // Can be also ['milestone', 'task']
                 scheduleView: true,  // Can be also ['allday', 'time']
+                useCreationPopup: true,
+                useDetailPopup: true,
                 template: {
                     milestone: function(schedule) {
                         return '<span style="color:red;"><i class="fa fa-flag"></i> ' + schedule.title + '</span>';
@@ -465,31 +467,7 @@
                     },
                     time: function(schedule) {
                         return schedule.title + ' <i class="fa fa-refresh"></i>' + schedule.start;
-                    }
-
-                },
-                month: {
-                    daynames: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
-                    startDayOfWeek: 0,
-                    narrowWeekend: true
-                },
-                week: {
-                    daynames: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
-                    startDayOfWeek: 0,
-                    narrowWeekend: true
-                }
-            });
-
-
-            /*********************************************************************
-            *   calendar Click Event - calender 클릭시
-            *********************************************************************/
-            $('#calendar').click(function(event){
-                 console.log('calendarClick', event.date, event.target);
-
-
-                  // register templates
-                  var templates = {
+                    },
                     popupIsAllDay: function() {
                       return 'All Day';
                     },
@@ -548,18 +526,29 @@
                     popupDelete: function() {
                       return 'Delete';
                     }
-                  };
 
-                  console.log('2222');
+                },
+                month: {
+                    daynames: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+                    startDayOfWeek: 0,
+                    narrowWeekend: true
+                },
+                week: {
+                    daynames: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+                    startDayOfWeek: 0,
+                    narrowWeekend: true
+                }
+            });
 
-                  var cal = new tui.Calendar('#calendar', {
-                    defaultView: 'month',
-                    template: templates,
-                    useCreationPopup: true,
-                    useDetailPopup: true
-                  });
 
-                  console.log('3333');
+            /*********************************************************************
+            *   calendar Click Event - calender 클릭시
+            *********************************************************************/
+            $('#calendar').click(function(event){
+                 console.log('calendarClick', event.date, event.target);
+
+
+
             });
 
 
@@ -857,10 +846,10 @@
                           <span id="menu-navi">
                             <button type="button" class="btn btn-default btn-sm move-today" data-action="move-today">Today</button>
                             <button type="button" class="btn btn-default btn-sm move-day" data-action="move-prev">
-                              <i class="calendar-icon ic-arrow-line-left" data-action="move-prev"></i>
+                              <i class="calendar-icon ic-arrow-line-left" data-action="move-prev">prev</i>
                             </button>
                             <button type="button" class="btn btn-default btn-sm move-day" data-action="move-next">
-                              <i class="calendar-icon ic-arrow-line-right" data-action="move-next"></i>
+                              <i class="calendar-icon ic-arrow-line-right" data-action="move-next">next</i>
                             </button>
                           </span>
                           <span id="renderRange" class="render-range"></span>
