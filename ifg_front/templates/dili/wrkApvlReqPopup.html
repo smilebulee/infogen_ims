@@ -47,7 +47,7 @@
                 if(data.length > 0) {
                     for(var i = 0; i < data.length; i++){
 
-                        wrkApvlTable += '<tr onclick="onclickEvt()">';
+                        wrkApvlTable += '<tr id ="grd_wrkApvl'+i+'" onclick="onclickEvt(this)">';
                         wrkApvlTable += '<td id="chkBox" class="pt-3-half">'+data[i].EMP_EMAL_ADDR+'</td>';
                         wrkApvlTable += '<td id="no" class="pt-3-half">'+i+'</td>';
                         wrkApvlTable += '<td id="wrkDt" class="pt-3-half">'+data[i].WRK_DT+'</td>';
@@ -66,11 +66,18 @@
 
         });
 
-        function onclickEvt() {
-            var tr = $(this);
-            //alert(tr);
-			//var td = tr.children();
+        function onclickEvt(trId) {
+            $("#ipt_wrkDt").val($('#'+trId.id).children().eq(2).text());
 
+            $("#sbx_type option").removeAttr("selected");
+
+            if($('#'+trId.id).children().eq(3).text() == "") {
+                $("#sbx_type option[value='00']").attr("selected", true);
+            } else if($('#'+trId.id).children().eq(3).text() == "휴일근무") {
+                $("#sbx_type option[value='01']").attr("selected", true);
+            } else if($('#'+trId.id).children().eq(3).text() == "야근근무") {
+                $("#sbx_type option[value='02']").attr("selected", true);
+            }
         }
 
         function btnReqEvt() {
@@ -124,11 +131,13 @@
                                 </button>
                             </h2>
                         </div>
-                        <div style="position: relative;" id="grid-parent">
-                            <div id="grd_wrkApvlReq">grid</div>
-                        </div>
 
                         <div id="col_wrkApvlReq" class="collapse show" aria-labelledby="head_wrkApvlReq" data-parent="#grp_wrkApvlReq">
+                            <div style="position: relative;" id="grid-parent">
+                                <div id="grd_wrkApvlReq">grid</div>
+                            </div>
+
+
                             <div class="card-body flex-height d-flex m-0 p-2">
                                 <div class="align-self-start align-self-center mr-3">일자</div>
                                 <div class="align-self-center mr-5">
@@ -140,7 +149,7 @@
                                 <div class="align-self-start align-self-center mr-3">구분</div>
                                 <div class="align-self-center mr-5">
                                     <select id="sbx_type" class="form-control" name="type">
-                                        <option selected>선택</option>
+                                        <option value="00" selected>선택</option>
                                         <option value="01">휴일근무</option>
                                         <option value="02">야근근무</option>
                                     </select>
