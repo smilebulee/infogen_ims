@@ -286,6 +286,7 @@ class retrieveDevInfo(Resource):
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 sql = "SELECT EMP_NAME, " \
+                             "EMP_DEPT_CD, " \
                              "EMP_RANK_CD, " \
                              "DEVP_GRD_CD, " \
                              "DEVP_TEL_NO, " \
@@ -340,6 +341,7 @@ class devSave(Resource):
 
                 sql = "INSERT INTO TB_FRLC_DEVP_INFO (`EMP_NO`, " \
                                                      "`EMP_NAME`, " \
+                                                     "`EMP_DEPT_CD`, " \
                                                      "`EMP_RANK_CD`, " \
                                                      "`DEVP_GRD_CD`, " \
                                                      "`DEVP_TEL_NO`, " \
@@ -352,9 +354,10 @@ class devSave(Resource):
                                                      "`CHG_DATE`, " \
                                                      "`RMKS`, " \
                                                      "`DEVP_USE_YN`)  " \
-                      "VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, NOW(), %s, NOW(), %s, %s)" \
+                      "VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, NOW(), %s, NOW(), %s, %s)" \
                       "ON DUPLICATE KEY UPDATE " \
                                       "EMP_NAME = %s, " \
+                                      "EMP_DEPT_CD = %s, " \
                                       "EMP_RANK_CD = %s, " \
                                       "DEVP_GRD_CD = %s, " \
                                       "DEVP_TEL_NO = %s, " \
@@ -365,19 +368,21 @@ class devSave(Resource):
                                       "CHG_DATE = NOW(), " \
                                       "RMKS = %s"
 
-                cursor.execute(sql, (emp_no, emp_name, emp_rank, devp_grd, tel_no, cntc_divs, devp_blco, devp_bday, 'admin', 'admin', rmks, use_yn
-                                     , emp_name, emp_rank, devp_grd, tel_no, cntc_divs, devp_blco, devp_bday, 'admin', rmks))
+                cursor.execute(sql, (emp_no, emp_name, emp_dept, emp_rank, devp_grd, tel_no, cntc_divs, devp_blco, devp_bday, 'admin', 'admin', rmks, use_yn
+                                     , emp_name, emp_dept, emp_rank, devp_grd, tel_no, cntc_divs, devp_blco, devp_bday, 'admin', rmks))
                 mysql_con.commit()
 
         finally:
             mysql_con.close()
 
-        retJson = {
-            "status": 200,
-            "msg": "Data has been saved successfully"
-        }
+        # retJson = {
+        #     "status": 200,
+        #     "msg": "Data has been saved successfully"
+        # }
+        #
+        # return jsonify(retJson)
 
-        return jsonify(retJson)
+        return emp_no
 
 #프리 개발자 정보 삭제
 class devDelete(Resource):

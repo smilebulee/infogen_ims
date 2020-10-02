@@ -1,198 +1,106 @@
 {% extends 'common/base.html' %}
 
 {% block content %}
+<script type="text/javascript" xmlns:max-width="http://www.w3.org/1999/xhtml">
+        var firstGrid;
+        $(document).ready(function(){
+
+            firstGrid = $('[data-ax5grid="first-grid"]');
+
+            var gridOptions = {
+                columns: [  /* columns : 그리드 헤더 및 매핑 시킬 컬럼 및 컬럼 속성 설정 항목(필수) */
+                { key: "TIT",            label: "제목",       width: 100,  align: "center"},
+                { key: "CNTN",           label: "내용",        hidden : true},
+                { key: "KD_DIVS_CD",     label: "유형구분코드",       width: 80,   align: "center"},
+                { key: "MJR_YN",         label: "중요여부",      hidden : true},
+                { key: "POP_OPEN_YN",    label: "팝업호출여부",         hidden : true},
+                { key: "DATA_INPT_ID",   label: "데이터입력자ID",        hidden : true},
+                { key: "EMP_NAME",     label: "작성자",       width: 80,   align: "center"},
+                { key: "DATA_INPT_DTTM", label: "데이터입력일시", width: 120,  align: "center"},
+                { key: "DATA_INPT_PGM_ID",   label: "데이터입력프로그램ID",   hidden : true},
+                { key: "DATA_UPD_ID",     label: "데이터수정자ID",      hidden : true},
+                { key: "DATA_UPD_DTTM",   label: "데이터수정일시",     hidden : true},
+                { key: "DATA_UPD_PGM_ID", label: "데이터수정프로그램ID",       hidden : true}
+                ]
+            };
+
+            firstGrid = $('[data-ax5grid="first-grid"]').initGrid(gridOptions);
+
+            $('#searchBtn').click(function(){
+                getGridList(1);
+            });
+
+            getGridList(1);
+
+        });
+
+        function makePaging(ret){
+            $('#paging_navi').makePagingNavi(ret, 'getGridList');
+        }
+
+        function getGridList(page){
+            var options = {
+                method : 'get',
+                url : "{% url 'dili_api:getNoticeLst' %}",
+                callbackFn :  function(ret){
+                    debugger;
+                    if(ret.list.length == 0){
+                        alertMsg('데이터가 없습니다.');
+                        firstGrid.setData([]);
+                        return false;
+                    }
+                    firstGrid.setData(ret.list);
+                    firstGrid.select(0);
+
+                    makePaging(ret);
+                }
+            };
+
+            $.ajaxCall({ page : page,
+                         dept : 'deptValue',
+                         name : 'deptValue',
+                         division : 'divisionValue',
+                         skilKind : 'skilKindValue',
+                         skil : 'skilValue',
+                         category : $('[name="category"]').val(),
+                         searchStr : $('[name="searchStr"]').val()
+                         }, options);
+
+        }
+    </script>
+
+
     <div class="container" style="margin-top:30px"><!--margin 임시로 줌. 이후 수정 필요 -->
         <!-- 제목 -->
         <div>
             <h5><b>공지사항</b></h5>
         </div>
 
-        <!-- 게시글 목록 table -->
-        <table class="table table-striped table-hover">
-            <colgroup>
-                <col style="width:5%;" />
-                <col style="width:10%;" />
-                <col style="width:auto;" />
-                <col style="width:10%;" />
-                <col style="width:10%;" />
-                <col style="width:7%;" />
-            </colgroup>
-
-            <thead class="text-center">
-                <tr class="text-center">
-                    <th>NO</th>
-                    <th>분류</th> <!-- 말머리 -->
-                    <th>글제목</th>
-                    <th>작성자</th>
-                    <th>작성일</th>
-                    <th>조회수</th>
-                </tr>
-            </thead>
-
-            <tbody>
-            <!--
-                <c:choose>
-                    <c:when test="${empty boardList }" >-->
-                        <!-- UI 테스트용 -->
-                        <tr>
-                            <td class="text-center">10</td>
-                            <td class="text-center">복지</td>
-                            <td><a href="#">2020년도 건강검진 실시 안내</a></td>
-                            <td class="text-center"><a href="#">남궁혜연</a></td>
-                            <td class="text-center">2020-08-01</td>
-                            <td class="text-center">100</td>
-                        </tr>
-                        <tr>
-                            <td class="text-center">9</td>
-                            <td class="text-center">복지</td>
-                            <td><a href="#">2020년 추석 선물 세트 신청 안내</a></td>
-                            <td class="text-center"><a href="#">김혜연</a></td>
-                            <td class="text-center">2020-08-01</td>
-                            <td class="text-center">20</td>
-                        </tr>
-                        <tr>
-                            <td class="text-center">8</td>
-                            <td class="text-center">발령</td>
-                            <td><a href="#">소속변경에 따른 인사발령 공지</a></td>
-                            <td class="text-center"><a href="#">이현주</a></td>
-                            <td class="text-center">2020-08-01</td>
-                            <td class="text-center">15</td>
-                        </tr>
-                        <tr>
-                            <td class="text-center">7</td>
-                            <td class="text-center">그룹웨어</td>
-                            <td><a href="#">카드영수증 / 카드지출결의 사용 안내</a></td>
-                            <td class="text-center"><a href="#">김혜연</a></td>
-                            <td class="text-center">2020-08-01</td>
-                            <td class="text-center">20</td>
-                        </tr>
-                        <tr>
-                            <td class="text-center">6</td>
-                            <td class="text-center">공지</td>
-                            <td><a href="#">(참고자료) 오픈소스 및 Tool 목록</a></td>
-                            <td class="text-center"><a href="#">황규정</a></td>
-                            <td class="text-center">2020-08-01</td>
-                            <td class="text-center">11</td>
-                        </tr>
-                        <tr>
-                            <td class="text-center">5</td>
-                            <td class="text-center">복지</td>
-                            <td><a href="#">2020년도 건강검진 실시 안내</a></td>
-                            <td class="text-center"><a href="#">남궁혜연</a></td>
-                            <td class="text-center">2020-08-01</td>
-                            <td class="text-center">100</td>
-                        </tr>
-                        <tr>
-                            <td class="text-center">4</td>
-                            <td class="text-center">복지</td>
-                            <td><a href="#">2020년 추석 선물 세트 신청 안내</a></td>
-                            <td class="text-center"><a href="#">김혜연</a></td>
-                            <td class="text-center">2020-08-01</td>
-                            <td class="text-center">20</td>
-                        </tr>
-                        <tr>
-                            <td class="text-center">3</td>
-                            <td class="text-center">발령</td>
-                            <td><a href="#">소속변경에 따른 인사발령 공지</a></td>
-                            <td class="text-center"><a href="#">이현주</a></td>
-                            <td class="text-center">2020-08-01</td>
-                            <td class="text-center">15</td>
-                        </tr>
-                        <tr>
-                            <td class="text-center">2</td>
-                            <td class="text-center">그룹웨어</td>
-                            <td><a href="#">카드영수증 / 카드지출결의 사용 안내</a></td>
-                            <td class="text-center"><a href="#">김혜연</a></td>
-                            <td class="text-center">2020-08-01</td>
-                            <td class="text-center">20</td>
-                        </tr>
-                        <tr>
-                            <td class="text-center">1</td>
-                            <td class="text-center">공지</td>
-                            <td><a href="#">(참고자료) 오픈소스 및 Tool 목록</a></td>
-                            <td class="text-center"><a href="#">황규정</a></td>
-                            <td class="text-center">2020-08-01</td>
-                            <td class="text-center">11</td>
-                        </tr>
-                        <!--
-                        실사용용
-                        <tr><td colspan="5" align="center">데이터가 없습니다.</td></tr>
-
-                    </c:when>
-                    <c:when test="${!empty boardList}">
-                        <c:forEach var="list" items="${boardList}">
-                            <tr>
-                                <td class="text-center"><c:out value="${list.bid}"/></td>
-                                <td class="text-center"><c:out value="${list.category}"/></td>
-                                <td><a href="#"><c:out value="${list.title}"/></a></td>
-                                <td class="text-center"><a href="#"><c:out value="${list.reg_id}"/></a></td>
-                                <td class="text-center"><c:out value="${list.view_cnt}"/></td>
-                                <td class="text-center"><c:out value="${list.reg_dt}"/></td>
-                            </tr>
-                        </c:forEach>
-                    </c:when>
-                </c:choose>
-                -->
-            </tbody>
-        </table>
-
-        <!-- 글쓰기 -->
-        <div>
-             <button type="submit" class="btn btn-primary float-right">글쓰기</button>
-		</div>
-
-        <br/>
-
-        <!-- 페이징 -->
-        <div class="container">
-            <ul class="pagination justify-content-center" style="margin:20px 0">
-                <li class="page-item"><a class="page-link" href="#">Previous</a></li>
-                <li class="page-item"><a class="page-link" href="#">1</a></li>
-                <li class="page-item active"><a class="page-link" href="#">2</a></li>
-                <li class="page-item"><a class="page-link" href="#">3</a></li>
-                <li class="page-item"><a class="page-link" href="#">Next</a></li>
-            </ul>
+        <div style="position: relative;height:400px;" id="grid-parent">
+            <div data-ax5grid="first-grid" style="height: 100%;"></div>
+            <div id="paging_navi"></div>
+            <button class="btn btn-primary" id="skillDetlMentBtn" style="float: right; padding-top :10px;">글쓰기</button>
         </div>
 
+
+        <br/><br/>
         <!-- 검색 div -->
-    <!--    <div class="container">
-            <div class="input-group justify-content-center">
-                <div class="input-group-prepend">
-                    <select class="btn btn-light">
-                         <option value="#" selected>검색조건</option>
-                         <option value="#">제목</option>
-                         <option value="#">내용</option>
-                         <option value="#">제목 + 내용</option>
-                         <option value="#">작성자</option>
-                    </select>
-                </div>
 
-                <div class="input-group-text w-25">
-                    <input type="text" class="form-control" placeholder="검색어를 입력하세요.">
-                </div>
-
-                <div class="input-group-append">
-                    <button class="btn btn-primary" type="submit">조회</button>
-                </div>
-            </div>
-        </div>-->
         <div class="container">
             <div class="input-group">
-                    <select class="input-group-prepend btn btn-light float-left">
-                         <option value="#" selected="">검색조건</option>
-                         <option value="#">제목</option>
-                         <option value="#">내용</option>
-                         <option value="#">제목 + 내용</option>
-                         <option value="#">작성자</option>
+                    <select name="category" class="input-group-prepend btn btn-light float-left">
+                         <option value="00" selected>제목</option>
+                         <option value="01">내용</option>
+                         <option value="02">제목 + 내용</option>
+                         <option value="03">작성자</option>
                     </select>
 
-
                 <!--<div class="input-group-text w-25">-->
-                    <input type="text" class="form-control w-25" placeholder="검색어를 입력하세요.">
+                    <input type="text" name="searchStr" class="form-control w-25" placeholder="검색어를 입력하세요.">
                 <!--</div>-->
 
                 <div class="input-group-append">
-                    <button class="btn btn-primary" type="submit">조회</button>
+                    <button id="searchBtn" class="btn btn-primary" type="button">조회</button>
                 </div>
             </div>
         </div>
