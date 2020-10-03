@@ -442,110 +442,60 @@
             *********************************************************************/
             var calendar = new tui.Calendar(document.getElementById('calendar'), {
                 defaultView: 'month',
-                taskView: true,    // Can be also ['milestone', 'task']
-                scheduleView: true,  // Can be also ['allday', 'time']
+                taskView: true,
                 useCreationPopup: true,
-                useDetailPopup: true,
-                template: {
-                    milestone: function(schedule) {
-                        return '<span style="color:red;"><i class="fa fa-flag"></i> ' + schedule.title + '</span>';
-                    },
-                    milestoneTitle: function() {
-                        return 'Milestone';
-                    },
-                    task: function(schedule) {
-                        return '&nbsp;&nbsp;#' + schedule.title;
-                    },
-                    taskTitle: function() {
-                        return '<label><input type="checkbox" />Task</label>';
-                    },
-                    allday: function(schedule) {
-                        return schedule.title + ' <i class="fa fa-refresh"></i>';
-                    },
-                    alldayTitle: function() {
-                        return 'All Day';
-                    },
-                    time: function(schedule) {
-                        return schedule.title + ' <i class="fa fa-refresh"></i>' + schedule.start;
-                    },
-                    popupIsAllDay: function() {
-                      return 'All Day';
-                    },
-                    popupStateFree: function() {
-                      return 'Free';
-                    },
-                    popupStateBusy: function() {
-                      return 'Busy';
-                    },
-                    titlePlaceholder: function() {
-                      return 'Subject';
-                    },
-                    locationPlaceholder: function() {
-                      return 'Location';
-                    },
-                    startDatePlaceholder: function() {
-                      return 'Start date';
-                    },
-                    endDatePlaceholder: function() {
-                      return 'End date';
-                    },
-                    popupSave: function() {
-                      return 'Save';
-                    },
-                    popupUpdate: function() {
-                      return 'Update';
-                    },
-                    popupDetailDate: function(isAllDay, start, end) {
-                      var isSameDate = moment(start).isSame(end);
-                      var endFormat = (isSameDate ? '' : 'YYYY.MM.DD ') + 'hh:mm a';
-
-                      if (isAllDay) {
-                        return moment(start).format('YYYY.MM.DD') + (isSameDate ? '' : ' - ' + moment(end).format('YYYY.MM.DD'));
-                      }
-
-                      return (moment(start).format('YYYY.MM.DD hh:mm a') + ' - ' + moment(end).format(endFormat));
-                    },
-                    popupDetailLocation: function(schedule) {
-                      return 'Location : ' + schedule.location;
-                    },
-                    popupDetailUser: function(schedule) {
-                      return 'User : ' + (schedule.attendees || []).join(', ');
-                    },
-                    popupDetailState: function(schedule) {
-                      return 'State : ' + schedule.state || 'Busy';
-                    },
-                    popupDetailRepeat: function(schedule) {
-                      return 'Repeat : ' + schedule.recurrenceRule;
-                    },
-                    popupDetailBody: function(schedule) {
-                      return 'Body : ' + schedule.body;
-                    },
-                    popupEdit: function() {
-                      return 'Edit';
-                    },
-                    popupDelete: function() {
-                      return 'Delete';
-                    }
-
-                },
-                month: {
-                    daynames: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
-                    startDayOfWeek: 0,
-                    narrowWeekend: true
-                },
-                week: {
-                    daynames: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
-                    startDayOfWeek: 0,
-                    narrowWeekend: true
-                }
+                useDetailPopup: true
             });
 
+            var data = [{
+                calendarId: null,
+                id: String(Math.random() * 100000000000000000),
+                title : "son1",
+                isAllDay: false,
+                start: new Date("2020-10-01T09:00:00"),
+                end: new Date("2020-10-01T10:00:00"),
+                category: "time"
+              }, {
+                calendarId: null,
+                id: String(Math.random() * 100000000000000000),
+                title : "son2",
+                isAllDay: false,
+                start: new Date("2020-10-02T09:00:00"),
+                end: new Date("2020-10-02T10:00:00"),
+                category: "time"
+              }];
+              // ajax 오늘달, id에 해당하는 스케줄 가져오기
+
+              calendar.createSchedules(data);
+
+
+            /*********************************************************************
+            *   calendar 버튼제어 - today,이전날 다음달
+            *********************************************************************/
+            setLabel(calendar);
+
+            $("#today").click(function(){
+              calendar.today();
+              setLabel(calendar);
+            });
+            $("#prev").click(function(){
+              calendar.prev();
+              setLabel(calendar);
+            });
+            $("#next").click(function(){
+              calendar.next();
+              setLabel(calendar);
+            });
+
+            function setLabel(calendar){
+              $("#calendarLabel").text(calendar.getDate().getFullYear() + "." + (calendar.getDate().getMonth()+1));
+            }
 
             /*********************************************************************
             *   calendar Click Event - calender 클릭시
             *********************************************************************/
             $('#calendar').click(function(event){
-                 console.log('calendarClick', event.date, event.target);
+<!--                console.log('calendarClick', event.date, event.target);-->
 
 
 
@@ -553,7 +503,7 @@
 
 
 
-        });
+        });<!--ready.function_END-->
 
         /*********************************************************************
         *   Draw Chart Event - 근무누적시간 누적막대그래프 그리기
@@ -843,16 +793,13 @@
                 <div id="grp_calendar">
                     <div class="bg-light p-5">
                         <div id="menu">
-                          <span id="menu-navi">
-                            <button type="button" class="btn btn-default btn-sm move-today" data-action="move-today">Today</button>
-                            <button type="button" class="btn btn-default btn-sm move-day" data-action="move-prev">
-                              <i class="calendar-icon ic-arrow-line-left" data-action="move-prev">prev</i>
-                            </button>
-                            <button type="button" class="btn btn-default btn-sm move-day" data-action="move-next">
-                              <i class="calendar-icon ic-arrow-line-right" data-action="move-next">next</i>
-                            </button>
-                          </span>
-                          <span id="renderRange" class="render-range"></span>
+                            <span id="menu-navi">
+                              <button type="button" class="btn btn-outline-primary btn-sm" id="today">Today</button>
+                              <button type="button" class="btn btn-outline-secondary btn-sm" id="prev">이전달</button>
+                              <button type="button" class="btn btn-outline-secondary btn-sm" id="next">다음달</button>
+                              <span id="calendarLabel"></span>
+                            </span>
+                            <span id="renderRange" class="render-range"></span>
                         </div>
                         <div id="calendar"></div>
                     </div>
