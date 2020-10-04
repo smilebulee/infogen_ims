@@ -447,26 +447,68 @@
                 useDetailPopup: true
             });
 
-            var data = [{
-                calendarId: null,
-                id: String(Math.random() * 100000000000000000),
-                title : "son1",
-                isAllDay: false,
-                start: new Date("2020-10-01T09:00:00"),
-                end: new Date("2020-10-01T10:00:00"),
-                category: "time"
-              }, {
-                calendarId: null,
-                id: String(Math.random() * 100000000000000000),
-                title : "son2",
-                isAllDay: false,
-                start: new Date("2020-10-02T09:00:00"),
-                end: new Date("2020-10-02T10:00:00"),
-                category: "time"
-              }];
-              // ajax 오늘달, id에 해당하는 스케줄 가져오기
+            var param = {
+                "email" : 'test'
+            }
 
-              calendar.createSchedules(data);
+            $.ajaxCall( param, {
+                 'method' : 'GET',
+                 'url' : "{% url 'dili_api:getCalendarData' %}",
+                 'dataType' : 'json',
+                 'data' : JSON.stringify(param),
+                 'async' : false,
+                 'callbackFn' : function(data, status, xhr){
+                    console.log("data111 : ",data)
+
+                    setCalendar(data);
+                 }
+            });
+
+            function setCalendar(data){
+                console.log("data222 : ",data);
+
+                var data = [{
+                    calendarId: null,
+                    id: String(Math.random() * 100000000000000000),
+                    title : "업무시작시간: 09:00",
+                    isAllDay: false,
+                    start: new Date("2020-10-01T09:00:00"),
+                    end: new Date("2020-10-01T10:00:00"),
+                    category: "time"
+                }, {
+                    calendarId: null,
+                    id: String(Math.random() * 100000000000000000),
+                    title : "업무종료시간: 18:00",
+                    isAllDay: false,
+                    start: new Date("2020-10-01T09:00:00"),
+                    end: new Date("2020-10-01T10:00:00"),
+                    category: "time"
+                }];
+                // ajax 오늘달, id에 해당하는 스케줄 가져오기
+
+                calendar.createSchedules(data);
+            }
+
+            /*********************************************************************
+            *  저장, 수정, 삭제 이벤트
+            *********************************************************************/
+            calendar.on("beforeCreateSchedule", function(scheduleData){
+              var schedule = {
+                calendarId: scheduleData.calendarId,
+                id: String(Math.random() * 100000000000000000),
+                title: scheduleData.title,
+                isAllDay: scheduleData.isAllDay,
+                start: scheduleData.start,
+                end: scheduleData.end,
+                category: scheduleData.isAllDay ? 'allday' : 'time',
+                location: scheduleData.location             // 장소 정보
+              };
+              // ajax DB 저장 schedule
+              // DB 저장
+              calendar.createSchedules([schedule]);
+              console.log(schedule);
+            });
+
 
 
             /*********************************************************************
