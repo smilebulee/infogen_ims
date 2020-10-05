@@ -168,6 +168,55 @@ tbody>tr>td:first-child:before {
 </div>
 
 <script>
+    var DB = [];
+    var Language = [];
+    var WEB = [];
+    var MIDWARE = [];
+    var Framework = [];
+
+    $('#projectInfo').ajaxCall({
+            method : 'GET',
+            url : "{% url 'prj_api:retrieveSkilName' %}",
+            callbackFn : function(data){
+                for(var i = 0; i < data.length; i++){
+                   if(data[i].SKIL_DIVS_CD == '01'){
+                        DB.push(data[i].SKIL_NM);
+                    } else if(data[i].SKIL_DIVS_CD == '02'){
+                        Language.push(data[i].SKIL_NM);
+                    } else if(data[i].SKIL_DIVS_CD == '03'){
+                        WEB.push(data[i].SKIL_NM);
+                    } else if(data[i].SKIL_DIVS_CD == '04'){
+                        MIDWARE.push(data[i].SKIL_NM);
+                    } else if(data[i].SKIL_DIVS_CD == '05'){
+                        Framework.push(data[i].SKIL_NM);
+                    }
+                }
+
+            }
+    });
+
+<!--    $.ajaxCall( param, {-->
+<!--             method : 'GET',-->
+<!--             'url' : '/prj/retrieveSkilName/',-->
+<!--             'dataType' : 'json',-->
+<!--             'data' : JSON.stringify(param),-->
+<!--             'async' : false,-->
+<!--             'callbackFn' : function(data){-->
+<!--                for(var i = 0; i < data.length; i++){-->
+<!--                   if(data[i].SKIL_DIVS_CD == '01'){-->
+<!--                        DB.push(data[i].SKIL_NM);-->
+<!--                    } else if(data[i].SKIL_DIVS_CD == '02'){-->
+<!--                        Language.push(data[i].SKIL_NM);-->
+<!--                    } else if(data[i].SKIL_DIVS_CD == '03'){-->
+<!--                        WEB.push(data[i].SKIL_NM);-->
+<!--                    } else if(data[i].SKIL_DIVS_CD == '04'){-->
+<!--                        MIDWARE.push(data[i].SKIL_NM);-->
+<!--                    } else if(data[i].SKIL_DIVS_CD == '05'){-->
+<!--                        Framework.push(data[i].SKIL_NM);-->
+<!--                    }-->
+<!--                }-->
+<!--             }-->
+<!--    });-->
 
     $(document).ready(function() {
 
@@ -325,55 +374,33 @@ tbody>tr>td:first-child:before {
 
     function skil_chg(a){
 
-        var skil_divs_cd = $('#req_skil_divs'+a).val();
 
+        var selectSkill = $("#req_skil_divs"+a).val();
 
-        $.ajaxCall( param, {
-                 method : 'GET',
-                 'url' : '/prj/retrieveSkilName/',
-                 'dataType' : 'json',
-                 'data' : JSON.stringify(param),
-                 'async' : false,
-                 'callbackFn' : function(data){
-                    for(var i = 0; i < data.length; i++){
-                        var option = $("<option>"+data[i]+"</option>");
+        var changeSkill;
+
+        if(selectSkill == "01"){
+          changeSkill = DB;
+        }
+        else if(selectSkill == "02"){
+          changeSkill = Language;
+        }
+        else if(selectSkill == "03"){
+          changeSkill =  WEB;
+        }
+        else if(selectSkill == "04"){
+          changeSkill =  MIDWARE;
+        }
+        else if(selectSkill == "05"){
+          changeSkill =  Framework;
+        }
+
+        $("#req_skil_name"+a).empty();
+
+        for(var i = 0; i < changeSkill.length; i++){
+                        var option = $("<option>"+changeSkill[i]+"</option>");
                         $('#req_skil_name'+a).append(option);
                     }
-                 }
-         });
-
-<!--        var DB = ["Oracle","MySql","MsSql"];-->
-<!--        var Language = ["C","C++","C#","JAVA","Python"];-->
-<!--        var WEB = ["HTML","JavaScript","CSS"];-->
-<!--        var MIDWARE = ["RPC", "MOM", "ORB"];-->
-<!--        var Framework = [".net", "Spring"];-->
-
-<!--        var selectSkill = $("#req_skil_divs"+a).val();-->
-
-<!--        var changeSkill;-->
-
-<!--        if(selectSkill == "01"){-->
-<!--          changeSkill = DB;-->
-<!--        }-->
-<!--        else if(selectSkill == "02"){-->
-<!--          changeSkill = Language;-->
-<!--        }-->
-<!--        else if(selectSkill == "03"){-->
-<!--          changeSkill =  WEB;-->
-<!--        }-->
-<!--        else if(selectSkill == "04"){-->
-<!--          changeSkill =  MIDWARE;-->
-<!--        }-->
-<!--        else if(selectSkill == "05"){-->
-<!--          changeSkill =  Framework;-->
-<!--        }-->
-
-<!--        $("#req_skil_name"+a).empty();-->
-
-<!--        for(var count = 0; count < changeSkill.length; count++){-->
-<!--                        var option = $("<option>"+changeSkill[count]+"</option>");-->
-<!--                        $('#req_skil_name'+a).append(option);-->
-<!--                    }-->
     };
 
 
