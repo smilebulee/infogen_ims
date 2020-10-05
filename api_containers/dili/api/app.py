@@ -443,6 +443,104 @@ class calendarData(Resource): # Mariadb 연결 진행
 
         return json.dumps(result2, indent=4, cls=DateTimeEncoder)
 
+
+class noticeLst(Resource):  # Mariadb 연결 진행
+    def get(self):
+        logging.debug("noticeLst start")
+        logging.debug(request.get_json())
+
+        # get data
+        category = request.args.get('category')
+        searchStr = request.args.get('searchStr')
+
+        logging.debug('---------------SEARCH---------------')
+        logging.debug('category : ' + category)
+        logging.debug('searchStr : ' + searchStr)
+        logging.debug('------------------------------------')
+
+        # requirements pymysql import 후 커넥트 사용
+        mysql_con = pymysql.connect(host='218.151.225.142', port=3306, db='IFG_IMS', user='ims2', password='1234',
+                                    charset='utf8')
+        try:
+            with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+                # 쿼리문 실행
+                # sql = "SELECT TIT, CNTN, KD_DIVS_CD, MJR_YN, POP_OPEN_YN, DATA_INPT_ID, DATA_INPT_PGM_ID, DATA_UPD_ID, DATA_UPD_PGM_ID FROM TB_STTS_POST_MGMT_M "
+                sql = "SELECT  A.POST_ID, " \
+                      "A.TIT, " \
+                      "A.CNTN, " \
+                      "A.KD_DIVS_CD, " \
+                      "A.MJR_YN, " \
+                      "A.POP_OPEN_YN, " \
+                      "A.DATA_INPT_ID, " \
+                      "B.EMP_NAME, " \
+                      "DATE_FORMAT(A.DATA_INPT_DTTM, '%Y-%m-%d %H:%i:%s') AS DATA_INPT_DTTM, " \
+                      "A.DATA_INPT_PGM_ID, " \
+                      "A.DATA_UPD_ID, " \
+                      "DATE_FORMAT(A.DATA_UPD_DTTM, '%Y-%m-%d %H:%i:%s') AS DATA_UPD_DTTM, " \
+                      "A.DATA_UPD_PGM_ID, " \
+                      "CASE WHEN A.KD_DIVS_CD = '01' THEN '공지' " \
+                      "WHEN A.KD_DIVS_CD = '02' THEN '복리' " \
+                      "WHEN A.KD_DIVS_CD = '03' THEN '발령'  " \
+                      "WHEN A.KD_DIVS_CD = '04' THEN '그룹웨어'  " \
+                      "ELSE '' END KD_DIVS_NM  " \
+                      "FROM  TB_STTS_POST_MGMT_M A LEFT OUTER JOIN TB_EMP_MGMT B ON A.DATA_INPT_ID = B.EMP_ID " \
+                      "WHERE 1=1 " \
+                      "AND  post_id IN ( " \
+                      "		              SELECT AA.POST_ID FROM  " \
+                      "		                                    ( " \
+                      "		                                    	SELECT ROW_NUMBER() OVER (ORDER BY POST_ID DESC) AS ROW_NUM, POST_ID " \
+                      "		                                    	FROM TB_STTS_POST_MGMT_M  " \
+                      "		                                    	WHERE MJR_YN = 'Y'  " \
+                      "		                                    	ORDER BY POST_ID DESC " \
+                      "		                                    ) AA " \
+                      "		              WHERE  AA.ROW_NUM <= 3 " \
+                      "	) " \
+                      "UNION " \
+                      "SELECT  A.POST_ID, " \
+                      "A.TIT, " \
+                      "A.CNTN, " \
+                      "A.KD_DIVS_CD, " \
+                      "A.MJR_YN, " \
+                      "A.POP_OPEN_YN, " \
+                      "A.DATA_INPT_ID, " \
+                      "B.EMP_NAME, " \
+                      "DATE_FORMAT(A.DATA_INPT_DTTM, '%Y-%m-%d %H:%i:%s') AS DATA_INPT_DTTM, " \
+                      "A.DATA_INPT_PGM_ID, " \
+                      "A.DATA_UPD_ID, " \
+                      "DATE_FORMAT(A.DATA_UPD_DTTM, '%Y-%m-%d %H:%i:%s') AS DATA_UPD_DTTM, " \
+                      "A.DATA_UPD_PGM_ID, " \
+                      "CASE WHEN A.KD_DIVS_CD = '01' THEN '공지' " \
+                      "WHEN A.KD_DIVS_CD = '02' THEN '복리' " \
+                      "WHEN A.KD_DIVS_CD = '03' THEN '발령'  " \
+                      "WHEN A.KD_DIVS_CD = '04' THEN '그룹웨어'  " \
+                      "ELSE '' END KD_DIVS_NM  " \
+                      "FROM  TB_STTS_POST_MGMT_M A LEFT OUTER JOIN TB_EMP_MGMT B ON A.DATA_INPT_ID = B.EMP_ID " \
+                      "WHERE 1=1 "
+                if searchStr != "":
+                    if category == "00":
+                        sql += "AND TIT LIKE '%" + searchStr + "%' "
+                    if category == "01":
+                        sql += "AND CNTN LIKE '%" + searchStr + "%' "
+                    if category == "02":
+                        sql += "AND (TIT LIKE '%" + searchStr + "%' OR CNTN LIKE '%" + searchStr + "%') "
+                    if category == "03":
+                        sql += "AND B.EMP_NAME LIKE '%" + searchStr + "%' "
+                sql += "ORDER BY MJR_YN DESC, POST_ID DESC "
+                logging.debug(sql)
+                cursor.execute(sql)
+
+        finally:
+            mysql_con.close()
+
+        result2 = cursor.fetchall()
+        # for row in result2:
+        #    logging.debug('====== row====')
+        #    logging.debug(row)
+        #    logging.debug('===============')
+        # array = list(result2)  # 결과를 리스트로
+
+        return result2
+
 api.add_resource(Hello, '/hello')
 api.add_resource(Register, '/register')
 api.add_resource(Retrieve, '/retrieve')
@@ -456,5 +554,7 @@ api.add_resource(saveApvlReq,'/saveApvlReq') #api 선언
 api.add_resource(apvlReqHist,'/apvlReqHist') #api 선언
 api.add_resource(apvlReqHistDetl,'/apvlReqHistDetl') #api 선언
 api.add_resource(calendarData,'/calendarData') #api 선언
+api.add_resource(noticeLst,'/noticeLst') #api 선언
+
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5006, debug=True)

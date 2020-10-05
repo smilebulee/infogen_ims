@@ -129,18 +129,13 @@ class noticeLst(generic.TemplateView):
         return render(request, template_name)
         # return render(request, template_name, rr)
 
-def getNoticeLst(request):
 
+def getNoticeLst(request):
     param = json.loads(request.GET['param'])
     logger.info("getNoticeLst : dili/views.py")
     logger.info(param)
 
     datas = {
-        'dept': param['dept'],
-        'name': param['name'],
-        'division': param['division'],
-        'skilKind': param['skilKind'],
-        'skil': param['skil'],
         'category': param['category'],
         'searchStr': param['searchStr']
     }
@@ -158,7 +153,7 @@ def getNoticeLst(request):
     logger.info("----------------")
 
     result = paginator.get_page(param['page'])
-    
+
     logger.info(result)
 
     data = {
