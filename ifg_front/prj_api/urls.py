@@ -18,6 +18,7 @@ urlpatterns = [
     url(r'^prjReg/', views.prjReg, name='prjReg'),
     url(r'^retrievePrjInfo/get', views.retrievePrjInfo, name='retrievePrjInfo'),
     url(r'^retrieveReqSkil/get', views.retrieveReqSkil, name='retrieveReqSkil'),
+    url(r'^retrieveSkilName/', views.retrieveSkilName, name='retrieveSkilName'),
     url(r'^prjSave/post', views.prjSave, name='prjSave'),
     url(r'^prjDelete/post', views.prjDelete, name='prjDelete'),
 

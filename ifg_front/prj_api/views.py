@@ -80,6 +80,21 @@ def retrieveReqSkil(request):
 
     return JsonResponse(r.json(), safe=False)
 
+# 프로젝트 등록 스킬명 조회
+def retrieveSkilName(request):
+    param = json.loads(request.GET['param'])
+
+    params = {
+        'prj_cd': param['prj_cd'],
+    }
+
+    r = requests.get('http://prj_api:5002/retrieveSkilName', params=params)
+    logger.info(r)
+    logger.info(r.text)
+    logger.info(r.json())
+
+    return JsonResponse(r.json(), safe=False)
+
 # 프로젝트 저장
 def prjSave(request):
     param = json.loads(request.POST['param'])

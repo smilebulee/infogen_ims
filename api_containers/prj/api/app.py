@@ -228,6 +228,33 @@ class retrieveReqSkil(Resource):
 
         return result
 
+#프로젝트 등록 스킬명 조회
+class retrieveSkilName(Resource):
+    def get(self):
+        params = request.get_json()
+
+        logging.debug('retrieveSkilName Start')
+        # skil_divs_cd = request.args.get('skil_divs_cd')
+
+        mysql_con = pymysql.connect(host='218.151.225.142', port=3306, db='IFG_IMS', user='ims2', password='1234',
+                                    charset='utf8')
+
+        try:
+            with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+                sql = "SELECT " \
+                      "SKIL_DIVS_CD, " \
+                      "SKIL_NM " \
+                      "FROM TB_SKIL_MGNT_CD A "
+                cursor.execute(sql)
+                logging.debug('retrieveSkilName SUCCESS')
+        finally:
+            mysql_con.close()
+
+        result = cursor.fetchall()
+        logging.debug(result)
+
+        return result
+
 #프로젝트 저장
 class prjSave(Resource):
         def post(self):
@@ -458,6 +485,7 @@ api.add_resource(Health, '/health')
 # 프로젝트 등록
 api.add_resource(retrievePrjInfo, '/retrievePrjInfo')
 api.add_resource(retrieveReqSkil, '/retrieveReqSkil')
+api.add_resource(retrieveSkilName, '/retrieveSkilName')
 api.add_resource(prjSave, '/prjSave')
 api.add_resource(prjDelete, '/prjDelete')
 
