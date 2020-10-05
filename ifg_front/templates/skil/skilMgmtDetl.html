@@ -6,7 +6,7 @@
                 console.log('???')
                 $.ajaxCall({}, {
                  method : 'get',
-                 url : "{% url 'emp_api:getMaria' %}",
+                 url : "{% url 'skil_api:getMariaDB' %}",
                  async : false,
                  callbackFn : function(data){
                     console.log('call')
