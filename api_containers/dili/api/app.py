@@ -22,6 +22,7 @@ class DateTimeEncoder(JSONEncoder):
         if isinstance(obj, (datetime.date, datetime.datetime)):
             return obj.isoformat()
 
+
 def dateConverter(param):
     if isinstance(param, datetime.datetime):
         return param.__str__()
@@ -349,15 +350,85 @@ class apvlReqHist(Resource): # Mariadb 연결 진행
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 # 쿼리문 실행
-                sql = "SELECT *, CASE WHEN APVL_REQ_DIVS = '01' THEN '휴일근무' " \
-                    + "               WHEN APVL_REQ_DIVS = '02' THEN '야근근무' " \
-                    + "               WHEN APVL_REQ_DIVS = '03' THEN '연차결재'  " \
-                    + "               ELSE '' END APVL_REQ_NM  " \
-                    + "        , CASE WHEN TH1_APRV_STUS != '' AND TH2_APRV_STUS = '' THEN '미승인'" \
-                    + "               WHEN TH1_APRV_STUS != '' AND TH2_APRV_STUS != '' THEN '승인'" \
+                sql = "SELECT B.EMP_NAME" \
+                    + "       , CASE WHEN A.APVL_REQ_DIVS = '01' THEN '휴일근무' " \
+                    + "              WHEN A.APVL_REQ_DIVS = '02' THEN '야근근무' " \
+                    + "              WHEN A.APVL_REQ_DIVS = '03' THEN '연차결재'  " \
+                    + "              ELSE '' END APVL_REQ_NM  " \
+                    + "        , CASE WHEN A.TH1_APRV_STUS != '' AND A.TH2_APRV_STUS = '' THEN '미승인'" \
+                    + "               WHEN A.TH1_APRV_STUS != '' AND A.TH2_APRV_STUS != '' THEN '승인'" \
                     + "               ELSE '미승인' END APRV_STUS_NM" \
-                    + "  FROM TB_APVL_REQ_MGMT_M WHERE EMP_EMAL_ADDR = '" + data["email"] + "'"
+                    + "   FROM TB_APVL_REQ_MGMT_M A, TB_EMP_MGMT B" \
+                    + "  WHERE A.EMP_EMAL_ADDR = B.EMP_EMAIL" \
+                    + "    AND A.EMP_EMAL_ADDR = '" + data["email"] + "'"
                 logging.debug("apvlReqHist SQL문" + sql)
+                cursor.execute(sql)
+
+        finally:
+            mysql_con.close()
+
+        result2 = cursor.fetchall()
+        for row in result2:
+            logging.debug('====== row====')
+            logging.debug(row)
+            logging.debug('===============')
+        array = list(result2)  # 결과를 리스트로
+
+        return json.dumps(result2, indent=4, cls=DateTimeEncoder)
+
+class apvlReqHistDetl(Resource): # Mariadb 연결 진행
+    def get(self):
+
+        data = request.get_json()
+
+        #requirements pymysql import 후 커넥트 사용
+        mysql_con = pymysql.connect(host='218.151.225.142', port=3306, db='IFG_IMS', user='ims2', password='1234',
+                                        charset='utf8')
+        try:
+            with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+                # 쿼리문 실행
+                sql = "SELECT A.TH1_APRV_NM" \
+                    + "      ,A.TH2_APRV_NM" \
+                    + "      ,CASE WHEN A.TH1_APRV_STUS != '' THEN '승인'" \
+                    + "            ELSE '미승인' END TH1_APRV_STUS_NM" \
+                    + "      ,CASE WHEN A.TH2_APRV_STUS != '' THEN '승인'" \
+                    + "            ELSE '미승인' END TH2_APRV_STUS_NM" \
+                    + "   FROM TB_APVL_REQ_MGMT_M A, TB_EMP_MGMT B" \
+                    + "  WHERE A.EMP_EMAL_ADDR = B.EMP_EMAIL" \
+                    + "    AND A.EMP_EMAL_ADDR = '" + data["email"] + "'"
+                logging.debug("apvlReqHist SQL문" + sql)
+                cursor.execute(sql)
+
+        finally:
+            mysql_con.close()
+
+        result2 = cursor.fetchall()
+        for row in result2:
+            logging.debug('====== row====')
+            logging.debug(row)
+            logging.debug('===============')
+        array = list(result2)  # 결과를 리스트로
+
+        return json.dumps(result2, indent=4, cls=DateTimeEncoder)
+
+class calendarData(Resource): # Mariadb 연결 진행
+    def get(self):
+
+        data = request.get_json()
+
+        logging.debug('================== App Start ==================')
+        logging.debug(data)
+        logging.debug(data["email"])
+        logging.debug('================== App End ==================')
+
+        #requirements pymysql import 후 커넥트 사용
+        mysql_con = pymysql.connect(host='218.151.225.142', port=3306, db='IFG_IMS', user='ims2', password='1234',
+                                        charset='utf8')
+        try:
+            with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+                #쿼리문 실행
+                sql = "SELECT * FROM TB_WRK_TM_MGMT_M"
+                logging.debug(sql)
                 cursor.execute(sql)
 
         finally:
@@ -383,6 +454,7 @@ api.add_resource(yryMgmt,'/yryMgmt') #api 선언
 api.add_resource(wrkApvlReq,'/wrkApvlReq') #api 선언
 api.add_resource(saveApvlReq,'/saveApvlReq') #api 선언
 api.add_resource(apvlReqHist,'/apvlReqHist') #api 선언
-
+api.add_resource(apvlReqHistDetl,'/apvlReqHistDetl') #api 선언
+api.add_resource(calendarData,'/calendarData') #api 선언
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5006, debug=True)

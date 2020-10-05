@@ -3,12 +3,75 @@
 {% extends 'common/base_popup.html' %}
 
 {% block content %}
+{% load static %}
     <div class="container">
         <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+
+        <link rel="stylesheet" href="https://code.jquery.com/ui/1.11.4/themes/ui-lightness/jquery-ui.css" type="text/css"/>
+        <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+        <script type="text/javascript" src="{% static 'js/jquery.mtz.monthpicker.js' %}"></script>
+
         <script type="text/javascript">
         $(document).ready(function(){
 
+            /*********************************************************************
+            *   btn_datepicker1 Btn Click Event - 일달력호출
+            *********************************************************************/
+            $("#btn_datepicker1").click(function(){
 
+                $("#datepickerData1").datepicker("show");
+            });
+
+            /*********************************************************************
+            *   btn_datepicker2 Btn Click Event - 일달력호출
+            *********************************************************************/
+            $("#btn_datepicker2").click(function(){
+                if($("#ipt_holiTerm1").val() == "") {
+                    alert("시작 일자를 먼저 선택해주세요.");
+                    return;
+                }
+                $("#datepickerData2").datepicker("show");
+            });
+
+            /*********************************************************************
+            *   클릭한 달력 datepickerData1에 value 값 담기
+            *********************************************************************/
+            $("#datepickerData1").datepicker({
+
+                onSelect:function(dateText, inst) {
+
+                    var tempData = $('#datepickerData1').val();
+
+                    $("#ipt_holiTerm1").val(tempData);
+                }
+            });
+
+	        /*********************************************************************
+            *   클릭한 달력 datepickerData2에 value 값 담기
+            *********************************************************************/
+            $("#datepickerData2").datepicker({
+
+                onSelect:function(dateText, inst) {
+
+                    var tempData = $('#datepickerData2').val();
+
+                    $("#ipt_holiTerm2").val(tempData);
+                    dateCalcu();
+                }
+	        });
+
+            function dateCalcu() {
+                var tempData1 = $("#ipt_holiTerm1").val().split('-');
+                var tempData2 = $("#ipt_holiTerm2").val().split('-');
+
+                var arrDate1 = new Date(tempData1[0], tempData1[1], tempData1[2]);
+                var arrDate2 = new Date(tempData2[0], tempData2[1], tempData2[2]);
+
+                var diffDate = arrDate2 - arrDate1;
+                var currDate = 24 * 60 * 60 * 1000;
+
+                $("#ipt_holiDays").val(parseInt(diffDate/currDate));
+            }
         });
 
     </script>
@@ -20,11 +83,11 @@
                     </h5>
                 </div>
 
-                <div class="accordion mb-4" id="grp_wrkApvlReq">
+                <div class="accordion mb-4" id="grp_yryApvlReq">
                     <div class="card">
-                        <div class="card-header p-0" id="head_wrkApvlReq">
+                        <div class="card-header p-0" id="head_yryApvlReq">
                             <h2 class="mb-0">
-                                <button class="btn btn-link btn-block text-left text-dark" type="button" data-toggle="collapse" data-target="#col_wrkApvlReq" aria-expanded="true" aria-controls="collapseOne">
+                                <button class="btn btn-link btn-block text-left text-dark" type="button" data-toggle="collapse" data-target="#col_yryApvlReq" aria-expanded="true" aria-controls="collapseOne">
                                     <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-caret-down-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                                         <path d="M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z"/>
                                     </svg>
@@ -53,8 +116,14 @@
 
                             <div class="card-body flex-height d-flex m-0 p-2">
                                 <div class="align-self-start align-self-center mr-3">휴가기간</div>
-                                <div class="align-self-center mr-5">
-                                    <input type="text" class="form-control" id="ipt_holiTerm" name="ipt_holiTerm" placeholder="" maxlength="24"/>
+                                <input type="hidden" name="date" id="datepickerData1"/>
+                                <div id="btn_datepicker1" class="align-self-center mr-5" >
+                                    <input type="text" class="form-control" id="ipt_holiTerm1" name="ipt_holiTerm" placeholder="" maxlength="24"/>
+                                </div>
+                                ~
+                                <input type="hidden" name="date" id="datepickerData2"/>
+                                <div id="btn_datepicker2" class="align-self-center mr-5" >
+                                    <input type="text" class="form-control" id="ipt_holiTerm2" name="ipt_holiTerm" placeholder="" maxlength="24"/>
                                 </div>
                             </div>
 

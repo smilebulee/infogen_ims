@@ -6,6 +6,7 @@ from django.views import generic
 from django.http import JsonResponse
 import requests
 import logging
+import json
 
 logger = logging.getLogger(__name__)
 
@@ -41,3 +42,83 @@ def retrieve(request):
         }
     logger.debug(retVal);
     return JsonResponse(retVal)
+
+
+def prjReg(request):
+    template_name = 'prj/prjReg.html'
+
+    return render(request, template_name)
+
+# 프로젝트 정보 조회
+def retrievePrjInfo(request):
+    param = json.loads(request.GET['param'])
+
+    params = {
+        'prj_cd': param['prj_cd'],
+    }
+
+    r = requests.get('http://prj_api:5002/retrievePrjInfo', params=params)
+    logger.info(r)
+    logger.info(r.text)
+    logger.info(r.json())
+
+    return JsonResponse(r.json(), safe=False)
+
+
+# 프로젝트 요구 스킬 조회
+def retrieveReqSkil(request):
+    param = json.loads(request.GET['param'])
+
+    params = {
+        'prj_cd': param['prj_cd'],
+    }
+
+    r = requests.get('http://prj_api:5002/retrieveReqSkil', params=params)
+    logger.info(r)
+    logger.info(r.text)
+    logger.info(r.json())
+
+    return JsonResponse(r.json(), safe=False)
+
+# 프로젝트 저장
+def prjSave(request):
+    param = json.loads(request.POST['param'])
+
+    datas = {
+    }
+
+    for row in param:
+        datas.setdefault(row, param[row])
+
+    r = requests.post('http://prj_api:5002/prjSave', data=datas)
+    logger.info(r)
+    logger.info(r.text)
+    logger.info(r.json())
+
+    return JsonResponse(r.json())
+
+# 프로젝트 삭제
+def prjDelete(request):
+
+    param = json.loads(request.POST['param'])
+
+    datas = {
+        'prj_name' : param['prj_name'],
+        'prj_cnct_cd' : param['prj_cnct_cd'],
+        'gnr_ctro'  : param['gnr_ctro'],
+        'ctro': param['ctro'],
+        'cnct_amt': param['cnct_amt'],
+        'slin_bzdp': param['slin_bzdp'],
+        'job_divs': param['job_divs'],
+        'pgrs_stus' : param['pgrs_stus'],
+        'req_skil_divs' : param['req_skil_divs1'],
+        'req_skil_name' : param['req_skil_name1'],
+        'rmks' : param['rmks'],
+    }
+
+    r = requests.post('http://prj_api:5002/prjDelete', data=datas)
+    logger.info(r)
+    logger.info(r.text)
+    logger.info(r.json())
+
+    return JsonResponse(r.json())

@@ -8,24 +8,29 @@
         <script type="text/javascript">
         $(document).ready(function(){
 
-            /*********************************************************************
-            *   Session Email 값 기준 근무 결재요청 리스트 조회
-            *********************************************************************/
-            var param = {
-                "email" : 'yubin1020@infogen.co.kr'                                   // 추후 Session Value 연동.
-            }
+            $("#searchBtn").click(function(){
+                /*********************************************************************
+                *   Session Email 값 기준 근무 결재요청 리스트 조회
+                *********************************************************************/
+                var param = {
+                    "email" : 'ishwang@infogen.co.kr'                                   // 추후 Session Value 연동.
+                }
 
-            $.ajaxCall( param, {
-                 'method' : 'GET',
-                 'url' : "{% url 'dili_api:getApvlReqHist' %}",
-                 'dataType' : 'json',
-                 'data' : JSON.stringify(param),
-                 'async' : false,
-                 'callbackFn' : function(data){
+                $.ajaxCall( param, {
+                     'method' : 'GET',
+                     'url' : "{% url 'dili_api:getApvlReqHist' %}",
+                     'dataType' : 'json',
+                     'data' : JSON.stringify(param),
+                     'async' : false,
+                     'callbackFn' : function(data){
 
-                    // 리턴
-                    apvlReqHistGrd(data);
-                 }
+                        // 리턴
+                        apvlReqHistGrd(data);
+                     }
+                });
+
+
+
             });
 
 	        /*********************************************************************
@@ -47,9 +52,9 @@
                 if(data.length > 0) {
                     for(var i = 0; i < data.length; i++){
 
-                        apvlReqHistTable += '<tr onclick="onclickEvt()">';
-                        apvlReqHistTable += '<td id="chkBox" class="pt-3-half">'+i+'</td>';
-                        apvlReqHistTable += '<td id="emalAddr" class="pt-3-half">'+data[i].EMP_EMAL_ADDR+'</td>';
+                        apvlReqHistTable += '<tr onclick="onclickEvt(this)">';
+                        apvlReqHistTable += '<td id="no'+i+'" class="pt-3-half">'+i+'</td>';
+                        apvlReqHistTable += '<td id="empName" class="pt-3-half">'+data[i].EMP_NAME+'</td>';
                         apvlReqHistTable += '<td id="apvlReqNm" class="pt-3-half">'+data[i].APVL_REQ_NM+'</td>';
                         apvlReqHistTable += '<td id="aprvStusNm" class="pt-3-half">'+data[i].APRV_STUS_NM+'</td>';
                         apvlReqHistTable += '</tr>';
@@ -66,7 +71,32 @@
 
         });
 
+        function onclickEvt(trId) {
+            var param = {
+                "email" : 'ishwang@infogen.co.kr'                                   // 추후 Session Value 연동.
+            }
 
+            $.ajaxCall( param, {
+                 'method' : 'GET',
+                 'url' : "{% url 'dili_api:getApvlReqHistDetl' %}",
+                 'dataType' : 'json',
+                 'data' : JSON.stringify(param),
+                 'async' : false,
+                 'callbackFn' : function(data){
+
+                    // 리턴
+                    setApvlReqHistDetl(data);
+                 }
+            });
+        }
+
+        function setApvlReqHistDetl(data) {
+            $("#thAprvNm1").text(data[0].TH1_APRV_NM);
+            $("#thAprvNm2").text(data[0].TH2_APRV_NM);
+            $("#thAprvStus1").text(data[0].TH1_APRV_STUS_NM);
+            $("#thAprvStus2").text(data[0].TH2_APRV_STUS_NM);
+
+        }
 
 
     </script>
@@ -97,6 +127,14 @@
                                 <div class="align-self-center mr-3">
                                     <input type="text" class="form-control" id="ipt_searchName" name="ipt_searchName" placeholder="이름을 입력해주세요." maxlength="10"/>
                                 </div>
+                                <div class="align-self-start align-self-center mr-3">구분</div>
+                                <div class="align-self-center mr-5">
+                                    <select id="sbx_type" class="form-control" name="type">
+                                        <option value="00" selected>선택</option>
+                                        <option value="01">미승인</option>
+                                        <option value="02">승인</option>
+                                    </select>
+                                </div>
                                 <div class="align-self-end align-self-center">
                                     <button class="btn btn-primary" id="searchBtn">Search</button>
                                 </div>
@@ -109,18 +147,46 @@
                     <div class="card">
                         <div class="card-header p-0" id="head_wrkApvlReq">
                             <h2 class="mb-0">
-                                <button class="btn btn-link btn-block text-left text-dark" type="button" data-toggle="collapse" data-target="#col_wrkApvlReq" aria-expanded="true" aria-controls="collapseOne">
+                                <button class="btn btn-link btn-block text-left text-dark" type="button" data-toggle="collapse" data-target="#col_apvlReqHist" aria-expanded="true" aria-controls="collapseOne">
                                     <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-caret-down-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                                         <path d="M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z"/>
                                     </svg>
-                                    근무결재 요청
+                                    결재요청 이력
                                 </button>
                             </h2>
                         </div>
-                        <div style="position: relative;" id="grid-parent">
-                            <div id="grd_apvlReqHist">grid</div>
-                        </div>
 
+                        <div id="col_apvlReqHist" class="collapse show" aria-labelledby="head_wrkApvlReq" data-parent="#grp_apvlReqHist">
+                            <div style="position: relative;" id="grid-parent">
+                                <div id="grd_apvlReqHist"></div>
+                            </div>
+
+                            <div style="position: relative;" id="grid-parent2">
+                                <div id="grd_apvlReqHistDetl">
+                                    <table class="table table-bordered table-responsive-md text-center">
+                                        <thead>
+                                        <tr>
+                                            <th class="text-center">결재 차수</th>
+                                            <th class="text-center">결재자</th>
+                                            <th class="text-center">결재상태</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr>
+                                           <td id="apvlTh1" class="pt-3-half">1</td>
+                                           <td id="thAprvNm1" class="pt-3-half"></td>
+                                           <td id="thAprvStus1" class="pt-3-half"></td>
+                                        </tr>
+                                        <tr>
+                                           <td id="apvlTh2" class="pt-3-half">2</td>
+                                           <td id="thAprvNm2" class="pt-3-half"></td>
+                                           <td id="thAprvStus2" class="pt-3-half"></td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
