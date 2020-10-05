@@ -594,66 +594,6 @@ class prjDelete(Resource):
 
             return jsonify(retJson)
 
-
-class prjInpuSearch(Resource):
-    def get(self):
-        # Get posted data from request
-        logging.debug("search start")
-
-        # get data
-        prjCd = request.args.get('prjCd')
-
-        logging.debug('---------------SEARCH---------------')
-        logging.debug('prjCd : ' + prjCd)
-        logging.debug('------------------------------------')
-
-        mysql_con = pymysql.connect(host='218.151.225.142', port=3306, db='IFG_IMS', user='ims2', password='1234',
-                                    charset='utf8')
-
-        try:
-            with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
-                if prjCd is None or prjCd == "":
-                    sql = "SELECT PRJ_CD, EMP_NO,DIVS, SLIN_GRD, INPU_STRT_DAY, INPU_END_DAY, CNTC_STRT_DAY, CNTC_END_DAY, CRGE_JOB, RMKS FROM TB_PRJ_INPU_STAT_MGMT "
-                    cursor.execute(sql)
-                else:
-                    logging.debug("is not null")
-                    sql = "SELECT PRJ_CD, EMP_NO,DIVS, SLIN_GRD, INPU_STRT_DAY, INPU_END_DAY, CNTC_STRT_DAY, CNTC_END_DAY, CRGE_JOB, RMKS FROM TB_PRJ_INPU_STAT_MGMT WHERE PRJ_CD=%s"
-                    cursor.execute(sql, (prjCd))
-        finally:
-            mysql_con.close()
-
-        result2 = cursor.fetchall()
-        return result2
-
-
-class prjInpuDelete(Resource):
-
-    def post(self):
-        # Get posted data from request
-
-        # get data
-        prjCd = request.form["prjCd"]
-        empNo = request.form["empNo"]
-
-        logging.debug('---------------SEARCH---------------')
-        logging.debug('prjCd : ' + prjCd)
-        logging.debug('empNo : ' + empNo)
-        logging.debug('------------------------------------')
-
-        mysql_con = pymysql.connect(host='218.151.225.142', port=3306, db='IFG_IMS', user='ims2', password='1234',
-                                    charset='utf8')
-
-        try:
-            with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
-                sql = "DELETE FROM TB_PRJ_INPU_STAT_MGMT WHERE EMP_NO= %s AND PRJ_CD = %s"
-                cursor.execute(sql, (empNo, prjCd))
-                mysql_con.commit()
-        finally:
-            mysql_con.close()
-
-        result2 = cursor.fetchall()
-        return result2
-
 class skilMgmtSearch(Resource):
     def get(self):
         # Get posted data from request
@@ -750,57 +690,6 @@ class skilMgmtDetl(Resource):
     def get(self):
         return "This is SkilDetail Management API! hohoho"
 
-class prjInpuSave(Resource):
-    def post(self):
-        params = request.get_json()
-
-        logging.debug("save start")
-        empNo = request.form['empNo']
-        prjCd = request.form['prjCd']
-        slinGrd = request.form['slinGrd']
-        divs = request.form['divs']
-
-        inpuStrtDay = request.form['inpuStrtDay']
-        inpuEndDay = request.form['inpuEndDay']
-        cntcStrtDay = request.form['cntcStrtDay']
-        cntcEndDay = request.form['cntcEndDay']
-        crgeJob = request.form['crgeJob']
-        rmks = request.form['rmks']
-        state = request.form['state']
-
-        logging.debug('================== App Start ==================')
-        logging.debug(params)
-        logging.debug('================== App End ==================')
-
-        mysql_con = pymysql.connect(host='218.151.225.142', port=3306, db='IFG_IMS', user='ims2', password='1234',
-                                    charset='utf8')
-
-        try:
-            with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
-
-                if state =="created" :
-                    logging.debug('[skil_app] app.py : created')
-                    sql = "INSERT INTO TB_PRJ_INPU_STAT_MGMT(EMP_NO, PRJ_CD, DIVS, SLIN_GRD, INPU_STRT_DAY, INPU_END_DAY, CNTC_STRT_DAY, CNTC_END_DAY, CRGE_JOB, RMKS, REG_EMP_NO, REG_DATE) " \
-                          "VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,NOW())"
-                    cursor.execute(sql, (empNo, prjCd, divs, slinGrd, inpuStrtDay, inpuEndDay, cntcStrtDay, cntcEndDay, crgeJob, rmks,'admin'))
-                    mysql_con.commit()
-                else:
-                    logging.debug('[skil_app] app.py : modified')
-                    sql = "UPDATE TB_PRJ_INPU_STAT_MGMT " \
-                          "SET DIVS=%s, SLIN_GRD=%s, INPU_STRT_DAY=%s, INPU_END_DAY=%s,  CNTC_STRT_DAY=%s, CNTC_END_DAY=%s, CRGE_JOB=%s, RMKS=%s, CHG_EMP_NO=%s, CHG_DATE= NOW()" \
-                          "WHERE EMP_NO = %s AND PRJ_CD = %s "
-                    cursor.execute(sql, (divs, slinGrd, inpuStrtDay, inpuEndDay, cntcStrtDay, cntcEndDay, crgeJob, rmks,'admin', empNo, prjCd))
-                    mysql_con.commit()
-        finally:
-            mysql_con.close()
-
-        retJson = {
-            "status": 200,
-            "msg": "Data has been saved successfully"
-        }
-
-        return jsonify(retJson)
-
 #공통 코드 조회
 class retrieveCmmCd(Resource):
     def get(self):
@@ -848,12 +737,6 @@ api.add_resource(retrievePrjInfo, '/retrievePrjInfo')
 api.add_resource(retrieveReqSkil, '/retrieveReqSkil')
 api.add_resource(prjSave, '/prjSave')
 api.add_resource(prjDelete, '/prjDelete')
-
-# 프로젝트 투입 관리
-api.add_resource(prjInpuSearch, '/prjInpuSearch')
-api.add_resource(prjInpuDelete, '/prjInpuDelete')
-api.add_resource(prjInpuSave, '/prjInpuSave')
-
 
 # 스킬관리
 api.add_resource(skilMgmtDetl, '/skilMgmtDetl')

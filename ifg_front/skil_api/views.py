@@ -207,40 +207,10 @@ def prjDelete(request):
 
     return JsonResponse(r.json())
 
-def prjInpuMgmt(request):
-    template_name = 'skil/prjInpuMgmt.html'
-
-    return render(request, template_name)
-
 def skilMgmt(request):
     template_name = 'skil/skilMgmt.html'
 
     return render(request, template_name)
-
-def prjInpuSearch(request):
-
-    param = json.loads(request.GET['param'])
-    logger.info("prjInpuSearch : skil/views.py")
-    datas = {
-        'prjCd': param['prjCd']
-    }
-    r = requests.get('http://skil_api:5003/prjInpuSearch', params=datas)
-    return JsonResponse(r.json(), safe=False)
-
-def prjInpuDelete(request):
-
-    param = json.loads(request.POST['param'])
-    logger.info(param)
-    logger.info("prjInpuDelete : skil/views.py")
-    datas = {
-        'prjCd': param['PRJ_CD'],
-        'empNo': param['EMP_NO'],
-    }
-
-    logger.info('request.post : ' + request.POST['param'])
-
-    r = requests.post('http://skil_api:5003/prjInpuDelete', data=datas)
-    return JsonResponse(r.json(), safe=False)
 
 def skilRegPopup(request):
     template_name = 'skil/skilRegPopup.html'
@@ -317,44 +287,6 @@ class skilMgmtDetl(generic.TemplateView):
         }
 
         return render(request, template_name, rr)
-
-def prjInpuSave(request):
-
-    param = json.loads(request.POST['param'])
-    logger.info(param)
-    for data in param:
-        if '__created__' in data and data['__created__']:
-            logger.info("__created__")
-            datas = {
-                'empNo': data['EMP_NO'],
-                'prjCd': data['PRJ_CD'],
-                'slinGrd': data['SLIN_GRD'],
-                'divs': data['DIVS'],
-                'inpuStrtDay': data['INPU_STRT_DAY'],
-                'inpuEndDay': data['INPU_END_DAY'],
-                'cntcStrtDay': data['CNTC_STRT_DAY'],
-                'cntcEndDay': data['CNTC_END_DAY'],
-                'crgeJob': data['CRGE_JOB'],
-                'rmks': data['RMKS'],
-                'state': 'created'
-            }
-        else:
-            logger.info("modified")
-            datas = {
-                'empNo': data['EMP_NO'],
-                'prjCd': data['PRJ_CD'],
-                'slinGrd': data['SLIN_GRD'],
-                'divs': data['DIVS'],
-                'inpuStrtDay': data['INPU_STRT_DAY'],
-                'inpuEndDay': data['INPU_END_DAY'],
-                'cntcStrtDay': data['CNTC_STRT_DAY'],
-                'cntcEndDay': data['CNTC_END_DAY'],
-                'crgeJob': data['CRGE_JOB'],
-                'rmks': data['RMKS'],
-                'state': 'modified'
-            }
-        r = requests.post('http://skil_api:5003/prjInpuSave', data=datas)
-    return JsonResponse(r.json())
 
 #공통 코드 조회
 def retrieveCmmCd(request):

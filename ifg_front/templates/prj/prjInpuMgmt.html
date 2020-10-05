@@ -60,7 +60,7 @@ history
             function getGridList(page){
                 $('#formSearchDiv').ajaxCall({
                     method : 'GET',
-                    url : "{% url 'skil_api:prjInpuSearch' %}",
+                    url : "{% url 'prj_api:prjInpuSearch' %}",
                     callbackFn : function(data){
 
                         var gridList = data; /* 그리드에 세팅할 데이터는 JSON 배열 형태 */
@@ -104,7 +104,7 @@ history
                     if(firstGrid.getList("selected")[0].STUS !="insert"){
                         var delList = firstGrid.getList('selected')[0];
                         $.ajaxCall(delList, {
-                            url : '{% url 'skil_api:prjInpuDelete' %}',
+                            url : '{% url 'prj_api:prjInpuDelete' %}',
                             method : 'post',
                             callbackFn : function(data){
                                 g_toast.push('삭제 되었습니다.');
@@ -166,7 +166,7 @@ history
                         }
                     }
                     $.ajaxCall(updateList, {
-                        url : '{% url 'skil_api:prjInpuSave' %}',
+                        url : '{% url 'prj_api:prjInpuSave' %}',
                         method : 'post',
                         callbackFn : function(data){
                             g_toast.push('저장 되었습니다.');
