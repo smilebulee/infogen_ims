@@ -271,8 +271,8 @@ class prjSave(Resource):
                           "PRJ_NAME = %s, PRJ_CNCT_CD = %s, GNR_CTRO = %s, CTRO = %s, CNCT_AMT = %s, SLIN_BZDP = %s, " \
                           "JOB_DIVS_CD = %s, PGRS_STUS_CD = %s, CHG_EMP_NO = 'admin', CHG_DATE = NOW(), RMKS = %s"
                     cursor.execute(sql, (
-                        prj_cd, prj_nm, cnct_cd, gnr_ctro, ctro, cnct_amt, slin_bzdp, job_divs, pgrs_stus, rmks, use_yn,
-                        prj_nm, cnct_cd, gnr_ctro, ctro, cnct_amt, slin_bzdp, job_divs, pgrs_stus, rmks))
+                        prj_cd, prj_name, prj_cnct_cd, gnr_ctro, ctro, cnct_amt, slin_bzdp, job_divs, pgrs_stus, rmks, use_yn,
+                        prj_name, prj_cnct_cd, gnr_ctro, ctro, cnct_amt, slin_bzdp, job_divs, pgrs_stus, rmks))
                     mysql_con.commit()
                     logging.debug('PRJ_INFO SUCCESS')
 
@@ -293,18 +293,13 @@ class prjSave(Resource):
                                       " `CHG_EMP_NO`, `CHG_DATE`) " \
                                       "VALUES ((SELECT PRJ_CD FROM TB_PRJ_INFO A WHERE PRJ_NAME = %s)," \
                                       " %s, %s, 'admin', NOW(), 'admin', NOW())"
-                            cursor.execute(sql, (prj_nm, req_skil_divs, req_skil_name))
+                            cursor.execute(sql, (prj_name, req_skil_divs, req_skil_name))
                             mysql_con.commit()
                             logging.debug('REQ_SKIL'+str(i)+' SUCCESS')
             finally:
                 mysql_con.close()
 
-            retJson = {
-                "status": 200,
-                "msg": "Data has been saved successfully"
-            }
-
-            return jsonify(retJson)
+            return prj_cd
 
 #프로젝트 정보 삭제
 class prjDelete(Resource):
@@ -313,7 +308,7 @@ class prjDelete(Resource):
             params = request.get_json()
 
             logging.debug("delete start")
-            prj_nm = request.form['prj_nm']
+            prj_name = request.form['prj_name']
 
             mysql_con = pymysql.connect(host='218.151.225.142', port=3306, db='IFG_IMS', user='ims2',
                                             password='1234',
@@ -322,8 +317,8 @@ class prjDelete(Resource):
             try:
                 with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                     sql = "UPDATE TB_PRJ_INFO SET USE_YN = 'N' " \
-                          "WHERE PRJ_NM = %s"
-                    cursor.execute(sql, (prj_nm))
+                          "WHERE PRJ_NAME = %s"
+                    cursor.execute(sql, prj_name)
                     mysql_con.commit()
                     logging.debug('PRJ_INFO SUCCESS')
 

@@ -18,8 +18,8 @@ urlpatterns = [
     url(r'^prjReg/', views.prjReg, name='prjReg'),
     url(r'^retrievePrjInfo/get', views.retrievePrjInfo, name='retrievePrjInfo'),
     url(r'^retrieveReqSkil/get', views.retrieveReqSkil, name='retrieveReqSkil'),
-    # url(r'^prjSave/post', views.prjSave, name='prjSave'),
-    # url(r'^prjDelete/post', views.prjDelete, name='prjDelete'),
+    url(r'^prjSave/post', views.prjSave, name='prjSave'),
+    url(r'^prjDelete/post', views.prjDelete, name='prjDelete'),
 
     # 프로젝트 투입 관리
     url(r'^prjInpuMgmt/', views.prjInpuMgmt, name='prjInpuMgmt'),

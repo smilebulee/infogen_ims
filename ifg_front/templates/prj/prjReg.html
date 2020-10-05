@@ -2,7 +2,6 @@
 
 {% block content %}
 
-
  <style>
 #modal {
   position:relative;
@@ -183,7 +182,7 @@ tbody>tr>td:first-child:before {
 
             retrieveDevInfo();
         } else{  <!--   프로젝트 최초 등록    -->
-            console.log('emp_no is null')
+            console.log('prj_cd is null')
         }
     });
 
@@ -266,6 +265,37 @@ tbody>tr>td:first-child:before {
     $('#saveBtn').click(function(){
             $('#trCount').val($('#reqSkil tbody tr').length);
 
+            var prj_name = $('#prj_name').val();
+            var prj_cnct_cd = $('#prj_cnct_cd').val();
+            var gnr_ctro = $('#gnr_ctro').val();
+            var ctro = $('#ctro').val();
+            var slin_bzdp = $('#slin_bzdp').val();
+            var job_divs = $('#job_divs').val();
+            var pgrs_stus = $('#pgrs_stus').val();
+
+            if(prj_name == '' || prj_name == null){
+                alertMsg('프로젝트명은(는) 필수 입력 사항입니다.');
+                return false;
+            } else if(prj_cnct_cd == '' || prj_cnct_cd == null){
+               alertMsg('고객사 계약 코드은(는) 필수 입력 사항입니다.');
+               return false;
+            } else if(gnr_ctro == '' || gnr_ctro == null){
+                alertMsg('원청사(는) 필수 입력 사항입니다.');
+                return false;
+            } else if(ctro == '' || ctro == null){
+                alertMsg('계약사은(는) 필수 입력 사항입니다.');
+                return false;
+            } else if(slin_bzdp == '' || slin_bzdp == null){
+                alertMsg('매출 사업부은(는) 필수 입력 사항입니다.');
+                return false;
+            }  else if(job_divs == '' || job_divs == null){
+                alertMsg('업무 구분은(는) 필수 입력 사항입니다.');
+                return false;
+            }  else if(pgrs_stus == '' || pgrs_stus == null){
+                alertMsg('진행 상태은(는) 필수 입력 사항입니다.');
+                return false;
+            }
+
             console.log('저장');
                 confirmMsg('저장 하시겠습니까?', function(){
                         $('#projectInfo').ajaxCall({
@@ -285,6 +315,7 @@ tbody>tr>td:first-child:before {
                     method : 'POST',
                     url : '/prj/prjDelete/post',
                     callbackFn : function(data){
+                       location.href = '/prj/prjReg'
                        g_toast.push('삭제 되었습니다.');
                     }
                 });
@@ -293,39 +324,56 @@ tbody>tr>td:first-child:before {
      });
 
     function skil_chg(a){
-        console.log('스킬 변경');
-        var DB = ["Oracle","MySql","MsSql"];
-        var Language = ["C","C++","C#","JAVA","Python"];
-        var WEB = ["HTML","JavaScript","CSS"];
-        var MIDWARE = ["RPC", "MOM", "ORB"];
-        var Framework = [".net", "Spring"];
 
-        var selectSkill = $("#req_skil_divs"+a).val();
+        var skil_divs_cd = $('#req_skil_divs'+a).val();
 
-        var changeSkill;
 
-        if(selectSkill == "01"){
-          changeSkill = DB;
-        }
-        else if(selectSkill == "02"){
-          changeSkill = Language;
-        }
-        else if(selectSkill == "03"){
-          changeSkill =  WEB;
-        }
-        else if(selectSkill == "04"){
-          changeSkill =  MIDWARE;
-        }
-        else if(selectSkill == "05"){
-          changeSkill =  Framework;
-        }
-
-        $("#req_skil_name"+a).empty();
-
-        for(var count = 0; count < changeSkill.length; count++){
-                        var option = $("<option>"+changeSkill[count]+"</option>");
+        $.ajaxCall( param, {
+                 method : 'GET',
+                 'url' : '/prj/retrieveSkilName/',
+                 'dataType' : 'json',
+                 'data' : JSON.stringify(param),
+                 'async' : false,
+                 'callbackFn' : function(data){
+                    for(var i = 0; i < data.length; i++){
+                        var option = $("<option>"+data[i]+"</option>");
                         $('#req_skil_name'+a).append(option);
                     }
+                 }
+         });
+
+<!--        var DB = ["Oracle","MySql","MsSql"];-->
+<!--        var Language = ["C","C++","C#","JAVA","Python"];-->
+<!--        var WEB = ["HTML","JavaScript","CSS"];-->
+<!--        var MIDWARE = ["RPC", "MOM", "ORB"];-->
+<!--        var Framework = [".net", "Spring"];-->
+
+<!--        var selectSkill = $("#req_skil_divs"+a).val();-->
+
+<!--        var changeSkill;-->
+
+<!--        if(selectSkill == "01"){-->
+<!--          changeSkill = DB;-->
+<!--        }-->
+<!--        else if(selectSkill == "02"){-->
+<!--          changeSkill = Language;-->
+<!--        }-->
+<!--        else if(selectSkill == "03"){-->
+<!--          changeSkill =  WEB;-->
+<!--        }-->
+<!--        else if(selectSkill == "04"){-->
+<!--          changeSkill =  MIDWARE;-->
+<!--        }-->
+<!--        else if(selectSkill == "05"){-->
+<!--          changeSkill =  Framework;-->
+<!--        }-->
+
+<!--        $("#req_skil_name"+a).empty();-->
+
+<!--        for(var count = 0; count < changeSkill.length; count++){-->
+<!--                        var option = $("<option>"+changeSkill[count]+"</option>");-->
+<!--                        $('#req_skil_name'+a).append(option);-->
+<!--                    }-->
     };
 
 
