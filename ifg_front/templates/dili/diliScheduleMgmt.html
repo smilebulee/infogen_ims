@@ -474,7 +474,7 @@
                 console.log("calendarData1 : ",calendarData);
 
                 var dataCustom = [{
-                    calendarId: null,
+                    calendarId: 1,
                     id: String(Math.random() * 100000000000000000),
                     title : "업무시작시간: 09:00",
                     isAllDay: false,
@@ -482,7 +482,7 @@
                     end: new Date("2020-10-01T10:00:00"),
                     category: "time"
                 }, {
-                    calendarId: null,
+                    calendarId: 2,
                     id: String(Math.random() * 100000000000000000),
                     title : "업무종료시간: 18:00",
                     isAllDay: false,
@@ -494,6 +494,20 @@
 
                 calendar.createSchedules(dataCustom);
             }
+
+            calendar.setCalendarColor('1', {
+                color: '#e8e8e8',
+                bgColor: '#585858',
+                borderColor: '#a1b56c',
+                dragBgColor: '#585858',
+            });
+            calendar.setCalendarColor('2', {
+                color: '#282828',
+                bgColor: '#dc9656',
+                borderColor: '#a1b56c',
+                dragBgColor: '#dc9656',
+            });
+
 
             /*********************************************************************
             *  저장, 수정, 삭제 이벤트

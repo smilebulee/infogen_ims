@@ -243,7 +243,7 @@ class retrieveSkilName(Resource):
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 sql = "SELECT " \
                       "SKIL_DIVS_CD, " \
-                      "SKIL_NM " \
+                      "SKIL_NAME " \
                       "FROM TB_SKIL_MGNT_CD A "
                 cursor.execute(sql)
                 logging.debug('retrieveSkilName SUCCESS')
@@ -316,7 +316,7 @@ class prjSave(Resource):
                         req_skil_name = request.form['req_skil_name'+str(i)]
                         logging.debug('req_skil_name : ' + req_skil_name)
                         if req_skil_divs != "00":
-                            sql = "INSERT INTO TB_PRJ_REQ_SKIL(`PRJ_CD`, `SKIL_DIVS`, `SKIL_NAME`, `REG_EMP_NO`, `REG_DATE`," \
+                            sql = "INSERT INTO TB_PRJ_REQ_SKIL(`PRJ_CD`, `SKIL_DIVS_CD`, `SKIL_NAME`, `REG_EMP_NO`, `REG_DATE`," \
                                       " `CHG_EMP_NO`, `CHG_DATE`) " \
                                       "VALUES ((SELECT PRJ_CD FROM TB_PRJ_INFO A WHERE PRJ_NAME = %s)," \
                                       " %s, %s, 'admin', NOW(), 'admin', NOW())"
