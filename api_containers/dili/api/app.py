@@ -541,6 +541,89 @@ class noticeLst(Resource):  # Mariadb 연결 진행
 
         return result2
 
+class noticeSave(Resource):
+    def post(self):
+        logger.info('========app.py noticeSave=========')
+        params = request.get_json()
+        logger.info(params)
+
+        for row in request.form:
+            logger.info(row + ':' + request.form[row])
+            globals()[row] = request.form[row]
+
+        tit = request.form['tit']
+        kdDivsCd = request.form['kdDivsCd']
+        mjrYn = request.form['mjrYn']
+        popOpenYn = request.form['popOpenYn']
+        cntn = request.form['cntn']
+        dataInptId = request.form['dataInptId']
+        dataInptPgmId = request.form['dataInptPgmId']
+        dataUpdId = request.form['dataUpdId']
+        dataUpdPgmId = request.form['dataUpdPgmId']
+        #
+        logging.debug("====Param data====")
+        logging.debug("tit = " + tit)
+        logging.debug("kdDivsCd = " + kdDivsCd)
+        logging.debug("mjrYn = " + mjrYn)
+        logging.debug("popOpenYn = " + popOpenYn)
+        logging.debug("cntn = " + cntn)
+        logging.debug("dataInptId = " + dataInptId)
+        logging.debug("dataInptPgmId = " + dataInptPgmId)
+        logging.debug("dataUpdId = " + dataUpdId)
+        logging.debug("dataUpdPgmId = " + dataUpdPgmId)
+        logging.debug("=====================")
+
+        mysql_con = pymysql.connect(host='218.151.225.142', port=3306, db='IFG_IMS', user='ims2', password='1234',
+                                    charset='utf8')
+
+
+        logging.debug("save Start")
+
+        try:
+            with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+                sql = "INSERT INTO	TB_STTS_POST_MGMT_M	('TIT', " \
+                                                    +    "'CNTN', " \
+                                                    +    "'KD_DIVS_CD', " \
+                                                    +    "'MJR_YN', " \
+                                                    +    "'POP_OPEN_YN', " \
+                                                    +    "'DATA_INPT_ID'," \
+                                                    +    "'DATA_INPT_DTTM'," \
+                                                    +    "'DATA_INPT_PGM_ID'," \
+                                                    +    "'DATA_UPD_ID'," \
+                                                    +    "'DATA_UPD_DTTM'," \
+                                                    +    "'DATA_UPD_PGM_ID') "\
+                "VALUES( %s, %s, %s, %s, %s, %s, NOW(), %s, %s, NOW(), %s)" \
+
+                # "ON DUPLICATE KEY UPDATE "
+                # "TIT = %s, " \
+                # "CNTN = %s," \
+                # "MJR_YN = %s," \
+                # "POP_OPEN_YN = %s," \
+                # "DATA_INPT_ID = %s," \
+                # "DATA_INPT_PGM_ID = %s," \
+                # "DATA_UPD_ID = %s," \
+                # "DATA_UPD_ID = %s," \
+                # "DATA_UPD_PGM_ID = %s"
+            logger.info(sql)
+            cursor.execute(sql,(tit, cntn, kdDivsCd, mjrYn, popOpenYn, dataInptId, dataInptPgmId, dataUpdId, dataUpdPgmId))
+
+            # sql2 = "INSERT INTO WEB_CONN_TEST VALUES (12,%s,NOW())"
+            # cursor.execute(sql2,(tit))
+
+            logging.debug(sql)
+            # logging.debug(sql2)
+            mysql_con.commit()
+
+        finally:
+            mysql_con.close()
+
+        retJson = {
+            "status": 200,
+            "msg": "Data has been saved successfully"
+        }
+
+        return jsonify(retJson)
+
 api.add_resource(Hello, '/hello')
 api.add_resource(Register, '/register')
 api.add_resource(Retrieve, '/retrieve')
@@ -555,6 +638,7 @@ api.add_resource(apvlReqHist,'/apvlReqHist') #api 선언
 api.add_resource(apvlReqHistDetl,'/apvlReqHistDetl') #api 선언
 api.add_resource(calendarData,'/calendarData') #api 선언
 api.add_resource(noticeLst,'/noticeLst') #api 선언
+api.add_resource(noticeSave,'/noticeSave') #api 선언
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5006, debug=True)
