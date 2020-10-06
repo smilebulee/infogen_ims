@@ -579,6 +579,85 @@ class noticeLst(Resource):  # Mariadb 연결 진행
 
         return result2
 
+
+class noticeOne(Resource):  # Mariadb 연결 진행
+    def get(self):
+        logging.debug("noticeOne start")
+        logging.debug(request.get_json())
+
+        # get data
+        postId = request.args.get('postId')
+
+        logging.debug('---------------SEARCH---------------')
+        logging.debug('postId : ' + postId)
+        logging.debug('------------------------------------')
+
+        # requirements pymysql import 후 커넥트 사용
+        mysql_con = pymysql.connect(host='218.151.225.142', port=3306, db='IFG_IMS', user='ims2', password='1234',
+                                    charset='utf8')
+        try:
+            with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+                # 쿼리문 실행
+                sql = "SELECT  A.POST_ID, " \
+                      "A.TIT, " \
+                      "A.CNTN, " \
+                      "A.KD_DIVS_CD, " \
+                      "A.MJR_YN, " \
+                      "A.POP_OPEN_YN, " \
+                      "A.DATA_INPT_ID, " \
+                      "B.EMP_NAME, " \
+                      "DATE_FORMAT(A.DATA_INPT_DTTM, '%Y-%m-%d %H:%i:%s') AS DATA_INPT_DTTM, " \
+                      "A.DATA_INPT_PGM_ID, " \
+                      "A.DATA_UPD_ID, " \
+                      "DATE_FORMAT(A.DATA_UPD_DTTM, '%Y-%m-%d %H:%i:%s') AS DATA_UPD_DTTM, " \
+                      "A.DATA_UPD_PGM_ID, " \
+                      "CASE WHEN A.KD_DIVS_CD = '01' THEN '공지' " \
+                      "WHEN A.KD_DIVS_CD = '02' THEN '복리' " \
+                      "WHEN A.KD_DIVS_CD = '03' THEN '발령'  " \
+                      "WHEN A.KD_DIVS_CD = '04' THEN '그룹웨어'  " \
+                      "ELSE '' END KD_DIVS_NM  " \
+                      "FROM  TB_STTS_POST_MGMT_M A LEFT OUTER JOIN TB_EMP_MGMT B ON A.DATA_INPT_ID = B.EMP_ID " \
+                      "WHERE 1=1 " \
+                      "AND  post_id = %s "
+
+                logging.debug(sql)
+                cursor.execute(sql, postId)
+
+        finally:
+            mysql_con.close()
+
+        result1 = cursor.fetchall()
+
+        return result1
+
+class noticeMjrCnt(Resource):  # Mariadb 연결 진행
+    def get(self):
+        logging.debug("noticeMjrCnt start")
+        logging.debug(request.get_json())
+
+        logging.debug('---------------SEARCH---------------')
+        logging.debug('param X')
+        logging.debug('------------------------------------')
+
+        # requirements pymysql import 후 커넥트 사용
+        mysql_con = pymysql.connect(host='218.151.225.142', port=3306, db='IFG_IMS', user='ims2', password='1234',
+                                    charset='utf8')
+        try:
+            with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+                # 쿼리문 실행
+                sql = "SELECT COUNT(MJR_YN) " \
+                      "FROM TB_STTS_POST_MGMT_M " \
+                      "WHERE MJR_YN = 'Y' "
+                logging.debug(sql)
+                cursor.execute(sql)
+
+        finally:
+            mysql_con.close()
+
+        result1 = cursor.fetchall()
+
+        return result1
+
 class noticeSave(Resource):
     def post(self):
         logger.info('========app.py noticeSave=========')
@@ -671,6 +750,8 @@ api.add_resource(apvlReqHist,'/apvlReqHist') #api 선언
 api.add_resource(apvlReqHistDetl,'/apvlReqHistDetl') #api 선언
 api.add_resource(calendarData,'/calendarData') #api 선언
 api.add_resource(noticeLst,'/noticeLst') #api 선언
+api.add_resource(noticeOne,'/noticeOne') #api 선언
+api.add_resource(noticeMjrCnt,'/noticeMjrCnt') #api 선언
 api.add_resource(noticeSave,'/noticeSave') #api 선언
 api.add_resource(empList,'/empList') #api 선언
 

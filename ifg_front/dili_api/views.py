@@ -185,6 +185,41 @@ def getNoticeLst(request):
     return JsonResponse(data)
 
 
+
+def getNoticeOne(request):
+    param = json.loads(request.GET['param'])
+
+    logger.info(param)
+
+    params = {
+        'postId': param['postId'],
+    }
+
+    r = requests.get('http://dili_api:5006/noticeOne', params=params)
+    logger.info(r)
+    logger.info(r.text)
+    logger.info(r.json())
+
+    return JsonResponse(r.json(), safe=False)
+
+
+def getNoticeMjrCnt(request):
+    param = json.loads(request.GET['param'])
+
+    logger.info(param)
+
+    params = {
+    }
+    #param X
+
+    r = requests.get('http://dili_api:5006/noticeMjrCnt', params=params)
+    logger.info(r)
+    logger.info(r.text)
+    logger.info(r.json())
+
+    return JsonResponse(r.json(), safe=False)
+
+
 class noticeDtl(generic.TemplateView):
     def get(self, request, *args, **kwargs):
         template_name = 'dili/noticeDtl.html'
