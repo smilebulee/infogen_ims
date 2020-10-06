@@ -367,11 +367,14 @@
             /*********************************************************************
             *   anhoReg Btn Click Event - 연차등록 버튼 클릭
             *********************************************************************/
-            $('#btn_anhoReg').on('click', function() {
-                modal('my_modal');                  //연차결제 화면 모달 띄우기
-                $("#my_modal2").load("{% url 'dili_api:yryApvlReq' %}");
-            });
 
+            $('#btn_anhoReg').on('click', function() {
+
+               modal('my_modal');                  //연차결제 화면 모달 띄우기
+                $("#my_modal2").load("{% url 'dili_api:yryApvlReq' %}");
+
+
+            });
 
             /*********************************************************************
             *   btn_datepicker Btn Click Event - 일달력호출
@@ -679,16 +682,16 @@
 
     </script>
         <!--모달 영역 -->
-
-
-
-
- <!--       <div id="my_modal" class="modalUi">
-            &lt;!&ndash;모달 url 불러오는 영역 &ndash;&gt;
+        <div id="my_modal" class="modalUi">
             <div id="my_modal2">
             </div>
-            <a class="modal_close_btn">닫기</a>
-        </div>-->
+           <a class="modal_close_btn">
+               <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-x-circle" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                  <path fill-rule="evenodd" d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                  <path fill-rule="evenodd" d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+                </svg>
+           </a>
+        </div>
 
         <div class="row">
             <div class="col-sm-12">
