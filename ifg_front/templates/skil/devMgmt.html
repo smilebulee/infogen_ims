@@ -25,8 +25,10 @@ history
                         columns: [              /* columns : 그리드 헤더 및 매핑 시킬 컬럼 및 컬럼 속성 설정 항목(필수) */
                         { key: "EMP_NAME",   label: "성명",       width: 100,  align: "center"},
                         { key: "DEVP_BLCO",   label: "부서",       width: 80,   align: "center"},
-                        { key: "DEVP_GRD_CD",    label: "등급",       width: 80,   align: "center"},
-                        { key: "CNTC_DIVS_CD",    label: "구분",         width: 80,   align: "center"},
+                        { key: "DEVP_GRD_NAME",    label: "등급",       width: 80,   align: "center"},
+                        { key: "CNTC_DIVS_NAME",    label: "구분",         width: 80,   align: "center"},
+                        { key: "DEVP_GRD_CD",     label: "등급코드",       width: 80,   align: "center", hidden : true},
+                        { key: "CNTC_DIVS_CD",     label: "구분코드",       width: 80,   align: "center", hidden : true},
                         { key: "EMP_NO",     label: "사번",       width: 80,   align: "center", hidden : true}
                         ]
                     };
@@ -44,6 +46,28 @@ history
 
             $('#searchBtn').click(function(){
                 getGridList(1);
+            });
+
+            /* 프로젝트별투입 등록 선택 */
+           $('#devOutSaveBtn').click(function(){
+
+                if(firstGrid.getList("selected").length == 0){
+                    alertMsg("선택된 행이 없습니다.");
+                    return false;
+                }  else{
+                    alertMsg("(작성예정)선택된 행 값 넘겨주기");
+                    var empNo = firstGrid.getList("selected")[0].EMP_NO;
+                    var empName = firstGrid.getList("selected")[0].EMP_NAME;
+                    var devpBlco = firstGrid.getList("selected")[0].DEVP_BLCO;
+                    var devpGrdCd = firstGrid.getList("selected")[0].DEVP_GRD_CD;
+                    var cntcDivsCd = firstGrid.getList("selected")[0].CNTC_DIVS_CD;
+                    console.log(empNo);
+                    console.log(empName);
+                    console.log(devpBlco);
+                    console.log(devpGrdCd);
+                    console.log(cntcDivsCd);
+                    location.href = '/prj/prjInpuMgmt?emp_No='+empNo+'&empName='+empName+'&devpBlco='+devpBlco+'&devpGrdCd='+devpGrdCd+'&cntcDivsCd='+cntcDivsCd
+                }
             });
 
             /* 개발자 등록 선택 */
@@ -105,6 +129,7 @@ history
                     </div>
                     <div style="float: right; padding-top :10px;">
                         <button class="btn btn-primary" id="devSaveBtn" >개발자 등록</button>
+                        <button class="btn btn-primary" id="devOutSaveBtn" >프로젝트별 투입 등록</button>
                     </div>
                 </div>
     </div>

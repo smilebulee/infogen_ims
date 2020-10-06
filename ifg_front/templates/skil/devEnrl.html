@@ -107,7 +107,7 @@
             </span>
             </div>
             <hr>
-                    <button type="button" id="closeBtn">취소</button>
+                    <button type="button" id="closeBtn">닫기</button>
                     <button type="button" id="saveBtn">저장</button>
                     <button type="button" id="deleteBtn" style="color:red">삭제</button>
     </div>
@@ -176,42 +176,43 @@
                         $('#'+sbx_id).append(option);
                     }
                  }
-            });
+         });
      };
 
     $('#saveBtn').click(function(){
+        var emp_name = $('#emp_name').val();
+        var emp_dept = $('#emp_dept').val();
+        var dept_grd = $('#devp_grd').val();
+        var cntc_divs = $('#cntc_divs').val();
+        var tel_no1 = $('#tel_no1').val();
+        var tel_no2 = $('#tel_no2').val();
+        var tel_no3 = $('#tel_no3').val();
+        var devp_bday = $('#devp_bday').val();
+
+        if(emp_name == '' || emp_name == null){
+            alertMsg('성명은(는) 필수 입력 사항입니다.');
+            return false;
+        } else if(emp_dept == '' || emp_dept == null){
+           alertMsg('부서은(는) 필수 입력 사항입니다.');
+           return false;
+        } else if(dept_grd == '' || dept_grd == null){
+            alertMsg('등급은(는) 필수 입력 사항입니다.');
+            return false;
+        } else if(cntc_divs == '' || cntc_divs == null){
+            alertMsg('계약구분은(는) 필수 입력 사항입니다.');
+            return false;
+        } else if(tel_no1 == '' || tel_no1 == null ||
+                  tel_no2 == '' || tel_no2 == null ||
+                  tel_no3 == '' || tel_no3 == null){
+            alertMsg('연락처은(는) 필수 입력 사항입니다.');
+            return false;
+        } else if(devp_bday == '' || devp_bday == null){
+            alertMsg('생년월일은(는) 필수 입력 사항입니다.');
+            return false;
+        }
+
         console.log('저장');
         confirmMsg('저장 하시겠습니까?', function(){
-            var emp_name = $('#emp_name').val();
-            var emp_dept = $('#emp_dept').val();
-            var dept_grd = $('#devp_grd').val();
-            var cntc_divs = $('#cntc_divs').val();
-            var tel_no1 = $('#tel_no1').val();
-            var tel_no2 = $('#tel_no2').val();
-            var tel_no3 = $('#tel_no3').val();
-            var devp_bday = $('#devp_bday').val();
-
-            if(emp_name == '' || emp_name == null){
-                alertMsg('성명은(는) 필수 입력 사항입니다.');
-                return false;
-            } else if(emp_dept == '' || emp_dept == null){
-                alertMsg('부서은(는) 필수 입력 사항입니다.');
-                return false;
-            } else if(dept_grd == '' || dept_grd == null){
-                alertMsg('등급은(는) 필수 입력 사항입니다.');
-                return false;
-            } else if(cntc_divs == '' || cntc_divs == null){
-                alertMsg('계약구분은(는) 필수 입력 사항입니다.');
-                return false;
-            } else if(tel_no1 == '' || tel_no1 == null ||
-                      tel_no2 == '' || tel_no2 == null ||
-                      tel_no3 == '' || tel_no3 == null){
-                alertMsg('연락처은(는) 필수 입력 사항입니다.');
-                return false;
-            } else if(devp_bday == '' || devp_bday == null){
-                alertMsg('생년월일은(는) 필수 입력 사항입니다.');
-                return false;
-            }
 
             $('#developerEnrollment').ajaxCall({
                 method : 'POST',

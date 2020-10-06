@@ -129,18 +129,13 @@ class noticeLst(generic.TemplateView):
         return render(request, template_name)
         # return render(request, template_name, rr)
 
-def getNoticeLst(request):
 
+def getNoticeLst(request):
     param = json.loads(request.GET['param'])
     logger.info("getNoticeLst : dili/views.py")
     logger.info(param)
 
     datas = {
-        'dept': param['dept'],
-        'name': param['name'],
-        'division': param['division'],
-        'skilKind': param['skilKind'],
-        'skil': param['skil'],
         'category': param['category'],
         'searchStr': param['searchStr']
     }
@@ -158,7 +153,7 @@ def getNoticeLst(request):
     logger.info("----------------")
 
     result = paginator.get_page(param['page'])
-    
+
     logger.info(result)
 
     data = {
@@ -184,6 +179,28 @@ class noticeDtl(generic.TemplateView):
         # }
         return render(request, template_name)
         # return render(request, template_name, rr)
+
+def noticeSave(request):
+    param = json.loads(request.POST['param'])
+
+    logger.info("Parameters Start")
+    logger.info(param)
+    logger.info("Parameters End")
+
+    datas = {
+    }
+
+    for row in param:
+        logger.info("------views.py------")
+        logger.info(row + ':' + param[row])
+        datas.setdefault(row, param[row])
+
+    r = requests.post('http://dili_api:5006/noticeSave', data=datas)
+    logger.info(r)
+    logger.info(r.text)
+    logger.info(r.json())
+
+    return JsonResponse(r.json(), safe=False)
 
 class empMgmt(generic.TemplateView):
     def get(self, request, *args, **kwargs):
