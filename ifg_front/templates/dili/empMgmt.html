@@ -1,76 +1,24 @@
 {% extends 'common/base.html' %}
-{% block content %}
-    <div class="container">
-        <script type="text/javascript">
-        $(document).ready(function(){
-            /* 메인 화면에서 받는 이메일 파라미터 */
-            var param = {
-                "email" : 'PARK@INFOGEN.CO.KR'
-            }
 
-            /* 목록조회 */
-            $.ajaxCall( param, {
-                 'method' : 'GET',
-                 'url' : "{% url 'dili_api:getEmpList' %}",
-                 'dataType' : 'json',
-                 'data' : JSON.stringify(param),
-                 'async' : false,
-                 'callbackFn' : function(data){
-                    // 로그
-                    console.log("data : ",data)
-                    // 리턴
-                    empListGrd(data);
+{% block content %}
+    <script type="text/javascript">
+        $(document).ready(function(){
+                console.log('???')
+                $.ajaxCall({}, {
+                 method : 'get',
+                 url : "{% url 'dili_api:getMaria' %}",
+                 async : false,
+                 callbackFn : function(data){
+                    console.log('call')
+                    data[0]
+                    $('#result').text('seq : '+data[0].SEQ + ' / RMKS : '+data[0].RMKS)
                  }
             });
-
-	        /* 직원목록 생성 */
-            function empListGrd(data){
-                var size = data.length;
-                var empListTable = '<table class="table table-bordered table-responsive-md text-center">';
-                empListTable += '<thead>';
-                empListTable += '<tr>';
-                empListTable += '<th class="text-center">순번</th>';
-                empListTable += '<th class="text-center">이름</th>';
-                empListTable += '<th class="text-center">E-Mail</th>';
-                empListTable += '<th class="text-center">연락처</th>';
-                empListTable += '</tr>';
-                empListTable += '</thead>';
-                empListTable += '<tbody>';
-
-                console.log("Start")
-                console.log(data)
-                console.log(typeof(data))
-
-                if(data.length > 0) {
-                    for(var i = 0; i < size; i++){
-
-                        empListTable += '<tr id ="grd_empList">';
-                        empListTable += '<td id="no" class="pt-3-half">'+(i+1)+'</td>';
-                        empListTable += '<td id="empName" class="pt-3-half">'+data[i].EMP_NAME+'</td>';
-                        empListTable += '<td id="empEmail" class="pt-3-half">'+data[i].EMP_EMAIL+'</td>';
-                        empListTable += '<td id="empTel" class="pt-3-half">'+data[i].EMP_TEL+'</td>';
-                        empListTable += '</tr>';
-
-                    }
-                }
-
-
-                empListTable += '</tbody>';
-                empListTable += '</table>';
-
-                document.getElementById('grd_empListTable').innerHTML = empListTable;
-            }
-
         });
-
-        function onclickEvt(trId) {
-
-        }
 
 
     </script>
-
-
+    <div class="container">
         <div class="row">
             <div class="col-sm-12">
                 <div class="mb-4" role="alert">
@@ -89,17 +37,27 @@
                                     <input type="text" class="form-control" id="ipt_searchEmail" name="ipt_searchEmail" placeholder="E-mail을 입력해주세요." maxlength="10"/>
                                 </div>
                                 <div class="align-self-end align-self-center">
-                                    <button class="btn btn-primary" id="searchBtn" onclick="onclickEvt">검색</button>
+                                    <button class="btn btn-primary" id="searchBtn">검색</button>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
+                <table class="table table-striped" style="text-align: center; border: 1px solid #dddddd">
+                    <thead>
+                            <tr>
+                                <th style="background-color: #eeeeee; text-align: center;" width ="10%">번호</th>
+                                <th style="background-color: #eeeeee; text-align: center;" width ="40%">E-Mail</th>
+                                <th style="background-color: #eeeeee; text-align: center;" width ="20%">이름</th>
+                                <th style="background-color: #eeeeee; text-align: center;" width ="30%">연락처</th>
+                            </tr>
+                    </thead>
+                    <tbody>
+
+                    </tbody>
+                </table>
                 <center>
-                <!--week table 영역 -->
-                    <div id="grd_empListTable"></div>
-                    # 되긴하니?
-                    # 페이징 구현하기
+                # 페이징 구현하기
                     <a href ="" class="btn btn-link text-dark btn-arrow-left">
                         [이전]
                     </a>
