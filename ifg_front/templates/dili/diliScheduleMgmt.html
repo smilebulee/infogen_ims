@@ -24,6 +24,10 @@
         <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
         <script type="text/javascript" src="{% static 'js/jquery.mtz.monthpicker.js' %}"></script>
 
+        <script type="text/javascript" src="{% static 'js/modal.js' %}"></script>
+        <link rel="stylesheet" type="text/css" href="{% static 'css/modal.css' %}"/>
+
+
         <script src="https://uicdn.toast.com/tui.code-snippet/v1.5.2/tui-code-snippet.min.js"></script>
         <script src="https://uicdn.toast.com/tui.time-picker/latest/tui-time-picker.min.js"></script>
         <script src="https://uicdn.toast.com/tui.date-picker/latest/tui-date-picker.min.js"></script>
@@ -363,10 +367,11 @@
             /*********************************************************************
             *   anhoReg Btn Click Event - 연차등록 버튼 클릭
             *********************************************************************/
-            $('#btn_anhoReg').click(function(){
-
-                alert("연차결제화면 연결");                   //연차결제 화면 모달 띄우기
+            $('#btn_anhoReg').on('click', function() {
+                modal('my_modal');                  //연차결제 화면 모달 띄우기
+                $("#my_modal2").load("{% url 'dili_api:yryApvlReq' %}");
             });
+
 
             /*********************************************************************
             *   btn_datepicker Btn Click Event - 일달력호출
@@ -658,11 +663,18 @@
             });
         }
 
-
-
-
-
     </script>
+        <!--모달 영역 -->
+
+
+
+
+ <!--       <div id="my_modal" class="modalUi">
+            &lt;!&ndash;모달 url 불러오는 영역 &ndash;&gt;
+            <div id="my_modal2">
+            </div>
+            <a class="modal_close_btn">닫기</a>
+        </div>-->
 
         <div class="row">
             <div class="col-sm-12">
