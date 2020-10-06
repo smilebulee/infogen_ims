@@ -623,63 +623,64 @@ class skilMgmtSearch(Resource):
                                     charset='utf8')
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
-                sql = "SELECT A.EMP_NO AS EMP_NO," \
-                             "A.EMP_NAME," \
-                             "CASE WHEN A.DEPT ='01' THEN 'FIC'" \
-                                   "WHEN A.DEPT ='02' THEN '전자/제조' " \
-                                   "WHEN A.DEPT ='03' THEN '통신'" \
-                                   "WHEN A.DEPT ='04' THEN '화학'WHEN A.DEPT ='05' THEN '전략' " \
-                                   "WHEN A.DEPT ='06' THEN  'DX'ELSE '미정' END AS EMP_DEPT, CASE " \
-                                   "WHEN A.DIVS ='1' THEN '정규직' " \
-                                   "WHEN A.DIVS ='2' THEN '프리랜서' ELSE '미정' END AS EMP_GRD, " \
-                             "A.DIVS," \
-                             "A.DEVP_TEL_NO AS EMP_PHONE, " \
-                             "A.DEVP_BDAY AS EMP_BIRTH," \
-                             "A.SKIL_DB,A.SKIL_LANG, " \
-                             "A.SKIL_WEB,A.SKIL_FRAME, " \
-                             "A.SKIL_MID " \
-                      "FROM (SELECT FRLC.EMP_NO AS EMP_NO," \
-                                   "FRLC.EMP_NAME AS EMP_NAME," \
-                                   " '' AS DEPT, '2' AS DIVS," \
-                                   "FRLC.DEVP_TEL_NO AS DEVP_TEL_NO," \
-                                   "FRLC.DEVP_BDAY AS DEVP_BDAY," \
-                                   "GROUP_CONCAT( CASE SKIL.SKIL_DIVS_CD WHEN '01' THEN SKIL.SKIL_NM_CD ELSE NULL END  SEPARATOR  ',' ) AS SKIL_DB, " \
-                                   "GROUP_CONCAT( CASE SKIL.SKIL_DIVS_CD WHEN '02' THEN SKIL.SKIL_NM_CD ELSE NULL END  SEPARATOR  ',' ) AS SKIL_LANG, " \
-                                   "GROUP_CONCAT( CASE SKIL.SKIL_DIVS_CD WHEN '03' THEN SKIL.SKIL_NM_CD ELSE NULL END  SEPARATOR  ',' ) AS SKIL_WEB," \
-                                   "GROUP_CONCAT( CASE SKIL.SKIL_DIVS_CD WHEN '04' THEN SKIL.SKIL_NM_CD ELSE NULL END  SEPARATOR  ',' ) AS SKIL_FRAME," \
-                                   "GROUP_CONCAT( CASE SKIL.SKIL_DIVS_CD WHEN '05' THEN SKIL.SKIL_NM_CD ELSE NULL END  SEPARATOR  ',' ) AS SKIL_MID " \
-                            "FROM TB_FRLC_DEVP_INFO  FRLC LEFT OUTER JOIN TB_SKIL_MGNT_M SKIL ON FRLC.EMP_NO = SKIL.EMP_NO " \
-                            "WHERE 1=1 AND FRLC.DEVP_USE_YN ='Y' " \
-                            "GROUP BY FRLC.EMP_NO " \
-                            "UNION " \
-                            "SELECT EMP.EMP_NO AS EMP_NO, " \
-                                  "EMP.EMP_NAME AS EMP_NAME," \
-                                  "EMP.DEPT AS DEPT,'1' AS DIVS, " \
-                                  "EMP.DEVP_TEL_NO AS DEVP_TEL_NO, " \
-                                  "EMP.DEVP_BDAY AS DEVP_BDAY, " \
-                                  "GROUP_CONCAT( CASE SKIL.SKIL_DIVS_CD WHEN '01' THEN SKIL.SKIL_NM_CD ELSE NULL END  SEPARATOR  ',' ) AS SKIL_DB," \
-                                  "GROUP_CONCAT( CASE SKIL.SKIL_DIVS_CD WHEN '02' THEN SKIL.SKIL_NM_CD ELSE NULL END  SEPARATOR  ',' ) AS SKIL_LANG, " \
-                                  "GROUP_CONCAT( CASE SKIL.SKIL_DIVS_CD WHEN '03' THEN SKIL.SKIL_NM_CD ELSE NULL END  SEPARATOR  ',' ) AS SKIL_WEB, " \
-                                  "GROUP_CONCAT( CASE SKIL.SKIL_DIVS_CD WHEN '04' THEN SKIL.SKIL_NM_CD ELSE NULL END  SEPARATOR  ',' ) AS SKIL_FRAME," \
-                                  "GROUP_CONCAT( CASE SKIL.SKIL_DIVS_CD WHEN '05' THEN SKIL.SKIL_NM_CD ELSE NULL END  SEPARATOR  ',' ) AS SKIL_MID " \
-                            "FROM TB_EMP_TEST EMP LEFT OUTER JOIN TB_SKIL_MGNT_M SKIL ON EMP.EMP_NO = SKIL.EMP_NO " \
-                            "GROUP BY EMP.EMP_NO )A " \
-                      "WHERE 1=1 "
+                sql = "SELECT A.EMP_NO, " \
+                              "A.EMP_NAME, " \
+                              "A.DEPT_CD," \
+                              "DEPT.CMM_CD_NAME AS DEPT_NM," \
+                              "A.CNTC_DIVS_CD, " \
+                              "CNTC.CMM_CD_NAME AS CNTC_DIVS_NM, " \
+                              "A.SKIL_DB,A.SKIL_LANG,A.SKIL_WEB," \
+                              "A.SKIL_FRAME, A.SKIL_MID, " \
+                              "A.DEVP_TEL_NO," \
+                              "A.DEVP_BDAY " \
+                      "FROM (SELECT FRLC.EMP_NO AS EMP_NO, " \
+                                  "FRLC.EMP_NAME AS EMP_NAME, " \
+                                  "FRLC.EMP_DEPT_CD AS DEPT_CD, " \
+                                  "FRLC.CNTC_DIVS_CD AS CNTC_DIVS_CD, " \
+                                  "FRLC.DEVP_TEL_NO AS DEVP_TEL_NO, " \
+                                  "FRLC.DEVP_BDAY AS DEVP_BDAY, " \
+                                  "GROUP_CONCAT( CASE SKIL.SKIL_DIVS_CD WHEN '01' THEN CONCAT('(',(SELECT CMM_CD_NAME FROM TB_CMM_CD_DETL CMM WHERE 1=1 AND CMM_CD_GRP_ID = 'SKIL_LVL_CD' AND CMM.CMM_CD = SKIL_LVL_CD),')',SKIL.SKIL_NM_CD) ELSE NULL END  SEPARATOR  ', ' ) AS SKIL_DB, " \
+                                  "GROUP_CONCAT( CASE SKIL.SKIL_DIVS_CD WHEN '02' THEN CONCAT('(',(SELECT CMM_CD_NAME FROM TB_CMM_CD_DETL CMM WHERE 1=1 AND CMM_CD_GRP_ID = 'SKIL_LVL_CD' AND CMM.CMM_CD = SKIL_LVL_CD),')',SKIL.SKIL_NM_CD) ELSE NULL END  SEPARATOR  ', ' ) AS SKIL_LANG, " \
+                                  "GROUP_CONCAT( CASE SKIL.SKIL_DIVS_CD WHEN '03' THEN CONCAT('(',(SELECT CMM_CD_NAME FROM TB_CMM_CD_DETL CMM WHERE 1=1 AND CMM_CD_GRP_ID = 'SKIL_LVL_CD' AND CMM.CMM_CD = SKIL_LVL_CD),')',SKIL.SKIL_NM_CD) ELSE NULL END  SEPARATOR  ', ' ) AS SKIL_WEB, " \
+                                  "GROUP_CONCAT( CASE SKIL.SKIL_DIVS_CD WHEN '04' THEN CONCAT('(',(SELECT CMM_CD_NAME FROM TB_CMM_CD_DETL CMM WHERE 1=1 AND CMM_CD_GRP_ID = 'SKIL_LVL_CD' AND CMM.CMM_CD = SKIL_LVL_CD),')',SKIL.SKIL_NM_CD) ELSE NULL END  SEPARATOR  ', ' ) AS SKIL_FRAME, " \
+                                  "GROUP_CONCAT( CASE SKIL.SKIL_DIVS_CD WHEN '05' THEN CONCAT('(',(SELECT CMM_CD_NAME FROM TB_CMM_CD_DETL CMM WHERE 1=1 AND CMM_CD_GRP_ID = 'SKIL_LVL_CD' AND CMM.CMM_CD = SKIL_LVL_CD),')',SKIL.SKIL_NM_CD) ELSE NULL END  SEPARATOR  ', ' ) AS SKIL_MID " \
+                              "FROM TB_FRLC_DEVP_INFO  FRLC LEFT OUTER JOIN TB_SKIL_MGNT_M SKIL ON FRLC.EMP_NO = SKIL.EMP_NO " \
+                              "WHERE FRLC.DEVP_USE_YN ='Y' " \
+                              "GROUP BY FRLC.EMP_NO  " \
+                              "UNION " \
+                              "SELECT EMP.EMP_ID AS EMP_NO, " \
+                                      "EMP.EMP_NAME AS EMP_NAME, " \
+                                      "EMP.DEPT_CD AS DEPT_CD, " \
+                                      "'01' AS CNTC_DIVS_CD, " \
+                                      "EMP.EMP_TEL AS DEVP_TEL_NO, " \
+                                      "EMP.EMP_BDAY AS DEVP_BDAY, " \
+                                      "GROUP_CONCAT( CASE SKIL.SKIL_DIVS_CD WHEN '01' THEN CONCAT('(',(SELECT CMM_CD_NAME FROM TB_CMM_CD_DETL CMM WHERE 1=1 AND CMM_CD_GRP_ID = 'SKIL_LVL_CD' AND CMM.CMM_CD = SKIL_LVL_CD),')',SKIL.SKIL_NM_CD) ELSE NULL END  SEPARATOR  ', ' ) AS SKIL_DB, " \
+                                      "GROUP_CONCAT( CASE SKIL.SKIL_DIVS_CD WHEN '02' THEN CONCAT('(',(SELECT CMM_CD_NAME FROM TB_CMM_CD_DETL CMM WHERE 1=1 AND CMM_CD_GRP_ID = 'SKIL_LVL_CD' AND CMM.CMM_CD = SKIL_LVL_CD),')',SKIL.SKIL_NM_CD) ELSE NULL END  SEPARATOR  ', ' ) AS SKIL_LANG, " \
+                                      "GROUP_CONCAT( CASE SKIL.SKIL_DIVS_CD WHEN '03' THEN CONCAT('(',(SELECT CMM_CD_NAME FROM TB_CMM_CD_DETL CMM WHERE 1=1 AND CMM_CD_GRP_ID = 'SKIL_LVL_CD' AND CMM.CMM_CD = SKIL_LVL_CD),')',SKIL.SKIL_NM_CD) ELSE NULL END  SEPARATOR  ', ' ) AS SKIL_WEB, " \
+                                      "GROUP_CONCAT( CASE SKIL.SKIL_DIVS_CD WHEN '04' THEN CONCAT('(',(SELECT CMM_CD_NAME FROM TB_CMM_CD_DETL CMM WHERE 1=1 AND CMM_CD_GRP_ID = 'SKIL_LVL_CD' AND CMM.CMM_CD = SKIL_LVL_CD),')',SKIL.SKIL_NM_CD) ELSE NULL END  SEPARATOR  ', ' ) AS SKIL_FRAME, " \
+                                      "GROUP_CONCAT( CASE SKIL.SKIL_DIVS_CD WHEN '05' THEN CONCAT('(',(SELECT CMM_CD_NAME FROM TB_CMM_CD_DETL CMM WHERE 1=1 AND CMM_CD_GRP_ID = 'SKIL_LVL_CD' AND CMM.CMM_CD = SKIL_LVL_CD),')',SKIL.SKIL_NM_CD) ELSE NULL END  SEPARATOR  ', ' ) AS SKIL_MID " \
+                              "FROM TB_EMP_MGMT EMP LEFT OUTER JOIN TB_SKIL_MGNT_M SKIL ON EMP.EMP_ID = SKIL.EMP_NO GROUP BY EMP.EMP_ID) A, " \
+                              "TB_CMM_CD_DETL CNTC, " \
+                              "TB_CMM_CD_DETL DEPT " \
+                      "WHERE 1=1 " \
+                      "AND A.CNTC_DIVS_CD = CNTC.CMM_CD AND A.DEPT_CD = DEPT.CMM_CD " \
+                      "AND CNTC.CMM_CD_GRP_ID ='CNTC_DIVS_CD' " \
+                      "AND DEPT.CMM_CD_GRP_ID = 'SLIN_BZDP'"
                 if dept != "":
-                    sql += "AND DEPT = '" + dept + "' "
+                    sql += "AND DEPT_CD = '" + dept + "' "
                 if name != "":
                     sql += "AND EMP_NAME LIKE '%" + name + "%' "
                 if division != "":
-                    sql += "AND DIVS = '" + division + "' "
-                if skilKind == "1":
+                    sql += "AND CNTC_DIVS_CD = '" + division + "' "
+                if skilKind == "01":
                     sql += "AND SKIL_DB LIKE '%" + skil + "%'"
-                if skilKind == "2":
+                if skilKind == "02":
                     sql += "AND SKIL_LANG LIKE '%" + skil + "%'"
-                if skilKind == "3":
+                if skilKind == "03":
                     sql += "AND SKIL_WEB LIKE '%" + skil + "%'"
-                if skilKind == "4":
+                if skilKind == "04":
                     sql += "AND SKIL_FRAME LIKE '%" + skil + "%'"
-                if skilKind == "5":
+                if skilKind == "05":
                     sql += "AND SKIL_MID LIKE '%" + skil + "%'"
                 logging.debug(sql)
 

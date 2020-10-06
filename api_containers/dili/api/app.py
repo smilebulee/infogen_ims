@@ -581,17 +581,17 @@ class noticeSave(Resource):
 
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
-                sql = "INSERT INTO	TB_STTS_POST_MGMT_M	('TIT', " \
-                                                    +    "'CNTN', " \
-                                                    +    "'KD_DIVS_CD', " \
-                                                    +    "'MJR_YN', " \
-                                                    +    "'POP_OPEN_YN', " \
-                                                    +    "'DATA_INPT_ID'," \
-                                                    +    "'DATA_INPT_DTTM'," \
-                                                    +    "'DATA_INPT_PGM_ID'," \
-                                                    +    "'DATA_UPD_ID'," \
-                                                    +    "'DATA_UPD_DTTM'," \
-                                                    +    "'DATA_UPD_PGM_ID') "\
+                sql = "INSERT INTO	TB_STTS_POST_MGMT_M	(`TIT`, " \
+                                                    "`CNTN`, " \
+                                                    "`KD_DIVS_CD`, " \
+                                                    "`MJR_YN`, " \
+                                                    "`POP_OPEN_YN`, " \
+                                                    "`DATA_INPT_ID`," \
+                                                    "`DATA_INPT_DTTM`," \
+                                                    "`DATA_INPT_PGM_ID`," \
+                                                    "`DATA_UPD_ID`," \
+                                                    "`DATA_UPD_DTTM`," \
+                                                    "`DATA_UPD_PGM_ID`) "\
                 "VALUES( %s, %s, %s, %s, %s, %s, NOW(), %s, %s, NOW(), %s)" \
 
                 # "ON DUPLICATE KEY UPDATE "
@@ -604,15 +604,10 @@ class noticeSave(Resource):
                 # "DATA_UPD_ID = %s," \
                 # "DATA_UPD_ID = %s," \
                 # "DATA_UPD_PGM_ID = %s"
-            logger.info(sql)
-            cursor.execute(sql,(tit, cntn, kdDivsCd, mjrYn, popOpenYn, dataInptId, dataInptPgmId, dataUpdId, dataUpdPgmId))
+                logger.info(sql)
+                cursor.execute(sql, (tit, cntn, kdDivsCd, mjrYn, popOpenYn, dataInptId, dataInptPgmId, dataUpdId, dataUpdPgmId))
 
-            # sql2 = "INSERT INTO WEB_CONN_TEST VALUES (12,%s,NOW())"
-            # cursor.execute(sql2,(tit))
-
-            logging.debug(sql)
-            # logging.debug(sql2)
-            mysql_con.commit()
+                mysql_con.commit()
 
         finally:
             mysql_con.close()

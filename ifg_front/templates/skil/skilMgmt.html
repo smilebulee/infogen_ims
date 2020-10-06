@@ -11,20 +11,25 @@ history
         $(document).ready(function(){
             firstGrid = $('[data-ax5grid="first-grid"]');
 
+            <!--    공통코드 조회    -->
+            retrieveCmmCd('dept', 'SLIN_BZDP');
+            retrieveCmmCd('skilKind', 'SKIL_DIVS_CD');
+            retrieveCmmCd('division', 'CNTC_DIVS_CD');
+
             var gridOptions = {
                 columns: [              /* columns : 그리드 헤더 및 매핑 시킬 컬럼 및 컬럼 속성 설정 항목(필수) */
-                { key: "EMP_NAME",   label: "성명",       width: 100,  align: "center"},
-                { key: "EMP_DEPT",   label: "부서",       width: 80,   align: "center"},
-                { key: "EMP_GRD",    label: "구분",       width: 80,   align: "center"},
-                { key: "SKIL_DB",    label: "DB",         width: 80,   align: "center"},
-                { key: "SKIL_LANG",  label: "언어",       width: 120,  align: "center"},
-                { key: "SKIL_WEB",   label: "WEB",        width: 120,  align: "center"},
-                { key: "SKIL_FRAME", label: "FRAME WORK", width: 120,  align: "center"},
-                { key: "SKIL_MID",   label: "MID-WARE",   width: 120,  align: "center"},
-                { key: "EMP_PHONE",  label: "연락처",     width: 80,   align: "center"},
-                { key: "EMP_BIRTH",  label: "생년월일",   width: 80,   align: "center", /* 숨김처리 hidden : true */},
-                { key: "EMP_NO",     label: "사번",       width: 80,   align: "center", hidden : true},
-                { key: "DIVS",       label: "구분코드",   width: 80,   align: "center", hidden : true}
+                { key: "EMP_NAME",     label: "성명",       width: 100,  align: "center"},
+                { key: "DEPT_NM",      label: "부서",       width: 80,   align: "center"},
+                { key: "CNTC_DIVS_NM", label: "계약구분",   width: 80,   align: "center"},
+                { key: "SKIL_DB",      label: "DB",         width: 120,   align: "center"},
+                { key: "SKIL_LANG",    label: "언어",       width: 120,  align: "center"},
+                { key: "SKIL_WEB",     label: "WEB",        width: 120,  align: "center"},
+                { key: "SKIL_FRAME",   label: "FRAME WORK", width: 120,  align: "center"},
+                { key: "SKIL_MID",     label: "MID-WARE",   width: 120,  align: "center"},
+                { key: "DEVP_TEL_NO",  label: "연락처",     width: 110,   align: "center"},
+                { key: "DEVP_BDAY",    label: "생년월일",   width: 85,   align: "center", /* 숨김처리 hidden : true */},
+                { key: "EMP_NO",       label: "사번",       width: 80,   align: "center", hidden : true},
+                { key: "CNTC_DIVS_CD", label: "구분코드",   width: 80,   align: "center", hidden : true}
                 ]
             };
             firstGrid = $('[data-ax5grid="first-grid"]').initGrid(gridOptions);
@@ -39,9 +44,8 @@ history
                     alertMsg("선택된 행이 없습니다.");
                     return false;
                 } else{
-                    alertMsg("(작성예정)선택된 행 값 넘겨주기");
                     var empNo = firstGrid.getList("selected")[0].EMP_NO;
-                    var empGrd = firstGrid.getList("selected")[0].DIVS;
+                    var empGrd = firstGrid.getList("selected")[0].CNTC_DIVS_CD;
                     location.href = '/skil/skilMgmtDetl?empNo='+empNo+'&empGrd='+empGrd
                 }
             });
@@ -79,6 +83,26 @@ history
                          }, options);
         }
 
+        function retrieveCmmCd(sbx_id, grp_id){
+            var param = {
+                "sbx_id" : sbx_id,
+                "grp_id" : grp_id
+            }
+
+             $.ajaxCall( param, {
+                     method : 'GET',
+                     'url' : '/skil/retrieveCmmCd/',
+                     'dataType' : 'json',
+                     'data' : JSON.stringify(param),
+                     'async' : false,
+                     'callbackFn' : function(data){
+                        for(var i = 0; i < data.length; i++){
+                            var option = $("<option value = "+data[i].CMM_CD+">"+data[i].CMM_CD_NAME+"</option>");
+                            $('#'+sbx_id).append(option);
+                        }
+                     }
+                });
+         };
 
 
     </script>
@@ -93,14 +117,8 @@ history
                         <div id="formDiv">
                             <div class="form-row" style="padding-bottom:9px">
                                 <label class="col-sm-1" style="max-width:50px;">부서</label>
-                                <select class="col-sm-2" name="dept">
-                                    <option selected></option>
-                                    <option value="01">FIC</option>
-                                    <option value="02">전자/제조</option>
-                                    <option value="03">통신</option>
-                                    <option value="04">화학</option>
-                                    <option value="05">전략</option>
-                                    <option value="06">DX</option>
+                                <select class="col-sm-2" name="dept" id="dept">
+                                    <option value = "">선택</option>
                                 </select>
                                 <div class="col-sm-1" style="padding-left:760px;">
                                 <button class="btn btn-primary" id="searchBtn" style="width:120px">조회</button>
@@ -112,21 +130,14 @@ history
                             </div>
                             <div class="form-row" style="padding-top:9px;">
                                 <label class="col-sm-1" style="max-width:50px;">구분</label>
-                                <select class="col-sm-2" name="division">
-                                    <option selected></option>
-                                    <option value="1">정규직</option>
-                                    <option value="2">프리랜서</option>
+                                <select class="col-sm-2" name="division" id ="division">
+                                    <option value = "">선택</option>
                                 </select>
                             </div>
                             <div class="form-row" style="padding-top:9px;">
                                 <label class="col-sm-1" style="max-width:50px;">스킬</label>
                                 <select class="col-sm-2" id="skilKind" name="skilKind">
-                                    <option selected></option>
-                                    <option value="1">DB</option>
-                                    <option value="2">언어</option>
-                                    <option value="3">WEB</option>
-                                    <option value="4">FRAME WORK</option>
-                                    <option value="5">MID-WARE</option>
+                                    <option value = "">선택</option>
                                 </select>
                                 <label style="width:30px"></label>
                                 <input style="width:237px" type="text" id="skil" name="skil" maxlength="50" placeholder="내용을 입력해주세요." >
