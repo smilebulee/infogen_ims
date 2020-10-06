@@ -28,6 +28,7 @@ urlpatterns = [
     url(r'^empMgmt/', views.empMgmt.as_view(), name='empMgmt'),
     url(r'^getApvlReqHistDetl/', views.getApvlReqHistDetl, name='getApvlReqHistDetl'),
     url(r'^getCalendarData/', views.getCalendarData, name='getCalendarData'),
+    url(r'^getEmpList/', views.getEmpList, name='getEmpList'),
 
 ]
 
