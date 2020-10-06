@@ -255,7 +255,7 @@ def skilMgmtSearch(request):
 
     logger.info(datas)
     r = requests.get('http://skil_api:5003/skilMgmtSearch', params=datas)
-    paginator = Paginator(r.json(), 2)
+    paginator = Paginator(r.json(), 9)
     logger.info("----------------")
     logger.info(paginator)
     logger.info(r)
