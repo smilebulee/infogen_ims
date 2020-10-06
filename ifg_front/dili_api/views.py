@@ -203,6 +203,23 @@ def getNoticeOne(request):
     return JsonResponse(r.json(), safe=False)
 
 
+def getNoticePopUp(request):
+    param = json.loads(request.GET['param'])
+
+    logger.info(param)
+
+    params = {
+    }
+    # param X
+
+    r = requests.get('http://dili_api:5006/noticePopUp', params=params)
+    logger.info(r)
+    logger.info(r.text)
+    logger.info(r.json())
+
+    return JsonResponse(r.json(), safe=False)
+
+
 def getNoticeMjrCnt(request):
     param = json.loads(request.GET['param'])
 
