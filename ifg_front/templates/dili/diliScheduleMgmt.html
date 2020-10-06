@@ -452,6 +452,11 @@
                 useDetailPopup: true
             });
 
+
+
+            /*********************************************************************
+            *   Draw  calendar Event - 데이터 받아오기
+            *********************************************************************/
             var param = {
                 "email" : 'test'
             }
@@ -469,32 +474,51 @@
                  }
             });
 
+            /*********************************************************************
+            *   Draw  calendar Event - 받아온 데이터 캘린더에 입력
+            *********************************************************************/
             function setCalendar(data){
-                calendarData = JSON.parse(data);
+                var calendarData = JSON.parse(data);
                 console.log("calendarData1 : ",calendarData);
 
-                var dataCustom = [{
-                    calendarId: 1,
-                    id: String(Math.random() * 100000000000000000),
-                    title : "업무시작시간: 09:00",
-                    isAllDay: false,
-                    start: new Date("2020-10-01T09:00:00"),
-                    end: new Date("2020-10-01T10:00:00"),
-                    category: "time"
-                }, {
-                    calendarId: 2,
-                    id: String(Math.random() * 100000000000000000),
-                    title : "업무종료시간: 18:00",
-                    isAllDay: false,
-                    start: new Date("2020-10-01T09:00:00"),
-                    end: new Date("2020-10-01T10:00:00"),
-                    category: "time"
-                }];
-                // ajax 오늘달, id에 해당하는 스케줄 가져오기
+                console.log("JOB_STRT_TM : ",calendarData[0].JOB_STRT_TM);
+                console.log("JOB_END_TM : ",calendarData[0].JOB_END_TM);
 
-                calendar.createSchedules(dataCustom);
+
+
+                var dataCustomArray = new Array();
+
+                for(var i=0; i < calendarData.length; i++) {
+                    var dataCustom = [{
+                        calendarId: i,
+                        id: String(Math.random() * 100000000000000000),
+                        title : "업무시작시간: " + calendarData[i].JOB_STRT_TM,
+                        isAllDay: false,
+                        start: new Date(calendarData[i].JOB_STRT_TM),
+                        end: new Date(calendarData[i].JOB_END_TM),
+                        category: "time"
+                    }, {
+                        calendarId: i + 1,
+                        id: String(Math.random() * 100000000000000000),
+                        title : "업무종료시간: " + calendarData[i].JOB_END_TM,
+                        isAllDay: false,
+                        start: new Date(calendarData[i].JOB_STRT_TM),
+                        end: new Date(calendarData[i].JOB_END_TM),
+                        category: "time"
+                    }];
+
+                    dataCustomArray.push(dataCustom);
+                }
+
+                console.log("dataCustomArray : ",dataCustomArray);
+
+                calendar.createSchedules(dataCustomArray);
             }
 
+
+            /*********************************************************************
+            *   Draw  calendar Event - 캘린더 색입히기
+            *********************************************************************/
             calendar.setCalendarColor('1', {
                 color: '#e8e8e8',
                 bgColor: '#585858',
