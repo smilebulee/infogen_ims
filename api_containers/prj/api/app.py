@@ -188,6 +188,8 @@ class retrievePrjInfo(Resource):
                              "SLIN_BZDP, " \
                              "JOB_DIVS_CD, " \
                              "PGRS_STUS_CD, " \
+                             "CNTC_STRT_DAY, " \
+                             "CNTC_END_DAY, " \
                              "RMKS " \
                       "FROM TB_PRJ_INFO " \
                       "WHERE PRJ_CD = %s"
@@ -289,17 +291,19 @@ class prjSave(Resource):
                         prjResult = cursor.fetchone()
                         prj_cd = prjResult['PRJ_CD']
 
-                    sql = "INSERT INTO TB_PRJ_INFO(`PRJ_CD`, `PRJ_NAME`, `PRJ_CNCT_CD`, `GNR_CTRO`, `CTRO`, `CNCT_AMT`," \
-                          " `SLIN_BZDP`, `JOB_DIVS_CD`, `PGRS_STUS_CD`, `REG_EMP_NO`, `REG_DATE`, `CHG_EMP_NO`," \
+                    sql = "INSERT INTO TB_PRJ_INFO(`PRJ_CD`, `PRJ_NAME`, `PRJ_CNCT_CD`, `GNR_CTRO`, `CTRO`, `CNCT_AMT`, " \
+                          "`SLIN_BZDP`, `JOB_DIVS_CD`, `PGRS_STUS_CD`, `CNTC_STRT_DAY`, " \
+                          "`CNTC_END_DAY`, `REG_EMP_NO`, `REG_DATE`, `CHG_EMP_NO`," \
                           " `CHG_DATE`, `RMKS`, `USE_YN`) " \
                           "VALUES(%s, " \
-                          "%s, %s, %s, %s, %s, %s, %s, %s, 'admin', NOW(), 'admin', NOW(), %s, %s)" \
+                          "%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, 'admin', NOW(), 'admin', NOW(), %s, %s)" \
                           "ON DUPLICATE KEY UPDATE " \
                           "PRJ_NAME = %s, PRJ_CNCT_CD = %s, GNR_CTRO = %s, CTRO = %s, CNCT_AMT = %s, SLIN_BZDP = %s, " \
-                          "JOB_DIVS_CD = %s, PGRS_STUS_CD = %s, CHG_EMP_NO = 'admin', CHG_DATE = NOW(), RMKS = %s"
+                          "JOB_DIVS_CD = %s, PGRS_STUS_CD = %s, CNTC_STRT_DAY = %s, CNTC_END_DAY = %s, " \
+                          "CHG_EMP_NO = 'admin', CHG_DATE = NOW(), RMKS = %s"
                     cursor.execute(sql, (
-                        prj_cd, prj_name, prj_cnct_cd, gnr_ctro, ctro, cnct_amt, slin_bzdp, job_divs, pgrs_stus, rmks, use_yn,
-                        prj_name, prj_cnct_cd, gnr_ctro, ctro, cnct_amt, slin_bzdp, job_divs, pgrs_stus, rmks))
+                        prj_cd, prj_name, prj_cnct_cd, gnr_ctro, ctro, cnct_amt, slin_bzdp, job_divs, pgrs_stus, cntc_strt_day, cntc_end_day, rmks, use_yn,
+                        prj_name, prj_cnct_cd, gnr_ctro, ctro, cnct_amt, slin_bzdp, job_divs, pgrs_stus, cntc_strt_day, cntc_end_day, rmks))
                     mysql_con.commit()
                     logging.debug('PRJ_INFO SUCCESS')
 
