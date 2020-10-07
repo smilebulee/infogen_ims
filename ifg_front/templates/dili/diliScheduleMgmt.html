@@ -493,7 +493,7 @@
                 var dataCustomArray = new Array();
 
                 for(var i=0; i < calendarData.length; i++) {
-                    var dataCustom = [{
+                    var dataCustom = {
                         calendarId: i,
                         id: String(Math.random() * 100000000000000000),
                         title : "업무시작시간: " + calendarData[i].JOB_STRT_TM,
@@ -501,7 +501,10 @@
                         start: new Date(calendarData[i].JOB_STRT_TM),
                         end: new Date(calendarData[i].JOB_END_TM),
                         category: "time"
-                    }, {
+                    };
+                    dataCustomArray.push(dataCustom);
+
+                    dataCustom = {
                         calendarId: i + 1,
                         id: String(Math.random() * 100000000000000000),
                         title : "업무종료시간: " + calendarData[i].JOB_END_TM,
@@ -509,8 +512,7 @@
                         start: new Date(calendarData[i].JOB_STRT_TM),
                         end: new Date(calendarData[i].JOB_END_TM),
                         category: "time"
-                    }];
-
+                    };
                     dataCustomArray.push(dataCustom);
                 }
 
@@ -585,7 +587,7 @@
             *   calendar Click Event - calender 클릭시
             *********************************************************************/
             $('#calendar').click(function(event){
-<!--                console.log('calendarClick', event.date, event.target);-->
+                console.log('calendarClick', event.date, event.target);
 
 
 
