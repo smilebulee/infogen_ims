@@ -1,29 +1,33 @@
-{% extends 'common/base.html' %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
 
-{% block content %}
+    <meta name="viewport" content="width=device-width, initial-scale=1"><!-- 모바일 -->
+{% load static %}
+       <title>IFG-IMS</title>
+
+</head>
+<body>
 
  <style>
 #modal {
-  position:relative;
-  width:100%;
-  height:100%;
   z-index:1;
 }
 
 #modal h2 {
-  margin:0;
+
 }
 
 #modal input {
   width : 100%;
   border: 0;
-  border-bottom: 1px solid #0489B1;
+  border-bottom: 2px solid #0489B1;
   outline : 0;
 }
 
 #modal button {
   display:inline-block;
-  width:33%;
+  width:50%;
   margin-center:calc(100% - 100px - 10px);
   float:left;
   color: blue;
@@ -34,21 +38,11 @@
 }
 
 #modal .modal_content {
-  width:600px;
-  margin:100px auto;
-  padding:0px 40px;
-  background:#fff;
-  border:2px solid #666;
+
 }
 
 #modal .modal_layer {
-  position:fixed;
-  top:0;
-  left:0;
-  width:100%;
-  height:100%;
-  background:rgb(0, 0, 0, 0.5);
-  z-index:-1;
+
 }
 
 </style>
@@ -64,20 +58,20 @@
                     <input type = "text" id = "emp_no" name = "emp_no"></p>
 
                 <p>*성명<br>
-                    <input type = "text" id = "emp_name" name = "emp_name" placeholder="input text"></p>
+                    <input type = "text" id = "emp_name" name = "emp_name" placeholder="input text" style = "width : 25%"></p>
 
                 <p>*부서<br>
-                    <select size ="1" width="50px" id = "emp_dept" name = "emp_dept" class="col-sm-4">
+                    <select size ="1" id = "emp_dept" name = "emp_dept" class="col-sm-4">
                         <option value = "">선택</option>
                     </select></p>
 
                 <p>직급<br>
-                    <select size ="1" width="50px" id = "emp_rank" name = "emp_rank" class = "col-sm-2">
+                    <select size ="1" id = "emp_rank" name = "emp_rank" class = "col-sm-2">
                         <option value = "">선택</option>
                     </select></p>
 
                 <p>*등급<br>
-                    <select size ="1" width="50px" id = "devp_grd" name = "devp_grd" class = "col-sm-2">
+                    <select size ="1" id = "devp_grd" name = "devp_grd" class = "col-sm-2">
                         <option value = "">선택</option>
                     </select></p>
 
@@ -90,24 +84,24 @@
                                  maxlength="4" oninput="this.value = this.value.replace(/[^0-9]/g, '');"></p>
 
                 <p>*계약구분<br>
-                    <select size ="1" width="50px" id = "cntc_divs" name = "cntc_divs" class="col-sm-2">
+                    <select size ="1" id = "cntc_divs" name = "cntc_divs" class="col-sm-2">
                         <option value = "">선택</option>
                         <option value = "02">프리</option>
                         <option value = "03">외주</option>
                     </select></p>
 
                 <p>소속사<br>
-                    <input type = "text" id = "devp_blco" name = "devp_blco" placeholder="input text"></p>
+                    <input type = "text" id = "devp_blco" name = "devp_blco" placeholder="input text" style = "width : 50%"></p>
 
                 <p>*생년월일<br>
                     <input type = "date" id = "devp_bday" name = "devp_bday" style = "width : 50%"></p>
 
                 <p>비고<br>
-                    <input type = "text" id = "rmks" name = "rmks" placeholder="input text" style="width:500px"></p>
+                    <input type = "text" id = "rmks" name = "rmks" placeholder="input text" ></p>
             </span>
             </div>
             <hr>
-                    <button type="button" id="closeBtn">닫기</button>
+<!--                    <button type="button" id="closeBtn">닫기</button>-->
                     <button type="button" id="saveBtn">저장</button>
                     <button type="button" id="deleteBtn" style="color:red">삭제</button>
     </div>
@@ -218,7 +212,7 @@
                 method : 'POST',
                 url : '/skil/devSave/post',
                 callbackFn : function(data){
-                    location.href = '/skil/devEnrl?emp_No='+data
+<!--                    location.href = '/skil/devEnrl?emp_No='+data-->
                     g_toast.push('저장 되었습니다.');
                 }
             });
@@ -238,20 +232,21 @@
                 method : 'POST',
                 url : '/skil/devDelete/post',
                 callbackFn : function(data){
-                    location.href = '/skil/devEnrl'
+<!--                    location.href = '/skil/devEnrl'-->
                     g_toast.push('삭제 되었습니다.');
                 }
             });
         });
     });
 
-    document.getElementById("closeBtn").onclick = function() {
-        window.history.back();
-    }
+<!--    document.getElementById("closeBtn").onclick = function() {-->
+<!--        $(this).modal("hide");-->
+<!--    }-->
 
 </script>
 
     <div class="modal_layer"></div>
 </div>
 
-{% endblock %}
+</body>
+</html>
