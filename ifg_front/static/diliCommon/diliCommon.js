@@ -18,9 +18,8 @@ function rpad(s, padLength, padString){
 
 /*********************************************************************
 *   현재 일자를 반환 (YYYY/MM/DD)
-*   Input Parameter  - date     [ Date Type - YYYY/MM/DD ]
-*   Output Parameter - strtDate [ Date Type - YYYY/MM/DD ]
-*                      endDate  [ Date Type - YYYY/MM/DD ]
+*   Input Parameter  - date     [ Date Type  or String Type - YYYY/MM/DD ]
+*   Output Parameter - strtDate [ String Type - YYYY/MM/DD ]
 *********************************************************************/
 function getCurrentDate() {
     var today   = new Date();
@@ -36,9 +35,10 @@ function getCurrentDate() {
 
 /*********************************************************************
 *   특정일을 전달받아 해당 일이 속한 주 시작일과 종료일을 Return한다.   (일~월)
-*   Input Parameter  - date     [ Date Type - YYYY/MM/DD ]
-*   Output Parameter - strtDate [ Date Type - YYYY/MM/DD ]
-*                      endDate  [ Date Type - YYYY/MM/DD ]
+*   Input Parameter  - date     [ Date Type  or String Type - YYYY/MM/DD]
+*   Output Parameter - baseDate [ String Type - YYYY/MM/DD]
+*                      strtDate [ String Type - YYYY/MM/DD]
+*                      endDate  [ String Type - YYYY/MM/DD]
 *********************************************************************/
 function setWeek(date) {
 
