@@ -23,10 +23,10 @@ function rpad(s, padLength, padString){
 *********************************************************************/
 function getCurrentDate() {
     var today   = new Date();
-    var year    = today.getFullYear();      // �⵵
-    var month   = today.getMonth();         // �� (today.getMonth()�� 0~11�� ���)
-    var date    = today.getDate();          // ��¥
-    var day     = today.getDay();           // ���� (0~6���� ���, 0:�Ͽ���, 1:������, 6:�����)
+    var year    = today.getFullYear();      // 년도
+    var month   = today.getMonth();         // 월 (today.getMonth()는 0~11로 출력)
+    var date    = today.getDate();          // 날짜
+    var day     = today.getDay();           // 요일 (0~6으로 출력, 0:일요일, 1:월요일, 6:토요일)
 
     var curDate = year+"/"+lpad((month+1).toString(),2,"0")+"/"+lpad(date.toString(),2,"0");
 
@@ -63,10 +63,10 @@ function setWeek(date) {
 function setDateFormat(date) {
 
     tgtDate     = new Date(date);
-    var year    = tgtDate.getFullYear();      // �⵵
-    var month   = tgtDate.getMonth();         // �� (today.getMonth()�� 0~11�� ���)
-    var date    = tgtDate.getDate();          // ��¥
-    var day     = tgtDate.getDay();           // ���� (0~6���� ���, 0:�Ͽ���, 1:������, 6:�����)
+    var year    = tgtDate.getFullYear();      // 년도
+    var month   = tgtDate.getMonth();         // 월 (today.getMonth()는 0~11로 출력)
+    var date    = tgtDate.getDate();          // 날짜
+    var day     = tgtDate.getDay();           // 요일 (0~6으로 출력, 0:일요일, 1:월요일, 6:토요일)
 
     date = year+"/"+lpad((month+1).toString(),2,"0")+"/"+lpad(date.toString(),2,"0");
 
