@@ -20,6 +20,9 @@ urlpatterns = [
     url(r'^yryApvlReq/', views.yryApvlReq.as_view(), name='yryApvlReq'),
     url(r'^noticeLst/', views.noticeLst.as_view(), name='noticeLst'),
     url(r'^getNoticeLst/', views.getNoticeLst, name='getNoticeLst'),
+    url(r'^getNoticeOne/', views.getNoticeOne, name='getNoticeOne'),
+    url(r'^getNoticePopUp/', views.getNoticePopUp, name='getNoticePopUp'),
+    url(r'^getNoticeMjrCnt/', views.getNoticeMjrCnt, name='getNoticeMjrCnt'),
     url(r'^noticeDtl/', views.noticeDtl.as_view(), name='noticeDtl'),
     url(r'^noticeSave/post', views.noticeSave, name='noticeSave'),
     url(r'^getWrkApvlReq/', views.getWrkApvlReq, name='getWrkApvlReq'),
@@ -29,6 +32,7 @@ urlpatterns = [
     url(r'^empMgmt/', views.empMgmt.as_view(), name='empMgmt'),
     url(r'^getApvlReqHistDetl/', views.getApvlReqHistDetl, name='getApvlReqHistDetl'),
     url(r'^getCalendarData/', views.getCalendarData, name='getCalendarData'),
+    url(r'^getEmpList/', views.getEmpList, name='getEmpList'),
 
 ]
 
