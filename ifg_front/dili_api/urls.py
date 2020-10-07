@@ -21,6 +21,7 @@ urlpatterns = [
     url(r'^noticeLst/', views.noticeLst.as_view(), name='noticeLst'),
     url(r'^getNoticeLst/', views.getNoticeLst, name='getNoticeLst'),
     url(r'^noticeDtl/', views.noticeDtl.as_view(), name='noticeDtl'),
+    url(r'^getNoticeOne/', views.getNoticeOne, name='getNoticeOne'),
     url(r'^noticeSave/post', views.noticeSave, name='noticeSave'),
     url(r'^getWrkApvlReq/', views.getWrkApvlReq, name='getWrkApvlReq'),
     url(r'^saveApvlReq/post', views.saveApvlReq, name='saveApvlReq'),

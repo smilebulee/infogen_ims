@@ -180,6 +180,22 @@ class noticeDtl(generic.TemplateView):
         return render(request, template_name)
         # return render(request, template_name, rr)
 
+def getNoticeOne(request):
+    param = json.loads(request.GET['param'])
+
+    logger.info(param)
+
+    params = {
+        'postId': param['postId'],
+    }
+
+    r = requests.get('http://dili_api:5006/noticeOne', params=params)
+    logger.info(r)
+    logger.info(r.text)
+    logger.info(r.json())
+
+    return JsonResponse(r.json(), safe=False)
+
 def noticeSave(request):
     param = json.loads(request.POST['param'])
 
