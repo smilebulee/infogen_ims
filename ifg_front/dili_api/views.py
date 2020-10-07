@@ -94,6 +94,22 @@ def getWrkTimeInfoByEml(request):
     logger.info(json.loads(r.text))
     return JsonResponse(ast.literal_eval(r.json()), safe=False)
 
+def getEmpList(request):
+    param = json.loads(request.GET['param'])
+
+    logger.info("Parameters Logging Start")
+    logger.info(param)
+    logger.info("Parameters Logging End")
+
+    # api 호출
+    r = requests.get('http://dili_api:5006/empList', json=param)
+    logger.info(r)
+    logger.info(r.text)
+    logger.info(r.json())
+    logger.info(json.loads(r.text))
+    return JsonResponse(ast.literal_eval(r.json()), safe=False)
+
+
 class wrkApvlReq(generic.TemplateView):
     def get(self, request, *args, **kwargs):
         template_name = 'dili/wrkApvlReqPopup.html'
@@ -129,18 +145,13 @@ class noticeLst(generic.TemplateView):
         return render(request, template_name)
         # return render(request, template_name, rr)
 
-def getNoticeLst(request):
 
+def getNoticeLst(request):
     param = json.loads(request.GET['param'])
     logger.info("getNoticeLst : dili/views.py")
     logger.info(param)
 
     datas = {
-        'dept': param['dept'],
-        'name': param['name'],
-        'division': param['division'],
-        'skilKind': param['skilKind'],
-        'skil': param['skil'],
         'category': param['category'],
         'searchStr': param['searchStr']
     }
@@ -158,7 +169,7 @@ def getNoticeLst(request):
     logger.info("----------------")
 
     result = paginator.get_page(param['page'])
-    
+
     logger.info(result)
 
     data = {
@@ -174,6 +185,58 @@ def getNoticeLst(request):
     return JsonResponse(data)
 
 
+
+def getNoticeOne(request):
+    param = json.loads(request.GET['param'])
+
+    logger.info(param)
+
+    params = {
+        'postId': param['postId'],
+    }
+
+    r = requests.get('http://dili_api:5006/noticeOne', params=params)
+    logger.info(r)
+    logger.info(r.text)
+    logger.info(r.json())
+
+    return JsonResponse(r.json(), safe=False)
+
+
+def getNoticePopUp(request):
+    param = json.loads(request.GET['param'])
+
+    logger.info(param)
+
+    params = {
+    }
+    # param X
+
+    r = requests.get('http://dili_api:5006/noticePopUp', params=params)
+    logger.info(r)
+    logger.info(r.text)
+    logger.info(r.json())
+
+    return JsonResponse(r.json(), safe=False)
+
+
+def getNoticeMjrCnt(request):
+    param = json.loads(request.GET['param'])
+
+    logger.info(param)
+
+    params = {
+    }
+    #param X
+
+    r = requests.get('http://dili_api:5006/noticeMjrCnt', params=params)
+    logger.info(r)
+    logger.info(r.text)
+    logger.info(r.json())
+
+    return JsonResponse(r.json(), safe=False)
+
+
 class noticeDtl(generic.TemplateView):
     def get(self, request, *args, **kwargs):
         template_name = 'dili/noticeDtl.html'
@@ -184,6 +247,28 @@ class noticeDtl(generic.TemplateView):
         # }
         return render(request, template_name)
         # return render(request, template_name, rr)
+
+def noticeSave(request):
+    param = json.loads(request.POST['param'])
+
+    logger.info("Parameters Start")
+    logger.info(param)
+    logger.info("Parameters End")
+
+    datas = {
+    }
+
+    for row in param:
+        logger.info("------views.py------")
+        logger.info(row + ':' + param[row])
+        datas.setdefault(row, param[row])
+
+    r = requests.post('http://dili_api:5006/noticeSave', data=datas)
+    logger.info(r)
+    logger.info(r.text)
+    logger.info(r.json())
+
+    return JsonResponse(r.json(), safe=False)
 
 class empMgmt(generic.TemplateView):
     def get(self, request, *args, **kwargs):

@@ -1,7 +1,13 @@
-{% extends 'common/base.html' %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
 
-{% block content %}
+    <meta name="viewport" content="width=device-width, initial-scale=1"><!-- 모바일 -->
+{% load static %}
+       <title>IFG-IMS</title>
 
+</head>
+<body>
  <style>
 #modal {
   position:relative;
@@ -89,7 +95,7 @@ tbody>tr>td:first-child:before {
                     <input type = "text" id = "cnct_amt" name = "cnct_amt" placeholder="input text"></p>
 
                 <p>*매출 사업부<br>
-                    <select size ="1" style="width:200px" id = "slin_bzdp" name = "slin_bzdp" class="col-sm-2">
+                    <select size ="1" style="width:200px" id = "slin_bzdp" name = "slin_bzdp" class="col-sm-4">
                         <option value = "01">FIC</option>
                         <option value = "02">전자/제조</option>
                         <option value = "03">통신</option>
@@ -159,7 +165,7 @@ tbody>tr>td:first-child:before {
         <hr>
             <button type="button" id="deleteBtn" style="color:red">삭제</button>
             <button type="button" id="saveBtn">저장</button>
-            <button type="button" id="closeBtn">취소</button>
+            <button type="button" id="closeBtn">닫기</button>
         <br>
      
     </div>
@@ -180,43 +186,21 @@ tbody>tr>td:first-child:before {
             callbackFn : function(data){
                 for(var i = 0; i < data.length; i++){
                    if(data[i].SKIL_DIVS_CD == '01'){
-                        DB.push(data[i].SKIL_NM);
+                        DB.push(data[i].SKIL_NAME);
                     } else if(data[i].SKIL_DIVS_CD == '02'){
-                        Language.push(data[i].SKIL_NM);
+                        Language.push(data[i].SKIL_NAME);
                     } else if(data[i].SKIL_DIVS_CD == '03'){
-                        WEB.push(data[i].SKIL_NM);
+                        WEB.push(data[i].SKIL_NAME);
                     } else if(data[i].SKIL_DIVS_CD == '04'){
-                        MIDWARE.push(data[i].SKIL_NM);
+                        MIDWARE.push(data[i].SKIL_NAME);
                     } else if(data[i].SKIL_DIVS_CD == '05'){
-                        Framework.push(data[i].SKIL_NM);
+                        Framework.push(data[i].SKIL_NAME);
                     }
                 }
 
             }
     });
 
-<!--    $.ajaxCall( param, {-->
-<!--             method : 'GET',-->
-<!--             'url' : '/prj/retrieveSkilName/',-->
-<!--             'dataType' : 'json',-->
-<!--             'data' : JSON.stringify(param),-->
-<!--             'async' : false,-->
-<!--             'callbackFn' : function(data){-->
-<!--                for(var i = 0; i < data.length; i++){-->
-<!--                   if(data[i].SKIL_DIVS_CD == '01'){-->
-<!--                        DB.push(data[i].SKIL_NM);-->
-<!--                    } else if(data[i].SKIL_DIVS_CD == '02'){-->
-<!--                        Language.push(data[i].SKIL_NM);-->
-<!--                    } else if(data[i].SKIL_DIVS_CD == '03'){-->
-<!--                        WEB.push(data[i].SKIL_NM);-->
-<!--                    } else if(data[i].SKIL_DIVS_CD == '04'){-->
-<!--                        MIDWARE.push(data[i].SKIL_NM);-->
-<!--                    } else if(data[i].SKIL_DIVS_CD == '05'){-->
-<!--                        Framework.push(data[i].SKIL_NM);-->
-<!--                    }-->
-<!--                }-->
-<!--             }-->
-<!--    });-->
 
     $(document).ready(function() {
 
@@ -407,7 +391,6 @@ tbody>tr>td:first-child:before {
 
 </script>
 
-
-
-{% endblock %}
+</body>
+</html>
 
