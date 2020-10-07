@@ -85,16 +85,15 @@ history
                $('#devSaveBtn').click(function(){
 
                     if(firstGrid.getList("selected").length == 0){
+                        empNo = null;
                         modal('devRegModal');
                         $("#devRegModal2").load("{% url 'skil_api:devEnrl' %}");
                     } else{
-                        alertMsg("(작성예정)선택된 행 값 넘겨주기");
-<!--                        var empNo = firstGrid.getList("selected")[0].EMP_NO;-->
-<!--                        console.log(empNo);-->
-<!--                        location.href = '/skil/devEnrl?emp_No='+empNo-->
+                        empNo = firstGrid.getList("selected")[0].EMP_NO;
+                        modal('devRegModal');
+                        $("#devRegModal2").load("{% url 'skil_api:devEnrl' %}");
                     }
                 });
-
             });
 
 
