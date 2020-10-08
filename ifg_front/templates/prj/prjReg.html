@@ -81,29 +81,18 @@
                 <p>*매출 사업부<br>
                     <select size ="1" style="width:200px" id = "slin_bzdp" name = "slin_bzdp" class="col-sm-4">
                         <option value = "">선택</option>
-                        <option value = "01">FIC</option>
-                        <option value = "02">전자/제조</option>
-                        <option value = "03">통신</option>
-                        <option value = "04">화학</option>
-                        <option value = "05">전략</option>
-                        <option value = "06">DX</option>
                     </select>
                 </p>
 
                 <p>*업무 구분<br>
                     <select size ="1" style="width:200px" id = "job_divs" name = "job_divs" class="col-sm-2">
                         <option value = "">선택</option>
-                        <option value = "01">SM</option>
-                        <option value = "02">SI</option>
                     </select>
                 </p>
 
                 <p>*진행 상태<br>
                     <select size ="1" style="width:200px" id = "pgrs_stus" name = "pgrs_stus" class="col-sm-2">
                         <option value = "">선택</option>
-                        <option value = "01">예정</option>
-                        <option value = "02">진행 중</option>
-                        <option value = "03">종료</option>
                     </select>
                 </p>
 
@@ -137,11 +126,6 @@
                             <td id="skil_no"></td>
                             <td><select size="1" class="form-control" id="req_skil_divs1" name="req_skil_divs1" onchange="skil_chg(1)">
                                 <option value = "00">선택</option>
-                                <option value = "01">DB</option>
-                                <option value = "02">LANGUAGE</option>
-                                <option value = "03">WEB</option>
-                                <option value = "04">MIDWARE</option>
-                                <option value = "05">Framework</option>
                             </select></td>
                             <td><select class="form-control" id = "req_skil_name1" name = "req_skil_name1"></select></td>
                         </tr>
@@ -192,7 +176,11 @@
     });
 
     $(document).ready(function() {
-        var prj_cd = 'PRJ_000003';
+        retrieveCmmCd('slin_bzdp', 'SLIN_BZDP');
+        retrieveCmmCd('job_divs', 'JOB_DIVS_CD');
+        retrieveCmmCd('pgrs_stus', 'PGRS_STUS_CD');
+        retrieveCmmCd('req_skil_divs1', 'SKIL_DIVS_CD');
+        var prj_cd = null;
         <!--   프로젝트 정보 최초 등록    -->
         if(prj_cd == '' || prj_cd == null){
             console.log('prj_cd is null')
@@ -203,6 +191,27 @@
             retrieveReqSkil()
         }
     });
+
+    function retrieveCmmCd(sbx_id, grp_id){
+        var param = {
+            "sbx_id" : sbx_id,
+            "grp_id" : grp_id
+        }
+
+         $.ajaxCall( param, {
+                 method : 'GET',
+                 'url' : '/skil/retrieveCmmCd/',
+                 'dataType' : 'json',
+                 'data' : JSON.stringify(param),
+                 'async' : false,
+                 'callbackFn' : function(data){
+                    for(var i = 0; i < data.length; i++){
+                        var option = $("<option value = "+data[i].CMM_CD+">"+data[i].CMM_CD_NAME+"</option>");
+                        $('#'+sbx_id).append(option);
+                    }
+                 }
+         });
+     };
 
     function retrievePrjInfo(){
         $('#projectInfo').ajaxCall({
