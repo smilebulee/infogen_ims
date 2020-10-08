@@ -81,31 +81,33 @@
         }
 
         function btnReqEvt() {
-            var param = {
-                "email" : 'ishwang@ingofen.co.kr',                                   // 추후 Session Value 연동.
-                "apvlReqDivs" : $("#sbx_type option:selected").val(),    //1: 야근, 2:연차
-                "wrkDt" : $("#ipt_wrkDt").val(),
-                "wrkTme" : "000000",
-                "wrkReqRsn": $("#txa_reqRsn").val(),
-                //"apvlReqDt": ,
-                //"th1AprvStus":,
-                //"th2AprvStus":,
-                //apvlLastAprvDt:
-            }
+            confirmMsg('저장하시겠습니까?', function(){
+                var param = {
+                    "email" : 'ishwang@ingofen.co.kr',                                   // 추후 Session Value 연동.
+                    "apvlReqDivs" : $("#sbx_type option:selected").val(),    //1: 야근, 2:연차
+                    "wrkDt" : $("#ipt_wrkDt").val(),
+                    "wrkTme" : "000000",
+                    "wrkReqRsn": $("#txa_reqRsn").val(),
+                    "th1AprvStus": "01",
+                    "th1AprvStusNm": "승인",
+                    "th2AprvStus": "01",
+                    "th2AprvStusNm": "승인"
 
-            $.ajaxCall( param, {
-                 method : 'POST',
-                 'url' : '/dili/saveApvlReq/post',
-                 'dataType' : 'json',
-                 'data' : JSON.stringify(param),
-                 'async' : false,
-                 'callbackFn' : function(data){
+                }
 
-                    // 리턴
+                $.ajaxCall( param, {
+                     method : 'POST',
+                     'url' : '/dili/saveApvlReq/post',
+                     'dataType' : 'json',
+                     'data' : JSON.stringify(param),
+                     'async' : false,
+                     'callbackFn' : function(data){
 
-                 }
+                        // 리턴
+
+                     }
+                });
             });
-
         }
 
 
@@ -141,7 +143,7 @@
                             <div class="card-body flex-height d-flex m-0 p-2">
                                 <div class="align-self-start align-self-center mr-3">일자</div>
                                 <div class="align-self-center mr-5">
-                                    <input type="text" class="form-control" id="ipt_wrkDt" name="ipt_wrkDt" placeholder="" maxlength="24"/>
+                                    <input type="text" class="form-control" id="ipt_wrkDt" name="ipt_wrkDt" placeholder="" maxlength="24" readonly/>
                                 </div>
                             </div>
 
@@ -159,7 +161,7 @@
                             <div class="card-body flex-height d-flex m-0 p-2">
                                 <div class="align-self-start align-self-center mr-3">사유</div>
                                 <div class="align-self-center mr-7">
-                                    <textarea id="txa_reqRsn" name="reqRsn" maxlength="500" placeholder="사유를 입력해주세요.">
+                                    <textarea id="txa_reqRsn" name="reqRsn" maxlength="500" style="resize: none; width:350px;height:70px;" placeholder="사유를 입력해주세요.">
                                     </textarea>
                                 </div>
                             </div>

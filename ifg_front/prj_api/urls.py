@@ -18,8 +18,17 @@ urlpatterns = [
     url(r'^prjReg/', views.prjReg, name='prjReg'),
     url(r'^retrievePrjInfo/get', views.retrievePrjInfo, name='retrievePrjInfo'),
     url(r'^retrieveReqSkil/get', views.retrieveReqSkil, name='retrieveReqSkil'),
-    # url(r'^prjSave/post', views.prjSave, name='prjSave'),
-    # url(r'^prjDelete/post', views.prjDelete, name='prjDelete'),
+    url(r'^retrieveSkilName/', views.retrieveSkilName, name='retrieveSkilName'),
+    url(r'^prjSave/post', views.prjSave, name='prjSave'),
+    url(r'^prjDelete/post', views.prjDelete, name='prjDelete'),
+
+    # 프로젝트 투입 관리
+    url(r'^retrievePrjDetlInfo/get', views.retrievePrjDetlInfo, name='retrievePrjDetlInfo'),
+    url(r'^prjInpuMgmt/', views.prjInpuMgmt, name='prjInpuMgmt'),
+    url(r'^prjInpuSearch/get', views.prjInpuSearch, name='prjInpuSearch'),
+    url(r'^prjInpuDelete/', views.prjInpuDelete, name='prjInpuDelete'),
+    url(r'^prjInpuSave/', views.prjInpuSave, name='prjInpuSave'),
+
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -21,10 +21,8 @@
   <component name="ChangeListManager">
     <list default="true" id="069bc5b9-482e-4fff-a242-76dbf771ee42" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api_containers/dili/api/docker-entrypoint.sh" beforeDir="false" afterPath="$PROJECT_DIR$/api_containers/dili/api/docker-entrypoint.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api_containers/skil/api/docker-entrypoint.sh" beforeDir="false" afterPath="$PROJECT_DIR$/api_containers/skil/api/docker-entrypoint.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ifg_front/docker-entrypoint.sh" beforeDir="false" afterPath="$PROJECT_DIR$/ifg_front/docker-entrypoint.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ifg_front/templates/dili/diliScheduleMgmt.html" beforeDir="false" afterPath="$PROJECT_DIR$/ifg_front/templates/dili/diliScheduleMgmt.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ifg_front/dili_api/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/ifg_front/dili_api/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ifg_front/dili_api/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/ifg_front/dili_api/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -53,16 +51,20 @@
     <property name="DefaultHtmlFileTemplate" value="HTML File" />
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/ifg_front/templates/prj" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/ifg_front/static/SkilCommon" />
     <property name="run.code.analysis.last.selected.profile" value="aDefault" />
     <property name="settings.editor.selected.configurable" value="reference.settingsDialog.application.dockerMachine" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
-      <recent name="C:\workspace\infogen_ims\ifg_front\templates\prj" />
+      <recent name="C:\workspace\infogen_ims\ifg_front\static\SkilCommon" />
       <recent name="C:\workspace\infogen_ims\ifg_front\templates\skil" />
+      <recent name="C:\workspace\infogen_ims\ifg_front\templates\prj" />
       <recent name="C:\Users\user\Documents\GitHub\infogen_ims\ifg_front\templates\skil" />
       <recent name="C:\workspace\infogen_ims\infogen_ims\ifg_front\templates\dili" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\workspace\infogen_ims\ifg_front\templates\prj" />
     </key>
   </component>
   <component name="RunManager" selected="Docker.docker-compose.yml: Compose Deployment">
@@ -199,19 +201,25 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state width="498" height="446" key="SwitcherDM/0.0.1920.1040/-1600.0.1600.860@0.0.1920.1040" timestamp="1597798807421" />
-    <state x="-1800" y="29" width="1736" height="856" key="com.intellij.history.integration.ui.views.FileHistoryDialog" timestamp="1600823501771">
+    <state x="-1800" y="29" width="1736" height="856" key="com.intellij.history.integration.ui.views.FileHistoryDialog" timestamp="1601875076546">
       <screen x="-1920" y="2" width="1920" height="1040" />
     </state>
+    <state x="-1800" y="29" width="1736" height="856" key="com.intellij.history.integration.ui.views.FileHistoryDialog/0.0.1920.1040/-1920.2.1920.1040@-1920.2.1920.1040" timestamp="1601875076546" />
     <state x="-1800" y="29" width="1736" height="856" key="com.intellij.history.integration.ui.views.FileHistoryDialog/0.0.1920.1040/-1920.2.1920.1040@0.0.1920.1040" timestamp="1600823501771" />
-    <state x="815" y="230" width="559" height="630" key="find.popup" timestamp="1601292953487">
-      <screen x="0" y="0" width="1440" height="860" />
+    <state x="-833" y="280" width="746" height="762" key="find.popup" timestamp="1602146618308">
+      <screen x="-1920" y="2" width="1920" height="1040" />
     </state>
     <state x="815" y="230" width="559" height="630" key="find.popup/0.0.1440.860/-1680.0.1680.1010@0.0.1440.860" timestamp="1601292953487" />
     <state x="668" y="223" width="584" height="594" key="find.popup/0.0.1920.1040/-1600.0.1600.860@0.0.1920.1040" timestamp="1598576784500" />
+    <state x="-833" y="280" width="746" height="762" key="find.popup/0.0.1920.1040/-1920.2.1920.1040@-1920.2.1920.1040" timestamp="1602146618308" />
     <state x="-834" y="330" width="745" height="615" key="find.popup/0.0.1920.1040/-1920.2.1920.1040@0.0.1920.1040" timestamp="1600913069465" />
     <state x="668" y="223" width="584" height="594" key="find.popup/0.0.1920.1040/-1920.98.1920.1040@0.0.1920.1040" timestamp="1598950212258" />
-    <state x="668" y="223" width="584" height="594" key="find.popup/0.0.1920.1040/62.-1080.1858.1080@0.0.1920.1040" timestamp="1599455993324" />
+    <state x="668" y="223" width="584" height="594" key="find.popup/0.0.1920.1040/62.-1080.1858.1080@0.0.1920.1040" timestamp="1602050296099" />
     <state x="668" y="223" width="584" height="594" key="find.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1599392780526" />
+    <state x="-836" y="227" width="672" height="678" key="search.everywhere.popup" timestamp="1602144420686">
+      <screen x="-1920" y="2" width="1920" height="1040" />
+    </state>
+    <state x="-836" y="227" width="672" height="678" key="search.everywhere.popup/0.0.1920.1040/-1920.2.1920.1040@-1920.2.1920.1040" timestamp="1602144420686" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -230,11 +238,6 @@
           <url>file://$PROJECT_DIR$/ifg_front/emp_api/views.py</url>
           <line>218</line>
           <option name="timeStamp" value="5" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/api_containers/skil/api/app.py</url>
-          <line>580</line>
-          <option name="timeStamp" value="6" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

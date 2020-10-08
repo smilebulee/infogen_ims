@@ -1,5 +1,6 @@
 from django.conf.urls import url, include
 from django.urls import path
+from django.contrib.auth.decorators import login_required
 from . import views
 
 from django.conf import settings
@@ -8,6 +9,7 @@ from django.conf.urls.static import static
 app_name = 'skil_api'
 
 urlpatterns = [
+    path('', login_required(views.Skil_api_index.as_view()), name='skil_api'),
     url(r'^$', views.Skil_api_index.as_view(), name='skil_api'),
     url(r'^devEnrl/', views.devEnrl, name='devEnrl'),
     url(r'^prjMgmt/', views.prjMgmt, name='prjMgmt'),
@@ -24,19 +26,6 @@ urlpatterns = [
     url(r'^retrieveDevInfo/get', views.retrieveDevInfo, name='retrieveDevInfo'),
     url(r'^devSave/post', views.devSave, name='devSave'),
     url(r'^devDelete/post', views.devDelete, name='devDelete'),
-
-    # 프로젝트 등록
-    url(r'^retrievePrjInfo/get', views.retrievePrjInfo, name='retrievePrjInfo'),
-    url(r'^retrieveReqSkil/get', views.retrieveReqSkil, name='retrieveReqSkil'),
-    url(r'^prjSave/post', views.prjSave, name='prjSave'),
-    url(r'^prjDelete/post', views.prjDelete, name='prjDelete'),
-
-
-    # 프로젝트 투입 관리
-    url(r'^prjInpuMgmt/', views.prjInpuMgmt, name='prjInpuMgmt'),
-    url(r'^prjInpuSearch/get', views.prjInpuSearch, name='prjInpuSearch'),
-    url(r'^prjInpuDelete/', views.prjInpuDelete, name='prjInpuDelete'),
-    url(r'^prjInpuSave/', views.prjInpuSave, name='prjInpuSave'),
 
     # 스킬관리
     url(r'^skilMgmt/', views.skilMgmt, name='skilMgmt'),
