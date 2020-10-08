@@ -138,6 +138,21 @@ def prjDelete(request):
 
     return JsonResponse(r.json())
 
+# 프로젝트별투입현황관리 프로젝트 상세정보
+def retrievePrjDetlInfo(request):
+    param = json.loads(request.GET['param'])
+    logger.info(param)
+    logger.info("프로젝트별투입현황관리 프로젝트 상세정보")
+    params = {
+        'prjCd': param['prjCd'],
+    }
+    r = requests.get('http://prj_api:5002/retrievePrjDetlInfo', params=params)
+    logger.info(r)
+    logger.info(r.text)
+    logger.info(r.json())
+    return JsonResponse(r.json(), safe=False)
+
+
 # 프로젝트별투입현황관리 화면
 def prjInpuMgmt(request):
     template_name = 'prj/prjInpuMgmt.html'
@@ -183,7 +198,6 @@ def prjInpuSave(request):
                 'empNo': data['EMP_NO'],
                 'prjCd': data['PRJ_CD'],
                 'slinGrd': data['SLIN_GRD'],
-                'divs': data['DIVS'],
                 'inpuStrtDay': data['INPU_STRT_DAY'],
                 'inpuEndDay': data['INPU_END_DAY'],
                 'cntcStrtDay': data['CNTC_STRT_DAY'],
@@ -198,7 +212,6 @@ def prjInpuSave(request):
                 'empNo': data['EMP_NO'],
                 'prjCd': data['PRJ_CD'],
                 'slinGrd': data['SLIN_GRD'],
-                'divs': data['DIVS'],
                 'inpuStrtDay': data['INPU_STRT_DAY'],
                 'inpuEndDay': data['INPU_END_DAY'],
                 'cntcStrtDay': data['CNTC_STRT_DAY'],
