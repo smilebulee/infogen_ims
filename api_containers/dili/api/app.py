@@ -341,17 +341,17 @@ class saveApvlReq(Resource): # Mariadb 연결 진행
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 #쿼리문 실행
                 sql = "INSERT INTO TB_APVL_REQ_MGMT_M (" \
-                                                      "'EMP_EMAL_ADDR'," \
-                                                      "'APVL_REQ_DIVS'," \
-                                                      "'WRK_DT'," \
-                                                      "'WRK_TME'," \
-                                                      "'WRK_REQ_RSN'," \
-                                                      "'APVL_REQ_DT'," \
-                                                      "'TH1_APRV_STUS'," \
-                                                      "'TH1_APRV_STUS_NM'," \
-                                                      "'TH2_APRV_STUS'," \
-                                                      "'TH2_APRV_STUS_NM'," \
-                                                      "'APVL_LAST_APRV_DT')" \
+                                                      "`EMP_EMAL_ADDR`," \
+                                                      "`APVL_REQ_DIVS`," \
+                                                      "`WRK_DT`," \
+                                                      "`WRK_TME`," \
+                                                      "`WRK_REQ_RSN`," \
+                                                      "`APVL_REQ_DT`," \
+                                                      "`TH1_APRV_STUS`," \
+                                                      "`TH1_APRV_NM`," \
+                                                      "`TH2_APRV_STUS`," \
+                                                      "`TH2_APRV_NM`," \
+                                                      "`APVL_LAST_APRV_DT`)" \
                                                       "VALUES( %s, %s, %s, %s, %s, NOW(), %s, %s, %s, %s, NOW())" \
                 
                 # "ON DUPLICATE KEY UPDATE "
