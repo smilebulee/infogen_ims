@@ -36,6 +36,18 @@ class scheduleMgmt(generic.TemplateView):
         return render(request, template_name)
         # return render(request, template_name, rr)
 
+class scheduleMgmtPop(generic.TemplateView):
+    def get(self, request, *args, **kwargs):
+        template_name = 'dili/diliScheduleMgmtPop.html'
+
+        # r = requests.get('http://dili_api:5006/hello')
+        # rr = {
+        #     "result": r.text
+        # }
+
+        return render(request, template_name)
+        # return render(request, template_name, rr)
+
 class mariatest(generic.TemplateView):
     def get(self, request, *args, **kwargs):
         template_name = 'dili/mariatest.html'

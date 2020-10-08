@@ -21,8 +21,8 @@
   <component name="ChangeListManager">
     <list default="true" id="069bc5b9-482e-4fff-a242-76dbf771ee42" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ifg_front/templates/prj/prjInpuMgmt.html" beforeDir="false" afterPath="$PROJECT_DIR$/ifg_front/templates/prj/prjInpuMgmt.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ifg_front/templates/skil/devMgmt.html" beforeDir="false" afterPath="$PROJECT_DIR$/ifg_front/templates/skil/devMgmt.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ifg_front/dili_api/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/ifg_front/dili_api/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ifg_front/dili_api/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/ifg_front/dili_api/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
