@@ -3,8 +3,6 @@ grid sample
 history
     - 2020.09 김경민 최초작성
 *********************************************** -->
-{% extends 'common/base.html' %}
-{% block content %}
 {% load static %}
 <style>
     #devRegModal {
@@ -66,18 +64,20 @@ history
                         alertMsg("선택된 행이 없습니다.");
                         return false;
                     }  else{
-                        alertMsg("(작성예정)선택된 행 값 넘겨주기");
                         var empNo = firstGrid.getList("selected")[0].EMP_NO;
                         var empName = firstGrid.getList("selected")[0].EMP_NAME;
                         var devpBlco = firstGrid.getList("selected")[0].DEVP_BLCO;
-                        var devpGrdCd = firstGrid.getList("selected")[0].DEVP_GRD_CD;
-                        var cntcDivsCd = firstGrid.getList("selected")[0].CNTC_DIVS_CD;
-                        console.log(empNo);
-                        console.log(empName);
-                        console.log(devpBlco);
-                        console.log(devpGrdCd);
-                        console.log(cntcDivsCd);
-                        location.href = '/prj/prjInpuMgmt?emp_No='+empNo+'&empName='+empName+'&devpBlco='+devpBlco+'&devpGrdCd='+devpGrdCd+'&cntcDivsCd='+cntcDivsCd
+                        var devpGrdName = firstGrid.getList("selected")[0].DEVP_GRD_NAME;
+                        var cntcDivsName = firstGrid.getList("selected")[0].CNTC_DIVS_NAME;
+
+                        var list = prjGrid.getList()
+                        for(var i = 0; i < list.length; i++){
+                            if(list[i].EMP_NO == empNo){
+                               alertMsg("이미 해당 프로젝트에 존재하는 개발자입니다.");
+                               return;
+                            }
+                        }
+                        prjGrid.updateRow({PRJ_CD: prjCd ,EMP_NO: empNo, EMP_NAME: empName,  DEPT_NM: devpBlco,SKIL_GRD: devpGrdName, CNTC_DIVS_NM: cntcDivsName, SLIN_GRD: '', INPU_STRT_DAY: '', INPU_END_DAY: '', CNTC_STRT_DAY: '', CNTC_END_DAY: '', CRGE_JOB: '', RMKS: '', STUS :'insert', __created__ : true, __modified__ : true,}, prjGrid.selectedDataIndexs[0]);
                     }
                 });
 
@@ -171,5 +171,3 @@ history
                     </div>
         </div>
 </div>
-
-{% endblock %}
