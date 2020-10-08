@@ -35,11 +35,11 @@ history
             $('#prjCd').val(prjCd);
 
             retrievePrjInfo()
-            getGridList(1);
+            getPrjGridList(1);
 
             /* 행 추가 버튼 */
             $('#grpAddBtn').click(function(){
-                prjGrid.addRow({PRJ_CD : prjCd ,EMP_NO: '',EMP_NAME: '',DEPT_NM: '', SKIL_GRD: '',CNTC_DIVS_NM: '',SLIN_GRD: '',INPU_STRT_DAY: '',INPU_END_DAY: '',CNTC_STRT_DAY: '',CNTC_END_DAY: '',CRGE_JOB: '',RMKS :'',STUS :'insert'});
+                prjGrid.addRow({PRJ_CD : '' ,EMP_NO: '',EMP_NAME: '',DEPT_NM: '', SKIL_GRD: '',CNTC_DIVS_NM: '',SLIN_GRD: '',INPU_STRT_DAY: '',INPU_END_DAY: '',CNTC_STRT_DAY: '',CNTC_END_DAY: '',CRGE_JOB: '',RMKS :'',STUS :'insert'});
             });
 
             /* 행 삭제 버튼 */
@@ -115,7 +115,7 @@ history
                         method : 'post',
                         callbackFn : function(data){
                             g_toast.push('저장 되었습니다.');
-                            getGridList(1);
+                            /*getPrjGridList(1);*/
                         }
                     });
                 });
@@ -136,7 +136,7 @@ history
             });
         };
 
-        function getGridList(page){
+        function getPrjGridList(page){
             $('#formSearchDiv').ajaxCall({
                 method : 'GET',
                 url : "{% url 'prj_api:prjInpuSearch' %}",
