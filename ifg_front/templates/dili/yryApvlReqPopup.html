@@ -73,6 +73,35 @@
             }
         });
 
+        function btnReqEvt() {
+            confirmMsg('저장하시겠습니까?', function(){
+                var param = {
+                    "email" : 'ishwang@ingofen.co.kr',                                   // 추후 Session Value 연동.
+                    "apvlReqDivs" : $("#sbx_type option:selected").val(),    //1: 야근, 2:연차
+                    "wrkDt" : $("#ipt_wrkDt").val(),
+                    "wrkTme" : "000000",
+                    "wrkReqRsn": $("#txa_reqRsn").val(),
+                    "th1AprvStus": "01",
+                    "th1AprvStusNm": "승인",
+                    "th2AprvStus": "01",
+                    "th2AprvStusNm": "승인"
+
+                }
+
+                $.ajaxCall( param, {
+                     method : 'POST',
+                     'url' : '/dili/saveYryApvlReq/post',
+                     'dataType' : 'json',
+                     'data' : JSON.stringify(param),
+                     'async' : false,
+                     'callbackFn' : function(data){
+
+                        // 리턴
+
+                     }
+                });
+            });
+        }
     </script>
         <div class="row">
             <div class="col-sm-12">
@@ -151,7 +180,7 @@
                             <div class="card-body flex-height d-flex m-0 p-2">
                                 <div class="align-self-start align-self-center mr-3"></div>
                                 <div class="align-self-center mr-7">
-                                    <button class="btn btn-primary" id="btn_req">요청</button>
+                                    <button class="btn btn-primary" id="btn_req" onclick="btnReqEvt()>요청</button>
                                 </div>
                             </div>
                         </div>

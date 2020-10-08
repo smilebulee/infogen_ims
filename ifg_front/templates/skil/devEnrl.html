@@ -117,6 +117,7 @@
         if(empNo == '' || empNo == null ){
             console.log('empNo is null')
         } else{  <!--   개발자 정보 수정    -->
+            console.log('empNo : '+empNo)
             $('#emp_no').val(empNo);
             retrieveDevInfo();
         }
@@ -206,7 +207,9 @@
                 method : 'POST',
                 url : '/skil/devSave/post',
                 callbackFn : function(data){
-<!--                    location.href = '/skil/devEnrl?emp_No='+data-->
+<!--                    window.location.reload();-->
+                    $('#emp_no').val(data);
+                    retrieveDevInfo();
                     g_toast.push('저장 되었습니다.');
                 }
             });
@@ -226,7 +229,7 @@
                 method : 'POST',
                 url : '/skil/devDelete/post',
                 callbackFn : function(data){
-<!--                    location.href = '/skil/devEnrl'-->
+                    location.href = '/skil/devMgmt'
                     g_toast.push('삭제 되었습니다.');
                 }
             });
