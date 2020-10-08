@@ -82,15 +82,7 @@ history
                     alertMsg("해당 Row는 이미 개발자가 존재합니다.");
                     return;
                 }
-                var empNo = 100 /* 사번 임시 값(수정필요.)*/
-                /* 해당 프로젝트에 이미 존재하는 개발자인지 체크 */
-                var list = prjGrid.getList()
-                for(var i = 0; i < list.length; i++){
-                    if(list[i].EMP_NO == empNo){
-                       alertMsg("이미 해당 프로젝트에 존재하는 개발자입니다.");
-                       return;
-                    }
-                }
+
                 /* devMgmtPopup(); */
                 modal('devMgmtModal');
                 $("#devMgmtModal2").load("{% url 'skil_api:devMgmt' %}")
