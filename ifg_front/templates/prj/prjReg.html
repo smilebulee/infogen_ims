@@ -1,29 +1,31 @@
-{% extends 'common/base.html' %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
 
-{% block content %}
+    <meta name="viewport" content="width=device-width, initial-scale=1"><!-- 모바일 -->
+{% load static %}
+       <title>IFG-IMS</title>
 
+</head>
+<body>
  <style>
 #modal {
-  position:relative;
-  width:100%;
-  height:100%;
   z-index:1;
 }
 
 #modal h2 {
-  margin:0;
 }
 
 #modal input {
   width:100%;
   border: 0;
-  border-bottom: 1px solid #0489B1;
+  border-bottom: 1.5px solid #0489B1;
   outline : 0;
 }
 
 #modal button {
   display:inline-block;
-  width:33%;
+  width:50%;
   margin-center:calc(100% - 100px - 10px);
   float:right;
   color: blue;
@@ -34,27 +36,15 @@
 }
 
 #modal .modal_content {
-  width:600px;
-  margin:100px auto;
-  padding:0px 40px;
-  background:#fff;
-  border:2px solid #666;
 }
 
 #modal .modal_layer {
-  position:fixed;
-  top:0;
-  left:0;
-  width:100%;
-  height:100%;
-  background:rgb(0, 0, 0, 0.5);
-  z-index:-1;
 }
 
-tbody>tr {
+#modal tbody>tr {
   counter-increment: aaa;
 }
-tbody>tr>td:first-child:before {
+#modal tbody>tr>td:first-child:before {
   content: counter(aaa) " ";
 }
 
@@ -90,6 +80,7 @@ tbody>tr>td:first-child:before {
 
                 <p>*매출 사업부<br>
                     <select size ="1" style="width:200px" id = "slin_bzdp" name = "slin_bzdp" class="col-sm-4">
+                        <option value = "">선택</option>
                         <option value = "01">FIC</option>
                         <option value = "02">전자/제조</option>
                         <option value = "03">통신</option>
@@ -101,6 +92,7 @@ tbody>tr>td:first-child:before {
 
                 <p>*업무 구분<br>
                     <select size ="1" style="width:200px" id = "job_divs" name = "job_divs" class="col-sm-2">
+                        <option value = "">선택</option>
                         <option value = "01">SM</option>
                         <option value = "02">SI</option>
                     </select>
@@ -108,26 +100,31 @@ tbody>tr>td:first-child:before {
 
                 <p>*진행 상태<br>
                     <select size ="1" style="width:200px" id = "pgrs_stus" name = "pgrs_stus" class="col-sm-2">
+                        <option value = "">선택</option>
                         <option value = "01">예정</option>
                         <option value = "02">진행 중</option>
                         <option value = "03">종료</option>
                     </select>
                 </p>
 
+                <p>*계약기간<br>
+                    <input type = "date" id = "cntc_strt_day" name = "cntc_strt_day" style = "width : 30%"> ~
+                    <input type = "date" id = "cntc_end_day" name = "cntc_end_day" style = "width : 30%"></p></p>
+
                 <p>비고<br>
                     <input type = "text" id = "rmks" name = "rmks" placeholder="input text"></p>
                 <br>
-                요구스킬  <button id = "addSkil" name="addSkil" class = "btn btn-primary style="float:right">추가</button>
-                <table id="reqSkil" class="table" style="margin-top: 20px;">
+                요구스킬  <button id = "addSkil" name="addSkil" class = "btn btn-primary" style="width:33%; float:right;">추가</button>
+                <table id="reqSkil" class="table" style="margin-top: 20px; text-align:center">
                     <colgroup>
                         <col width="20%"/>
                         <col width="30%"/>
-                        <col width="35%"/>
+                        <col width="30%"/>
                         <col width="15%"/>
                     </colgroup>
 
                     <thead>
-                    <tr style = "float : center">
+                    <tr>
                         <th>순번</th>
                         <th>구분</th>
                         <th>스킬명</th>
@@ -136,8 +133,8 @@ tbody>tr>td:first-child:before {
                     </thead>
 
                     <tbody id="reqSkilBody" name = "req_skil">
-                        <tr name="trSkil">
-                            <td id="skil_name"></td>
+                        <tr id = "trSkil" name="trSkil">
+                            <td id="skil_no"></td>
                             <td><select size="1" class="form-control" id="req_skil_divs1" name="req_skil_divs1" onchange="skil_chg(1)">
                                 <option value = "00">선택</option>
                                 <option value = "01">DB</option>
@@ -159,7 +156,6 @@ tbody>tr>td:first-child:before {
         <hr>
             <button type="button" id="deleteBtn" style="color:red">삭제</button>
             <button type="button" id="saveBtn">저장</button>
-            <button type="button" id="closeBtn">닫기</button>
         <br>
      
     </div>
@@ -195,21 +191,16 @@ tbody>tr>td:first-child:before {
             }
     });
 
-
     $(document).ready(function() {
-
-       var prj_cd = location.href.indexOf('emp_No');
-        <!--   프로젝트 정보 수정    -->
-        if(prj_cd != -1){
-            console.log('prj_cd : '+ prj_cd);
-            temp=location.href.split("?");
-            data = temp[1].split("=");
-            emp_no = data[1];
-            $('#prj_cd').val(prj_cd);
-
-            retrieveDevInfo();
-        } else{  <!--   프로젝트 최초 등록    -->
+        var prj_cd = 'PRJ_000003';
+        <!--   프로젝트 정보 최초 등록    -->
+        if(prj_cd == '' || prj_cd == null){
             console.log('prj_cd is null')
+        } else{  <!--   프로젝트 정보 수정    -->
+            console.log('prj_cd : '+ prj_cd);
+            $('#prj_cd').val(prj_cd);
+            retrievePrjInfo();
+            retrieveReqSkil()
         }
     });
 
@@ -226,6 +217,8 @@ tbody>tr>td:first-child:before {
                 $('#slin_bzdp').val(data[0].SLIN_BZDP);
                 $('#job_divs').val(data[0].JOB_DIVS_CD);
                 $('#pgrs_stus').val(data[0].PGRS_STUS_CD);
+                $('#cntc_strt_day').val(data[0].CNTC_STRT_DAY);
+                $('#cntc_end_day').val(data[0].CNTC_END_DAY);
                 $('#rmks').val(data[0].RMKS);
 
             }
@@ -242,7 +235,7 @@ tbody>tr>td:first-child:before {
                     if(i != length-1){
                         $("#addStaff").trigger("click");
                     }
-                    $('#req_skil_divs'+(i+1)).val(data[i].SKIL_DIVS).trigger('change');
+                    $('#req_skil_divs'+(i+1)).val(data[i].SKIL_DIVS_CD).trigger('change');
                     $('#req_skil_name'+(i+1)).val(data[i].SKIL_NAME);
                 }
             }
@@ -254,12 +247,13 @@ tbody>tr>td:first-child:before {
     $(document).on("click","button[name=addSkil]",function(){
         console.log('add');
         count += 1;
+        var rowCount = $('#reqSkil tbody tr').length+1;
 
         var addSkilText =
             '<tr name="trSkil">'+
-            '        <td id="skil_name"></td>'+
+            '        <td id="skil_no"></td>'+
             '        <td><select size ="1" class="form-control" id = "req_skil_divs'+count+'" name = "req_skil_divs'+count+'" onchange="skil_chg('+count+')">'+
-            '                <option>선택</option>'+
+            '                <option value = "00">선택</option>'+
             '                <option value = "01">DB</option>'+
             '                <option value = "02">LANGUAGE</option>'+
             '                <option value = "03">WEB</option>'+
@@ -267,15 +261,12 @@ tbody>tr>td:first-child:before {
             '                <option value = "05">Framework</option>'+
             '            </select></td>'+
             '        <td><select class="form-control" id = "req_skil_name'+count+'" name = "req_skil_name'+count+'"></select></td>'+
-            '        <td><input type="button" style="float:right" id="delSkil" name="delSkil" value="삭제" class = "btn btn-primary"/></td>'+
+            '        <td><input type="button" style="float:right;" id="delSkil" name="delSkil" value="삭제" class = "btn btn-primary"/></td>'+
             '</tr>';
 
         var trHtml = $( "tr[name=trSkil]:last" );
 
         trHtml.after(addSkilText);
-
-        console.log($('#reqSkil tbody tr').length);
-
     });
 
     $(document).on("click","input[name=delSkil]",function(){
@@ -284,10 +275,6 @@ tbody>tr>td:first-child:before {
 
         trHtml.remove();
     });
-
-    document.getElementById("closeBtn").onclick = function() {
-        window.history.back();
-    }
 
     $('#saveBtn').click(function(){
             $('#trCount').val($('#reqSkil tbody tr').length);
@@ -315,11 +302,17 @@ tbody>tr>td:first-child:before {
             } else if(slin_bzdp == '' || slin_bzdp == null){
                 alertMsg('매출 사업부은(는) 필수 입력 사항입니다.');
                 return false;
-            }  else if(job_divs == '' || job_divs == null){
+            } else if(job_divs == '' || job_divs == null){
                 alertMsg('업무 구분은(는) 필수 입력 사항입니다.');
                 return false;
-            }  else if(pgrs_stus == '' || pgrs_stus == null){
+            } else if(pgrs_stus == '' || pgrs_stus == null){
                 alertMsg('진행 상태은(는) 필수 입력 사항입니다.');
+                return false;
+            } else if(cntc_strt_day == '' || cntc_strt_day == null){
+                alertMsg('계약시작일은(는) 필수 입력 사항입니다.');
+                return false;
+            } else if(cntc_end_day == '' || cntc_end_day == null){
+                alertMsg('계약종료일은(는) 필수 입력 사항입니다.');
                 return false;
             }
 
@@ -329,6 +322,9 @@ tbody>tr>td:first-child:before {
                         method : 'POST',
                         url : '/prj/prjSave/post',
                         callbackFn : function(data){
+                            $('#prj_cd').val(data);
+                            retrievePrjInfo();
+                            retrieveReqSkil()
                             g_toast.push('저장 되었습니다.');
                         }
                 });
@@ -342,7 +338,7 @@ tbody>tr>td:first-child:before {
                     method : 'POST',
                     url : '/prj/prjDelete/post',
                     callbackFn : function(data){
-                       location.href = '/prj/prjReg'
+<!--                       location.href = '/prj/prjReg'-->
                        g_toast.push('삭제 되었습니다.');
                     }
                 });
@@ -351,10 +347,7 @@ tbody>tr>td:first-child:before {
      });
 
     function skil_chg(a){
-
-
         var selectSkill = $("#req_skil_divs"+a).val();
-
         var changeSkill;
 
         if(selectSkill == "01"){
@@ -385,7 +378,6 @@ tbody>tr>td:first-child:before {
 
 </script>
 
-
-
-{% endblock %}
+</body>
+</html>
 
