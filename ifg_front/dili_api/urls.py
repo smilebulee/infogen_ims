@@ -16,6 +16,7 @@ urlpatterns = [
     url(r'^getWrkTimeInfoByEml/', views.getWrkTimeInfoByEml, name='getWrkTimeInfoByEml'),
     url(r'^getYryMgmt/', views.getYryMgmt, name='getYryMgmt'),
     url(r'^scheduleMgmt/', views.scheduleMgmt.as_view(), name='scheduleMgmt'),
+    url(r'^scheduleMgmtPop/', views.scheduleMgmtPop.as_view(), name='scheduleMgmtPop'),
     url(r'^wrkApvlReq/', views.wrkApvlReq.as_view(), name='wrkApvlReq'),
     url(r'^yryApvlReq/', views.yryApvlReq.as_view(), name='yryApvlReq'),
     url(r'^noticeLst/', views.noticeLst.as_view(), name='noticeLst'),

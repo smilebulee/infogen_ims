@@ -21,8 +21,8 @@
   <component name="ChangeListManager">
     <list default="true" id="069bc5b9-482e-4fff-a242-76dbf771ee42" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ifg_front/templates/prj/prjInpuMgmt.html" beforeDir="false" afterPath="$PROJECT_DIR$/ifg_front/templates/prj/prjInpuMgmt.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ifg_front/templates/skil/devMgmt.html" beforeDir="false" afterPath="$PROJECT_DIR$/ifg_front/templates/skil/devMgmt.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ifg_front/dili_api/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/ifg_front/dili_api/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ifg_front/dili_api/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/ifg_front/dili_api/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -135,44 +135,6 @@
       </list>
     </recent_temporary>
   </component>
-  <component name="ServiceViewManager">
-    <option name="viewStates">
-      <list>
-        <serviceView>
-          <treeState>
-            <expand />
-            <select />
-          </treeState>
-        </serviceView>
-        <serviceView>
-          <option name="contentProportion" value="0.18983957" />
-          <treeState>
-            <expand>
-              <path>
-                <item name="services root" type="e789fda9:ObjectUtils$Sentinel" />
-                <item name="Docker" type="9fbbdea:ServiceModel$ServiceNode" />
-              </path>
-              <path>
-                <item name="services root" type="e789fda9:ObjectUtils$Sentinel" />
-                <item name="Docker" type="9fbbdea:ServiceModel$ServiceNode" />
-                <item name="Containers" type="9fbbdea:ServiceModel$ServiceNode" />
-              </path>
-            </expand>
-            <select />
-          </treeState>
-          <option name="isSelected" value="true" />
-          <option name="viewType" value="contributor" />
-          <option name="roots">
-            <list>
-              <ServiceState>
-                <option name="contributor" value="com.intellij.docker.view.DockerServiceViewContributor" />
-              </ServiceState>
-            </list>
-          </option>
-        </serviceView>
-      </list>
-    </option>
-  </component>
   <component name="SpellCheckerSettings" BundledDictionaries="0" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" Dictionaries="0" CorrectionsLimit="5" DefaultDictionary="application-level" UseSingleDictionary="true" />
   <component name="SvnConfiguration">
     <configuration />
@@ -192,13 +154,12 @@
       <map>
         <entry key="MAIN">
           <value>
-            <State>
-              <option name="COLUMN_ORDER" />
-            </State>
+            <State />
           </value>
         </entry>
       </map>
     </option>
+    <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="WindowStateProjectService">
     <state x="-1244" y="134" key="#app" timestamp="1600842346827">
