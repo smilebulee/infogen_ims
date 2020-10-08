@@ -237,7 +237,15 @@ def saveApvlReq(request):
     logger.info(param)
     logger.info("Parameters End")
 
-    r = requests.post('http://dili_api:5006/saveApvlReq', data=param)
+    datas = {
+    }
+
+    for row in param:
+        logger.info("------views.py------")
+        logger.info(row + ':' + param[row])
+        datas.setdefault(row, param[row])
+
+    r = requests.post('http://dili_api:5006/saveApvlReq', data=datas)
     logger.info(r)
     logger.info(r.text)
     logger.info(r.json())
@@ -300,3 +308,24 @@ def getCalendarData(request):
     logger.info(r.json())
     logger.info(json.loads(r.text))
     return JsonResponse(r.json(), safe=False)
+
+def saveYryApvlReq(request):
+    param = json.loads(request.POST['param'])
+
+    logger.info("Parameters Start")
+    logger.info(param)
+    logger.info("Parameters End")
+
+    datas = {
+    }
+
+    for row in param:
+        logger.info("------views.py------")
+        logger.info(row + ':' + param[row])
+        datas.setdefault(row, param[row])
+
+    r = requests.post('http://dili_api:5006/saveYryApvlReq', data=datas)
+    logger.info(r)
+    logger.info(r.text)
+    logger.info(r.json())
+    return JsonResponse(r.json())
