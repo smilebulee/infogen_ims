@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
+from main.helpers import ajax_login_required
 # Create your views here.
 from django.views import View
 from django.views import generic
@@ -43,7 +44,7 @@ def retrieve(request):
     logger.debug(retVal);
     return JsonResponse(retVal)
 
-
+@login_required
 def prjReg(request):
     template_name = 'prj/prjReg.html'
 
@@ -96,10 +97,13 @@ def retrieveSkilName(request):
     return JsonResponse(r.json(), safe=False)
 
 # 프로젝트 저장
+@ajax_login_required
 def prjSave(request):
+    userId = str(request.user)
     param = json.loads(request.POST['param'])
 
     datas = {
+        'userId': userId
     }
 
     for row in param:
@@ -110,9 +114,10 @@ def prjSave(request):
     logger.info(r.text)
     logger.info(r.json())
 
-    return JsonResponse(r.json())
+    return JsonResponse(r.json(), safe=False)
 
 # 프로젝트 삭제
+@ajax_login_required
 def prjDelete(request):
 
     param = json.loads(request.POST['param'])

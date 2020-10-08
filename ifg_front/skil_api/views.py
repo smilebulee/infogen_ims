@@ -125,6 +125,7 @@ def devSave(request):
 
     return JsonResponse(r.json(), safe=False)
 
+@ajax_login_required
 def devDelete(request):
     param = json.loads(request.POST['param'])
 

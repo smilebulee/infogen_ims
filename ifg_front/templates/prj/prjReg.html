@@ -192,19 +192,15 @@
     });
 
     $(document).ready(function() {
-
-       var prj_cd = location.href.indexOf('emp_No');
-        <!--   프로젝트 정보 수정    -->
-        if(prj_cd != -1){
-            console.log('prj_cd : '+ prj_cd);
-            temp=location.href.split("?");
-            data = temp[1].split("=");
-            emp_no = data[1];
-            $('#prj_cd').val(prj_cd);
-
-            retrieveDevInfo();
-        } else{  <!--   프로젝트 최초 등록    -->
+        var prj_cd = 'PRJ_000003';
+        <!--   프로젝트 정보 최초 등록    -->
+        if(prj_cd == '' || prj_cd == null){
             console.log('prj_cd is null')
+        } else{  <!--   프로젝트 정보 수정    -->
+            console.log('prj_cd : '+ prj_cd);
+            $('#prj_cd').val(prj_cd);
+            retrievePrjInfo();
+            retrieveReqSkil()
         }
     });
 
@@ -239,7 +235,7 @@
                     if(i != length-1){
                         $("#addStaff").trigger("click");
                     }
-                    $('#req_skil_divs'+(i+1)).val(data[i].SKIL_DIVS).trigger('change');
+                    $('#req_skil_divs'+(i+1)).val(data[i].SKIL_DIVS_CD).trigger('change');
                     $('#req_skil_name'+(i+1)).val(data[i].SKIL_NAME);
                 }
             }
@@ -252,13 +248,12 @@
         console.log('add');
         count += 1;
         var rowCount = $('#reqSkil tbody tr').length+1;
-        console.log(rowCount);
 
         var addSkilText =
             '<tr name="trSkil">'+
             '        <td id="skil_no"></td>'+
             '        <td><select size ="1" class="form-control" id = "req_skil_divs'+count+'" name = "req_skil_divs'+count+'" onchange="skil_chg('+count+')">'+
-            '                <option>선택</option>'+
+            '                <option value = "00">선택</option>'+
             '                <option value = "01">DB</option>'+
             '                <option value = "02">LANGUAGE</option>'+
             '                <option value = "03">WEB</option>'+
@@ -272,9 +267,6 @@
         var trHtml = $( "tr[name=trSkil]:last" );
 
         trHtml.after(addSkilText);
-
-        console.log($('#reqSkil tbody tr').length);
-
     });
 
     $(document).on("click","input[name=delSkil]",function(){
@@ -330,6 +322,9 @@
                         method : 'POST',
                         url : '/prj/prjSave/post',
                         callbackFn : function(data){
+                            $('#prj_cd').val(data);
+                            retrievePrjInfo();
+                            retrieveReqSkil()
                             g_toast.push('저장 되었습니다.');
                         }
                 });
@@ -343,7 +338,7 @@
                     method : 'POST',
                     url : '/prj/prjDelete/post',
                     callbackFn : function(data){
-                       location.href = '/prj/prjReg'
+<!--                       location.href = '/prj/prjReg'-->
                        g_toast.push('삭제 되었습니다.');
                     }
                 });

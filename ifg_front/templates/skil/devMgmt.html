@@ -94,6 +94,17 @@ history
                         $("#devRegModal2").load("{% url 'skil_api:devEnrl' %}");
                     }
                 });
+
+                $('#prjSaveBtn').click(function(){
+
+                    if(firstGrid.getList("selected").length == 0){
+                        empNo = null;
+                        skilModal('devRegModal');
+                        $("#devRegModal2").load("{% url 'prj_api:prjReg' %}");
+                    } else{
+
+                    }
+                });
             });
 
 
@@ -154,6 +165,7 @@ history
                         </div>
                         <div style="float: right; padding-top :10px;">
                             <button class="btn btn-primary" id="devSaveBtn" >개발자 등록</button>
+                            <button class="btn btn-primary" id="prjSaveBtn" >프로젝트 등록</button>
                             <button class="btn btn-primary" id="devOutSaveBtn" >프로젝트별 투입 등록</button>
                         </div>
                     </div>

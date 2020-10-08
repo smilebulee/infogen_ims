@@ -216,8 +216,9 @@ class retrieveReqSkil(Resource):
 
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
-                sql = "SELECT " \
-                      "PRJ_CD, SKIL_DIVS, SKIL_NAME " \
+                sql = "SELECT PRJ_CD, " \
+                             "SKIL_DIVS_CD, " \
+                             "SKIL_NAME " \
                       "FROM TB_PRJ_REQ_SKIL A " \
                       "WHERE PRJ_CD = %s;"
                 cursor.execute(sql, prj_cd)
@@ -236,16 +237,14 @@ class retrieveSkilName(Resource):
         params = request.get_json()
 
         logging.debug('retrieveSkilName Start')
-        # skil_divs_cd = request.args.get('skil_divs_cd')
 
         mysql_con = pymysql.connect(host='218.151.225.142', port=3306, db='IFG_IMS', user='ims2', password='1234',
                                     charset='utf8')
 
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
-                sql = "SELECT " \
-                      "SKIL_DIVS_CD, " \
-                      "SKIL_NAME " \
+                sql = "SELECT SKIL_DIVS_CD, " \
+                             "SKIL_NAME " \
                       "FROM TB_SKIL_MGNT_CD A "
                 cursor.execute(sql)
                 logging.debug('retrieveSkilName SUCCESS')
@@ -291,19 +290,41 @@ class prjSave(Resource):
                         prjResult = cursor.fetchone()
                         prj_cd = prjResult['PRJ_CD']
 
-                    sql = "INSERT INTO TB_PRJ_INFO(`PRJ_CD`, `PRJ_NAME`, `PRJ_CNCT_CD`, `GNR_CTRO`, `CTRO`, `CNCT_AMT`, " \
-                          "`SLIN_BZDP`, `JOB_DIVS_CD`, `PGRS_STUS_CD`, `CNTC_STRT_DAY`, " \
-                          "`CNTC_END_DAY`, `REG_EMP_NO`, `REG_DATE`, `CHG_EMP_NO`," \
-                          " `CHG_DATE`, `RMKS`, `USE_YN`) " \
-                          "VALUES(%s, " \
-                          "%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, 'admin', NOW(), 'admin', NOW(), %s, %s)" \
+                    sql = "INSERT INTO TB_PRJ_INFO(`PRJ_CD`, " \
+                                                  "`PRJ_NAME`, " \
+                                                  "`PRJ_CNCT_CD`, " \
+                                                  "`GNR_CTRO`, " \
+                                                  "`CTRO`, " \
+                                                  "`CNCT_AMT`, " \
+                                                  "`SLIN_BZDP`, " \
+                                                  "`JOB_DIVS_CD`, " \
+                                                  "`PGRS_STUS_CD`, " \
+                                                  "`CNTC_STRT_DAY`, " \
+                                                  "`CNTC_END_DAY`, " \
+                                                  "`REG_EMP_NO`, " \
+                                                  "`REG_DATE`, " \
+                                                  "`CHG_EMP_NO`, " \
+                                                  "`CHG_DATE`, " \
+                                                  "`RMKS`, " \
+                                                  "`USE_YN`) " \
+                          "VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, NOW(), %s, NOW(), %s, %s)" \
                           "ON DUPLICATE KEY UPDATE " \
-                          "PRJ_NAME = %s, PRJ_CNCT_CD = %s, GNR_CTRO = %s, CTRO = %s, CNCT_AMT = %s, SLIN_BZDP = %s, " \
-                          "JOB_DIVS_CD = %s, PGRS_STUS_CD = %s, CNTC_STRT_DAY = %s, CNTC_END_DAY = %s, " \
-                          "CHG_EMP_NO = 'admin', CHG_DATE = NOW(), RMKS = %s"
+                                                  "PRJ_NAME = %s, " \
+                                                  "PRJ_CNCT_CD = %s, " \
+                                                  "GNR_CTRO = %s, " \
+                                                  "CTRO = %s, " \
+                                                  "CNCT_AMT = %s, " \
+                                                  "SLIN_BZDP = %s, " \
+                                                  "JOB_DIVS_CD = %s, " \
+                                                  "PGRS_STUS_CD = %s, " \
+                                                  "CNTC_STRT_DAY = %s, " \
+                                                  "CNTC_END_DAY = %s, " \
+                                                  "CHG_EMP_NO = %s, " \
+                                                  "CHG_DATE = NOW(), " \
+                                                  "RMKS = %s"
                     cursor.execute(sql, (
-                        prj_cd, prj_name, prj_cnct_cd, gnr_ctro, ctro, cnct_amt, slin_bzdp, job_divs, pgrs_stus, cntc_strt_day, cntc_end_day, rmks, use_yn,
-                        prj_name, prj_cnct_cd, gnr_ctro, ctro, cnct_amt, slin_bzdp, job_divs, pgrs_stus, cntc_strt_day, cntc_end_day, rmks))
+                        prj_cd, prj_name, prj_cnct_cd, gnr_ctro, ctro, cnct_amt, slin_bzdp, job_divs, pgrs_stus, cntc_strt_day, cntc_end_day, userId, userId, rmks, use_yn,
+                        prj_name, prj_cnct_cd, gnr_ctro, ctro, cnct_amt, slin_bzdp, job_divs, pgrs_stus, cntc_strt_day, cntc_end_day, userId, rmks))
                     mysql_con.commit()
                     logging.debug('PRJ_INFO SUCCESS')
 
@@ -317,14 +338,21 @@ class prjSave(Resource):
                     for i in range(1, int(trCount)+1):
                         req_skil_divs = request.form['req_skil_divs'+str(i)]
                         logging.debug('req_skil_divs : ' + req_skil_divs)
-                        req_skil_name = request.form['req_skil_name'+str(i)]
-                        logging.debug('req_skil_name : ' + req_skil_name)
-                        if req_skil_divs != "00":
-                            sql = "INSERT INTO TB_PRJ_REQ_SKIL(`PRJ_CD`, `SKIL_DIVS_CD`, `SKIL_NAME`, `REG_EMP_NO`, `REG_DATE`," \
-                                      " `CHG_EMP_NO`, `CHG_DATE`) " \
-                                      "VALUES ((SELECT PRJ_CD FROM TB_PRJ_INFO A WHERE PRJ_NAME = %s)," \
-                                      " %s, %s, 'admin', NOW(), 'admin', NOW())"
-                            cursor.execute(sql, (prj_name, req_skil_divs, req_skil_name))
+                        if req_skil_divs != '00':
+                            req_skil_name = request.form['req_skil_name'+str(i)]
+                            logging.debug('req_skil_name : ' + req_skil_name)
+                            sql = "INSERT INTO TB_PRJ_REQ_SKIL(`PRJ_CD`, " \
+                                                              "`SKIL_DIVS_CD`, " \
+                                                              "`SKIL_NAME`, " \
+                                                              "`REG_EMP_NO`, " \
+                                                              "`REG_DATE`," \
+                                                              " `CHG_EMP_NO`, " \
+                                                              "`CHG_DATE`) " \
+                                      "VALUES ((SELECT PRJ_CD " \
+                                              "FROM TB_PRJ_INFO A " \
+                                              "WHERE PRJ_NAME = %s)," \
+                                              " %s, %s, %s, NOW(), %s, NOW())"
+                            cursor.execute(sql, (prj_name, req_skil_divs, req_skil_name, userId, userId))
                             mysql_con.commit()
                             logging.debug('REQ_SKIL'+str(i)+' SUCCESS')
             finally:
@@ -339,7 +367,7 @@ class prjDelete(Resource):
             params = request.get_json()
 
             logging.debug("delete start")
-            prj_name = request.form['prj_name']
+            prj_cd = request.form['prj_cd']
 
             mysql_con = pymysql.connect(host='218.151.225.142', port=3306, db='IFG_IMS', user='ims2',
                                             password='1234',
@@ -348,8 +376,8 @@ class prjDelete(Resource):
             try:
                 with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                     sql = "UPDATE TB_PRJ_INFO SET USE_YN = 'N' " \
-                          "WHERE PRJ_NAME = %s"
-                    cursor.execute(sql, prj_name)
+                          "WHERE PRJ_CD = %s"
+                    cursor.execute(sql, prj_cd)
                     mysql_con.commit()
                     logging.debug('PRJ_INFO SUCCESS')
 
