@@ -14,7 +14,7 @@ history
     }
 </style>
 <div class="container">
-    <script type="text/javascript" src="{% static 'js/modal.js' %}"></script>
+    <script type="text/javascript" src="{% static 'SkilCommon/skilModal.js' %}"></script>
     <link rel="stylesheet" type="text/css" href="{% static 'css/modal.css' %}"/>
 
     <script type="text/javascript" xmlns:max-width="http://www.w3.org/1999/xhtml">
@@ -86,11 +86,11 @@ history
 
                     if(firstGrid.getList("selected").length == 0){
                         empNo = null;
-                        modal('devRegModal');
+                        skilModal('devRegModal');
                         $("#devRegModal2").load("{% url 'skil_api:devEnrl' %}");
                     } else{
                         empNo = firstGrid.getList("selected")[0].EMP_NO;
-                        modal('devRegModal');
+                        skilModal('devRegModal');
                         $("#devRegModal2").load("{% url 'skil_api:devEnrl' %}");
                     }
                 });

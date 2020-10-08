@@ -21,19 +21,10 @@
   <component name="ChangeListManager">
     <list default="true" id="069bc5b9-482e-4fff-a242-76dbf771ee42" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api_containers/prj/api/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/api_containers/prj/api/Dockerfile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api_containers/prj/api/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/api_containers/prj/api/app.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api_containers/prj/api/docker-entrypoint.sh" beforeDir="false" afterPath="$PROJECT_DIR$/api_containers/prj/api/docker-entrypoint.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api_containers/prj/api/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/api_containers/prj/api/requirements.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api_containers/skil/api/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/api_containers/skil/api/app.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ifg_front/prj_api/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/ifg_front/prj_api/urls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ifg_front/prj_api/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/ifg_front/prj_api/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ifg_front/cmm_api/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/ifg_front/cmm_api/views.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ifg_front/skil_api/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/ifg_front/skil_api/urls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ifg_front/skil_api/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/ifg_front/skil_api/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ifg_front/templates/prj/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/ifg_front/templates/prj/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ifg_front/templates/skil/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/ifg_front/templates/skil/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ifg_front/templates/skil/prjInpuMgmt.html" beforeDir="false" afterPath="$PROJECT_DIR$/ifg_front/templates/prj/prjInpuMgmt.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ifg_front/templates/skil/skilMgmtDetl.html" beforeDir="false" afterPath="$PROJECT_DIR$/ifg_front/templates/skil/skilMgmtDetl.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ifg_front/templates/skil/devEnrl.html" beforeDir="false" afterPath="$PROJECT_DIR$/ifg_front/templates/skil/devEnrl.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -62,19 +53,20 @@
     <property name="DefaultHtmlFileTemplate" value="HTML File" />
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/ifg_front/templates/skil" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/ifg_front/static/SkilCommon" />
     <property name="run.code.analysis.last.selected.profile" value="aDefault" />
     <property name="settings.editor.selected.configurable" value="reference.settingsDialog.application.dockerMachine" />
   </component>
   <component name="RecentsManager">
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="C:\workspace\infogen_ims\ifg_front\templates\prj" />
-    </key>
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\workspace\infogen_ims\ifg_front\static\SkilCommon" />
       <recent name="C:\workspace\infogen_ims\ifg_front\templates\skil" />
       <recent name="C:\workspace\infogen_ims\ifg_front\templates\prj" />
       <recent name="C:\Users\user\Documents\GitHub\infogen_ims\ifg_front\templates\skil" />
       <recent name="C:\workspace\infogen_ims\infogen_ims\ifg_front\templates\dili" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\workspace\infogen_ims\ifg_front\templates\prj" />
     </key>
   </component>
   <component name="RunManager" selected="Docker.docker-compose.yml: Compose Deployment">
@@ -248,11 +240,6 @@
           <url>file://$PROJECT_DIR$/ifg_front/emp_api/views.py</url>
           <line>218</line>
           <option name="timeStamp" value="5" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/api_containers/skil/api/app.py</url>
-          <line>580</line>
-          <option name="timeStamp" value="6" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

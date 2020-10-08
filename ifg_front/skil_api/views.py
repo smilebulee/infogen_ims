@@ -7,6 +7,9 @@ from django.http import JsonResponse
 from django.core.paginator import Paginator
 #from .models import Tb_page
 
+from django.contrib.auth.decorators import login_required
+from main.helpers import ajax_login_required
+
 from django.views.decorators.csrf import csrf_exempt
 
 import requests
@@ -18,13 +21,12 @@ logger = logging.getLogger(__name__)
 class Skil_api_index(generic.TemplateView):
     def get(self, request, *args, **kwargs):
         template_name = 'skil/index.html'
-        logger.info("dadadadaata")
         r = requests.get('http://skil_api:5003/hello')
         rr = {
             "result": r.text
         }
 
-        return render(request, template_name,rr)
+        return render(request, template_name, rr)
 
 def devEnrl(request):
     template_name = 'skil/devEnrl.html'
@@ -63,7 +65,7 @@ def getMariaDB(request):
     logger.info(json.loads(r.text))
     return JsonResponse(r.json(), safe=False)
 
-
+@login_required
 def devMgmt(request):
     template_name = 'skil/devMgmt.html'
 
@@ -104,15 +106,18 @@ def retrieveDevInfo(request):
 
     return JsonResponse(r.json(), safe=False)
 
+@ajax_login_required
 def devSave(request):
+    userId = str(request.user)
     param = json.loads(request.POST['param'])
 
     datas = {
+        'userId': userId
     }
 
     for row in param:
         datas.setdefault(row, param[row])
-
+    logger.info(datas)
     r = requests.post('http://skil_api:5003/devSave', data=datas)
     logger.info(r)
     logger.info(r.text)
@@ -130,77 +135,6 @@ def devDelete(request):
         datas.setdefault(row, param[row])
 
     r = requests.post('http://skil_api:5003/devDelete', data=datas)
-    logger.info(r)
-    logger.info(r.text)
-    logger.info(r.json())
-
-    return JsonResponse(r.json())
-
-def retrievePrjInfo(request):
-    param = json.loads(request.GET['param'])
-
-    logger.info(param)
-
-    params = {
-        'prj_cd': param['prj_cd'],
-    }
-
-    r = requests.get('http://skil_api:5003/retrievePrjInfo', params=params)
-    logger.info(r)
-    logger.info(r.text)
-    logger.info(r.json())
-
-    return JsonResponse(r.json(), safe=False)
-
-def retrieveReqSkil(request):
-    param = json.loads(request.GET['param'])
-
-    params = {
-        'prj_cd': param['prj_cd'],
-    }
-
-    r = requests.get('http://skil_api:5003/retrieveReqSkil', params=params)
-    logger.info(r)
-    logger.info(r.text)
-    logger.info(r.json())
-
-    return JsonResponse(r.json(), safe=False)
-
-def prjSave(request):
-    param = json.loads(request.POST['param'])
-
-    datas = {
-    }
-
-    for row in param:
-        datas.setdefault(row, param[row])
-
-    r = requests.post('http://skil_api:5003/prjSave', data=datas)
-    logger.info(r)
-    logger.info(r.text)
-    logger.info(r.json())
-
-    return JsonResponse(r.json())
-
-def prjDelete(request):
-
-    param = json.loads(request.POST['param'])
-
-    datas = {
-        'prj_nm' : param['prj_nm'],
-        'cnct_cd' : param['cnct_cd'],
-        'gnr_ctro'  : param['gnr_ctro'],
-        'ctro': param['ctro'],
-        'cnct_amt': param['cnct_amt'],
-        'slin_bzdp': param['slin_bzdp'],
-        'job_divs': param['job_divs'],
-        'pgrs_stus' : param['pgrs_stus'],
-        'req_skil_divs' : param['req_skil_divs1'],
-        'req_skil_name' : param['req_skil_name1'],
-        'rmks' : param['rmks'],
-    }
-
-    r = requests.post('http://skil_api:5003/prjDelete', data=datas)
     logger.info(r)
     logger.info(r.text)
     logger.info(r.json())

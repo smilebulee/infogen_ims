@@ -373,8 +373,8 @@ class devSave(Resource):
                                       "CHG_DATE = NOW(), " \
                                       "RMKS = %s"
 
-                cursor.execute(sql, (emp_no, emp_name, emp_dept, emp_rank, devp_grd, tel_no, cntc_divs, devp_blco, devp_bday, 'admin', 'admin', rmks, use_yn
-                                     , emp_name, emp_dept, emp_rank, devp_grd, tel_no, cntc_divs, devp_blco, devp_bday, 'admin', rmks))
+                cursor.execute(sql, (emp_no, emp_name, emp_dept, emp_rank, devp_grd, tel_no, cntc_divs, devp_blco, devp_bday, userId, userId, rmks, use_yn
+                                     , emp_name, emp_dept, emp_rank, devp_grd, tel_no, cntc_divs, devp_blco, devp_bday, userId, rmks))
                 mysql_con.commit()
 
         finally:
@@ -419,185 +419,6 @@ class devDelete(Resource):
         }
 
         return jsonify(retJson)
-
-#프로젝트 정보 수정 시 해당 프로젝트 정보 조회
-class retrievePrjInfo(Resource):
-    def get(self):
-        params = request.get_json()
-
-        logging.debug('retrievePrjInfo Start')
-        prj_cd = request.args.get('prj_cd')
-        logging.debug(prj_cd)
-
-        mysql_con = pymysql.connect(host='218.151.225.142', port=3306, db='IFG_IMS', user='ims2', password='1234',
-                                    charset='utf8')
-
-        try:
-            with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
-                sql = "SELECT PRJ_NAME, " \
-                             "PRJ_CNCT_CD, " \
-                             "GNR_CTRO, " \
-                             "CTRO, " \
-                             "CNCT_AMT, " \
-                             "SLIN_BZDP, " \
-                             "JOB_DIVS_CD, " \
-                             "PGRS_STUS_CD, " \
-                             "RMKS " \
-                      "FROM TB_PRJ_INFO " \
-                      "WHERE PRJ_CD = %s"
-                cursor.execute(sql, prj_cd)
-                logging.debug('retrievePrjInfo SUCCESS')
-        finally:
-            mysql_con.close()
-
-        result1 = cursor.fetchall()
-        logging.debug(result1)
-
-        return result1
-
-#프로젝트 정보 수정 시 해당 프로젝트 요구 스킬 조회
-class retrieveReqSkil(Resource):
-    def get(self):
-        params = request.get_json()
-
-        logging.debug('retrieveReqSkil Start')
-        prj_cd = request.args.get('prj_cd')
-        logging.debug(prj_cd)
-
-        mysql_con = pymysql.connect(host='218.151.225.142', port=3306, db='IFG_IMS', user='ims2', password='1234',
-                                    charset='utf8')
-
-        try:
-            with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
-                sql = "SELECT " \
-                      "PRJ_CD, SKIL_DIVS, SKIL_NAME " \
-                      "FROM TB_PRJ_REQ_SKIL A " \
-                      "WHERE PRJ_CD = %s;"
-                cursor.execute(sql, prj_cd)
-                logging.debug('retrieveReqSkil SUCCESS')
-        finally:
-            mysql_con.close()
-
-        result1 = cursor.fetchall()
-        logging.debug(result1)
-
-        return result1
-
-#프로젝트 저장
-class prjSave(Resource):
-        def post(self):
-
-            params = request.get_json()
-
-            logging.debug("save start")
-            logging.debug(request.form)
-
-            for row in request.form:
-                logging.debug(row+':'+request.form[row])
-                globals()[row] = request.form[row]
-
-            prj_cd = request.form['prj_cd']
-            use_yn = 'Y'
-
-            mysql_con = pymysql.connect(host='218.151.225.142', port=3306, db='IFG_IMS', user='ims2', password='1234',
-                                        charset='utf8')
-
-            try:
-                with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
-                    if prj_cd: #프로젝트 정보 수정
-                        logging.debug('prj_cd exist')
-                        logging.debug(prj_cd)
-
-                    else: #프로젝트 최초 등록
-                        logging.debug('prj_cd is null')
-                        #프로젝트 코드 채번
-                        sql = "SELECT CONCAT('PRJ','_',( SELECT LPAD((SELECT NVL(SUBSTR(MAX(PRJ_CD), 5)+1, 1) " \
-                              "FROM TB_PRJ_INFO),6,'0'))) AS PRJ_CD"
-                        cursor.execute(sql)
-                        prjResult = cursor.fetchone()
-                        prj_cd = prjResult['PRJ_CD']
-
-                    sql = "INSERT INTO TB_PRJ_INFO(`PRJ_CD`, `PRJ_NAME`, `PRJ_CNCT_CD`, `GNR_CTRO`, `CTRO`, `CNCT_AMT`," \
-                          " `SLIN_BZDP`, `JOB_DIVS_CD`, `PGRS_STUS_CD`, `REG_EMP_NO`, `REG_DATE`, `CHG_EMP_NO`," \
-                          " `CHG_DATE`, `RMKS`, `USE_YN`) " \
-                          "VALUES(%s, " \
-                          "%s, %s, %s, %s, %s, %s, %s, %s, 'admin', NOW(), 'admin', NOW(), %s, %s)" \
-                          "ON DUPLICATE KEY UPDATE " \
-                          "PRJ_NAME = %s, PRJ_CNCT_CD = %s, GNR_CTRO = %s, CTRO = %s, CNCT_AMT = %s, SLIN_BZDP = %s, " \
-                          "JOB_DIVS_CD = %s, PGRS_STUS_CD = %s, CHG_EMP_NO = 'admin', CHG_DATE = NOW(), RMKS = %s"
-                    cursor.execute(sql, (
-                        prj_cd, prj_nm, cnct_cd, gnr_ctro, ctro, cnct_amt, slin_bzdp, job_divs, pgrs_stus, rmks, use_yn,
-                        prj_nm, cnct_cd, gnr_ctro, ctro, cnct_amt, slin_bzdp, job_divs, pgrs_stus, rmks))
-                    mysql_con.commit()
-                    logging.debug('PRJ_INFO SUCCESS')
-
-                    #프로젝트 수정 시 요구 스킬 삭제 후 업데이트
-                    sql = "DELETE FROM TB_PRJ_REQ_SKIL " \
-                          "WHERE PRJ_CD = %s"
-                    cursor.execute(sql, prj_cd)
-                    mysql_con.commit()
-                    logging.debug('REQ_SKIL DELETE SUCCESS')
-
-                    for i in range(1, int(trCount)+1):
-                        req_skil_divs = request.form['req_skil_divs'+str(i)]
-                        logging.debug('req_skil_divs : ' + req_skil_divs)
-                        req_skil_name = request.form['req_skil_name'+str(i)]
-                        logging.debug('req_skil_name : ' + req_skil_name)
-                        if req_skil_divs != "00":
-                            sql = "INSERT INTO TB_PRJ_REQ_SKIL(`PRJ_CD`, `SKIL_DIVS`, `SKIL_NAME`, `REG_EMP_NO`, `REG_DATE`," \
-                                      " `CHG_EMP_NO`, `CHG_DATE`) " \
-                                      "VALUES ((SELECT PRJ_CD FROM TB_PRJ_INFO A WHERE PRJ_NAME = %s)," \
-                                      " %s, %s, 'admin', NOW(), 'admin', NOW())"
-                            cursor.execute(sql, (prj_nm, req_skil_divs, req_skil_name))
-                            mysql_con.commit()
-                            logging.debug('REQ_SKIL'+str(i)+' SUCCESS')
-
-            finally:
-                mysql_con.close()
-
-            retJson = {
-                "status": 200,
-                "msg": "Data has been saved successfully"
-            }
-
-            return jsonify(retJson)
-
-#프로젝트 정보 삭제
-class prjDelete(Resource):
-        def post(self):
-
-            params = request.get_json()
-
-            logging.debug("delete start")
-
-            prj_nm = request.form['prj_nm']
-
-            mysql_con = pymysql.connect(host='218.151.225.142', port=3306, db='IFG_IMS', user='ims2',
-                                            password='1234',
-                                            charset='utf8')
-
-            try:
-                with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
-                    sql = "UPDATE TB_PRJ_INFO SET USE_YN = 'N' " \
-                          "WHERE PRJ_NM = %s"
-                    cursor.execute(sql, (prj_nm))
-                    mysql_con.commit()
-                    logging.debug('PRJ_INFO SUCCESS')
-
-                    sql = "DELETE FROM TB_PRJ_REQ_SKIL " \
-                          "WHERE PRJ_CD = %s"
-                    cursor.execute(sql, prj_cd)
-                    mysql_con.commit()
-                    logging.debug('REQ_SKIL DELETE SUCCESS')
-            finally:
-                mysql_con.close()
-
-            retJson = {
-                "status": 200,
-                "msg": "Data has been saved successfully"
-            }
-
-            return jsonify(retJson)
 
 class skilMgmtSearch(Resource):
     def get(self):
@@ -737,12 +558,6 @@ api.add_resource(devMgmtSearch, '/devMgmtSearch')
 api.add_resource(retrieveDevInfo, '/retrieveDevInfo')
 api.add_resource(devSave, '/devSave')
 api.add_resource(devDelete, '/devDelete')
-
-# 프로젝트 등록
-api.add_resource(retrievePrjInfo, '/retrievePrjInfo')
-api.add_resource(retrieveReqSkil, '/retrieveReqSkil')
-api.add_resource(prjSave, '/prjSave')
-api.add_resource(prjDelete, '/prjDelete')
 
 # 스킬관리
 api.add_resource(skilMgmtDetl, '/skilMgmtDetl')
