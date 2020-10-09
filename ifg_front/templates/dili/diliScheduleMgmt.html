@@ -337,7 +337,7 @@
             var calendar = new tui.Calendar(document.getElementById('calendar'), {
                 defaultView: 'month',
                 taskView: true,
-                useCreationPopup: true,
+<!--                useCreationPopup: true,-->
                 useDetailPopup: true
             });
 
@@ -347,7 +347,7 @@
             *   Draw  calendar Event - 데이터 받아오기
             *********************************************************************/
             var param = {
-                "email" : 'test'
+                "email" : 'ishwang@ingofen.co.kr'
             }
 
             $.ajaxCall( param, {
@@ -474,9 +474,19 @@
             $('#calendar').click(function(event){
                 console.log('calendarClick', event.date, event.target);
 
+                modal('my_modal');  <!--근무시간 Detail-->
+                $('#my_modal2').load("{% url 'dili_api:scheduleMgmtPop' %}");
 
 
             });
+
+            $('#calendar').dblclick(function(event){
+                console.log('calendarDbClick');
+
+
+            });
+
+
 
 
         });<!--ready.function_END-->

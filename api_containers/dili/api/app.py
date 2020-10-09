@@ -505,7 +505,13 @@ class calendarData(Resource): # Mariadb 연결 진행
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 #쿼리문 실행
-                sql = "SELECT * FROM TB_WRK_TM_MGMT_M"
+                sql = "SELECT * " \
+                    + "  FROM TB_WRK_TM_MGMT_M A" \
+                    + "      ,TB_APVL_REQ_MGMT_M B" \
+                    + " WHERE A.EMP_EMAL_ADDR = B.EMP_EMAL_ADDR" \
+                    + "   AND A.WRK_DT = B.WRK_DT" \
+                    + "   AND A.EMP_EMAL_ADDR = '" + data["email"] + "'"
+
                 logging.debug(sql)
                 cursor.execute(sql)
 
