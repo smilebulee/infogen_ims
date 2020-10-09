@@ -433,7 +433,7 @@ class empList(Resource): # Mariadb 연결 진행
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 #쿼리문 실행
-                if data is None:
+                if data =='List':
                     sql = "SELECT SEQ_NO, EMP_NAME, EMP_EMAIL, EMP_TEL FROM TB_EMP_MGMT  ORDER BY SEQ_NO"
                 else:
                     sql = "SELECT SEQ_NO, EMP_NAME, EMP_EMAIL, EMP_TEL FROM TB_EMP_MGMT WHERE EMP_EMAIL = '" + data["email"] + "' ORDER BY SEQ_NO"
