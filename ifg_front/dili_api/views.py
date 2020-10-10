@@ -41,6 +41,18 @@ class scheduleMgmt(generic.TemplateView):
         return render(request, template_name)
         # return render(request, template_name, rr)
 
+class scheduleMgmtPop(generic.TemplateView):
+    def get(self, request, *args, **kwargs):
+        template_name = 'dili/diliScheduleMgmtPop.html'
+
+        # r = requests.get('http://dili_api:5006/hello')
+        # rr = {
+        #     "result": r.text
+        # }
+
+        return render(request, template_name)
+        # return render(request, template_name, rr)
+
 class mariatest(generic.TemplateView):
     def get(self, request, *args, **kwargs):
         template_name = 'dili/mariatest.html'
@@ -302,6 +314,17 @@ class empMgmt(generic.TemplateView):
         return render(request, template_name)
         # return render(request, template_name, rr)
 
+class empMgmtPop(generic.TemplateView):
+    def get(self, request, *args, **kwargs):
+        template_name = 'dili/empMgmtPop.html'
+
+        # r = requests.get('http://dili_api:5006/hello')
+        # rr = {
+        #     "result": r.text
+        # }
+        return render(request, template_name)
+        # return render(request, template_name, rr)
+
 
 def getWrkApvlReq(request):
     param = json.loads(request.GET['param'])
@@ -326,7 +349,15 @@ def saveApvlReq(request):
     logger.info(param)
     logger.info("Parameters End")
 
-    r = requests.post('http://dili_api:5006/saveApvlReq', data=param)
+    datas = {
+    }
+
+    for row in param:
+        logger.info("------views.py------")
+        logger.info(row + ':' + param[row])
+        datas.setdefault(row, param[row])
+
+    r = requests.post('http://dili_api:5006/saveApvlReq', data=datas)
     logger.info(r)
     logger.info(r.text)
     logger.info(r.json())
@@ -415,3 +446,24 @@ def my_view(request):
     # Render list page with the documents and the form
     context = {'documents': documents, 'form': form, 'message': message}
     return render(request, 'dili/noticeDtl.html', context)
+
+def saveYryApvlReq(request):
+    param = json.loads(request.POST['param'])
+
+    logger.info("Parameters Start")
+    logger.info(param)
+    logger.info("Parameters End")
+
+    datas = {
+    }
+
+    for row in param:
+        logger.info("------views.py------")
+        logger.info(row + ':' + param[row])
+        datas.setdefault(row, param[row])
+
+    r = requests.post('http://dili_api:5006/saveYryApvlReq', data=datas)
+    logger.info(r)
+    logger.info(r.text)
+    logger.info(r.json())
+    return JsonResponse(r.json())

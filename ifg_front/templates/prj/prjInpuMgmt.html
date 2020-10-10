@@ -4,105 +4,54 @@ history
     - 2020.08 김은희 최초작성
 *********************************************** -->
 {% extends 'common/base.html' %}
-
 {% block content %}
+{% load static %}
 <style>
-#modal {
-  display:none;
-  position:relative;
-  width:100%;
-  height:100%;
-  z-index:1;
-}
-
-#modal h2 {
-  margin:0;
-}
-
-#modal input {
+#modal1 input {
+  width : 100%;
   border: 0;
-  border-bottom: 1px solid #0489B1;
+  border-bottom: 1.5px solid #0489B1;
   outline : 0;
 }
 
-#modal .popup {
-  width:1000px;
-  margin:100px auto;
-  padding:0px 40px;
-  background:#fff;
-  border:2px solid #666;
+#devMgmtModal {
+     width:60%;
+     height:80%;
+     overflow-y: scroll;
 }
-
-.modal_layer {
-  position:fixed;
-  top:0;
-  left:0;
-  width:100%;
-  height:100%;
-  background:rgb(0, 0, 0, 0.5);
-  z-index:-1;
-}
-
 </style>
+<div class="container">
+    <script type="text/javascript" src="{% static 'js/modal.js' %}"></script>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/modal.css' %}"/>
+    <script type="text/javascript">
+        var prjGrid;
 
-<script type="text/javascript">
-    var firstGrid;
+        $(document).ready(function(){
+            document.getElementById("modal1").style.display="block";
+            prjGrid = $('[data-ax5grid="prj-grid"]');
 
-    $(document).ready(function(){
-        document.getElementById("modal").style.display="block";
-        firstGrid = $('[data-ax5grid="first-grid"]');
-        getGridList(1);
+            <!--   프로젝트 CD 임시(수정예정)   -->
+            prjCd = '100'
+            $('#prjCd').val(prjCd);
 
-        /* 임시조회 버튼(삭제예정) */
-        $('#searchBtn').click(function(){
-            getGridList(1);
-        });
-            function getGridList(page){
-                $('#formSearchDiv').ajaxCall({
-                    method : 'GET',
-                    url : "{% url 'prj_api:prjInpuSearch' %}",
-                    callbackFn : function(data){
-
-                        var gridList = data; /* 그리드에 세팅할 데이터는 JSON 배열 형태 */
-
-                        var gridOptions = {
-                            columns: [              /* columns : 그리드 헤더 및 매핑 시킬 컬럼 및 컬럼 속성 설정 항목(필수) */
-                                { key: "EMP_NO",        label: "성명",          width: 100, align: "center", editor: {type: "text"} },
-                                { key: "PRJ_CD",        label: "소속구분(수정)", width: 80,  align: "center", editor: {type: "text"} },
-                                { key: "SKIL_GRADE",    label: "스킬등급(수정)", width: 80,  align: "center", editor: {type: "text"} },
-                                { key: "DIVS",          label: "구분",          width: 80,  align: "center", editor: {type: "text"} },
-                                { key: "SLIN_GRD",      label: "매출등급",      width: 80,  align: "center", editor: {type: "text"} },
-                                { key: "INPU_STRT_DAY", label: "투입시작일",    width: 80,  align: "center", editor: {type: "date"} },
-                                { key: "INPU_END_DAY",  label: "투입종료일",    width: 80,  align: "center", editor: {type: "date"} },
-                                { key: "CNTC_STRT_DAY", label: "계약시작일",    width: 80,  align: "center", editor: {type: "date"} },
-                                { key: "CNTC_END_DAY",  label: "계약종료일",    width: 80,  align: "center", editor: {type: "date"} },
-                                { key: "CRGE_JOB",      label: "담당업무",      width: 80,  align: "center", editor: {type: "text"} },
-                                { key: "RMKS",          label: "비고",          width: 80,  align: "center", editor: {type: "text"} },
-                                { key: "STUS",          label: "상태",          width: 80,  align: "center", hidden : true}
-                            ]
-                        };
-                        firstGrid = $('[data-ax5grid="first-grid"]');
-                        firstGrid = firstGrid.initGrid(gridOptions);
-                        firstGrid.setData(gridList);
-                    }
-                });
-            }
+            retrievePrjInfo()
+            getPrjGridList(1);
 
             /* 행 추가 버튼 */
             $('#grpAddBtn').click(function(){
-                firstGrid.addRow({EMP_NO: '',PRJ_CD : '',SKIL_GRADE: '',DIVS: '',SLIN_GRD: '',INPU_STRT_DAY: '',INPU_END_DAY: '',CNTC_STRT_DAY: '',CNTC_END_DAY: '',CRGE_JOB: '',RMKS :'',STUS :'insert'});
+                prjGrid.addRow({PRJ_CD : '' ,EMP_NO: '',EMP_NAME: '',DEPT_NM: '', SKIL_GRD: '',CNTC_DIVS_NM: '',SLIN_GRD: '',INPU_STRT_DAY: '',INPU_END_DAY: '',CNTC_STRT_DAY: '',CNTC_END_DAY: '',CRGE_JOB: '',RMKS :'',STUS :'insert'});
             });
 
             /* 행 삭제 버튼 */
             $('#grpDelBtn').click(function(){
 
-                if(firstGrid.getList("selected").length == 0){
+                if(prjGrid.getList("selected").length == 0){
                     alertMsg("선택된 행이 없습니다.");
                     return false;
                 }
                 confirmMsg('삭제 하시겠습니까?', function(){
-                    if(firstGrid.getList("selected")[0].STUS !="insert"){
-                        var delList = firstGrid.getList('selected')[0];
+                    if(prjGrid.getList("selected")[0].STUS !="insert"){
+                        var delList = prjGrid.getList('selected')[0];
                         $.ajaxCall(delList, {
                             url : '{% url 'prj_api:prjInpuDelete' %}',
                             method : 'post',
@@ -111,7 +60,7 @@ history
                             }
                         });
                     }
-                    firstGrid.deleteRow(firstGrid.selectedDataIndexs[0]); //선택한 행 삭제
+                    prjGrid.deleteRow(prjGrid.selectedDataIndexs[0]); //선택한 행 삭제
                 });
             });
 
@@ -124,44 +73,40 @@ history
            $('#devpAddBtn').click(function(){
 
                 /* 행 선택됐는지 체크 */
-                if(firstGrid.getList("selected").length == 0){
+                if(prjGrid.getList("selected").length == 0){
                     alertMsg("선택된 행이 없습니다.");
                     return;
                 }
                 /* 해당 row에 이미 값이 존재 하는 지 체크 */
-                if(firstGrid.getList("selected")[0].EMP_NO  != ""){
+                if(prjGrid.getList("selected")[0].EMP_NO  != ""){
                     alertMsg("해당 Row는 이미 개발자가 존재합니다.");
                     return;
                 }
-                var empNo = 100 /* 사번 임시 값(수정필요.)*/
-                /* 해당 프로젝트에 이미 존재하는 개발자인지 체크 */
-                var list = firstGrid.getList()
-                for(var i = 0; i < list.length; i++){
-                    if(list[i].EMP_NO == empNo){
-                       alertMsg("이미 해당 프로젝트에 존재하는 개발자입니다.");
-                       return;
-                    }
-                }
-                /* 다른컬럼도 넣어주기 INPU_END_DAY = "" 이런식으로 안그러면 null처리됨... */
-                firstGrid.updateRow({EMP_NO: empNo, PRJ_CD: 100, SKIL_GRADE: '상', DIVS: '정규직', SLIN_GRD: '', INPU_STRT_DAY: '', INPU_END_DAY: '', CNTC_STRT_DAY: '', CNTC_END_DAY: '', CRGE_JOB: '', RMKS: '', STUS :'insert', __created__ : true, __modified__ : true,}, firstGrid.selectedDataIndexs[0]); /* 다른화면에서 값 받아와야 됨(수정필요.)*/
+
+                /* devMgmtPopup(); */
+                modal('devMgmtModal');
+                $("#devMgmtModal2").load("{% url 'skil_api:devMgmt' %}")
+
+                /* 다른화면에서 값 받아와야 됨(수정필요.)*/
+                /*prjGrid.updateRow({EMP_NO: 100, EMP_NAME: '홍길동',  DEPT_NM: '전자/제조',SKIL_GRD: '상', CNTC_DIVS_NM: '정규직', SLIN_GRD: '', INPU_STRT_DAY: '', INPU_END_DAY: '', CNTC_STRT_DAY: '', CNTC_END_DAY: '', CRGE_JOB: '', RMKS: '', STUS :'insert', __created__ : true, __modified__ : true,}, prjGrid.selectedDataIndexs[0]); */
             });
 
             /* 저장 버튼 */
            $('#savaBtn').click(function(){
                 confirmMsg('저장 하시겠습니까?', function(){
-                    var updateList = firstGrid.getList('modified');
-                    var updateYN = firstGrid.getList('modified').length;
+                    var updateList = prjGrid.getList('modified');
+                    var updateYN = prjGrid.getList('modified').length;
                     if( updateYN == 0 ){
                         alertMsg("수정 후 저장하세요.");
                         return;
                     }
 
                     /* 개발자 추가 여부 Validation 확인 */
-                    var gridList = firstGrid.getList()
+                    var gridList = prjGrid.getList()
                     for(var i = 0; i < gridList.length; i++){
                         if(gridList[i].EMP_NO == ""){
                            alertMsg("["+(i+1)+"행] 개발자를 추가하세요.");
-                           firstGrid.select(i);
+                           prjGrid.select(i);
                            return;
                         }
                     }
@@ -170,19 +115,76 @@ history
                         method : 'post',
                         callbackFn : function(data){
                             g_toast.push('저장 되었습니다.');
-                            getGridList(1);
+                            /*getPrjGridList(1);*/
                         }
                     });
                 });
            });
 
-    });
-</script>
+        });
+
+        function retrievePrjInfo(){
+            $('#formSearchDiv').ajaxCall({
+                 method : 'GET',
+                 url : "{% url 'prj_api:retrievePrjDetlInfo' %}",
+                 callbackFn : function(data){
+                    $('#prjName').val(data[0].PRJ_NAME);
+                    $('#cnctCd').val(data[0].PRJ_CNCT_CD);
+                    $('#jobDivsNm').val(data[0].JOB_DIVS_NM);
+                    $('#cntcTerm').val(data[0].CNTC_TERM);
+                 }
+            });
+        };
+
+        function getPrjGridList(page){
+            $('#formSearchDiv').ajaxCall({
+                method : 'GET',
+                url : "{% url 'prj_api:prjInpuSearch' %}",
+                callbackFn : function(data){
+
+                    var gridList = data; /* 그리드에 세팅할 데이터는 JSON 배열 형태 */
+
+                    var gridOptions = {
+                        columns: [              /* columns : 그리드 헤더 및 매핑 시킬 컬럼 및 컬럼 속성 설정 항목(필수) */
+                            { key: "PRJ_CD",        label: "프로젝트코드", width: 80,  align: "center", editor: {type: "text"} },
+                            { key: "EMP_NO",        label: "사번",          width: 100, align: "center", editor: {type: "text"} },
+                            { key: "EMP_NAME",        label: "성명",          width: 100, align: "center", editor: {type: "text"} },
+                            { key: "DEPT_NM",        label: "부서", width: 80,  align: "center", editor: {type: "text"} },
+                            { key: "SKIL_GRD",    label: "스킬등급", width: 80,  align: "center", editor: {type: "text"} },
+                            { key: "CNTC_DIVS_NM",  label: "계약구분",          width: 80,  align: "center", editor: {type: "text"} },
+                            { key: "SLIN_GRD",      label: "매출등급",      width: 80,  align: "center",  editor: {type: "select",config: {options: [{CD: "상"},{CD: "중"},{CD: "하"}],columnKeys: { optionValue: "CD", optionText: "CD"}} } },
+                            { key: "INPU_STRT_DAY", label: "투입시작일",    width: 80,  align: "center", editor: {type: "date"} },
+                            { key: "INPU_END_DAY",  label: "투입종료일",    width: 80,  align: "center", editor: {type: "date"} },
+                            { key: "CNTC_STRT_DAY", label: "계약시작일",    width: 80,  align: "center", editor: {type: "date"} },
+                            { key: "CNTC_END_DAY",  label: "계약종료일",    width: 80,  align: "center", editor: {type: "date"} },
+                            { key: "CRGE_JOB",      label: "담당업무",      width: 80,  align: "center", editor: {type: "text"} },
+                            { key: "RMKS",          label: "비고",          width: 80,  align: "center", editor: {type: "text"} },
+                            { key: "STUS",          label: "상태",          width: 80,  align: "center", hidden : true}
+                        ]
+                    };
+                    prjGrid = $('[data-ax5grid="prj-grid"]');
+                    prjGrid = prjGrid.initGrid(gridOptions);
+                    prjGrid.setData(gridList);
+                }
+            });
+        }
+    </script>
 
     <style>
 
     </style>
-    <div class="row" id="modal">
+    <div id="devMgmtModal" class="modalUi">
+        <div id="devMgmtModal2">
+        </div>
+        <a class="modal_close_btn">
+            <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-x-circle" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+               <path fill-rule="evenodd" d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+               <path fill-rule="evenodd" d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+            </svg>
+        </a>
+    </div>
+    <div class="row" id="modal1">
+
         <div class="col-sm-12" id = "popup" style="background : #fff;">
             <div id="formSearchDiv" style="padding-top :20px;">
                 <h3>프로젝트 별 투입 현황 관리 <a href="http://ax5.io/ax5ui-grid/api/index.html" class="badge badge-info"></a></h3>
@@ -192,16 +194,17 @@ history
                           <tbody>
                             <tr>
                               <th scope="row" style="width:20%">프로젝트 명</th>
-                              <td style="width:30%">1111</td>
+                              <td style="width:30%"><input type="text" name="prjName" id="prjName"  maxlength="70" readonly/></td>
                               <th scope="row" style="width:20%">계약코드</th>
-                              <td style="width:30%"><input type="email" name="prjCd" placeholder="계약코드 입력 ex)1111" maxlength="70"/></td>
+                              <td style="width:30%"><input type="text" name="cnctCd" id="cnctCd"  maxlength="70" readonly/></td>
                             </tr>
                             <tr>
                               <th scope="row">업무구분</th>
-                              <td>SI</td>
+                              <td><input type="text" name="jobDivsNm" id="jobDivsNm"  maxlength="70" readonly/></td>
                               <th scope="row">프로젝트 계약기간</th>
-                              <td>2020-07-01 ~ 2020-09-30</td>
+                              <td><input type="text" name="cntcTerm" id="cntcTerm"  maxlength=`"70" readonly/></td>
                             </tr>
+                            <input type="hidden" name="prjCd" id="prjCd"  maxlength="70" readonly/>
                           </tbody>
                         </table>
                       </div>
@@ -217,14 +220,11 @@ history
                 </h4>
 
                 <div style="position: relative;height:510px;">
-                    <div id="projectGrid" data-ax5grid="first-grid" style="height: 90%;"/>
+                    <div id="projectGrid" data-ax5grid="prj-grid" style="height: 90%;"/>
                 </div>
                 <div style="float: right; float: right; padding-top :5px;" id="btn">
-                    <button class="btn btn-primary" id="submitBtn1">업로드 양식 다운</button>
-                    <button class="btn btn-primary" id="submitBtn2">개발자 일괄 업로드</button>
                     <button class="btn btn-primary" id="devpAddBtn">개발자 추가</button>
                     <button class="btn btn-primary" id="savaBtn">저장</button>
-                    <button class="btn btn-primary" id="searchBtn">임시 조회</button>
                     <button class="btn btn-primary" id="closeBtn">닫기</button>
                 </div>
             </div>
@@ -232,5 +232,6 @@ history
 
         <div class="modal_layer"></div>
     </div>
+</div>
 
 {% endblock %}

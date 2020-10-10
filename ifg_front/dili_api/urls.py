@@ -19,6 +19,7 @@ urlpatterns = [
     url(r'^getWrkTimeInfoByEml/', views.getWrkTimeInfoByEml, name='getWrkTimeInfoByEml'),
     url(r'^getYryMgmt/', views.getYryMgmt, name='getYryMgmt'),
     url(r'^scheduleMgmt/', views.scheduleMgmt.as_view(), name='scheduleMgmt'),
+    url(r'^scheduleMgmtPop/', views.scheduleMgmtPop.as_view(), name='scheduleMgmtPop'),
     url(r'^wrkApvlReq/', views.wrkApvlReq.as_view(), name='wrkApvlReq'),
     url(r'^yryApvlReq/', views.yryApvlReq.as_view(), name='yryApvlReq'),
     url(r'^noticeLst/', views.noticeLst.as_view(), name='noticeLst'),
@@ -34,9 +35,12 @@ urlpatterns = [
     url(r'^apvlReqHist/', views.apvlReqHist.as_view(), name='apvlReqHist'),
     url(r'^getApvlReqHist/', views.getApvlReqHist, name='getApvlReqHist'),
     url(r'^empMgmt/', views.empMgmt.as_view(), name='empMgmt'),
+    url(r'^empMgmtPop/', views.empMgmtPop.as_view(), name='empMgmtPop'),
+    url(r'^getEmpList/', views.getEmpList, name='getEmpList'),
     url(r'^getApvlReqHistDetl/', views.getApvlReqHistDetl, name='getApvlReqHistDetl'),
     url(r'^getCalendarData/', views.getCalendarData, name='getCalendarData'),
-    url(r'^getEmpList/', views.getEmpList, name='getEmpList'),
+    url(r'^saveYryApvlReq/post', views.saveYryApvlReq, name='saveYryApvlReq'),
+
 
     # 공지사항 파일업로드 추가
     url(r'^my_view/', views.my_view, name='my-view'),

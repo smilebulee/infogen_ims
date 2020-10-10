@@ -315,7 +315,24 @@ class wrkApvlReq(Resource): # Mariadb 연결 진행
 class saveApvlReq(Resource): # Mariadb 연결 진행
     def post(self):
 
-        data = request.get_json()
+        params = request.get_json()
+        logger.info(params)
+
+        for row in request.form:
+            logger.info(row + ':' + request.form[row])
+            globals()[row] = request.form[row]
+
+        email = request.form['email']
+        apvlReqDivs = request.form['apvlReqDivs']
+        wrkDt = request.form['wrkDt'] 
+        wrkTme = request.form['wrkTme']
+        wrkReqRsn = request.form['wrkReqRsn']
+        th1AprvStus = request.form['th1AprvStus']
+        th1AprvStusNm = request.form['th1AprvStusNm']
+        th2AprvStus = request.form['th2AprvStus']
+        th2AprvStusNm = request.form['th2AprvStusNm']
+        
+            
 
         #requirements pymysql import 후 커넥트 사용
         mysql_con = pymysql.connect(host='218.151.225.142', port=3306, db='IFG_IMS', user='ims2', password='1234',
@@ -323,10 +340,33 @@ class saveApvlReq(Resource): # Mariadb 연결 진행
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 #쿼리문 실행
-                sql = "INSERT INTO TB_APVL_REQ_MGMT_M (EMP_EMAL_ADDR)"\
-                    + "VALUES(%s)"
-                logging.debug("saveApvlReq SQL문" + sql)
-                cursor.execute(sql, data["email"] )
+                sql = "INSERT INTO TB_APVL_REQ_MGMT_M (" \
+                                                      "`EMP_EMAL_ADDR`," \
+                                                      "`APVL_REQ_DIVS`," \
+                                                      "`WRK_DT`," \
+                                                      "`WRK_TME`," \
+                                                      "`WRK_REQ_RSN`," \
+                                                      "`APVL_REQ_DT`," \
+                                                      "`TH1_APRV_STUS`," \
+                                                      "`TH1_APRV_NM`," \
+                                                      "`TH2_APRV_STUS`," \
+                                                      "`TH2_APRV_NM`," \
+                                                      "`APVL_LAST_APRV_DT`)" \
+                                                      "VALUES( %s, %s, %s, %s, %s, NOW(), %s, %s, %s, %s, NOW())" \
+                
+                # "ON DUPLICATE KEY UPDATE "
+                # "EMP_EMAL_ADDR = %s, " \
+                # "APVL_REQ_DIVS = %s," \
+                # "WRK_DT = %s," \
+                # "WRK_TME = %s," \
+                # "WRK_REQ_RSN = %s," \
+                # "TH1_APRV_STUS = %s," \
+                # "TH1_APRV_STUS_NM = %s," \
+                # "TH2_APRV_STUS = %s," \
+                # "TH2_APRV_STUS_NM = %s,"
+                logger.info(sql)
+                cursor.execute(sql, (email, apvlReqDivs, wrkDt, wrkTme, wrkReqRsn, th1AprvStus, th1AprvStusNm, th2AprvStus, th2AprvStusNm))
+                
                 mysql_con.commit()
 
         finally:
@@ -393,7 +433,7 @@ class empList(Resource): # Mariadb 연결 진행
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 #쿼리문 실행
-                if data is None:
+                if data =='List':
                     sql = "SELECT SEQ_NO, EMP_NAME, EMP_EMAIL, EMP_TEL FROM TB_EMP_MGMT  ORDER BY SEQ_NO"
                 else:
                     sql = "SELECT SEQ_NO, EMP_NAME, EMP_EMAIL, EMP_TEL FROM TB_EMP_MGMT WHERE EMP_EMAIL = '" + data["email"] + "' ORDER BY SEQ_NO"
@@ -465,7 +505,13 @@ class calendarData(Resource): # Mariadb 연결 진행
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 #쿼리문 실행
-                sql = "SELECT * FROM TB_WRK_TM_MGMT_M"
+                sql = "SELECT * " \
+                    + "  FROM TB_WRK_TM_MGMT_M A" \
+                    + "      ,TB_APVL_REQ_MGMT_M B" \
+                    + " WHERE A.EMP_EMAL_ADDR = B.EMP_EMAL_ADDR" \
+                    + "   AND A.WRK_DT = B.WRK_DT" \
+                    + "   AND A.EMP_EMAL_ADDR = '" + data["email"] + "'"
+
                 logging.debug(sql)
                 cursor.execute(sql)
 
@@ -804,6 +850,7 @@ api.add_resource(noticePopUp,'/noticePopUp') #api 선언
 api.add_resource(noticeMjrCnt,'/noticeMjrCnt') #api 선언
 api.add_resource(noticeSave,'/noticeSave') #api 선언
 api.add_resource(empList,'/empList') #api 선언
+
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5006, debug=True)

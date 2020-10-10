@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
+from main.helpers import ajax_login_required
 # Create your views here.
 from django.views import View
 from django.views import generic
@@ -43,7 +44,7 @@ def retrieve(request):
     logger.debug(retVal);
     return JsonResponse(retVal)
 
-
+@login_required
 def prjReg(request):
     template_name = 'prj/prjReg.html'
 
@@ -96,10 +97,13 @@ def retrieveSkilName(request):
     return JsonResponse(r.json(), safe=False)
 
 # 프로젝트 저장
+@ajax_login_required
 def prjSave(request):
+    userId = str(request.user)
     param = json.loads(request.POST['param'])
 
     datas = {
+        'userId': userId
     }
 
     for row in param:
@@ -110,26 +114,19 @@ def prjSave(request):
     logger.info(r.text)
     logger.info(r.json())
 
-    return JsonResponse(r.json())
+    return JsonResponse(r.json(), safe=False)
 
 # 프로젝트 삭제
+@ajax_login_required
 def prjDelete(request):
 
     param = json.loads(request.POST['param'])
 
     datas = {
-        'prj_name' : param['prj_name'],
-        'prj_cnct_cd' : param['prj_cnct_cd'],
-        'gnr_ctro'  : param['gnr_ctro'],
-        'ctro': param['ctro'],
-        'cnct_amt': param['cnct_amt'],
-        'slin_bzdp': param['slin_bzdp'],
-        'job_divs': param['job_divs'],
-        'pgrs_stus' : param['pgrs_stus'],
-        'req_skil_divs' : param['req_skil_divs1'],
-        'req_skil_name' : param['req_skil_name1'],
-        'rmks' : param['rmks'],
     }
+
+    for row in param:
+        datas.setdefault(row, param[row])
 
     r = requests.post('http://prj_api:5002/prjDelete', data=datas)
     logger.info(r)
@@ -137,6 +134,21 @@ def prjDelete(request):
     logger.info(r.json())
 
     return JsonResponse(r.json())
+
+# 프로젝트별투입현황관리 프로젝트 상세정보
+def retrievePrjDetlInfo(request):
+    param = json.loads(request.GET['param'])
+    logger.info(param)
+    logger.info("프로젝트별투입현황관리 프로젝트 상세정보")
+    params = {
+        'prjCd': param['prjCd'],
+    }
+    r = requests.get('http://prj_api:5002/retrievePrjDetlInfo', params=params)
+    logger.info(r)
+    logger.info(r.text)
+    logger.info(r.json())
+    return JsonResponse(r.json(), safe=False)
+
 
 # 프로젝트별투입현황관리 화면
 def prjInpuMgmt(request):
@@ -183,7 +195,6 @@ def prjInpuSave(request):
                 'empNo': data['EMP_NO'],
                 'prjCd': data['PRJ_CD'],
                 'slinGrd': data['SLIN_GRD'],
-                'divs': data['DIVS'],
                 'inpuStrtDay': data['INPU_STRT_DAY'],
                 'inpuEndDay': data['INPU_END_DAY'],
                 'cntcStrtDay': data['CNTC_STRT_DAY'],
@@ -198,7 +209,6 @@ def prjInpuSave(request):
                 'empNo': data['EMP_NO'],
                 'prjCd': data['PRJ_CD'],
                 'slinGrd': data['SLIN_GRD'],
-                'divs': data['DIVS'],
                 'inpuStrtDay': data['INPU_STRT_DAY'],
                 'inpuEndDay': data['INPU_END_DAY'],
                 'cntcStrtDay': data['CNTC_STRT_DAY'],

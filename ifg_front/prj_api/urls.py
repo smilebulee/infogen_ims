@@ -23,6 +23,7 @@ urlpatterns = [
     url(r'^prjDelete/post', views.prjDelete, name='prjDelete'),
 
     # 프로젝트 투입 관리
+    url(r'^retrievePrjDetlInfo/get', views.retrievePrjDetlInfo, name='retrievePrjDetlInfo'),
     url(r'^prjInpuMgmt/', views.prjInpuMgmt, name='prjInpuMgmt'),
     url(r'^prjInpuSearch/get', views.prjInpuSearch, name='prjInpuSearch'),
     url(r'^prjInpuDelete/', views.prjInpuDelete, name='prjInpuDelete'),
