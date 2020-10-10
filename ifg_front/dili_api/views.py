@@ -18,6 +18,11 @@ import ast
 
 logger = logging.getLogger(__name__)
 
+# 공지사항 파일업로드 임시추가
+from .models import Document
+from .forms import DocumentForm
+
+
 class Dili_api_index(generic.TemplateView):
     def get(self, request, *args, **kwargs):
         template_name = 'dili/index.html'
@@ -384,3 +389,29 @@ def getCalendarData(request):
     logger.info(r.json())
     logger.info(json.loads(r.text))
     return JsonResponse(r.json(), safe=False)
+
+
+# 공지사항 파일업로드 임시추가
+def my_view(request):
+    print(f"Great! You're using Python 3.6+. If you fail here, use the right version.")
+    message = 'Upload as many files as you want!'
+    # Handle file upload
+    if request.method == 'POST':
+        form = DocumentForm(request.POST, request.FILES)
+        if form.is_valid():
+            newdoc = Document(docfile=request.FILES['docfile'])
+            newdoc.save()
+
+            # Redirect to the document list after POST
+            return redirect('dili_api:noticeDtl')
+        else:
+            message = 'The form is not valid. Fix the following error:'
+    else:
+        form = DocumentForm()  # An empty, unbound form
+
+    # Load documents for the list page
+    documents = Document.objects.all()
+
+    # Render list page with the documents and the form
+    context = {'documents': documents, 'form': form, 'message': message}
+    return render(request, 'dili/noticeDtl.html', context)

@@ -2,6 +2,9 @@ from django.conf.urls import url, include
 from django.urls import path
 from . import views
 
+# 공지사항 파일업로드 임시추가
+#from views import my_view
+
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -35,6 +38,8 @@ urlpatterns = [
     url(r'^getCalendarData/', views.getCalendarData, name='getCalendarData'),
     url(r'^getEmpList/', views.getEmpList, name='getEmpList'),
 
-]
+    # 공지사항 파일업로드 추가
+    url(r'^my_view/', views.my_view, name='my-view'),
 
+]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
