@@ -31,10 +31,11 @@ urlpatterns = [
     url(r'^apvlReqHist/', views.apvlReqHist.as_view(), name='apvlReqHist'),
     url(r'^getApvlReqHist/', views.getApvlReqHist, name='getApvlReqHist'),
     url(r'^empMgmt/', views.empMgmt.as_view(), name='empMgmt'),
+    url(r'^empMgmtPop/', views.empMgmtPop.as_view(), name='empMgmtPop'),
+    url(r'^getEmpList/', views.getEmpList, name='getEmpList'),
     url(r'^getApvlReqHistDetl/', views.getApvlReqHistDetl, name='getApvlReqHistDetl'),
     url(r'^getCalendarData/', views.getCalendarData, name='getCalendarData'),
     url(r'^saveYryApvlReq/post', views.saveYryApvlReq, name='saveYryApvlReq'),
-    url(r'^getEmpList/', views.getEmpList, name='getEmpList'),
 
 
 ]

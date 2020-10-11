@@ -257,7 +257,6 @@ class wrkTimeInfoByEml(Resource): # Mariadb 연결 진행
 
         logging.debug('================== App Start ==================')
         logging.debug(data)
-        logging.debug(data["email"])
         logging.debug('================== App End ==================')
 
         #requirements pymysql import 후 커넥트 사용
@@ -266,7 +265,9 @@ class wrkTimeInfoByEml(Resource): # Mariadb 연결 진행
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 #쿼리문 실행
-                sql = "SELECT * FROM TB_WRK_TM_MGMT_M WHERE EMP_EMAL_ADDR = '" + data["email"] + "'"
+                sql = "SELECT * FROM TB_WRK_TM_MGMT_M " \
+                    + "WHERE EMP_EMAL_ADDR = '" + data["email"] + "'" \
+                    + "AND DATE(WRK_DT) BETWEEN '" + data["strtDate"] + "' AND '" + data["endDate"] + "'"
                 logging.debug(sql)
                 cursor.execute(sql)
 
@@ -443,7 +444,7 @@ class empList(Resource): # Mariadb 연결 진행
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 #쿼리문 실행
-                if data is None:
+                if data =='List':
                     sql = "SELECT SEQ_NO, EMP_NAME, EMP_EMAIL, EMP_TEL FROM TB_EMP_MGMT  ORDER BY SEQ_NO"
                 else:
                     sql = "SELECT SEQ_NO, EMP_NAME, EMP_EMAIL, EMP_TEL FROM TB_EMP_MGMT WHERE EMP_EMAIL = '" + data["email"] + "' ORDER BY SEQ_NO"
@@ -516,7 +517,13 @@ class calendarData(Resource): # Mariadb 연결 진행
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 #쿼리문 실행
-                sql = "SELECT * FROM TB_WRK_TM_MGMT_M"
+                sql = "SELECT * " \
+                    + "  FROM TB_WRK_TM_MGMT_M A" \
+                    + "      ,TB_APVL_REQ_MGMT_M B" \
+                    + " WHERE A.EMP_EMAL_ADDR = B.EMP_EMAL_ADDR" \
+                    + "   AND A.WRK_DT = B.WRK_DT" \
+                    + "   AND A.EMP_EMAL_ADDR = '" + data["email"] + "'"
+
                 logging.debug(sql)
                 cursor.execute(sql)
 

@@ -293,6 +293,17 @@ class empMgmt(generic.TemplateView):
         return render(request, template_name)
         # return render(request, template_name, rr)
 
+class empMgmtPop(generic.TemplateView):
+    def get(self, request, *args, **kwargs):
+        template_name = 'dili/empMgmtPop.html'
+
+        # r = requests.get('http://dili_api:5006/hello')
+        # rr = {
+        #     "result": r.text
+        # }
+        return render(request, template_name)
+        # return render(request, template_name, rr)
+
 
 def getWrkApvlReq(request):
     param = json.loads(request.GET['param'])
