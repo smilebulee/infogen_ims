@@ -65,6 +65,7 @@
 
             crteMonthGrid();                                                                              // Month Grid 생성
             crteTodayShow(year, month, date, day);                                                        // Grid UI(주) 날짜 세팅
+            setGridData();
 
             /*********************************************************************
             *   weekGridDtDfr Btn Click Event - 주 그리드 날짜 이전 버튼 클릭
@@ -199,6 +200,26 @@
                     $('#txt_rmnAnhoDays').text(data[0].ALL_YRY_DAYS - data[0].USE_YRY_DAYS) //남은연차일수
                  }
             });
+
+            /*********************************************************************
+            *   Session Email 값 기준 그리드 데이터 세팅
+            *********************************************************************/
+            function setGridData(){
+                var gridParam = {
+                    "email"     : sessionStorage.getItem("email")
+                }
+
+                $.ajaxCall( gridParam, {
+                     'method' : 'GET',
+                     'url' : "{% url 'dili_api:getGridData' %}",
+                     'dataType' : 'json',
+                     'data' : JSON.stringify(param),
+                     'async' : false,
+                     'callbackFn' : function(data, status, xhr){
+                        console.log("Griddata : ",data)
+                     }
+                });
+            }
 
             /*********************************************************************
             *   Grid Btn Click Event - 그리드 버튼 클릭
@@ -351,14 +372,14 @@
                  'callbackFn' : function(data, status, xhr){
                     console.log("data111 : ",JSON.parse(data))
 
-                    setCalendar(data);
+                    /*setCalendar(data);*/
                  }
             });
 
             /*********************************************************************
             *   Draw  calendar Event - 받아온 데이터 캘린더에 입력
             *********************************************************************/
-            function setCalendar(data){
+            /*function setCalendar(data){
                 var calendarData = JSON.parse(data);
                 console.log("calendarData1 : ",calendarData);
 
@@ -397,7 +418,7 @@
 
                 calendar.createSchedules(dataCustomArray);
             }
-
+*/
 
             /*********************************************************************
             *   Draw  calendar Event - 캘린더 색입히기
@@ -892,24 +913,14 @@
 
                 <div class="d-flex flex-row-reverse mb-2">
                     <div>
-                        <div>
-                            <svg id="btn_showGrd" align="center" width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-card-list" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                              <path fill-rule="evenodd" d="M14.5 3h-13a.5.5 0 0 0-.5.5v9a.5.5 0 0 0 .5.5h13a.5.5 0 0 0 .5-.5v-9a.5.5 0 0 0-.5-.5zm-13-1A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h13a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2h-13z"/>
-                              <path fill-rule="evenodd" d="M5 8a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7A.5.5 0 0 1 5 8zm0-2.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5zm0 5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5z"/>
-                            </svg>
-                        </div>
+                        <img id="btn_showGrd" width="30px" height="30px"  src="{% static 'image/grid.png' %}" align="center">
                     </div>
-                    <div>
-                        <div>
-                            <svg id="btn_showCal" align="center" width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-calendar3" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                              <path fill-rule="evenodd" d="M14 0H2a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zM1 3.857C1 3.384 1.448 3 2 3h12c.552 0 1 .384 1 .857v10.286c0 .473-.448.857-1 .857H2c-.552 0-1-.384-1-.857V3.857z"/>
-                              <path fill-rule="evenodd" d="M6.5 7a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm-9 3a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm-9 3a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/>
-                            </svg>
-                        </div>
+                    <div style="margin-right: 10px;">
+                        <img id="btn_showCal" width="30px" height="30px"  src="{% static 'image/calendar.png' %}" align="center">
                     </div>
                     <!-- 연차등록 버튼 -->
-                    <div style="margin-right: 20px;">
-                        <button type="button" class="badge badge-danger" id="btn_anhoReg">연차등록</button>
+                    <div style="margin-right: 10px;">
+                        <button type="button" class="btn btn-info btn-sm" id="btn_anhoReg">연차등록</button>
                     </div>
                     <!-- 전체연차일수/ 남은연차일수 표기 -->
                     <div style="margin-right: 20px;">
@@ -969,12 +980,9 @@
                         <div id="grp_showMonth">
 
                             <div class="d-flex justify-content-center mb-5">
-                                <button type="button" id="btn_mmGridDtDfr">
-                                    <svg width="0.6em" height="0.6em" viewBox="0 0 16 16" class="bi bi-caret-left-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M3.86 8.753l5.482 4.796c.646.566 1.658.106 1.658-.753V3.204a1 1 0 0 0-1.659-.753l-5.48 4.796a1 1 0 0 0 0 1.506z"/>
-                                    </svg>
-                                </button>
-
+                                <div>
+                                    <img id="btn_mmGridDtDfr" width="20px" height="20px"  src="{% static 'image/arrow_left.png' %}" align="center">
+                                </div>
                                 <div id="btn_monthpicker" style="margin-right: 10px;margin-left: 10px;">
                                     <h5>
                                         <span id="txt_mmYy"></span>
@@ -982,11 +990,9 @@
                                         <span id="txt_mmMm"></span>
                                     </h5>
                                 </div>
-                                <button type="button" id="btn_mmGridDtNxt">
-                                    <svg width="0.6em" height="0.6em" viewBox="0 0 16 16" class="bi bi-caret-right-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M12.14 8.753l-5.482 4.796c-.646.566-1.658.106-1.658-.753V3.204a1 1 0 0 1 1.659-.753l5.48 4.796a1 1 0 0 1 0 1.506z"/>
-                                    </svg>
-                                </button>
+                                <div>
+                                    <img id="btn_mmGridDtNxt" width="20px" height="20px"  src="{% static 'image/arrow_right.png' %}" align="center">
+                                </div>
                             </div>
                             <!--week table 영역 -->
                             <div id="month_week"></div>

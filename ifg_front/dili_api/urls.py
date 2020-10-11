@@ -37,6 +37,7 @@ urlpatterns = [
     url(r'^getApvlReqHistDetl/', views.getApvlReqHistDetl, name='getApvlReqHistDetl'),
     url(r'^getCalendarData/', views.getCalendarData, name='getCalendarData'),
     url(r'^saveYryApvlReq/post', views.saveYryApvlReq, name='saveYryApvlReq'),
+    url(r'^getGridData/', views.getGridData, name='getGridData'),
 
 
 ]

@@ -250,6 +250,48 @@ class yryMgmt(Resource): # Mariadb 연결 진행
         return result2
 
 
+class gridData(Resource): # Mariadb 연결 진행
+    def get(self):
+
+        data = request.get_json()
+
+        logging.debug('================== App Start ==================')
+        logging.debug(data)
+        logging.debug('================== App End ==================')
+
+        #requirements pymysql import 후 커넥트 사용
+        mysql_con = pymysql.connect(host='218.151.225.142', port=3306, db='IFG_IMS', user='ims2', password='1234',
+                                        charset='utf8')
+        try:
+            with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+                #쿼리문 실행
+                sql = "SELECT EMP_EMAL_ADDR "\
+                    + ",WRK_DT "\
+                    + ",DATE_FORMAT(JOB_STRT_TM, '%H:%i:%s') AS JOB_STRT_TM "\
+                    + ",DATE_FORMAT(JOB_END_TM, '%H:%i:%s') AS JOB_END_TM "\
+                    + ",NORM_WRK_TM "\
+                    + ",ALL_WRK_TM "\
+                    + "FROM TB_WRK_TM_MGMT_M "\
+                    + "WHERE 1 = 1 "\
+                    + "AND EMP_EMAL_ADDR = 'ishwang@infogen.co.kr' "\
+                    + "AND WRK_DT >= '2020-10-01' "\
+                    + "AND WRK_DT <= '2020-10-08' "\
+                    + "ORDER BY WRK_DT"
+                logging.debug(sql)
+                cursor.execute(sql)
+        finally:
+            mysql_con.close()
+
+        result2 = cursor.fetchall()
+        for row in result2:
+            logging.debug('====== row2====')
+            logging.debug(row)
+            logging.debug('===============')
+        array = list(result2)  # 결과를 리스트로
+
+        return json.dumps(result2, indent=4, cls=DateTimeEncoder)
+
+
 class wrkTimeInfoByEml(Resource): # Mariadb 연결 진행
     def get(self):
 
@@ -311,6 +353,7 @@ class wrkApvlReq(Resource): # Mariadb 연결 진행
                       "            ELSE '' END WRK_TYPE " \
                       "  FROM TB_WRK_TM_MGMT_M A" \
                       " WHERE A.EMP_EMAL_ADDR = '" + data["email"] + "'" \
+                      "   AND (NVL(A.HLDY_WRK_TM,'000000') != 000000 OR NVL(A.NGHT_WRK_TM,'000000') != 000000)" \
                       "   AND EXISTS (SELECT 1" \
                       "                 FROM TB_WRK_TM_MGMT_M B" \
                       "                WHERE B.EMP_EMAL_ADDR = A.EMP_EMAL_ADDR" \
@@ -1023,6 +1066,7 @@ api.add_resource(noticeSave,'/noticeSave') #api 선언
 api.add_resource(empList,'/empList') #api 선언
 api.add_resource(empInfo,'/empInfo') #api 선언
 api.add_resource(saveYryApvlReq,'/saveYryApvlReq') #api 선언
+api.add_resource(gridData,'/gridData') #api 선언
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5006, debug=True)
