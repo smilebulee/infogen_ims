@@ -43,6 +43,7 @@
                 apvlReqHistTable += '<tr>';
                 apvlReqHistTable += '<th class="text-center">순번</th>';
                 apvlReqHistTable += '<th class="text-center">성명</th>';
+                apvlReqHistTable += '<th class="text-center">근무일자</th>';
                 apvlReqHistTable += '<th class="text-center">구분</th>';
                 apvlReqHistTable += '<th class="text-center">승인상태</th>';
                 apvlReqHistTable += '</tr>';
@@ -52,9 +53,19 @@
                 if(data.length > 0) {
                     for(var i = 0; i < data.length; i++){
 
+                        var wrkDtm = "";
+                        if(data[i].WRK_DT != "") {
+                            if(data[i].WRK_TME != "") {
+                                wrkDtm = data[i].WRK_DT + " " + data[i].WRK_TME.substring(0,2) +":"+ data[i].WRK_TME.substring(2,4) +":"+ data[i].WRK_TME.substring(4,6)
+                            } else {
+                                wrkDtm = data[i].WRK_DT
+                            }
+                        }
+
                         apvlReqHistTable += '<tr onclick="onclickEvt(this)">';
-                        apvlReqHistTable += '<td id="no'+i+'" class="pt-3-half">'+i+'</td>';
+                        apvlReqHistTable += '<td id="no'+i+'" class="pt-3-half">'+(i+1)+'</td>';
                         apvlReqHistTable += '<td id="empName" class="pt-3-half">'+data[i].EMP_NAME+'</td>';
+                        apvlReqHistTable += '<td id="wrkDt" class="pt-3-half">'+wrkDtm+'</td>';
                         apvlReqHistTable += '<td id="apvlReqNm" class="pt-3-half">'+data[i].APVL_REQ_NM+'</td>';
                         apvlReqHistTable += '<td id="aprvStusNm" class="pt-3-half">'+data[i].APRV_STUS_NM+'</td>';
                         apvlReqHistTable += '</tr>';
@@ -91,6 +102,7 @@
         }
 
         function setApvlReqHistDetl(data) {
+
             $("#thAprvNm1").text(data[0].TH1_APRV_NM);
             $("#thAprvNm2").text(data[0].TH2_APRV_NM);
             $("#thAprvStus1").text(data[0].TH1_APRV_STUS_NM);
