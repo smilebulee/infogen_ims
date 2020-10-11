@@ -257,7 +257,6 @@ class wrkTimeInfoByEml(Resource): # Mariadb 연결 진행
 
         logging.debug('================== App Start ==================')
         logging.debug(data)
-        logging.debug(data["email"])
         logging.debug('================== App End ==================')
 
         #requirements pymysql import 후 커넥트 사용
@@ -266,7 +265,9 @@ class wrkTimeInfoByEml(Resource): # Mariadb 연결 진행
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 #쿼리문 실행
-                sql = "SELECT * FROM TB_WRK_TM_MGMT_M WHERE EMP_EMAL_ADDR = '" + data["email"] + "'"
+                sql = "SELECT * FROM TB_WRK_TM_MGMT_M " \
+                    + "WHERE EMP_EMAL_ADDR = '" + data["email"] + "'" \
+                    + "AND DATE(WRK_DT) BETWEEN '" + data["strtDate"] + "' AND '" + data["endDate"] + "'"
                 logging.debug(sql)
                 cursor.execute(sql)
 
