@@ -69,6 +69,11 @@
                 var diffDate = arrDate2 - arrDate1;
                 var currDate = 24 * 60 * 60 * 1000;
 
+                if(parseInt(diffDate/currDate) < 0) {
+                    alert("시작일자와 종료일자를 다시 확인해주세요.");
+                    return;
+                }
+
                 $("#ipt_holiDays").val(parseInt(diffDate/currDate));
             }
         });
@@ -76,15 +81,15 @@
         function btnReqEvt() {
             confirmMsg('저장하시겠습니까?', function(){
                 var param = {
-                    "email" : 'ishwang@ingofen.co.kr',                                   // 추후 Session Value 연동.
-                    "apvlReqDivs" : $("#sbx_type option:selected").val(),    //1: 야근, 2:연차
-                    "wrkDt" : $("#ipt_wrkDt").val(),
+                    "email" : 'ishwang@infogen.co.kr',                                   // 추후 Session Value 연동.
+                    "apvlReqDivs" : "03",    //01: 야근, 02:휴일, 03: 연차
+                    "wrkDt" : $("#ipt_holiTerm1").val(),
                     "wrkTme" : "000000",
-                    "wrkReqRsn": $("#txa_reqRsn").val(),
+                    "wrkReqRsn": $("#txa_holiRsn").val(),
                     "th1AprvStus": "01",
-                    "th1AprvStusNm": "승인",
+                    "th1AprvNm": "hykim@infogen.co.kr",
                     "th2AprvStus": "01",
-                    "th2AprvStusNm": "승인"
+                    "th2AprvNm": "yblee1987@infogen.co.kr"
 
                 }
 
@@ -158,7 +163,7 @@
                             <div class="card-body flex-height d-flex m-0 p-2">
                                 <div class="align-self-start align-self-center mr-3">휴가일수</div>
                                 <div class="align-self-center mr-5">
-                                    <input type="text" class="form-control" id="ipt_holiDays" name="ipt_holiDays" placeholder="" maxlength="4"/>
+                                    <input type="text" class="form-control" id="ipt_holiDays" name="ipt_holiDays" maxlength="4" readonly/>
                                 </div>
                             </div>
 
@@ -171,7 +176,7 @@
                             </div>
 
                             <div class="card-body flex-height d-flex m-0 p-2">
-                                <div class="align-self-start align-self-center mr-3">비상연락망망</div>
+                                <div class="align-self-start align-self-center mr-3">비상연락망</div>
                                <div class="align-self-center mr-5">
                                     <input type="text" class="form-control" id="ipt_emerCtpl" name="ipt_emerCtpl" placeholder="010-1234-5678" maxlength="10"/>
                                 </div>
@@ -180,7 +185,7 @@
                             <div class="card-body flex-height d-flex m-0 p-2">
                                 <div class="align-self-start align-self-center mr-3"></div>
                                 <div class="align-self-center mr-7">
-                                    <button class="btn btn-primary" id="btn_req" onclick="btnReqEvt()>요청</button>
+                                    <button class="btn btn-primary" id="btn_req" onclick="btnReqEvt()">요청</button>
                                 </div>
                             </div>
                         </div>
