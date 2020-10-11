@@ -843,6 +843,73 @@ class noticeSave(Resource):
 
         return jsonify(retJson)
 
+
+class saveYryApvlReq(Resource):  # Mariadb 연결 진행
+    def post(self):
+
+        params = request.get_json()
+        logger.info(params)
+
+        for row in request.form:
+            logger.info(row + ':' + request.form[row])
+            globals()[row] = request.form[row]
+
+        email = request.form['email']
+        apvlReqDivs = request.form['apvlReqDivs']
+        wrkDt = request.form['wrkDt']
+        wrkTme = request.form['wrkTme']
+        wrkReqRsn = request.form['wrkReqRsn']
+        th1AprvStus = request.form['th1AprvStus']
+        th1AprvNm = request.form['th1AprvNm']
+        th2AprvStus = request.form['th2AprvStus']
+        th2AprvNm = request.form['th2AprvNm']
+
+        # requirements pymysql import 후 커넥트 사용
+        mysql_con = pymysql.connect(host='218.151.225.142', port=3306, db='IFG_IMS', user='ims2', password='1234',
+                                    charset='utf8')
+        try:
+            with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+                # 쿼리문 실행
+                sql = "INSERT INTO TB_APVL_REQ_MGMT_M (" \
+                      "`EMP_EMAL_ADDR`," \
+                      "`APVL_REQ_DIVS`," \
+                      "`WRK_DT`," \
+                      "`WRK_TME`," \
+                      "`WRK_REQ_RSN`," \
+                      "`APVL_REQ_DT`," \
+                      "`TH1_APRV_STUS`," \
+                      "`TH1_APRV_NM`," \
+                      "`TH2_APRV_STUS`," \
+                      "`TH2_APRV_NM`," \
+                      "`APVL_LAST_APRV_DT`)" \
+                      "VALUES( %s, %s, %s, %s, %s, NOW(), %s, %s, %s, %s, NOW())" \
+ \
+                    # "ON DUPLICATE KEY UPDATE "
+                # "EMP_EMAL_ADDR = %s, " \
+                # "APVL_REQ_DIVS = %s," \
+                # "WRK_DT = %s," \
+                # "WRK_TME = %s," \
+                # "WRK_REQ_RSN = %s," \
+                # "TH1_APRV_STUS = %s," \
+                # "TH1_APRV_NM = %s," \
+                # "TH2_APRV_STUS = %s," \
+                # "TH2_APRV_NM = %s,"
+                logger.info(sql)
+                cursor.execute(sql, (
+                email, apvlReqDivs, wrkDt, wrkTme, wrkReqRsn, th1AprvStus, th1AprvNm, th2AprvStus, th2AprvNm))
+
+                mysql_con.commit()
+
+        finally:
+            mysql_con.close()
+
+            retJson = {
+                "status": 200,
+                "msg": "Data has been saved successfully"
+            }
+
+        return jsonify(retJson)
+
 api.add_resource(Hello, '/hello')
 api.add_resource(Register, '/register')
 api.add_resource(Retrieve, '/retrieve')
