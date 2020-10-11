@@ -6,20 +6,19 @@
         <script type="text/javascript">
         $(document).ready(function(){
             var param = {
-                "email" : 'PARK@INFOGEN.CO.KR' // 메인 화면에서 값 넘겨받기
+                "name" : '황이성' // 메인 화면에서 값 넘겨받기 name
             }
 
-            /*********************************************************************
-            *   직원 목록 조회하기
-            *********************************************************************/
+            /* 목록조회 */
             $.ajaxCall( param, {
                  'method' : 'GET',
-                 'url' : "{% url 'dili_api:getEmpList' %}",
+                 'url' : "{% url 'dili_api:getEmpInfo' %}",
                  'dataType' : 'json',
                  'data' : JSON.stringify(param),
                  'async' : false,
                  'callbackFn' : function(data){
-
+                    // 로그
+                    console.log("data : ",data)
                     // 리턴
                     empListGrd(data);
                  }
@@ -63,9 +62,6 @@
 
         });
 
-        function onclickEvt(trId) {
-
-        }
 
     </script>
         <div class="row">
