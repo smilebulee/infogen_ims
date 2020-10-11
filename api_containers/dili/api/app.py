@@ -311,6 +311,7 @@ class wrkApvlReq(Resource): # Mariadb 연결 진행
                       "            ELSE '' END WRK_TYPE " \
                       "  FROM TB_WRK_TM_MGMT_M A" \
                       " WHERE A.EMP_EMAL_ADDR = '" + data["email"] + "'" \
+                      "   AND (NVL(A.HLDY_WRK_TM,'000000') != 000000 OR NVL(A.NGHT_WRK_TM,'000000') != 000000)" \
                       "   AND EXISTS (SELECT 1" \
                       "                 FROM TB_WRK_TM_MGMT_M B" \
                       "                WHERE B.EMP_EMAL_ADDR = A.EMP_EMAL_ADDR" \
