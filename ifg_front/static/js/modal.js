@@ -1,5 +1,5 @@
 function modal(id) {
-    var zIndex = 9999;
+    var zIndex = 0;
     var modal = $('#' + id);
 
     // 모달 div 뒤에 희끄무레한 레이어
