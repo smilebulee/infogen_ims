@@ -2,6 +2,9 @@ from django.conf.urls import url, include
 from django.urls import path
 from . import views
 
+# 공지사항 파일업로드 임시추가
+#from views import my_view
+
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -25,6 +28,7 @@ urlpatterns = [
     url(r'^getNoticePopUp/', views.getNoticePopUp, name='getNoticePopUp'),
     url(r'^getNoticeMjrCnt/', views.getNoticeMjrCnt, name='getNoticeMjrCnt'),
     url(r'^noticeDtl/', views.noticeDtl.as_view(), name='noticeDtl'),
+    url(r'^getNoticeOne/', views.getNoticeOne, name='getNoticeOne'),
     url(r'^noticeSave/post', views.noticeSave, name='noticeSave'),
     url(r'^getWrkApvlReq/', views.getWrkApvlReq, name='getWrkApvlReq'),
     url(r'^saveApvlReq/post', views.saveApvlReq, name='saveApvlReq'),
@@ -40,6 +44,8 @@ urlpatterns = [
     url(r'^getGridData/', views.getGridData, name='getGridData'),
 
 
-]
+    # 공지사항 파일업로드 추가
+    url(r'^my_view/', views.my_view, name='my-view'),
 
+]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

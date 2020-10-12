@@ -6,7 +6,7 @@
     <script type="text/javascript" xmlns:max-width="http://www.w3.org/1999/xhtml">
 
         $(document).ready(function(){
-             tit = $('#tit').val();
+             tit = $('#ipt_title').val();
              console.log(tit);
 
              if(tit != ""){
@@ -17,7 +17,7 @@
                 //alert('제목을 입력해주세요.');
              }
 
-             cntn = $('#cntn').val();
+             cntn = $('#ipt_cntn').val();
              console.log(cntn);
 
              if(cntn != ""){
@@ -27,8 +27,55 @@
                 //alert('내용을 입력해주세요.');
              }
 
+             <!-- 공지사항 상세조회-->
+             var url = decodeURIComponent(window.location.href);
+             var type = $.urlParam("type");     <!-- url에서 type 가져오기-->
+             console.log("type: " + type);
+
+            // if(url != null || url != '' ){
+            if(type == "r"){
+                console.log("상세보기");
+                console.log(url);
+
+                $.urlParam = function(name){
+                    var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
+                    if (results == null || results == '' ){
+                        console.log("postId 없음");
+                        return null;
+                    } else{
+                        return results[1] || 0;
+                    }
+                }
+                var postId =  $.urlParam("postId");     <!-- url에서 postId 가져오기-->
+                console.log(postId);
+             } else {
+                console.log("새로 등록");
+             }
+
+            function getNoticeOne(){
+                var options = {
+                    method : 'get',
+                    url : "{% url 'dili_api:getNoticeOne' %}",
+                    callbackFn :  function(ret){
+                        debugger;
+                    }
+                }
+            }
+
         });
 
+        $.urlParam = function(name){
+            var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
+            if (results == null || results == '' ){
+                console.log("postId 없음");
+                return null;
+            } else{
+
+                return results[1] || 0;
+            }
+        }
+
+        <!-- 파일업로드 -->
         // 파일 리스트 번호
         var fileIndex = 0;
         // 등록할 전체 파일 사이즈
@@ -184,8 +231,8 @@
                     formData.append('files', fileList[uploadFileList[i]]);
                 }
 
-                $.ajax({
-                    url:"업로드 경로",
+                $.ajaxCall({
+                    url:"업로드 경로",   //??
                     data:formData,
                     type:'POST',
                     enctype:'multipart/form-data',
@@ -206,14 +253,37 @@
             }
         }
 
+
         function btnSave() {
+            var sFlag = false;
+            var mjrYn = "N";
+            var popOpenYn = "N";
             console.log('저장');
+            //중요 체크 값 지정
+            if($('#cb_mjrYn').is(":checked") == true){
+                console.log("중요체크됨");
+                mjrYn = "Y";
+                console.log(mjrYn);
+            } else{
+                console.log("중요체크 안됨");
+                console.log(mjrYn);
+            }
+            //공지팝업표출 값 지정
+            if($('#cb_popOpenYn').is(":checked") == true){
+                console.log("공지표출 체크됨");
+                popOpenYn = "Y";
+                console.log(popOpenYn);
+            } else{
+                console.log("공지표출 체크 안됨");
+                //popOpenYn = "N";
+                console.log(popOpenYn);
+            }
             confirmMsg('저장하시겠습니까?', function(){
                 var param = {
                     "tit" : $("#ipt_title").val(),
                     "kdDivsCd" : "11",
-                    "mjrYn" : $("#cb_mjrYn").val(),
-                    "popOpenYn" : $("#cb_popOpenYn").val(),
+                    "mjrYn" : mjrYn,
+                    "popOpenYn" : popOpenYn,
                     "cntn" : $("#ipt_cntn").val(),
                     "dataInptId" : "TEST1",
                     "dataInptPgmId" : "noticeDtl",
@@ -222,17 +292,59 @@
                 }
 
                $.ajaxCall( param, {
-                    method : 'POST',
-                    'url' : '/dili/noticeSave/post',
-                    'dataType' : 'json',
-                    'data' : JSON.stringify(param),
-                    'callbackFn' : function(data){
+                    method:'POST',
+                    url:'/dili/noticeSave/post',
+                    dataType:'json',
+                    data:JSON.stringify(param),
+                    //status == '200'
+                    callbackFn:function(data){
+                        if(status == '200'){
+                            // 리턴
+                             //location.href = '/dili/noticeLst';
+                             g_toast.push("저장되었습니다.");
+                             console.log(param);
+                             console.log("저장되었습니다.");
 
+                            sFlag = true;
+                            fileSave();
+                        } else{
+                            g_toast.push("저장에 실패하였습니다.");
+                            console.log("저장에 실패하였습니다.");
+                            location.reload();
+                        }
+                    }
+                    success:function(data){
                         // 리턴
+                         //location.href = '/dili/noticeLst';
+                         g_toast.push("저장되었습니다.");
+                         console.log(param);
+                         console.log("저장되었습니다.");
 
+                        sFlag = true;
+                        fileSave();
+                    },
+                    error:function(err){
+                        console.log(err);
+                        g_toast.push("저장에 실패하였습니다.");
+                        console.log("저장에 실패하였습니다.");
+                        location.reload();
                     }
                });
+
+               console.log("sFlag " + sFlag);
             });
+        }
+
+        function fileSave() {
+            console.log('aaa');
+
+            var param = {
+                    "fileFullpath" : $('#filePath').val(),
+                    //"postId" :
+                    "dataInptId" : "TEST1",
+                    "dataInptPgmId" : "noticeDtl"
+            }
+            console.log(param);
         }
 
     </script>
@@ -257,8 +369,8 @@
 
             <div class="form-inline">
                <h6><label>구분</label></h6>
-               <label class="col-sm-2"><input type="checkbox" class="form-control" id="cb_mjrYn" value="Y">중요</label>
-               <label class="col-sm-2"><input type="checkbox" class="form-control" id="cb_popOpenYn" value="Y">공지표출(팝업)</label>
+               <label class="col-sm-2"><input type="checkbox" class="form-control" id="cb_mjrYn" value="">중요</label>
+               <label class="col-sm-2"><input type="checkbox" class="form-control" id="cb_popOpenYn" value="">공지표출(팝업)</label>
             </div>
 
             <div class="mb-3">
@@ -268,7 +380,33 @@
             </div>
 
             <!-- 파일업로드 -->
-            <form name="uploadForm" id="uploadForm" enctype="multipart/form-data" method="post">
+            <form action="{% url 'dili_api:my-view' %}" name="uploadForm" id="uploadForm" enctype="multipart/form-data" method="post">
+                {% csrf_token %}
+                 {{ message }}
+                <p>{{ form.non_field_errors }}</p>
+
+                <p>{{ form.docfile.label_tag }} {{ form.docfile.help_text }}</p>
+
+                <p>
+                    {{ form.docfile.errors }}
+                    {{ form.docfile }}
+                </p>
+
+                <p><input class="btn btn-success" type="submit" value="Upload" /></p>
+            </form>  <!--파일업로드 -->
+            <!-- List of uploaded documents -->
+            {% if documents %}
+                <ul>
+                {% for document in documents %}
+                    <li><a href="{{ document.docfile.url }}">{{ document.docfile.name }}</a></li>
+                    <li><input type="hidden" id="filePath" value="{{ document.docfile.url }}" /></li>
+                {% endfor %}
+                </ul>
+            {% else %}
+                <p>No documents.</p>
+            {% endif %}
+
+            <!-- <form name="uploadForm" id="uploadForm" enctype="multipart/form-data" method="post">
                 <table class="table" width="100%" border="1px">
                     <tbody id="fileTableTbody">
                         <tr>
@@ -278,7 +416,7 @@
                         </tr>
                     </tbody>
                 </table>
-            </form>  <!-- 파일업로드 -->
+            </form>  파일업로드 -->
 
             <a href="#" onclick="uploadFile(); return false;" class="btn btn-success">파일 업로드</a>
 
@@ -288,9 +426,8 @@
 
 
     <div class="container">
-        <button type="button" class="btn btn-sm btn-primary float-right" id="btn_save" onclick="btnSave()">등록</button>
-<!--        <button type="button" class="btn btn-sm btn-primary" id="btnList">삭제</button>-->
-<!--        <button type="button" class="btn btn-sm btn-primary" id="btnUpdate">수정</button>-->
+        <button type="button" class="btn btn-sm btn-primary float-right mr-4" id="btn_cncl" onclick="">취소</button>
+        <button type="button" class="btn btn-sm btn-primary float-right mr-4" id="btn_save" onclick="btnSave()">등록</button>
     </div>
 
 </body>
