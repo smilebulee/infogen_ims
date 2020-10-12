@@ -85,7 +85,8 @@
 
         function onclickEvt(trId) {
             var param = {
-                "email" : 'ishwang@infogen.co.kr'                                   // 추후 Session Value 연동.
+                "email" : 'ishwang@infogen.co.kr',                                  // 추후 Session Value 연동.
+                "wrkDt" : $(trId).children().eq(2).text().substring(0,10)
             }
 
             $.ajaxCall( param, {
@@ -103,12 +104,17 @@
         }
 
         function setApvlReqHistDetl(data) {
-
-            $("#thAprvNm1").text(data[0].TH1_APRV_NM);
-            $("#thAprvNm2").text(data[0].TH2_APRV_NM);
-            $("#thAprvStus1").text(data[0].TH1_APRV_STUS_NM);
-            $("#thAprvStus2").text(data[0].TH2_APRV_STUS_NM);
-
+            if(data == undefined || data == null || data.length == 0) {
+                $("#thAprvNm1").text("");
+                $("#thAprvNm2").text("");
+                $("#thAprvStus1").text("");
+                $("#thAprvStus2").text("");
+            } else {
+                $("#thAprvNm1").text(data[0].TH1_APRV_NM);
+                $("#thAprvNm2").text(data[0].TH2_APRV_NM);
+                $("#thAprvStus1").text(data[0].TH1_APRV_STUS_NM);
+                $("#thAprvStus2").text(data[0].TH2_APRV_STUS_NM);
+            }
         }
 
 
