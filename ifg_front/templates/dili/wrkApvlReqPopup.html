@@ -33,10 +33,9 @@
             *********************************************************************/
             function wrkApvlGrd(data){
 
-                var wrkApvlTable = '<table class="table table-bordered table-responsive-md text-center">';
+                var wrkApvlTable = '<table class="table table-bordered table-responsive-md text-center"  id="tblWrkApvl" >';
                 wrkApvlTable += '<thead>';
                 wrkApvlTable += '<tr>';
-                wrkApvlTable += '<th class="text-center">체크박스</th>';
                 wrkApvlTable += '<th class="text-center">순번</th>';
                 wrkApvlTable += '<th class="text-center">일자</th>';
                 wrkApvlTable += '<th class="text-center">구분</th>';
@@ -56,7 +55,6 @@
                         }
 
                         wrkApvlTable += '<tr id ="grd_wrkApvl'+i+'" onclick="onclickEvt(this)">';
-                        wrkApvlTable += '<td id="chkBox" class="pt-3-half"><input type="checkbox" name="checkbox1" onclick="oneCheckbox(this)"></td>';
                         wrkApvlTable += '<td id="no" class="pt-3-half">'+(i+1)+'</td>';
                         wrkApvlTable += '<td id="wrkDt" class="pt-3-half">'+wrkDtm+'</td>';
                         wrkApvlTable += '<td id="wrkType" class="pt-3-half">'+data[i].WRK_TYPE+'</td>';
@@ -75,32 +73,26 @@
         });
 
         function onclickEvt(trId) {
-            document.getElementById(trId.id).removeAttribute('style');
-            document.getElementById(trId.id).setAttribute('style','background-color:lightgrey')
-            $("#ipt_wrkDt").val($('#'+trId.id).children().eq(2).text());
+            var table = document.getElementById("tblWrkApvl");
+            var tr = table.getElementsByTagName("tr");
+            for(var i=0; i<tr.length; i++){
+                tr[i].style.background = "white";
+            }
+            document.getElementById(trId.id).style.backgroundColor = "lightgrey";
+            $("#ipt_wrkDt").val($('#'+trId.id).children().eq(1).text());
 
             $("#sbx_type option").removeAttr("selected");
 
-            if($('#'+trId.id).children().eq(3).text() == "") {
+            if($('#'+trId.id).children().eq(2).text() == "") {
                 $("#sbx_type option[value='00']").attr("selected", true);
-            } else if($('#'+trId.id).children().eq(3).text() == "휴일근무") {
+            } else if($('#'+trId.id).children().eq(2).text() == "휴일근무") {
                 $("#sbx_type option[value='01']").attr("selected", true);
-            } else if($('#'+trId.id).children().eq(3).text() == "야근근무") {
+            } else if($('#'+trId.id).children().eq(2).text() == "야근근무") {
                 $("#sbx_type option[value='02']").attr("selected", true);
             }
 
         }
 
-        function oneCheckbox(that) {
-            var obj = document.getElementsByName("checkbox1");
-
-            for(var i=0; i<obj.length; i++){
-                if(obj[i] != that){
-                    obj[i].checked = false;
-                }
-            }
-
-        }
 
         function btnReqEvt() {
             confirmMsg('저장하시겠습니까?', function(){
