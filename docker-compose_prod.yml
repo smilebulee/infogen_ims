@@ -1,22 +1,11 @@
 version: "3"
 
-# 윈도우에서 볼륨 지정시 FATAL: data directory "/var/lib/postgresql/data" has wrong ownership 에러 발생하면  아래 스크립트로 도커에 볼류생성한 후 volumes: 태그 등록 후 사용
-# docker volume create --name data-postgressql --driver local
-# C:\workspace>docker volume create --driver local -o o=bind -o type=none -o device=/c/workspace/infogen_ims/ifg_front src-front
-volumes:
-  data-postgressql:
-    external: true
-#  src-front:
-#    external: true
 services:
   # 최초 설치시 DB(ifg_ims)와 사용자(infogen / infogen) 생성해야 함
   postgres:
     image: postgres:9.6.6
-#    container_name: postgres
     volumes:
-      - data-postgressql:/var/lib/postgresql/data
-#      - /c/workspace/postgres_db:/var/lib/postgresql/data
-#
+      - /opt/projects/infogen_ims/postgres_db:/var/lib/postgresql/data
     environment:
       - POSTGRES_DB=ifg_ims
       - POSTGRES_USER=infogen
@@ -24,35 +13,6 @@ services:
       - POSTGRES_INITDB_ARGS=--encoding=UTF-8
     ports:
       - "5432:5432"
-
-
-  #mariadb(test)
-#  postgres:
-#    image: mariadb:latest
-#####    container_name: mariadb
-#    volumes:
-#      - data-postgressql:/var/lib/mysql
-#    environment:
-#      - MYSQL_DATABASE=IFG_IMS
-#      - MYSQL_USER=ims2
-#      - MYSQL_PASSWORD=1234
-#      - MYSQL_ROOT_PASSWORD=infogen
-#      MYSQL_ROOT_PASSWORD: 'infogen'
-#      MYSQL_USER : 'ims2'
-#      MYSQL_PASSWORD : '1234'
-#      MYSQL_DATABASE : 'IFG_IMS'
-#    ports:
-#      - "3306:3306"
-#
-#  mariadb:
-#    image: mariadb:latest
-#    restart: always
-#    environment:
-#      MYSQL_ROOT_PASSWORD: 'infogen'
-#    volumes:
-#      - data-postgressql:/var/lib/mysql
-#    ports:
-#      - '3306:3306'
   # front ui
   front:
     build: "./ifg_front"
@@ -62,57 +22,35 @@ services:
       - emp_api
       - prj_api
       - postgres
-      - skil_api
-      - cmm_api
-      - cnc_api
-      - dili_api
+#      - skil_api
+#      - cmm_api
+#      - cnc_api
+#      - dili_api
 #      - eval_api
 #      - kpi_api
 #      - stat_api
 #      - site_api
     environment:
-#      - MYSQL_HOST=218.151.225.142
-#      - MYSQL_DATABASE=IFG_IMS
-#      - MYSQL_USER=ims2
-#      - MYSQL_PASSWORD=1234
-#      - MYSQL_ROOT_PASSWORD=infogen
-      - DJANGO_DB_HOST=218.151.225.142
+      - DJANGO_DB_HOST=postgres
       - DJANGO_DB_PORT=5432
       - DJANGO_DB_NAME=ifg_ims
       - DJANGO_DB_USERNAME=infogen
       - DJANGO_DB_PASSWORD=infogen
- #   volumes:
- #     - //c/workspace/infogen_ims/ifg_front:/usr/src/app
+#    volumes:
+#      - src-front:/app
   # 1.직원관리
   emp_api:
-    build: "./api_containers/emp/api"     # Dockerfile의 경로
+    build: "./api_containers/emp/api"
     ports:
-      - "5001:5001"     # 로컬의 5001포트로 요청일 들어오면 emp_api 컨테이너의 5001 포트로 연결
+      - "5001:5001"
     links:
       - emp_db
-      - emp_db2    # emp_api컨테이너는 emp_db 컨테이너로 접속가능 (maria db 연결 진행)
     environment:
-      - SPRING_PROFILES_ACTIVE=local      # 이미지 생성시 세팅될 환경변수들
+      - SPRING_PROFILES_ACTIVE=prod
       - SPRING_APPLICATION_NAME=emp_api
       - SIDECAR_PORT=5001
   emp_db:
-    build: "./api_containers/emp/db"   # Dockerfile의 경로
-  emp_db2:
-    build: "./api_containers/emp/db"   # Dockerfile의 경로
-    #container_name: mariadb
-    image: mariadb:latest
-    restart: always
-    ports:
-      - 3306:3306
-    volumes:
-      - data-postgressql:/var/lib/mysql
-    environment:
-      MYSQL_HOST: '218.151.225.142'
-      MYSQL_ROOT_PASSWORD: 'infogen'
-      MYSQL_USER : 'ims2'
-      MYSQL_PASSWORD : '1234'
-      MYSQL_DATABASE : 'IFG_IMS'
-      TZ: Asia/Seoul
+    build: "./api_containers/emp/db"
 
   # 2.프로젝트 관리
   prj_api:
@@ -122,73 +60,53 @@ services:
     links:
       - prj_db
     environment:
-      - SPRING_PROFILES_ACTIVE=local
+      - SPRING_PROFILES_ACTIVE=prod
       - SPRING_APPLICATION_NAME=prj_api
       - SIDECAR_PORT=5002
   prj_db:
     build: "./api_containers/prj/db"
-  prj_db2:
-    build: "./api_containers/prj/db"   # Dockerfile의 경로
-    #container_name: mariadb
-    image: mariadb:latest
-    restart: always
-    ports:
-      - 9753:3306
-    volumes:
-      - data-postgressql:/var/lib/mysql
-    environment:
-      MYSQL_HOST: '218.151.225.142'
-      MYSQL_ROOT_PASSWORD: 'infogen'
-      MYSQL_USER: 'ims2'
-      MYSQL_PASSWORD: '1234'
-      MYSQL_DATABASE: 'IFG_IMS'
-      TZ: Asia/Seoul
 
 #  # 3.skill 관리
-  skil_api:
-    build: "./api_containers/skil/api"
-    ports:
-      - "5003:5003"
-    links:
-      - skil_db
-      - skil_db2
-  skil_db:
-    build: "./api_containers/skil/db"
-  skil_db2:
-    build: "./api_containers/skil/db"   # Dockerfile의 경로
-    #container_name: mariadb
-    image: mariadb:latest
-    restart: always
-    ports:
-      - 9876:3306
-    volumes:
-      - data-postgressql:/var/lib/mysql
-    environment:
-      MYSQL_HOST: '218.151.225.142'
-      MYSQL_ROOT_PASSWORD: 'infogen'
-      MYSQL_USER: 'ims2'
-      MYSQL_PASSWORD: '1234'
-      MYSQL_DATABASE: 'IFG_IMS'
-
-# 4.cmm 관리
-  cmm_api:
-    build: "./api_containers/cmm/api"
-    ports:
-      - "5004:5004"
-    links:
-      - cmm_db
-  cmm_db:
-    build: "./api_containers/cmm/db"
+#  skil_api:
+#    build: "./api_containers/skil/api"
+#    ports:
+#      - "5003:5003"
+#    links:
+#      - skil_db
+#    environment:
+#      - SPRING_PROFILES_ACTIVE=prod
+#      - SPRING_APPLICATION_NAME=skil_api
+#      - SIDECAR_PORT=5003
+#  skil_db:
+#    build: "./api_containers/skil/db"
+#
+#  # 4.cmm 관리
+#  cmm_api:
+#    build: "./api_containers/cmm/api"
+#    ports:
+#      - "5004:5004"
+#    links:
+#      - cmm_db
+#    environment:
+#      - SPRING_PROFILES_ACTIVE=prod
+#      - SPRING_APPLICATION_NAME=cmm_api
+#      - SIDECAR_PORT=5004
+#  cmm_db:
+#    build: "./api_containers/cmm/db"
 #
 #  # 5.접속 관리
-  cnc_api:
-    build: "./api_containers/cnc/api"
-    ports:
-      - "5005:5005"
-    links:
-      - cnc_db
-  cnc_db:
-    build: "./api_containers/cnc/db"
+#  cnc_api:
+#    build: "./api_containers/cnc/api"
+#    ports:
+#      - "5005:5005"
+#    links:
+#      - cnc_db
+#    environment:
+#      - SPRING_PROFILES_ACTIVE=prod
+#      - SPRING_APPLICATION_NAME=cnc_api
+#      - SIDECAR_PORT=5005
+#  cnc_db:
+#    build: "./api_containers/cnc/db"
 #
 #  # 6.근태 관리
   dili_api:
@@ -221,6 +139,7 @@ services:
       MYSQL_DATABASE : 'IFG_IMS'
       TZ: Asia/Seoul
 
+#
 #  # 7.평가 관리
 #  eval_api:
 #    build: "./api_containers/eval/api"
@@ -228,6 +147,10 @@ services:
 #      - "5007:5007"
 #    links:
 #      - eval_db
+#    environment:
+#      - SPRING_PROFILES_ACTIVE=prod
+#      - SPRING_APPLICATION_NAME=eval_api
+#      - SIDECAR_PORT=5007
 #  eval_db:
 #    build: "./api_containers/eval/db"
 #
@@ -238,26 +161,38 @@ services:
 #      - "5008:5008"
 #    links:
 #      - kpi_db
+#    environment:
+#      - SPRING_PROFILES_ACTIVE=prod
+#      - SPRING_APPLICATION_NAME=kpi_api
+#      - SIDECAR_PORT=5008
 #  kpi_db:
 #    build: "./api_containers/kpi/db"
 #
-  # 9.현황 관리
-  stat_api:
-    build: "./api_containers/stat/api"
-    ports:
-      - "5009:5009"
-    links:
-      - stat_db
-  stat_db:
-    build: "./api_containers/stat/db"
-
+#  # 9.현황 관리
+#  stat_api:
+#    build: "./api_containers/stat/api"
+#    ports:
+#      - "5009:5009"
+#    links:
+#      - stat_db
+#    environment:
+#      - SPRING_PROFILES_ACTIVE=prod
+#      - SPRING_APPLICATION_NAME=stat_api
+#      - SIDECAR_PORT=5009
+#  stat_db:
+#    build: "./api_containers/stat/db"
+#
 #  # 10.사이트맵 관리
-  site_api:
-    build: "./api_containers/site/api"
-    ports:
-      - "5010:5010"
-    links:
-      - site_db
-  site_db:
-    build: "./api_containers/site/db"
+#  site_api:
+#    build: "./api_containers/site/api"
+#    ports:
+#      - "5010:5010"
+#    links:
+#      - site_db
+#    environment:
+#      - SPRING_PROFILES_ACTIVE=prod
+#      - SPRING_APPLICATION_NAME=site_api
+#      - SIDECAR_PORT=5010
+#  site_db:
+#    build: "./api_containers/site/db"
 
