@@ -265,18 +265,23 @@ class gridData(Resource): # Mariadb 연결 진행
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 #쿼리문 실행
-                sql = "SELECT EMP_EMAL_ADDR "\
-                    + ",WRK_DT "\
-                    + ",DATE_FORMAT(JOB_STRT_TM, '%H:%i:%s') AS JOB_STRT_TM "\
-                    + ",DATE_FORMAT(JOB_END_TM, '%H:%i:%s') AS JOB_END_TM "\
-                    + ",NORM_WRK_TM "\
-                    + ",ALL_WRK_TM "\
-                    + "FROM TB_WRK_TM_MGMT_M "\
-                    + "WHERE 1 = 1 "\
-                    + "AND EMP_EMAL_ADDR = 'ishwang@infogen.co.kr' "\
-                    + "AND WRK_DT >= '2020-10-01' "\
-                    + "AND WRK_DT <= '2020-10-08' "\
-                    + "ORDER BY WRK_DT"
+                sql = "SELECT  A.EMP_EMAL_ADDR "\
+                    + "       ,A.WRK_DT "\
+                    + "       ,DATE_FORMAT(A.JOB_STRT_TM, '%H:%i:%s') AS JOB_STRT_TM "\
+                    + "       ,DATE_FORMAT(A.JOB_END_TM, '%H:%i:%s') AS JOB_END_TM "\
+                    + "       ,A.NORM_WRK_TM "\
+                    + "       ,A.ALL_WRK_TM "\
+                    + "       ,NVL(B.APVL_REQ_DT, 'N/A') AS APVL_REQ_DT "\
+                    + "       ,NVL(B.APVL_LAST_APRV_DT, 'N/A') AS APVL_LAST_APRV_DT "\
+                    + "   FROM TB_WRK_TM_MGMT_M A "\
+                    + "        LEFT OUTER JOIN TB_APVL_REQ_MGMT_M B"\
+                    + "   ON A.WRK_DT = B.WRK_DT "\
+                    + "   AND A.EMP_EMAL_ADDR = B.EMP_EMAL_ADDR "\
+                    + "  WHERE 1 = 1 "\
+                    + "AND A.EMP_EMAL_ADDR = 'ishwang@infogen.co.kr' "\
+                    + "AND A.WRK_DT >= '2020-10-01' "\
+                    + "AND A.WRK_DT <= '2020-10-08' "\
+                    + "ORDER BY A.WRK_DT"
                 logging.debug(sql)
                 cursor.execute(sql)
         finally:
