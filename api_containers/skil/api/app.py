@@ -249,24 +249,45 @@ class devMgmtSearch(Resource):
                                     charset='utf8')
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
-                sql = "SELECT EMP_NAME,DEVP_BLCO," \
-                      "CASE WHEN DEVP_GRD_CD ='01' THEN '초' " \
-                      "WHEN DEVP_GRD_CD = '02' THEN '중' " \
-                      "WHEN DEVP_GRD_CD ='03' THEN '고' END DEVP_GRD_NAME, " \
-                      "CASE WHEN CNTC_DIVS_CD ='01' THEN '정규직' " \
-                      "WHEN CNTC_DIVS_CD ='02' THEN '프리랜서' " \
-                      "WHEN CNTC_DIVS_CD ='03' THEN '외주' END CNTC_DIVS_NAME, " \
-                      "DEVP_GRD_CD, " \
-                      "CNTC_DIVS_CD, " \
-                      "EMP_NO " \
-                      "FROM TB_FRLC_DEVP_INFO " \
-                      "WHERE 1=1 "
+                sql = "SELECT  A.EMP_NO, " \
+                      "        A.EMP_NAME, " \
+                      "        A.DEPT_CD AS DEVP_BLCO_CD, " \
+                      "        DEPT.CMM_CD_NAME AS DEVP_BLCO, " \
+                      "        A.CNTC_DIVS_CD, " \
+                      "        CNTC.CMM_CD_NAME AS CNTC_DIVS_NAME, " \
+                      "        A.DEVP_GRD_CD, " \
+                      "        DEVP.CMM_CD_NAME AS DEVP_GRD_NAME " \
+                      "FROM (       SELECT FRLC.EMP_NO AS EMP_NO, " \
+                      "                    FRLC.EMP_NAME AS EMP_NAME, " \
+                      "                    FRLC.EMP_DEPT_CD AS DEPT_CD, " \
+                      "                    FRLC.CNTC_DIVS_CD AS CNTC_DIVS_CD, " \
+                      "                    FRLC.DEVP_GRD_CD AS DEVP_GRD_CD " \
+                      "              FROM TB_FRLC_DEVP_INFO  FRLC " \
+                      "              WHERE FRLC.DEVP_USE_YN ='Y' " \
+                      "              GROUP BY FRLC.EMP_NO " \
+                      "              UNION ALL " \
+                      "              SELECT  EMP.EMP_ID AS EMP_NO, " \
+                      "                      EMP.EMP_NAME AS EMP_NAME, " \
+                      "                      EMP.DEPT_CD AS DEPT_CD, " \
+                      "                      '01' AS CNTC_DIVS_CD, " \
+                      "                      EMP.SKIL_GRADE AS DEVP_GRD_CD " \
+                      "              FROM TB_EMP_MGMT EMP )A, " \
+                      "              TB_CMM_CD_DETL CNTC, " \
+                      "              TB_CMM_CD_DETL DEPT, " \
+                      "              TB_CMM_CD_DETL DEVP " \
+                      "      WHERE 1=1 " \
+                      "      AND A.CNTC_DIVS_CD = CNTC.CMM_CD " \
+                      "		 AND A.DEPT_CD = DEPT.CMM_CD " \
+                      "		 AND A.DEVP_GRD_CD = DEVP.CMM_CD " \
+                      "      AND CNTC.CMM_CD_GRP_ID = 'CNTC_DIVS_CD' " \
+                      "      AND DEPT.CMM_CD_GRP_ID = 'SLIN_BZDP' " \
+                      "      AND DEVP.CMM_CD_GRP_ID = 'DEVP_GRD_CD' "
                 if devpBlco != "":
-                    sql = sql + "AND DEVP_BLCO = '" + devpBlco + "' "
+                    sql = sql + "AND A.DEPT_CD = '" + devpBlco + "' "
                 if empName != "":
-                    sql = sql + "AND EMP_NAME LIKE '%" + empName + "%' "
+                    sql = sql + "AND A.EMP_NAME LIKE '%" + empName + "%' "
                 if devpDivsCd != "":
-                    sql = sql + "AND CNTC_DIVS_CD = '" + devpDivsCd + "' "
+                    sql = sql + "AND A.CNTC_DIVS_CD = '" + devpDivsCd + "' "
                 logging.debug(sql)
 
                 cursor.execute(sql)

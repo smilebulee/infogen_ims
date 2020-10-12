@@ -52,6 +52,8 @@
 
             $('#grp_grid').hide();                                                  // Calendar UI를 Default로 한다.
             $('#grp_showMonth').hide();                                             // Grid UI의 week를 Default로 한다.
+            $('.grid-btnAction').css("display","none");
+
 
             //현재 날짜 가져오기
             var today = new Date();
@@ -206,7 +208,9 @@
             *********************************************************************/
             function setGridData(){
                 var gridParam = {
-                    "email"     : sessionStorage.getItem("email")
+                    "email"     : sessionStorage.getItem("email"),
+                    "startDate" : "",
+                    "endDate" : ""
                 }
 
                 $.ajaxCall( gridParam, {
@@ -227,9 +231,12 @@
             $('#btn_showGrd').click(function(){
 
                 console.log("Grid Btn Click Event");
-
+                document.getElementById("btn_showGrd").style.backgroundColor = "lightgrey";
+                document.getElementById("btn_showCal").style.backgroundColor = "";
                 $('#grp_grid').show('');
                 $('#grp_calendar').hide();
+                $('.grid-btnAction').css("display","");
+                $('.calendar-btnAction').css("display","none");
             });
 
             /*********************************************************************
@@ -238,9 +245,12 @@
             $('#btn_showCal').click(function(){
 
                 console.log("Calendar Btn Click Event");
-
+                document.getElementById("btn_showCal").style.backgroundColor = "lightgrey";
+                document.getElementById("btn_showGrd").style.backgroundColor = "";
                 $('#grp_grid').hide();
                 $('#grp_calendar').show('');
+                $('.grid-btnAction').css("display","none");
+                $('.calendar-btnAction').css("display","");
             });
             /*********************************************************************
             *   Week Btn Click Event - 주 버튼 클릭
@@ -248,6 +258,11 @@
             $('#btn_showWeek').click(function(){
 
                 console.log("Week Btn Click Event");
+                document.getElementById("btn_showWeek").style.backgroundColor = "#81DAF5";
+                document.getElementById("btn_showWeek").style.color = "white";
+                document.getElementById("btn_showMonth").style.backgroundColor = "white";
+                document.getElementById("btn_showMonth").style.color = "#81DAF5";
+
 
                 $('#grp_showWeek').show('');
                 $('#grp_showMonth').hide();
@@ -259,6 +274,10 @@
             $('#btn_showMonth').click(function(){
 
                 console.log("Month Btn Click Event");
+                document.getElementById("btn_showMonth").style.backgroundColor = "#81DAF5";
+                document.getElementById("btn_showMonth").style.color = "white";
+                document.getElementById("btn_showWeek").style.backgroundColor = "white";
+                document.getElementById("btn_showWeek").style.color = "#81DAF5";
 
                 $('#grp_showWeek').hide();
                 $('#grp_showMonth').show('');
@@ -775,7 +794,8 @@
                     display:true,
                     position : 'right',
                     fontColor: 'rgb(255, 99, 132)',
-                    onClick : null
+                    onClick : null,
+                    "labels" : {"fontSize":12}
                 },
 
                 animation: {
@@ -912,15 +932,10 @@
                 </div>
 
                 <div class="d-flex flex-row-reverse mb-2">
-                    <div>
-                        <img id="btn_showGrd" width="30px" height="30px"  src="{% static 'image/grid.png' %}" align="center">
-                    </div>
-                    <div style="margin-right: 10px;">
-                        <img id="btn_showCal" width="30px" height="30px"  src="{% static 'image/calendar.png' %}" align="center">
-                    </div>
+
                     <!-- 연차등록 버튼 -->
-                    <div style="margin-right: 10px;">
-                        <button type="button" class="btn btn-info btn-sm" id="btn_anhoReg">연차등록</button>
+                    <div>
+                        <button type="button" class="btn btn-sm" style="background-color: #81DAF5; color : white;" id="btn_anhoReg">연차등록</button>
                     </div>
                     <!-- 전체연차일수/ 남은연차일수 표기 -->
                     <div style="margin-right: 20px;">
@@ -930,18 +945,28 @@
                         <span id="txt_rmnAnhoDays">0</span>
                     </div>
                 </div>
+                <div class="d-flex flex-row-reverse mb-2">
+
+                    <div id="btn_showGrd">
+                        <img width="30px" height="30px"  src="{% static 'image/grid.png' %}" align="center">
+                    </div>
+                    <div id="btn_showCal" style="background-color: lightgrey;">
+                        <img width="30px" height="30px"  src="{% static 'image/calendar.png' %}" align="center">
+                    </div>
+                    <div class="d-flex flex-row-reverse mr-2 grid-btnAction">
+                        <button type="button" class="btn grid-btnAction" id="btn_showMonth" style="background-color: white; width : 35px; height : 30px; font-size : 12px; color : #81DAF5; font-weight:bold;">월</button>
+                        <button type="button" class="btn grid-btnAction" id="btn_showWeek" style="background-color: #81DAF5; width : 35px; height : 30px; font-size : 12px; color : white; font-weight:bold;">주</button>
+                    </div>
+                    <div class="d-flex flex-row-reverse mr-2 calendar-btnAction">
+                        <button type="button" class="btn btn-outline-primary btn-sm calendar-btnAction" id="today">Today</button>
+                        <button type="button" class="btn btn-outline-secondary btn-sm calendar-btnAction" id="prev">이전달</button>
+                        <button type="button" class="btn btn-outline-secondary btn-sm calendar-btnAction" id="next">다음달</button>
+                    </div>
+                </div>
 
                 <!-- 3. 사원 Schedule Grid 영역 -->
                 <div id="grp_grid">
                     <div class="p-0">
-                        <div class="d-flex flex-row-reverse">
-                            <div>
-                                <span class="badge badge-success" id="btn_showMonth">Month</span>
-                            </div>
-                            <div>
-                                <span class="badge badge-warning" id="btn_showWeek">Week</span>
-                            </div>
-                        </div>
                         <div class="d-flex justify-content-center" style="height:0; visibility:hidden;">
                             <input type="text" name="date" id="monthpickerData" />
                         </div>
@@ -1004,10 +1029,7 @@
                 <div id="grp_calendar">
                     <div class="bg-light p-5">
                         <div id="menu">
-                            <span id="menu-navi">
-                              <button type="button" class="btn btn-outline-primary btn-sm" id="today">Today</button>
-                              <button type="button" class="btn btn-outline-secondary btn-sm" id="prev">이전달</button>
-                              <button type="button" class="btn btn-outline-secondary btn-sm" id="next">다음달</button>
+                            <span id="menu-navi" class="d-flex justify-content-center">
                               <span id="calendarLabel"></span>
                             </span>
                             <span id="renderRange" class="render-range"></span>
