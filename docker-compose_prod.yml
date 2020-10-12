@@ -119,7 +119,7 @@ services:
     environment:
       - SPRING_PROFILES_ACTIVE=local      # 이미지 생성시 세팅될 환경변수들
       - SPRING_APPLICATION_NAME=dili_api
-      - SIDECAR_PORT=5006
+      - SIDECAR_PORT=8000
   dili_db:
     build: "./api_containers/dili/db"   # Dockerfile의 경로
   dili_db2:
