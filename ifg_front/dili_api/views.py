@@ -141,6 +141,21 @@ def getEmpList(request):
     logger.info(json.loads(r.text))
     return JsonResponse(ast.literal_eval(r.json()), safe=False)
 
+def getEmpInfo(request):
+    param = json.loads(request.GET['param'])
+
+    logger.info("Parameters Logging Start")
+    logger.info(param)
+    logger.info("Parameters Logging End")
+
+    # api 호출
+    r = requests.get('http://dili_api:5006/empInfo', json=param)
+    logger.info(r)
+    logger.info(r.text)
+    logger.info(r.json())
+    logger.info(json.loads(r.text))
+    return JsonResponse(ast.literal_eval(r.json()), safe=False)
+
 
 class wrkApvlReq(generic.TemplateView):
     def get(self, request, *args, **kwargs):
@@ -369,6 +384,7 @@ def saveApvlReq(request):
 
     for row in param:
         logger.info("------views.py------")
+        logger.info(row)
         logger.info(row + ':' + param[row])
         datas.setdefault(row, param[row])
 
@@ -441,18 +457,10 @@ def saveYryApvlReq(request):
     param = json.loads(request.POST['param'])
 
     logger.info("Parameters Start")
-    logger.info(param)
+    logger.info(type(json.dumps(param)))
     logger.info("Parameters End")
 
-    datas = {
-    }
-
-    for row in param:
-        logger.info("------views.py------")
-        logger.info(row + ':' + param[row])
-        datas.setdefault(row, param[row])
-
-    r = requests.post('http://dili_api:5006/saveYryApvlReq', data=datas)
+    r = requests.post('http://dili_api:5006/saveYryApvlReq', data=json.dumps(param), headers = {'Content-Type': 'application/json; charset=utf-8'})
     logger.info(r)
     logger.info(r.text)
     logger.info(r.json())

@@ -83,11 +83,13 @@
         });
 
         function btnReqEvt2() {
+
+
             confirmMsg('저장하시겠습니까?', function(){
-                var param = {
+                var param = [{
                     "email" : 'ishwang@infogen.co.kr',                                   // 추후 Session Value 연동.
                     "apvlReqDivs" : $('input[name="yryType"]:checked').val(),    //01: 야근, 02:휴일, 03: 연차
-                    "wrkDt" : $("#ipt_holiTerm1").val(),
+                    "wrkDt" : '20201104',
                     "wrkTme" : "000000",
                     "wrkReqRsn": $("#txa_holiRsn").val(),
                     "th1AprvStus": "01",
@@ -96,7 +98,31 @@
                     "th2AprvNm": "yblee1987@infogen.co.kr",
                     "holiDays" : $("#ipt_holiDays").val()
 
-                }
+                },{
+                    "email" : 'ishwang@infogen.co.kr',                                   // 추후 Session Value 연동.
+                    "apvlReqDivs" : $('input[name="yryType"]:checked').val(),    //01: 야근, 02:휴일, 03: 연차
+                    "wrkDt" : '20201102',
+                    "wrkTme" : "000000",
+                    "wrkReqRsn": $("#txa_holiRsn").val(),
+                    "th1AprvStus": "01",
+                    "th1AprvNm": "hykim@infogen.co.kr",
+                    "th2AprvStus": "01",
+                    "th2AprvNm": "yblee1987@infogen.co.kr",
+                    "holiDays" : $("#ipt_holiDays").val()
+
+                },{
+                    "email" : 'ishwang@infogen.co.kr',                                   // 추후 Session Value 연동.
+                    "apvlReqDivs" : $('input[name="yryType"]:checked').val(),    //01: 야근, 02:휴일, 03: 연차
+                    "wrkDt" : '20201103',
+                    "wrkTme" : "000000",
+                    "wrkReqRsn": $("#txa_holiRsn").val(),
+                    "th1AprvStus": "01",
+                    "th1AprvNm": "hykim@infogen.co.kr",
+                    "th2AprvStus": "01",
+                    "th2AprvNm": "yblee1987@infogen.co.kr",
+                    "holiDays" : $("#ipt_holiDays").val()
+
+                }]
 
                 $.ajaxCall( param, {
                      method : 'POST',

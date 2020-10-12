@@ -535,6 +535,8 @@ class empList(Resource): # Mariadb 연결 진행
     def get(self):
 
         data = request.get_json()
+        # get data
+        email = data["email"]
 
         logging.debug('================== App Start ==================')
         logging.debug(data)
@@ -547,10 +549,45 @@ class empList(Resource): # Mariadb 연결 진행
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 #쿼리문 실행
-                if data =='List':
-                    sql = "SELECT SEQ_NO, EMP_NAME, EMP_EMAIL, EMP_TEL FROM TB_EMP_MGMT  ORDER BY SEQ_NO"
+                if email == "List":
+                    sql = "SELECT SEQ_NO, EMP_NAME, EMP_EMAIL, EMP_TEL FROM TB_EMP_MGMT ORDER BY SEQ_NO"
                 else:
-                    sql = "SELECT SEQ_NO, EMP_NAME, EMP_EMAIL, EMP_TEL FROM TB_EMP_MGMT WHERE EMP_EMAIL = '" + data["email"] + "' ORDER BY SEQ_NO"
+                    sql = "SELECT SEQ_NO, EMP_NAME, EMP_EMAIL, EMP_TEL FROM TB_EMP_MGMT WHERE EMP_EMAIL like '%" + data["email"] + "%' ORDER BY SEQ_NO"
+
+                logging.debug(sql)
+                cursor.execute(sql)
+
+        finally:
+            mysql_con.close()
+
+        result2 = cursor.fetchall()
+        for row in result2:
+            logging.debug('====== row====')
+            logging.debug(row)
+            logging.debug('===============')
+        array = list(result2)  # 결과를 리스트로
+
+        return json.dumps(result2, indent=4, cls=DateTimeEncoder)
+
+class empInfo(Resource): # Mariadb 연결 진행
+    def get(self):
+
+        data = request.get_json()
+        # get data
+        name = data["name"]
+
+        logging.debug('================== App Start ==================')
+        logging.debug(data)
+        logging.debug(data["email"])
+        logging.debug('================== App End ==================')
+
+        #requirements pymysql import 후 커넥트 사용
+        mysql_con = pymysql.connect(host='218.151.225.142', port=3306, db='IFG_IMS', user='ims2', password='1234',
+                                        charset='utf8')
+        try:
+            with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+                #쿼리문 실행
+                sql = "SELECT SEQ_NO, EMP_NAME, EMP_EMAIL, EMP_TEL FROM TB_EMP_MGMT WHERE EMP_EMAIL LIKE '%" + name + "%' ORDER BY SEQ_NO"
 
                 logging.debug(sql)
                 cursor.execute(sql)
@@ -958,60 +995,63 @@ class noticeSave(Resource):
 class saveYryApvlReq(Resource):  # Mariadb 연결 진행
     def post(self):
 
-        params = request.get_json()
+        params = json.loads(request.data)
+        logger.info("App Parameters Start")
         logger.info(params)
+        logger.info(type(params))
+        logger.info("App Parameters End")
 
-        for row in request.form:
-            logger.info(row + ':' + request.form[row])
-            globals()[row] = request.form[row]
+        for row in params:
+            logger.info("request.form Parameters Start")
+            logger.info(row)
 
-        email = request.form['email']
-        apvlReqDivs = request.form['apvlReqDivs']
-        wrkDt = request.form['wrkDt']
-        wrkTme = request.form['wrkTme']
-        wrkReqRsn = request.form['wrkReqRsn']
-        th1AprvStus = request.form['th1AprvStus']
-        th1AprvNm = request.form['th1AprvNm']
-        th2AprvStus = request.form['th2AprvStus']
-        th2AprvNm = request.form['th2AprvNm']
+            email = row['email']
+            apvlReqDivs = row['apvlReqDivs']
+            wrkDt = row['wrkDt']
+            wrkTme = row['wrkTme']
+            wrkReqRsn = row['wrkReqRsn']
+            th1AprvStus = row['th1AprvStus']
+            th1AprvNm = row['th1AprvNm']
+            th2AprvStus = row['th2AprvStus']
+            th2AprvNm = row['th2AprvNm']
 
-        # requirements pymysql import 후 커넥트 사용
-        mysql_con = pymysql.connect(host='218.151.225.142', port=3306, db='IFG_IMS', user='ims2', password='1234',
-                                    charset='utf8')
-        try:
-            with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
-                # 쿼리문 실행
-                sql = "INSERT INTO TB_APVL_REQ_MGMT_M (" \
-                      "`EMP_EMAL_ADDR`," \
-                      "`APVL_REQ_DIVS`," \
-                      "`WRK_DT`," \
-                      "`WRK_TME`," \
-                      "`WRK_REQ_RSN`," \
-                      "`APVL_REQ_DT`," \
-                      "`TH1_APRV_STUS`," \
-                      "`TH1_APRV_NM`," \
-                      "`TH2_APRV_STUS`," \
-                      "`TH2_APRV_NM`," \
-                      "`APVL_LAST_APRV_DT`)" \
-                      "VALUES( %s, %s, %s, %s, %s, NOW(), %s, %s, %s, %s, NOW())" \
- \
-                    # "ON DUPLICATE KEY UPDATE "
-                # "EMP_EMAL_ADDR = %s, " \
-                # "APVL_REQ_DIVS = %s," \
-                # "WRK_DT = %s," \
-                # "WRK_TME = %s," \
-                # "WRK_REQ_RSN = %s," \
-                # "TH1_APRV_STUS = %s," \
-                # "TH1_APRV_NM = %s," \
-                # "TH2_APRV_STUS = %s," \
-                # "TH2_APRV_NM = %s,"
-                logger.info(sql)
-                cursor.execute(sql, (email, apvlReqDivs, wrkDt, wrkTme, wrkReqRsn, th1AprvStus, th1AprvNm, th2AprvStus, th2AprvNm))
+            # requirements pymysql import 후 커넥트 사용
+            mysql_con = pymysql.connect(host='218.151.225.142', port=3306, db='IFG_IMS', user='ims2', password='1234',
+                                        charset='utf8')
+            try:
+                with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+                    # 쿼리문 실행
+                    sql = "INSERT INTO TB_APVL_REQ_MGMT_M (" \
+                          "`EMP_EMAL_ADDR`," \
+                          "`APVL_REQ_DIVS`," \
+                          "`WRK_DT`," \
+                          "`WRK_TME`," \
+                          "`WRK_REQ_RSN`," \
+                          "`APVL_REQ_DT`," \
+                          "`TH1_APRV_STUS`," \
+                          "`TH1_APRV_NM`," \
+                          "`TH2_APRV_STUS`," \
+                          "`TH2_APRV_NM`," \
+                          "`APVL_LAST_APRV_DT`)" \
+                          "VALUES( %s, %s, %s, %s, %s, NOW(), %s, %s, %s, %s, NOW())" \
+     \
+                        # "ON DUPLICATE KEY UPDATE "
+                    # "EMP_EMAL_ADDR = %s, " \
+                    # "APVL_REQ_DIVS = %s," \
+                    # "WRK_DT = %s," \
+                    # "WRK_TME = %s," \
+                    # "WRK_REQ_RSN = %s," \
+                    # "TH1_APRV_STUS = %s," \
+                    # "TH1_APRV_NM = %s," \
+                    # "TH2_APRV_STUS = %s," \
+                    # "TH2_APRV_NM = %s,"
+                    logger.info(sql)
+                    cursor.execute(sql, (email, apvlReqDivs, wrkDt, wrkTme, wrkReqRsn, th1AprvStus, th1AprvNm, th2AprvStus, th2AprvNm))
 
-                mysql_con.commit()
+                    mysql_con.commit()
 
-        finally:
-            mysql_con.close()
+            finally:
+                mysql_con.close()
 
             retJson = {
                 "status": 200,
@@ -1039,6 +1079,7 @@ api.add_resource(noticePopUp,'/noticePopUp') #api 선언
 api.add_resource(noticeMjrCnt,'/noticeMjrCnt') #api 선언
 api.add_resource(noticeSave,'/noticeSave') #api 선언
 api.add_resource(empList,'/empList') #api 선언
+api.add_resource(empInfo,'/empInfo') #api 선언
 api.add_resource(saveYryApvlReq,'/saveYryApvlReq') #api 선언
 api.add_resource(gridData,'/gridData') #api 선언
 
