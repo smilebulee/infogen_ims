@@ -950,60 +950,63 @@ class noticeSave(Resource):
 class saveYryApvlReq(Resource):  # Mariadb 연결 진행
     def post(self):
 
-        params = request.get_json()
+        params = json.loads(request.data)
+        logger.info("App Parameters Start")
         logger.info(params)
+        logger.info(type(params))
+        logger.info("App Parameters End")
 
-        for row in request.form:
-            logger.info(row + ':' + request.form[row])
-            globals()[row] = request.form[row]
+        for row in params:
+            logger.info("request.form Parameters Start")
+            logger.info(row)
 
-        email = request.form['email']
-        apvlReqDivs = request.form['apvlReqDivs']
-        wrkDt = request.form['wrkDt']
-        wrkTme = request.form['wrkTme']
-        wrkReqRsn = request.form['wrkReqRsn']
-        th1AprvStus = request.form['th1AprvStus']
-        th1AprvNm = request.form['th1AprvNm']
-        th2AprvStus = request.form['th2AprvStus']
-        th2AprvNm = request.form['th2AprvNm']
+            email = row['email']
+            apvlReqDivs = row['apvlReqDivs']
+            wrkDt = row['wrkDt']
+            wrkTme = row['wrkTme']
+            wrkReqRsn = row['wrkReqRsn']
+            th1AprvStus = row['th1AprvStus']
+            th1AprvNm = row['th1AprvNm']
+            th2AprvStus = row['th2AprvStus']
+            th2AprvNm = row['th2AprvNm']
 
-        # requirements pymysql import 후 커넥트 사용
-        mysql_con = pymysql.connect(host='218.151.225.142', port=3306, db='IFG_IMS', user='ims2', password='1234',
-                                    charset='utf8')
-        try:
-            with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
-                # 쿼리문 실행
-                sql = "INSERT INTO TB_APVL_REQ_MGMT_M (" \
-                      "`EMP_EMAL_ADDR`," \
-                      "`APVL_REQ_DIVS`," \
-                      "`WRK_DT`," \
-                      "`WRK_TME`," \
-                      "`WRK_REQ_RSN`," \
-                      "`APVL_REQ_DT`," \
-                      "`TH1_APRV_STUS`," \
-                      "`TH1_APRV_NM`," \
-                      "`TH2_APRV_STUS`," \
-                      "`TH2_APRV_NM`," \
-                      "`APVL_LAST_APRV_DT`)" \
-                      "VALUES( %s, %s, %s, %s, %s, NOW(), %s, %s, %s, %s, NOW())" \
- \
-                    # "ON DUPLICATE KEY UPDATE "
-                # "EMP_EMAL_ADDR = %s, " \
-                # "APVL_REQ_DIVS = %s," \
-                # "WRK_DT = %s," \
-                # "WRK_TME = %s," \
-                # "WRK_REQ_RSN = %s," \
-                # "TH1_APRV_STUS = %s," \
-                # "TH1_APRV_NM = %s," \
-                # "TH2_APRV_STUS = %s," \
-                # "TH2_APRV_NM = %s,"
-                logger.info(sql)
-                cursor.execute(sql, (email, apvlReqDivs, wrkDt, wrkTme, wrkReqRsn, th1AprvStus, th1AprvNm, th2AprvStus, th2AprvNm))
+            # requirements pymysql import 후 커넥트 사용
+            mysql_con = pymysql.connect(host='218.151.225.142', port=3306, db='IFG_IMS', user='ims2', password='1234',
+                                        charset='utf8')
+            try:
+                with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+                    # 쿼리문 실행
+                    sql = "INSERT INTO TB_APVL_REQ_MGMT_M (" \
+                          "`EMP_EMAL_ADDR`," \
+                          "`APVL_REQ_DIVS`," \
+                          "`WRK_DT`," \
+                          "`WRK_TME`," \
+                          "`WRK_REQ_RSN`," \
+                          "`APVL_REQ_DT`," \
+                          "`TH1_APRV_STUS`," \
+                          "`TH1_APRV_NM`," \
+                          "`TH2_APRV_STUS`," \
+                          "`TH2_APRV_NM`," \
+                          "`APVL_LAST_APRV_DT`)" \
+                          "VALUES( %s, %s, %s, %s, %s, NOW(), %s, %s, %s, %s, NOW())" \
+     \
+                        # "ON DUPLICATE KEY UPDATE "
+                    # "EMP_EMAL_ADDR = %s, " \
+                    # "APVL_REQ_DIVS = %s," \
+                    # "WRK_DT = %s," \
+                    # "WRK_TME = %s," \
+                    # "WRK_REQ_RSN = %s," \
+                    # "TH1_APRV_STUS = %s," \
+                    # "TH1_APRV_NM = %s," \
+                    # "TH2_APRV_STUS = %s," \
+                    # "TH2_APRV_NM = %s,"
+                    logger.info(sql)
+                    cursor.execute(sql, (email, apvlReqDivs, wrkDt, wrkTme, wrkReqRsn, th1AprvStus, th1AprvNm, th2AprvStus, th2AprvNm))
 
-                mysql_con.commit()
+                    mysql_con.commit()
 
-        finally:
-            mysql_con.close()
+            finally:
+                mysql_con.close()
 
             retJson = {
                 "status": 200,

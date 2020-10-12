@@ -369,6 +369,7 @@ def saveApvlReq(request):
 
     for row in param:
         logger.info("------views.py------")
+        logger.info(row)
         logger.info(row + ':' + param[row])
         datas.setdefault(row, param[row])
 
@@ -441,18 +442,10 @@ def saveYryApvlReq(request):
     param = json.loads(request.POST['param'])
 
     logger.info("Parameters Start")
-    logger.info(param)
+    logger.info(type(json.dumps(param)))
     logger.info("Parameters End")
 
-    datas = {
-    }
-
-    for row in param:
-        logger.info("------views.py------")
-        logger.info(row + ':' + param[row])
-        datas.setdefault(row, param[row])
-
-    r = requests.post('http://dili_api:5006/saveYryApvlReq', data=datas)
+    r = requests.post('http://dili_api:5006/saveYryApvlReq', data=json.dumps(param), headers = {'Content-Type': 'application/json; charset=utf-8'})
     logger.info(r)
     logger.info(r.text)
     logger.info(r.json())
