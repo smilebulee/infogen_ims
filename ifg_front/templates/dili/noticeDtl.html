@@ -2,40 +2,41 @@
 {% extends 'common/base.html' %}
 
 {% block content %}
+{% load static %}
 <head>
+    <!--Grid UI : datepicker & monthpicker import -->
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.11.4/themes/ui-lightness/jquery-ui.css" type="text/css"/>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="{% static 'js/jquery.mtz.monthpicker.js' %}"></script>
+    <!--Grid UI : datepicker & monthpicker import End-->
+
+    <!-- 달력 표출 -->
+    <script src="https://uicdn.toast.com/tui.code-snippet/v1.5.2/tui-code-snippet.min.js"></script>
+    <script src="https://uicdn.toast.com/tui.time-picker/latest/tui-time-picker.min.js"></script>
+    <script src="https://uicdn.toast.com/tui.date-picker/latest/tui-date-picker.min.js"></script>
+    <script src="https://uicdn.toast.com/tui-calendar/latest/tui-calendar.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="https://uicdn.toast.com/tui-calendar/latest/tui-calendar.css" />
+    <!-- 달력 표출 End -->
+
     <script type="text/javascript" xmlns:max-width="http://www.w3.org/1999/xhtml">
 
         $(document).ready(function(){
-             tit = $('#ipt_title').val();
-             console.log(tit);
+             console.log("ready");
 
-             if(tit != ""){
-                console.log('tit is not null');
-
-             } else{
-                console.log('tit is null');
-                //alert('제목을 입력해주세요.');
-             }
-
-             cntn = $('#ipt_cntn').val();
-             console.log(cntn);
-
-             if(cntn != ""){
-                console.log('cntn is not null');
-             }else{
-                console.log('cntn is null');
-                //alert('내용을 입력해주세요.');
-             }
-
-             <!-- 공지사항 상세조회-->
              var url = decodeURIComponent(window.location.href);
              var type = $.urlParam("type");     <!-- url에서 type 가져오기-->
              console.log("type: " + type);
 
-            // if(url != null || url != '' ){
-            if(type == "r"){
+            /*********************************************************************
+             *  type에 따른 버튼 show/hide 변경
+            *********************************************************************/
+            if(type == "r"){    //공지사항 상세조회
                 console.log("상세보기");
                 console.log(url);
+                $('#btn_R').show();
+                $('#btn_U').hide();
+                $('#btn_C').hide();
 
                 $.urlParam = function(name){
                     var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
@@ -48,10 +49,21 @@
                 }
                 var postId =  $.urlParam("postId");     <!-- url에서 postId 가져오기-->
                 console.log(postId);
-             } else {
+            } else if(type == "c"){     //글쓰기 버튼 클릭
                 console.log("새로 등록");
-             }
+                $('#btn_R').hide();
+                $('#btn_U').hide();
+                $('#btn_C').show();
+            } else if(type == "u"){     //수정 버튼 클릭
+                console.log("수정");
+                $('#btn_R').hide();
+                $('#btn_U').show();
+                $('#btn_C').hide();
+            }
 
+            /*********************************************************************
+             *  공지사항 상세조회
+            *********************************************************************/
             function getNoticeOne(){
                 var options = {
                     method : 'get',
@@ -62,8 +74,81 @@
                 }
             }
 
+
+            /*********************************************************************
+            *   btn_datepicker1 Btn Click Event - 일달력호출
+            *********************************************************************/
+            $("#btn_datepicker1").click(function(){
+                if($('#cb_popOpenYn').is(":checked") == false) {
+                    alertMsg("공지표출(팝업)을 먼저 체크해주세요.");
+                    return;
+                }
+                $("#datepickerData1").datepicker("show");
+            });
+
+            /*********************************************************************
+            *   btn_datepicker2 Btn Click Event - 일달력호출
+            *********************************************************************/
+            $("#btn_datepicker2").click(function(){
+                if($("#ipt_holiTerm1").val() == "") {
+                    alertMsg("시작 일자를 먼저 선택해주세요.");
+                    return;
+                }
+                $("#datepickerData2").datepicker("show");
+            });
+
+            /*********************************************************************
+            *   클릭한 달력 datepickerData1에 value 값 담기
+            *********************************************************************/
+            $("#datepickerData1").datepicker({
+
+                onSelect:function(dateText, inst) {
+
+                    var tempData = $('#datepickerData1').val();
+
+                    $("#ipt_holiTerm1").val(tempData);
+                }
+            });
+
+	        /*********************************************************************
+            *   클릭한 달력 datepickerData2에 value 값 담기
+            *********************************************************************/
+            $("#datepickerData2").datepicker({
+
+                onSelect:function(dateText, inst) {
+
+                    var tempData = $('#datepickerData2').val();
+
+                    $("#ipt_holiTerm2").val(tempData);
+                    dateCalcu();
+                }
+	        });
+
+            function dateCalcu() {
+                var tempData1 = $("#ipt_holiTerm1").val().split('-');
+                var tempData2 = $("#ipt_holiTerm2").val().split('-');
+
+                var arrDate1 = new Date(tempData1[0], tempData1[1], tempData1[2]);
+                var arrDate2 = new Date(tempData2[0], tempData2[1], tempData2[2]);
+
+                var diffDate = arrDate2 - arrDate1;
+                var currDate = 24 * 60 * 60 * 1000;
+
+                if(parseInt(diffDate/currDate)+1 < 0) {
+                    alertMsg("시작일자와 종료일자를 다시 확인해주세요.");
+                    $("#ipt_holiTerm2").val("");
+                    return;
+                } else {
+                    $("#ipt_holiDays").val(parseInt(diffDate/currDate)+1);
+                }
+
+            }
+
         });
 
+        /*************************************************************
+        *  url에서 postId 가져오기
+        **************************************************************/
         $.urlParam = function(name){
             var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
             if (results == null || results == '' ){
@@ -73,187 +158,11 @@
 
                 return results[1] || 0;
             }
-        }
+        }   //End
 
-        <!-- 파일업로드 -->
-        // 파일 리스트 번호
-        var fileIndex = 0;
-        // 등록할 전체 파일 사이즈
-        var totalFileSize = 0;
-        // 파일 리스트
-        var fileList = new Array();
-        // 파일 사이즈 리스트
-        var fileSizeList = new Array();
-        // 등록 가능한 파일 사이즈 MB
-        var uploadSize = 50;
-        // 등록 가능한 총 파일 사이즈 MB
-        var maxUploadSize = 500;
-
-         $(function (){
-            // 파일 드롭 다운
-            fileDropDown();
-        });
-
-        // 파일 드롭 다운
-        function fileDropDown(){
-            var dropZone = $("#dropZone");
-            //Drag기능
-            dropZone.on('dragenter',function(e){
-                e.stopPropagation();
-                e.preventDefault();
-                // 드롭다운 영역 css
-                dropZone.css('background-color','#E3F2FC');
-            });
-            dropZone.on('dragleave',function(e){
-                e.stopPropagation();
-                e.preventDefault();
-                // 드롭다운 영역 css
-                dropZone.css('background-color','#FFFFFF');
-            });
-            dropZone.on('dragover',function(e){
-                e.stopPropagation();
-                e.preventDefault();
-                // 드롭다운 영역 css
-                dropZone.css('background-color','#E3F2FC');
-            });
-            dropZone.on('drop',function(e){
-                e.preventDefault();
-                // 드롭다운 영역 css
-                dropZone.css('background-color','#FFFFFF');
-
-                var files = e.originalEvent.dataTransfer.files;
-                if(files != null){
-                    if(files.length < 1){
-                        alert("폴더 업로드 불가");
-                        return;
-                    }
-                    selectFile(files)
-                }else{
-                    alert("ERROR");
-                }
-            });
-        }
-
-        // 파일 선택시
-        function selectFile(files){
-            // 다중파일 등록
-            if(files != null){
-                for(var i = 0; i < files.length; i++){
-                    // 파일 이름
-                    var fileName = files[i].name;
-                    var fileNameArr = fileName.split("\.");
-                    // 확장자
-                    var ext = fileNameArr[fileNameArr.length - 1];
-                    // 파일 사이즈(단위 :MB)
-                    var fileSize = files[i].size / 1024 / 1024;
-
-                    if($.inArray(ext, ['exe', 'bat', 'sh', 'java', 'jsp', 'html', 'js', 'css', 'xml']) >= 0){
-                        // 확장자 체크
-                        alert("등록 불가 확장자");
-                        break;
-                    }else if(fileSize > uploadSize){
-                        // 파일 사이즈 체크
-                        alert("용량 초과\n업로드 가능 용량 : " + uploadSize + " MB");
-                        break;
-                    }else{
-                        // 전체 파일 사이즈
-                        totalFileSize += fileSize;
-
-                        // 파일 배열에 넣기
-                        fileList[fileIndex] = files[i];
-
-                        // 파일 사이즈 배열에 넣기
-                        fileSizeList[fileIndex] = fileSize;
-
-                        // 업로드 파일 목록 생성
-                        addFileList(fileIndex, fileName, fileSize);
-
-                        // 파일 번호 증가
-                        fileIndex++;
-                    }
-                }
-            }else{
-                alert("ERROR");
-            }
-        }
-
-        // 업로드 파일 목록 생성
-        function addFileList(fIndex, fileName, fileSize){
-            var html = "";
-            html += "<tr id='fileTr_" + fIndex + "'>";
-            html += "    <td class='left' >";
-            html +=         fileName + " / " + fileSize + "MB "  + "<a href='#' onclick='deleteFile(" + fIndex + "); return false;' class='btn small bg_02'>삭제</a>"
-            html += "    </td>"
-            html += "</tr>"
-
-            $('#fileTableTbody').append(html);
-        }
-
-        // 업로드 파일 삭제
-        function deleteFile(fIndex){
-            // 전체 파일 사이즈 수정
-            totalFileSize -= fileSizeList[fIndex];
-
-            // 파일 배열에서 삭제
-            delete fileList[fIndex];
-
-            // 파일 사이즈 배열 삭제
-            delete fileSizeList[fIndex];
-
-            // 업로드 파일 테이블 목록에서 삭제
-            $("#fileTr_" + fIndex).remove();
-        }
-
-        // 파일 등록
-        function uploadFile(){
-            // 등록할 파일 리스트
-            var uploadFileList = Object.keys(fileList);
-
-            // 파일이 있는지 체크
-            if(uploadFileList.length == 0){
-                // 파일등록 경고창
-                alert("파일이 없습니다.");
-                return;
-            }
-
-            // 용량을 500MB를 넘을 경우 업로드 불가
-            if(totalFileSize > maxUploadSize){
-                // 파일 사이즈 초과 경고창
-                alert("총 용량 초과\n총 업로드 가능 용량 : " + maxUploadSize + " MB");
-                return;
-            }
-
-            if(confirm("등록 하시겠습니까?")){
-                // 등록할 파일 리스트를 formData로 데이터 입력
-                var form = $('#uploadForm');
-                var formData = new FormData(form);
-                for(var i = 0; i < uploadFileList.length; i++){
-                    formData.append('files', fileList[uploadFileList[i]]);
-                }
-
-                $.ajaxCall({
-                    url:"업로드 경로",   //??
-                    data:formData,
-                    type:'POST',
-                    enctype:'multipart/form-data',
-                    processData:false,
-                    contentType:false,
-                    dataType:'json',
-                    cache:false,
-                    success:function(result){
-                        if(result.data.length > 0){
-                            alert("성공");
-                            location.reload();
-                        }else{
-                            alert("실패");
-                            location.reload();
-                        }
-                    }
-                });
-            }
-        }
-
-
+        /*************************************************************
+        *  btnSave onClick() : 저장 버튼 클릭 이벤트
+        **************************************************************/
         function btnSave() {
             var sFlag = false;
             var mjrYn = "N";
@@ -268,7 +177,10 @@
                 console.log("중요체크 안됨");
                 console.log(mjrYn);
             }
-            //공지팝업표출 값 지정
+
+            /**************************************
+            * 저장 클릭시 공지팝업표출 값 지정 (default: 'N')
+            **************************************/
             if($('#cb_popOpenYn').is(":checked") == true){
                 console.log("공지표출 체크됨");
                 popOpenYn = "Y";
@@ -278,12 +190,49 @@
                 //popOpenYn = "N";
                 console.log(popOpenYn);
             }
+
+            /**************************************
+            * 저장 클릭시 필수입력 값 체크
+            **************************************/
+            console.log("분류: " + $('#sbx_kdDivsCd option:selected').val());
+            var title = $('#ipt_title').val();
+            var contents = $('#ipt_cntn').val();
+            var kdDivsCd = $('#sbx_kdDivsCd option:selected').val();
+
+            if(title == '' || title == null){
+                alertMsg('제목은(는) 필수 입력 사항입니다.');
+                return false;
+            } else if(contents == '' || contents == null){
+               alertMsg('내용은(는) 필수 입력 사항입니다.');
+               return false;
+            }
+
+            if( kdDivsCd == "00"){
+                alertMsg('분류는 필수 선택 사항입니다.');
+               return false;
+            }
+
+            /********************************************
+            * 저장 클릭시 공지표출 체크 했을때 날짜 입력했는지 체크
+            ********************************************/
+            if( $('#cb_popOpenYn').is(":checked") == true){
+                if( ($('#ipt_holiTerm1').val() == '' || $('#ipt_holiTerm1').val() == null ) || ( $('#ipt_holiTerm2').val() == '' || $('#ipt_holiTerm2').val() == null )) {
+                    alertMsg('공지표출 기간을(를) 입력해주세요.');
+                    return false;
+                 }
+            }
+
+            /**************************************
+            * 저장 실행
+            **************************************/
             confirmMsg('저장하시겠습니까?', function(){
                 var param = {
                     "tit" : $("#ipt_title").val(),
-                    "kdDivsCd" : "11",
+                    "kdDivsCd" : $("#sbx_kdDivsCd").val(),
                     "mjrYn" : mjrYn,
                     "popOpenYn" : popOpenYn,
+                    //"popOpenDttmFrom" : $("#ipt_holiTerm1").val(),
+                    //"popOpenDttmTo" : $("#ipt_holiTerm2").val(),
                     "cntn" : $("#ipt_cntn").val(),
                     "dataInptId" : "TEST1",
                     "dataInptPgmId" : "noticeDtl",
@@ -296,9 +245,8 @@
                     url:'/dili/noticeSave/post',
                     dataType:'json',
                     data:JSON.stringify(param),
-                    //status == '200'
                     callbackFn:function(data){
-                        if(status == '200'){
+                        if(data){
                             // 리턴
                              //location.href = '/dili/noticeLst';
                              g_toast.push("저장되었습니다.");
@@ -310,9 +258,9 @@
                         } else{
                             g_toast.push("저장에 실패하였습니다.");
                             console.log("저장에 실패하였습니다.");
-                            location.reload();
+                           // location.reload();
                         }
-                    }
+                    },
                     success:function(data){
                         // 리턴
                          //location.href = '/dili/noticeLst';
@@ -327,7 +275,7 @@
                         console.log(err);
                         g_toast.push("저장에 실패하였습니다.");
                         console.log("저장에 실패하였습니다.");
-                        location.reload();
+                        //location.reload();
                     }
                });
 
@@ -335,6 +283,9 @@
             });
         }
 
+        /*************************************************************
+        *  fileSave : 파일업로드
+        **************************************************************/
         function fileSave() {
             console.log('aaa');
 
@@ -345,6 +296,72 @@
                     "dataInptPgmId" : "noticeDtl"
             }
             console.log(param);
+        }
+
+        /*************************************************************
+        *  btnCncl onClick() : 취소 버튼 클릭 이벤트
+        **************************************************************/
+        function btnCncl() {
+            var title = $('#ipt_title').val();
+            var contents = $('#ipt_cntn').val();
+            var kdDivsCd = $('#sbx_kdDivsCd option:selected').val();
+
+            if(( title != '' && title != null) || (contents != '' && contents != null) || (kdDivsCd != "00")){
+                confirmMsg('작성중인 내용이 있습니다. 취소하시겠습니까?',function(){
+                    location.href = '/dili/noticeLst';
+                    g_toast.push("취소되었습니다.");
+                });
+                return false;
+            } else {
+                location.href = '/dili/noticeLst';
+                g_toast.push("취소되었습니다.");
+            }
+        }
+
+        /*************************************************************
+        *  goList onClick() : 목록 버튼 클릭 이벤트 - 목록으로 돌아가기
+        **************************************************************/
+        function goList() {
+            var title = $('#ipt_title').val();
+            var contents = $('#ipt_cntn').val();
+            var kdDivsCd = $('#sbx_kdDivsCd option:selected').val();
+
+            console.log("제목: " + title);
+            console.log("내용: " + contents);
+            console.log("분류: " + kdDivsCd);
+
+
+            if(( title != null && title != '') || (contents != null && contents != '') || (kdDivsCd != "00")){
+                confirmMsg('작성중인 내용이 있습니다. 목록으로 이동하시겠습니까?',function(){
+                    location.href = '/dili/noticeLst';
+                    g_toast.push("목록으로 가기");
+                });
+            } else {
+                location.href = '/dili/noticeLst';
+                g_toast.push("목록으로 가기");
+            }
+
+        }
+
+        /*************************************************************
+        *  btn_Delete onClick() : 삭제 버튼 클릭 이벤트
+        **************************************************************/
+        function btnDelete(){
+            console.log("삭제 버튼 클릭 이벤트");
+        }
+
+        /***************************************************************
+        *  btn_goUpt onClick() : 수정 버튼 클릭 이벤트 - 수정화면으로 이동
+        ****************************************************************/
+        function btnGoUpdt(){
+            console.log("수정화면으로 이동");
+        }
+
+        /***************************************************************
+        *  btn_updt onClick() : 내용 수정 (업데이트)
+        ****************************************************************/
+        function btnUpdt(){
+            console.log("내용 수정 (업데이트)");
         }
 
     </script>
@@ -358,7 +375,12 @@
 
     <div class="container">
         <h4>공지사항</h4>
-        <hr><br/><br/>
+        <hr><br/>
+
+        <div class="container">
+            <button type="button" class="btn btn-sm btn-primary float-left" id="btn_goList" onclick="goList()">목록</button>
+        </div>
+        <br/><hr>
 
         <div id="noticeEnrollment">
 
@@ -369,8 +391,30 @@
 
             <div class="form-inline">
                <h6><label>구분</label></h6>
-               <label class="col-sm-2"><input type="checkbox" class="form-control" id="cb_mjrYn" value="">중요</label>
-               <label class="col-sm-2"><input type="checkbox" class="form-control" id="cb_popOpenYn" value="">공지표출(팝업)</label>
+               <label class="col-sm-2"><input type="checkbox" class="form-control mr-2" id="cb_mjrYn" value="">중요</label>
+               <label class="col-sm-2"><input type="checkbox" class="form-control mr-2" id="cb_popOpenYn" value="">공지표출(팝업)</label>
+
+
+                <input type="hidden" name="date" id="datepickerData1"/>
+                <div id="btn_datepicker1" class="align-self-center mr-5" >
+                    <input type="text" class="form-control" id="ipt_holiTerm1" name="ipt_holiTerm" placeholder="" maxlength="24"/> ~
+                </div>
+
+                <input type="hidden" name="date" id="datepickerData2"/>
+                <div id="btn_datepicker2" class="align-self-center mr-5" >
+                    <input type="text" class="form-control" id="ipt_holiTerm2" name="ipt_holiTerm" placeholder="" maxlength="24"/>
+                </div>
+            </div>
+
+            <div class="form-inline">
+                <h6><label class="mr-4">*분류</label></h6>
+                <select id="sbx_kdDivsCd" class="form-control mr-4" name="kdDivsCd">
+                    <option value="00" selected>선택</option>
+                    <option value="01">공지</option>
+                    <option value="02">복리</option>
+                    <option value="03">발령</option>
+                    <option value="04">그룹웨어</option>
+                </select>
             </div>
 
             <div class="mb-3">
@@ -378,6 +422,7 @@
                <textarea class="form-control" rows="15" id="ipt_cntn" name="ipt_cntn" placeholder="내용을 입력해주세요."></textarea>
 
             </div>
+            <hr>
 
             <!-- 파일업로드 -->
             <form action="{% url 'dili_api:my-view' %}" name="uploadForm" id="uploadForm" enctype="multipart/form-data" method="post">
@@ -424,10 +469,21 @@
       </div> <!-- /container -->
 
 
+    <hr>
+    <div class="container" id="btn_C">
+        <button type="button" class="btn btn-sm btn-primary float-right mr-2" id="btn_cncl" onclick="btnCncl()">취소</button>
+        <button type="button" class="btn btn-sm btn-primary float-right mr-2" id="btn_save" onclick="btnSave()">등록</button>
+    </div>
 
-    <div class="container">
-        <button type="button" class="btn btn-sm btn-primary float-right mr-4" id="btn_cncl" onclick="">취소</button>
-        <button type="button" class="btn btn-sm btn-primary float-right mr-4" id="btn_save" onclick="btnSave()">등록</button>
+    <div class="container" id="btn_R" type="hidden">
+        <!--   (수정) 상세보기 화면에서 수정 화면으로 이동하는 버튼     -->
+        <button type="button" class="btn btn-sm btn-primary float-right mr-2" id="btn_goUpt" onclick="btnGoUpdt()">수정</button>
+        <button type="button" class="btn btn-sm btn-primary float-right mr-2" id="btn_delt" onclick="btnDelete()">삭제</button>
+    </div>
+
+    <!--   (수정)수정 화면에서 수정완료시 누르는 버튼(업데이트)   -->
+    <div class="container" id="btn_U" type="hidden">
+        <button type="button" class="btn btn-sm btn-primary float-right mr-2" id="btn_updt" onclick="btnUpdt()">수정</button>
     </div>
 
 </body>

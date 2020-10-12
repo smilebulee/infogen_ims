@@ -927,6 +927,8 @@ class noticeSave(Resource):
         kdDivsCd = request.form['kdDivsCd']
         mjrYn = request.form['mjrYn']
         popOpenYn = request.form['popOpenYn']
+        #popOpenDttmFrom = request.form['popOpenDttmFrom'],
+        #popOpenDttmTo = request.form['popOpenDttmTo'],
         cntn = request.form['cntn']
         dataInptId = request.form['dataInptId']
         dataInptPgmId = request.form['dataInptPgmId']
@@ -938,6 +940,8 @@ class noticeSave(Resource):
         logging.debug("kdDivsCd = " + kdDivsCd)
         logging.debug("mjrYn = " + mjrYn)
         logging.debug("popOpenYn = " + popOpenYn)
+        #logging.debug("popOpenDttmFrom = " + popOpenDttmFrom)
+        #logging.debug("popOpenDttmTo = " + popOpenDttmTo)
         logging.debug("cntn = " + cntn)
         logging.debug("dataInptId = " + dataInptId)
         logging.debug("dataInptPgmId = " + dataInptPgmId)
@@ -978,7 +982,7 @@ class noticeSave(Resource):
                 # "DATA_UPD_PGM_ID = %s"
                 logger.info(sql)
                 cursor.execute(sql, (tit, cntn, kdDivsCd, mjrYn, popOpenYn, dataInptId, dataInptPgmId, dataUpdId, dataUpdPgmId))
-
+                logger.info(sql)
                 mysql_con.commit()
 
         finally:
