@@ -25,7 +25,7 @@ services:
 #      - skil_api
 #      - cmm_api
 #      - cnc_api
-#      - dili_api
+      - dili_api
 #      - eval_api
 #      - kpi_api
 #      - stat_api
@@ -39,9 +39,9 @@ services:
 #    volumes:
 #      - src-front:/app
   # 1.직원관리
-  emp_api: 
+  emp_api:
     build: "./api_containers/emp/api"
-    ports: 
+    ports:
       - "5001:5001"
     links:
       - emp_db
@@ -53,9 +53,9 @@ services:
     build: "./api_containers/emp/db"
 
   # 2.프로젝트 관리
-  prj_api: 
+  prj_api:
     build: "./api_containers/prj/api"
-    ports: 
+    ports:
       - "5002:5002"
     links:
       - prj_db
@@ -109,18 +109,35 @@ services:
 #    build: "./api_containers/cnc/db"
 #
 #  # 6.근태 관리
-#  dili_api:
-#    build: "./api_containers/dili/api"
-#    ports:
-#      - "5006:5006"
-#    links:
-#      - dili_db
-#    environment:
-#      - SPRING_PROFILES_ACTIVE=prod
-#      - SPRING_APPLICATION_NAME=dili_api
-#      - SIDECAR_PORT=5006
-#  dili_db:
-#    build: "./api_containers/dili/db"
+  dili_api:
+    build: "./api_containers/dili/api"     # Dockerfile의 경로
+    ports:
+      - "5006:5006"     # 로컬의 5001포트로 요청일 들어오면 dili_api 컨테이너의 5006 포트로 연결
+    links:
+      - dili_db
+      - dili_db2
+    environment:
+      - SPRING_PROFILES_ACTIVE=local      # 이미지 생성시 세팅될 환경변수들
+      - SPRING_APPLICATION_NAME=dili_api
+      - SIDECAR_PORT=5006
+  dili_db:
+    build: "./api_containers/dili/db"   # Dockerfile의 경로
+  dili_db2:
+    build: "./api_containers/dili/db"   # Dockerfile의 경로
+    #container_name: mariadb
+    image: mariadb:latest
+    restart: always
+    ports:
+      - 9877:3306
+    volumes:
+      - data-postgressql:/var/lib/mysql
+    environment:
+      MYSQL_HOST: '218.151.225.142'
+      MYSQL_ROOT_PASSWORD: 'infogen'
+      MYSQL_USER : 'ims2'
+      MYSQL_PASSWORD : '1234'
+      MYSQL_DATABASE : 'IFG_IMS'
+      TZ: Asia/Seoul
 #
 #  # 7.평가 관리
 #  eval_api:
