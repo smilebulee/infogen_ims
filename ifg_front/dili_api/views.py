@@ -96,6 +96,21 @@ def getYryMgmt(request):
     logger.info(json.loads(r.text))
     return JsonResponse(r.json(), safe=False)
 
+def getGridData(request):
+    param = json.loads(request.GET['param'])
+
+    logger.info("Parameters Start")
+    logger.info(param)
+    logger.info("Parameters End")
+
+    # api 호출
+    r = requests.get('http://dili_api:5006/gridData', json=param)
+    logger.info(r)
+    logger.info(r.text)
+    logger.info(logger.info(ast.literal_eval(r.json())))
+    logger.info(json.loads(r.text))
+    return JsonResponse(ast.literal_eval(r.json()), safe=False)
+
 def getWrkTimeInfoByEml(request):
     param = json.loads(request.GET['param'])
 
@@ -422,6 +437,28 @@ def getCalendarData(request):
     return JsonResponse(r.json(), safe=False)
 
 
+def saveYryApvlReq(request):
+    param = json.loads(request.POST['param'])
+
+    logger.info("Parameters Start")
+    logger.info(param)
+    logger.info("Parameters End")
+
+    datas = {
+    }
+
+    for row in param:
+        logger.info("------views.py------")
+        logger.info(row + ':' + param[row])
+        datas.setdefault(row, param[row])
+
+    r = requests.post('http://dili_api:5006/saveYryApvlReq', data=datas)
+    logger.info(r)
+    logger.info(r.text)
+    logger.info(r.json())
+    return JsonResponse(r.json())
+
+
 # 공지사항 파일업로드 임시추가
 def my_view(request):
     print(f"Great! You're using Python 3.6+. If you fail here, use the right version.")
@@ -446,24 +483,3 @@ def my_view(request):
     # Render list page with the documents and the form
     context = {'documents': documents, 'form': form, 'message': message}
     return render(request, 'dili/noticeDtl.html', context)
-
-def saveYryApvlReq(request):
-    param = json.loads(request.POST['param'])
-
-    logger.info("Parameters Start")
-    logger.info(param)
-    logger.info("Parameters End")
-
-    datas = {
-    }
-
-    for row in param:
-        logger.info("------views.py------")
-        logger.info(row + ':' + param[row])
-        datas.setdefault(row, param[row])
-
-    r = requests.post('http://dili_api:5006/saveYryApvlReq', data=datas)
-    logger.info(r)
-    logger.info(r.text)
-    logger.info(r.json())
-    return JsonResponse(r.json())
