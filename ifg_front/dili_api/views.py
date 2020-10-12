@@ -299,6 +299,7 @@ def getNoticeOne(request):
     param = json.loads(request.GET['param'])
 
     logger.info(param)
+    logger.info("공지사항 상세정보")
 
     params = {
         'postId': param['postId'],

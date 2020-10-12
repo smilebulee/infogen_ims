@@ -810,12 +810,12 @@ class noticeOne(Resource):  # Mariadb 연결 진행
                       "A.KD_DIVS_CD, " \
                       "A.MJR_YN, " \
                       "A.POP_OPEN_YN, " \
+                      "A.POP_OPEN_DTTM_FROM, " \
+                      "A.POP_OPEN_DTTM_TO, " \
                       "A.DATA_INPT_ID, " \
                       "B.EMP_NAME, " \
-                      "DATE_FORMAT(A.DATA_INPT_DTTM, '%Y-%m-%d %H:%i:%s') AS DATA_INPT_DTTM, " \
                       "A.DATA_INPT_PGM_ID, " \
                       "A.DATA_UPD_ID, " \
-                      "DATE_FORMAT(A.DATA_UPD_DTTM, '%Y-%m-%d %H:%i:%s') AS DATA_UPD_DTTM, " \
                       "A.DATA_UPD_PGM_ID, " \
                       "CASE WHEN A.KD_DIVS_CD = '01' THEN '공지' " \
                       "WHEN A.KD_DIVS_CD = '02' THEN '복리' " \
@@ -927,8 +927,8 @@ class noticeSave(Resource):
         kdDivsCd = request.form['kdDivsCd']
         mjrYn = request.form['mjrYn']
         popOpenYn = request.form['popOpenYn']
-        #popOpenDttmFrom = request.form['popOpenDttmFrom'],
-        #popOpenDttmTo = request.form['popOpenDttmTo'],
+        popOpenDttmFrom = request.form['popOpenDttmFrom']
+        popOpenDttmTo = request.form['popOpenDttmTo']
         cntn = request.form['cntn']
         dataInptId = request.form['dataInptId']
         dataInptPgmId = request.form['dataInptPgmId']
@@ -940,8 +940,8 @@ class noticeSave(Resource):
         logging.debug("kdDivsCd = " + kdDivsCd)
         logging.debug("mjrYn = " + mjrYn)
         logging.debug("popOpenYn = " + popOpenYn)
-        #logging.debug("popOpenDttmFrom = " + popOpenDttmFrom)
-        #logging.debug("popOpenDttmTo = " + popOpenDttmTo)
+        #logging.debug("popOpenDttmFrom = " + popOpenDttmFrom) -> error:must be str, not tuple -> 타입 달라서 오류남
+        #logging.debug("popOpenDttmTo = " + popOpenDttmTo) -> error:must be str, not tuple -> 타입 달라서 오류남
         logging.debug("cntn = " + cntn)
         logging.debug("dataInptId = " + dataInptId)
         logging.debug("dataInptPgmId = " + dataInptPgmId)
@@ -962,26 +962,31 @@ class noticeSave(Resource):
                                                     "`KD_DIVS_CD`, " \
                                                     "`MJR_YN`, " \
                                                     "`POP_OPEN_YN`, " \
+                                                    "`POP_OPEN_DTTM_FROM`, " \
+                                                    "`POP_OPEN_DTTM_TO`, " \
                                                     "`DATA_INPT_ID`," \
                                                     "`DATA_INPT_DTTM`," \
                                                     "`DATA_INPT_PGM_ID`," \
                                                     "`DATA_UPD_ID`," \
                                                     "`DATA_UPD_DTTM`," \
                                                     "`DATA_UPD_PGM_ID`) "\
-                "VALUES( %s, %s, %s, %s, %s, %s, NOW(), %s, %s, NOW(), %s)" \
+                "VALUES( %s, %s, %s, %s, %s, %s, %s, %s, NOW(), %s, %s, NOW(), %s)" \
+## 쿼리 안먹음 ;;
+                "ON DUPLICATE KEY UPDATE "
+                "TIT = %s, " \
+                "CNTN = %s," \
+                "KD_DIVS_CD = %s," \
+                "MJR_YN = %s," \
+                "POP_OPEN_YN = %s," \
+                "POP_OPEN_DTTM_FROM = %s," \
+                "POP_OPEN_DTTM_TO = %s," \
+                "DATA_UPD_ID = %s," \
+                "DATA_UPD_DTTM = NOW()," \
+                "DATA_UPD_PGM_ID = %s"
 
-                # "ON DUPLICATE KEY UPDATE "
-                # "TIT = %s, " \
-                # "CNTN = %s," \
-                # "MJR_YN = %s," \
-                # "POP_OPEN_YN = %s," \
-                # "DATA_INPT_ID = %s," \
-                # "DATA_INPT_PGM_ID = %s," \
-                # "DATA_UPD_ID = %s," \
-                # "DATA_UPD_ID = %s," \
-                # "DATA_UPD_PGM_ID = %s"
                 logger.info(sql)
-                cursor.execute(sql, (tit, cntn, kdDivsCd, mjrYn, popOpenYn, dataInptId, dataInptPgmId, dataUpdId, dataUpdPgmId))
+                cursor.execute(sql, (tit, cntn, kdDivsCd, mjrYn, popOpenYn, popOpenDttmFrom, popOpenDttmTo, dataInptId, dataInptPgmId, dataUpdId, dataUpdPgmId
+                                     ,tit, cntn, kdDivsCd, mjrYn, popOpenYn, popOpenDttmFrom, popOpenDttmTo,dataUpdId,dataUpdPgmId))
                 logger.info(sql)
                 mysql_con.commit()
 
