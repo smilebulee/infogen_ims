@@ -620,12 +620,20 @@ class calendarData(Resource): # Mariadb 연결 진행
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 #쿼리문 실행
-                sql = "SELECT * " \
-                    + "  FROM TB_WRK_TM_MGMT_M A" \
-                    + "      ,TB_APVL_REQ_MGMT_M B" \
-                    + " WHERE A.EMP_EMAL_ADDR = B.EMP_EMAL_ADDR" \
-                    + "   AND A.WRK_DT = B.WRK_DT" \
-                    + "   AND A.EMP_EMAL_ADDR = '" + data["email"] + "'"
+                sql = "SELECT    A.EMP_EMAL_ADDR " \
+                      + "       ,A.WRK_DT " \
+                      + "       ,DATE_FORMAT(A.JOB_STRT_TM, '%H:%i:%s') AS JOB_STRT_TM " \
+                      + "       ,DATE_FORMAT(A.JOB_END_TM, '%H:%i:%s') AS JOB_END_TM " \
+                      + "       ,A.NORM_WRK_TM " \
+                      + "       ,A.ALL_WRK_TM " \
+                      + "       ,NVL(B.APVL_REQ_DT, 'N/A') AS APVL_REQ_DT " \
+                      + "       ,NVL(B.APVL_LAST_APRV_DT, 'N/A') AS APVL_LAST_APRV_DT " \
+                      + "   FROM TB_WRK_TM_MGMT_M A " \
+                      + "        LEFT OUTER JOIN TB_APVL_REQ_MGMT_M B" \
+                      + "     ON A.WRK_DT = B.WRK_DT " \
+                      + "    AND A.EMP_EMAL_ADDR = B.EMP_EMAL_ADDR " \
+                      + "  WHERE 1 = 1 " \
+                      + "    AND A.EMP_EMAL_ADDR = '" + data["email"] + "'"
 
                 logging.debug(sql)
                 cursor.execute(sql)
