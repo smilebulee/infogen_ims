@@ -1,6 +1,6 @@
 .modalUi {
 	display: none;
-	width: 1000px;
+	width: auto;
 	padding: 20px 60px;
 	background-color: #fefefe;
 	border: 1px solid #888;

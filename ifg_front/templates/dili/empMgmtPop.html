@@ -1,14 +1,17 @@
-{% extends 'common/base.html' %}
+{% extends 'common/base_popup.html' %}
+
 {% block content %}
     <div class="container">
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
         <script type="text/javascript">
         $(document).ready(function(){
-            /* 메인 화면에서 받는 이메일 파라미터 */
             var param = {
-                "email" : 'List'
+                "email" : 'PARK@INFOGEN.CO.KR' // 메인 화면에서 값 넘겨받기
             }
 
-            /* 목록조회 */
+            /*********************************************************************
+            *   직원 목록 조회하기
+            *********************************************************************/
             $.ajaxCall( param, {
                  'method' : 'GET',
                  'url' : "{% url 'dili_api:getEmpList' %}",
@@ -16,16 +19,17 @@
                  'data' : JSON.stringify(param),
                  'async' : false,
                  'callbackFn' : function(data){
-                    // 로그
-                    console.log("data : ",data)
+
                     // 리턴
                     empListGrd(data);
                  }
             });
 
-	        /* 직원목록 생성 */
+	        /*********************************************************************
+            *   근무결재요청 Grid 생성
+            *********************************************************************/
             function empListGrd(data){
-                var size = data.length;
+
                 var empListTable = '<table class="table table-bordered table-responsive-md text-center">';
                 empListTable += '<thead>';
                 empListTable += '<tr>';
@@ -37,18 +41,14 @@
                 empListTable += '</thead>';
                 empListTable += '<tbody>';
 
-                console.log("Start")
-                console.log(data)
-                console.log(typeof(data))
-
                 if(data.length > 0) {
-                    for(var i = 0; i < size; i++){
+                    for(var i = 0; i < data.length; i++){
 
-                        empListTable += '<tr id ="grd_empList">';
-                        empListTable += '<td id="no" class="pt-3-half">'+(i+1)+'</td>';
-                        empListTable += '<td id="empName" class="pt-3-half">'+data[i].EMP_NAME+'</td>';
-                        empListTable += '<td id="empEmail" class="pt-3-half">'+data[i].EMP_EMAIL+'</td>';
-                        empListTable += '<td id="empTel" class="pt-3-half">'+data[i].EMP_TEL+'</td>';
+                        empListTable += '<tr id ="grd_empListTable">';
+                        empListTable += '<td id="no" class="pt-3-half">'+i+'</td>';
+                        empListTable += '<td id="empName" class="pt-3-half">'+data[i].이름컬럼+'</td>';
+                        empListTable += '<td id="empEmail" class="pt-3-half">'+data[i].이메일컬럼+'</td>';
+                        empListTable += '<td id="empTel" class="pt-3-half">'+data[i].연락처컬럼+'</td>';
                         empListTable += '</tr>';
 
                     }
@@ -67,10 +67,7 @@
 
         }
 
-
     </script>
-
-
         <div class="row">
             <div class="col-sm-12">
                 <div class="mb-4" role="alert">
@@ -96,10 +93,7 @@
                     </div>
                 </div>
                 <center>
-                <!--week table 영역 -->
-                    <div id="grd_empListTable"></div>
-                    # 되긴하니?
-                    # 페이징 구현하기
+                # 페이징 구현하기
                     <a href ="" class="btn btn-link text-dark btn-arrow-left">
                         [이전]
                     </a>

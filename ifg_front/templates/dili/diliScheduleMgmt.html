@@ -16,6 +16,9 @@
 {% load static %}
 
     <div class="container">
+        <!--Dili Common JavaScript import -->
+        <script type="text/javascript" src="{% static 'diliCommon/diliCommon.js' %}"></script>
+
         <!--graph import -->
         <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
 
@@ -24,8 +27,10 @@
         <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
         <script type="text/javascript" src="{% static 'js/jquery.mtz.monthpicker.js' %}"></script>
 
+        <!--modal js/css import -->
         <script type="text/javascript" src="{% static 'js/modal.js' %}"></script>
         <link rel="stylesheet" type="text/css" href="{% static 'css/modal.css' %}"/>
+
 
 
         <script src="https://uicdn.toast.com/tui.code-snippet/v1.5.2/tui-code-snippet.min.js"></script>
@@ -43,6 +48,8 @@
 
         $(document).ready(function(){
 
+            sessionStorage.setItem("email","ishwang@infogen.co.kr");                // 임시
+
             $('#grp_grid').hide();                                                  // Calendar UI를 Default로 한다.
             $('#grp_showMonth').hide();                                             // Grid UI의 week를 Default로 한다.
 
@@ -57,125 +64,8 @@
             $('#txt_mmMm').text(month + 1); //그리드 월tab 월 초기값 입력
 
             crteMonthGrid();                                                                              // Month Grid 생성
-
             crteTodayShow(year, month, date, day);                                                        // Grid UI(주) 날짜 세팅
-
-
-
-            /*********************************************************************
-            *   Grid UI(주) 날짜 세팅
-            *********************************************************************/
-            function crteTodayShow(year, month, date, day){
-                var strtDate = null;
-                var endDate = null;
-
-                //주tab 시작일, 종료일 입력 날짜 계산
-                for(var i = 0; i < 7; i++ ){
-
-                    if(day == i){
-
-                        strtDate = new Date(year, Number(month), Number(date) - i);
-                        endDate = new Date(year, Number(month), Number(date) + 6 - i);
-                    }
-                }
-
-                $('#txt_weekStrtYy').text(strtDate.getFullYear()); //그리드 주tab 시작년도 입력
-                $('#txt_weekStrtMm').text(strtDate.getMonth() + 1); //그리드 주tab 시작월 입력
-                $('#txt_weekStrtDd').text(strtDate.getDate()); //그리드 주tab 시작일 입력
-
-                $('#txt_weekEndYy').text(endDate.getFullYear()); //그리드 주tab 종료년도 입력
-                $('#txt_weekEndMm').text(endDate.getMonth() + 1); //그리드 주tab 종료월 입력
-                $('#txt_weekEndDd').text(endDate.getDate()); //그리드 주tab 종료일 입력
-
-                crteWeekGrid();
-            }
-
-            /*********************************************************************
-            *   Week Grid 생성
-            *********************************************************************/
-            function crteWeekGrid(){
-
-                var weekTable = '<table class="table table-bordered table-responsive-md table-striped text-center">';
-                weekTable += '<thead>';
-                weekTable += '<tr>';
-                weekTable += '<th class="text-center">일자</th>';
-                weekTable += '<th class="text-center">업무시작시간</th>';
-                weekTable += '<th class="text-center">업무종료시간</th>';
-                weekTable += '<th class="text-center">총근무시간</th>';
-                weekTable += '<th class="text-center">근무시간상세</th>';
-                weekTable += '<th class="text-center">결재상태</th>';
-                weekTable += '</tr>';
-                weekTable += '</thead>';
-                weekTable += '<tbody>';
-
-                var weekGridStrtYy = $('#txt_weekStrtYy').text(); //현재 시작 년도
-                var weekGridStrtMm = $('#txt_weekStrtMm').text()-1; //현재 시작 월
-                var weekGridStrtDd = $('#txt_weekStrtDd').text(); //현재 시작 일
-
-                var weekGridStrtDate = new Date(weekGridStrtYy, weekGridStrtMm, weekGridStrtDd); //시작 날짜
-
-                for(var i = 0; i < 7; i++){
-
-                    weekTable += '<tr>';
-                    weekTable += '<td class="pt-3-half" contenteditable="false">'+weekGridStrtDate.getDate()+'</td>';
-                    weekTable += '<td class="pt-3-half" contenteditable="false"></td>';
-                    weekTable += '<td class="pt-3-half" contenteditable="false"></td>';
-                    weekTable += '<td class="pt-3-half" contenteditable="false"></td>';
-                    weekTable += '<td class="pt-3-half" contenteditable="false">정상근무 :  / 초과근무 : </td>';
-                    weekTable += '<td class="pt-3-half" contenteditable="false"></td>';
-                    weekTable += '</tr>';
-                    weekGridStrtDate.setDate(weekGridStrtDate.getDate()+1);
-                }
-
-                weekTable += '</tbody>';
-                weekTable += '</table>';
-
-                document.getElementById('grid_week').innerHTML = weekTable;
-            }
-
-            /*********************************************************************
-            *   Month Grid 생성
-            *********************************************************************/
-            function crteMonthGrid(){
-
-                var monthTable = '<table class="table table-bordered table-responsive-md table-striped text-center">';
-                monthTable += '<thead>';
-                monthTable += '<tr>';
-                monthTable += '<th class="text-center">일자</th>';
-                monthTable += '<th class="text-center">업무시작시간</th>';
-                monthTable += '<th class="text-center">업무종료시간</th>';
-                monthTable += '<th class="text-center">총근무시간</th>';
-                monthTable += '<th class="text-center">근무시간상세</th>';
-                monthTable += '<th class="text-center">결재상태</th>';
-                monthTable += '</tr>';
-                monthTable += '</thead>';
-                monthTable += '<tbody>';
-
-                var monthGridStrtYy = $('#txt_mmYy').text(); //현재 시작 년도
-                var monthGridStrtMm = $('#txt_mmMm').text()-1; //현재 시작 월
-
-                var monthGridStrtDate = new Date(monthGridStrtYy, monthGridStrtMm, 1); //시작 날짜
-                var tempMonthEndDate = new Date(monthGridStrtYy, monthGridStrtMm, 32); //다음 년도,월 세팅
-                var monthEndDate = new Date(tempMonthEndDate.getFullYear(), tempMonthEndDate.getMonth(), 0); //종료 날짜
-
-                for(var i = 0; i < monthEndDate.getDate(); i++){
-
-                    monthTable += '<tr>';
-                    monthTable += '<td class="pt-3-half" contenteditable="false">'+monthGridStrtDate.getDate()+'</td>';
-                    monthTable += '<td class="pt-3-half" contenteditable="false"></td>';
-                    monthTable += '<td class="pt-3-half" contenteditable="false"></td>';
-                    monthTable += '<td class="pt-3-half" contenteditable="false"></td>';
-                    monthTable += '<td class="pt-3-half" contenteditable="false">정상근무 :  / 초과근무 : </td>';
-                    monthTable += '<td class="pt-3-half" contenteditable="false"></td>';
-                    monthTable += '</tr>';
-                    monthGridStrtDate.setDate(monthGridStrtDate.getDate()+1);
-                }
-
-                monthTable += '</tbody>';
-                monthTable += '</table>';
-
-                document.getElementById('month_week').innerHTML = monthTable;
-            }
+            setGridData();
 
             /*********************************************************************
             *   weekGridDtDfr Btn Click Event - 주 그리드 날짜 이전 버튼 클릭
@@ -282,29 +172,19 @@
             /*********************************************************************
             *   Session Email 값 기준 현재일 포함 주 근무시간 조회
             *********************************************************************/
-            var param = {
-                "email" : 'ishwang@ingofen.co.kr'                                   // 추후 Session Value 연동.
-            }
 
-            $.ajaxCall( param, {
-                 'method' : 'GET',
-                 'url' : "{% url 'dili_api:getWrkTimeInfoByEml' %}",
-                 'dataType' : 'json',
-                 'data' : JSON.stringify(param),
-                 'async' : false,
-                 'callbackFn' : function(data, status, xhr){
-                    console.log("data : ",data)
-                    console.log("status : ",status)
-                    console.log("xhr : ",xhr)
+            var currentDate = getCurrentDate();
+            var currentWeek = setWeek(currentDate);
 
-                    // 해당 근무시간을 데이터로 차트를 그린다.
-                    drawChart(34,7,9.4);
-                 }
-            });
+            getWrkTimeByIml(null, currentWeek.strtDate, currentWeek.endDate);     // Session Email 을 기준으로 시작~종료일에 대한 근무시간 조회.
 
             /*********************************************************************
             *   Session Email 값 기준 연차정보 조회
             *********************************************************************/
+            var param = {
+                email : sessionStorage.getItem("email")
+            }
+
             $.ajaxCall( param, {
 
                  'method' : 'GET',
@@ -320,6 +200,26 @@
                     $('#txt_rmnAnhoDays').text(data[0].ALL_YRY_DAYS - data[0].USE_YRY_DAYS) //남은연차일수
                  }
             });
+
+            /*********************************************************************
+            *   Session Email 값 기준 그리드 데이터 세팅
+            *********************************************************************/
+            function setGridData(){
+                var gridParam = {
+                    "email"     : sessionStorage.getItem("email")
+                }
+
+                $.ajaxCall( gridParam, {
+                     'method' : 'GET',
+                     'url' : "{% url 'dili_api:getGridData' %}",
+                     'dataType' : 'json',
+                     'data' : JSON.stringify(param),
+                     'async' : false,
+                     'callbackFn' : function(data, status, xhr){
+                        console.log("Griddata : ",data)
+                     }
+                });
+            }
 
             /*********************************************************************
             *   Grid Btn Click Event - 그리드 버튼 클릭
@@ -368,10 +268,12 @@
             *   anhoReg Btn Click Event - 연차등록 버튼 클릭
             *********************************************************************/
             $('#btn_anhoReg').on('click', function() {
+
                 modal('my_modal');                  //연차결제 화면 모달 띄우기
                 $("#my_modal2").load("{% url 'dili_api:yryApvlReq' %}");
-            });
 
+
+            });
 
             /*********************************************************************
             *   btn_datepicker Btn Click Event - 일달력호출
@@ -448,12 +350,17 @@
             var calendar = new tui.Calendar(document.getElementById('calendar'), {
                 defaultView: 'month',
                 taskView: true,
-                useCreationPopup: true,
+<!--                useCreationPopup: true,-->
                 useDetailPopup: true
             });
 
+
+
+            /*********************************************************************
+            *   Draw  calendar Event - 데이터 받아오기
+            *********************************************************************/
             var param = {
-                "email" : 'test'
+                "email" : 'ishwang@infogen.co.kr'
             }
 
             $.ajaxCall( param, {
@@ -465,36 +372,57 @@
                  'callbackFn' : function(data, status, xhr){
                     console.log("data111 : ",JSON.parse(data))
 
-                    setCalendar(data);
+                    /*setCalendar(data);*/
                  }
             });
 
-            function setCalendar(data){
-                calendarData = JSON.parse(data);
+            /*********************************************************************
+            *   Draw  calendar Event - 받아온 데이터 캘린더에 입력
+            *********************************************************************/
+            /*function setCalendar(data){
+                var calendarData = JSON.parse(data);
                 console.log("calendarData1 : ",calendarData);
 
-                var dataCustom = [{
-                    calendarId: 1,
-                    id: String(Math.random() * 100000000000000000),
-                    title : "업무시작시간: 09:00",
-                    isAllDay: false,
-                    start: new Date("2020-10-01T09:00:00"),
-                    end: new Date("2020-10-01T10:00:00"),
-                    category: "time"
-                }, {
-                    calendarId: 2,
-                    id: String(Math.random() * 100000000000000000),
-                    title : "업무종료시간: 18:00",
-                    isAllDay: false,
-                    start: new Date("2020-10-01T09:00:00"),
-                    end: new Date("2020-10-01T10:00:00"),
-                    category: "time"
-                }];
-                // ajax 오늘달, id에 해당하는 스케줄 가져오기
+                console.log("JOB_STRT_TM : ",calendarData[0].JOB_STRT_TM);
+                console.log("JOB_END_TM : ",calendarData[0].JOB_END_TM);
 
-                calendar.createSchedules(dataCustom);
+
+
+                var dataCustomArray = new Array();
+
+                for(var i=0; i < calendarData.length; i++) {
+                    var dataCustom = {
+                        calendarId: i,
+                        id: String(Math.random() * 100000000000000000),
+                        title : "업무시작시간: " + calendarData[i].JOB_STRT_TM,
+                        isAllDay: false,
+                        start: new Date(calendarData[i].JOB_STRT_TM),
+                        end: new Date(calendarData[i].JOB_END_TM),
+                        category: "time"
+                    };
+                    dataCustomArray.push(dataCustom);
+
+                    dataCustom = {
+                        calendarId: i + 1,
+                        id: String(Math.random() * 100000000000000000),
+                        title : "업무종료시간: " + calendarData[i].JOB_END_TM,
+                        isAllDay: false,
+                        start: new Date(calendarData[i].JOB_STRT_TM),
+                        end: new Date(calendarData[i].JOB_END_TM),
+                        category: "time"
+                    };
+                    dataCustomArray.push(dataCustom);
+                }
+
+                console.log("dataCustomArray : ",dataCustomArray);
+
+                calendar.createSchedules(dataCustomArray);
             }
+*/
 
+            /*********************************************************************
+            *   Draw  calendar Event - 캘린더 색입히기
+            *********************************************************************/
             calendar.setCalendarColor('1', {
                 color: '#e8e8e8',
                 bgColor: '#585858',
@@ -557,15 +485,243 @@
             *   calendar Click Event - calender 클릭시
             *********************************************************************/
             $('#calendar').click(function(event){
-<!--                console.log('calendarClick', event.date, event.target);-->
+                console.log('calendarClick', event.date, event.target);
 
+                modal('my_modal');  <!--근무시간 Detail-->
+                $('#my_modal2').load("{% url 'dili_api:scheduleMgmtPop' %}");
+
+
+            });
+
+            $('#calendar').dblclick(function(event){
+                console.log('calendarDbClick');
 
 
             });
 
 
 
+
         });<!--ready.function_END-->
+
+        var myChart;
+
+
+        /*********************************************************************
+        *   Grid UI(주) 날짜 세팅
+        *********************************************************************/
+        function crteTodayShow(year, month, date, day){
+            var strtDate = null;
+            var endDate = null;
+
+            //주tab 시작일, 종료일 입력 날짜 계산
+            for(var i = 0; i < 7; i++ ){
+
+                if(day == i){
+
+                    strtDate = new Date(year, Number(month), Number(date) - i);
+                    endDate = new Date(year, Number(month), Number(date) + 6 - i);
+                }
+            }
+
+            $('#txt_weekStrtYy').text(strtDate.getFullYear()); //그리드 주tab 시작년도 입력
+            $('#txt_weekStrtMm').text(strtDate.getMonth() + 1); //그리드 주tab 시작월 입력
+            $('#txt_weekStrtDd').text(strtDate.getDate()); //그리드 주tab 시작일 입력
+
+            $('#txt_weekEndYy').text(endDate.getFullYear()); //그리드 주tab 종료년도 입력
+            $('#txt_weekEndMm').text(endDate.getMonth() + 1); //그리드 주tab 종료월 입력
+            $('#txt_weekEndDd').text(endDate.getDate()); //그리드 주tab 종료일 입력
+
+            crteWeekGrid();
+        }
+
+        /*********************************************************************
+        *   Week Grid 생성
+        *********************************************************************/
+        function crteWeekGrid(){
+
+            var weekTable = '<table class="table table-bordered table-responsive-md table-striped text-center">';
+            weekTable += '<thead>';
+            weekTable += '<tr>';
+            weekTable += '<th class="text-center">일자</th>';
+            weekTable += '<th class="text-center">업무시작시간</th>';
+            weekTable += '<th class="text-center">업무종료시간</th>';
+            weekTable += '<th class="text-center">총근무시간</th>';
+            weekTable += '<th class="text-center">근무시간상세</th>';
+            weekTable += '<th class="text-center">결재상태</th>';
+            weekTable += '</tr>';
+            weekTable += '</thead>';
+            weekTable += '<tbody>';
+
+            var weekGridStrtYy = $('#txt_weekStrtYy').text(); //현재 시작 년도
+            var weekGridStrtMm = $('#txt_weekStrtMm').text()-1; //현재 시작 월
+            var weekGridStrtDd = $('#txt_weekStrtDd').text(); //현재 시작 일
+
+            var weekGridStrtDate = new Date(weekGridStrtYy, weekGridStrtMm, weekGridStrtDd); //시작 날짜
+            var tdYear = "";
+            var tdMonth = "";
+            var tdDate = "";
+
+            for(var i = 0; i < 7; i++){
+
+                tdYear = weekGridStrtDate.getFullYear();
+                tdMonth = weekGridStrtDate.getMonth()+1;
+                tdDate = weekGridStrtDate.getDate();
+
+                weekTable += '<tr id ="grd_week'+tdYear+'/'+tdMonth+'/'+tdDate+'" onclick="onclickWeekEvt(this)"  ondblclick="ondblClickEvt(this)">';
+                weekTable += '<td class="pt-3-half" contenteditable="false">'+tdDate+'</td>';
+                weekTable += '<td class="pt-3-half" contenteditable="false"></td>';
+                weekTable += '<td class="pt-3-half" contenteditable="false"></td>';
+                weekTable += '<td class="pt-3-half" contenteditable="false"></td>';
+                weekTable += '<td class="pt-3-half" contenteditable="false">정상근무 :  / 초과근무 : </td>';
+                weekTable += '<td class="pt-3-half" contenteditable="false"></td>';
+                weekTable += '</tr>';
+                weekGridStrtDate.setDate(weekGridStrtDate.getDate()+1);
+            }
+
+            weekTable += '</tbody>';
+            weekTable += '</table>';
+
+            document.getElementById('grid_week').innerHTML = weekTable;
+        }
+
+        /*********************************************************************
+        *   Month Grid 생성
+        *********************************************************************/
+        function crteMonthGrid(){
+
+            var monthTable = '<table class="table table-bordered table-responsive-md table-striped text-center">';
+            monthTable += '<thead>';
+            monthTable += '<tr>';
+            monthTable += '<th class="text-center">일자</th>';
+            monthTable += '<th class="text-center">업무시작시간</th>';
+            monthTable += '<th class="text-center">업무종료시간</th>';
+            monthTable += '<th class="text-center">총근무시간</th>';
+            monthTable += '<th class="text-center">근무시간상세</th>';
+            monthTable += '<th class="text-center">결재상태</th>';
+            monthTable += '</tr>';
+            monthTable += '</thead>';
+            monthTable += '<tbody>';
+
+            var monthGridStrtYy = $('#txt_mmYy').text(); //현재 시작 년도
+            var monthGridStrtMm = $('#txt_mmMm').text()-1; //현재 시작 월
+
+            var monthGridStrtDate = new Date(monthGridStrtYy, monthGridStrtMm, 1); //시작 날짜
+            var tempMonthEndDate = new Date(monthGridStrtYy, monthGridStrtMm, 32); //다음 년도,월 세팅
+            var monthEndDate = new Date(tempMonthEndDate.getFullYear(), tempMonthEndDate.getMonth(), 0); //종료 날짜
+            var mTdYear = "";
+            var mTdMonth = "";
+            var mTdDate = "";
+
+
+            for(var i = 0; i < monthEndDate.getDate(); i++){
+                mTdYear = monthGridStrtDate.getFullYear();
+                mTdMonth = monthGridStrtDate.getMonth()+1;
+                mTdDate = monthGridStrtDate.getDate();
+
+                monthTable += '<tr id ="grd_month'+mTdYear+'/'+mTdMonth+'/'+mTdDate+'" onclick="onclickMonthEvt(this)">';
+                monthTable += '<td class="pt-3-half" contenteditable="false">'+mTdDate+'</td>';
+                monthTable += '<td class="pt-3-half" contenteditable="false"></td>';
+                monthTable += '<td class="pt-3-half" contenteditable="false"></td>';
+                monthTable += '<td class="pt-3-half" contenteditable="false"></td>';
+                monthTable += '<td class="pt-3-half" contenteditable="false">정상근무 :  / 초과근무 : </td>';
+                monthTable += '<td class="pt-3-half" contenteditable="false"></td>';
+                monthTable += '</tr>';
+                monthGridStrtDate.setDate(monthGridStrtDate.getDate()+1);
+            }
+
+            monthTable += '</tbody>';
+            monthTable += '</table>';
+
+            document.getElementById('month_week').innerHTML = monthTable;
+        }
+
+        /*********************************************************************
+        *   onclickWeekEvt 날짜 가져오기
+        *********************************************************************/
+       function onclickWeekEvt(trId) {
+            var wClickDt = trId.id.replace('grd_week','');
+            console.log(wClickDt);
+
+            weekDate = setWeek(wClickDt);                                   // 선택된 일이 포함된 주의 Start,End Date 조회
+            getWrkTimeByIml(null, weekDate.strtDate, weekDate.endDate);     // Session Email 을 기준으로 시작~종료일에 대한 근무시간 조회.
+
+       }
+
+       /*********************************************************************
+        *   onclickMonthEvt 날짜 가져오기
+        *********************************************************************/
+       function onclickMonthEvt(trId) {
+            var mClickDt = trId.id.replace('grd_month','');
+            console.log(mClickDt);
+
+            weekDate = setWeek(mClickDt);                                   // 선택된 일이 포함된 주의 Start,End Date 조회
+            getWrkTimeByIml(null, weekDate.strtDate, weekDate.endDate);     // Session Email 을 기준으로 시작~종료일에 대한 근무시간 조회.
+
+       }
+
+       function ondblClickEvt(dbl) {
+
+            modal('my_modal');
+            $('#my_modal2').load("{% url 'dili_api:scheduleMgmtPop' %}");
+
+       }
+
+        /*********************************************************************
+        *   Email 을 기준하여, start ~ end Date에 해당하는 직원의 근무시간을 조회한다.
+        *   Input Parameter  - email            : 조회할 직원의 Email (Null or String / Null 인 경우 Session값을 기준으로 조회한다.)
+        *                    - strtDate         : 조회할 시작 일      (String or Date - Format YYYY/MM/DD )
+        *                    - endDate          : 조회할 마지막 일    (String or Date - Format YYYY/MM/DD )
+        *   Output Parameter - nmlWrkTime       : 정상근무시간
+        *                      aprvWrkTime      : 초과근무시간(승인)
+        *                      notAprvWrkTime   : 초과근무시간(미승인)
+        *********************************************************************/
+       function getWrkTimeByIml(email, strtDate, endDate) {
+
+            var baseEndDate = $('#baseEndDate').text();
+
+            if (baseEndDate == endDate) {
+                return;                                 //baseEndDate 과 endDate이 동일한 경우 기존 조회된 내용과 변동사항이 없으므로 Return한다.
+            }
+
+            //email 파라미터가 null / EmptyString 으로 인입된 경우 Session 값을 기준하여 셋팅.
+            if (email == null || email == "") {
+                email = sessionStorage.getItem("email")
+            }
+
+            var param = {
+                "email"     : email,
+                "strtDate"  : strtDate,
+                "endDate"   : endDate
+            }
+
+            $.ajaxCall( param, {
+                 'method' : 'GET',
+                 'url' : "{% url 'dili_api:getWrkTimeInfoByEml' %}",
+                 'dataType' : 'json',
+                 'data' : JSON.stringify(param),
+                 'async' : false,
+                 'callbackFn' : function(data, status, xhr){
+                    console.log("data : ",data)
+                    console.log("status : ",status)
+                    console.log("xhr : ",xhr)
+
+                    $('#baseEndDate').text(endDate);                  // endDate가 변경되는 경우만 Server Call하기 위해 변수셋팅.
+
+                    if(data.length > 0) {
+                        var normWrkTm = Number(data[0].NORM_WRK_TM);
+                        var notAprvOverWrkTm = Number(data[0].NOT_APRV_OVER_WRK_TM);
+                        var aprvOverWrkTm = Number(data[0].APRV_OVER_WRK_TM);
+
+                        // 해당 근무시간을 데이터로 차트를 그린다.
+                        drawChart(normWrkTm, notAprvOverWrkTm, aprvOverWrkTm);
+
+                    } else {
+                        drawChart(0, 0, 0);
+                    }
+                 }
+            });
+       }
 
         /*********************************************************************
         *   Draw Chart Event - 근무누적시간 누적막대그래프 그리기
@@ -618,7 +774,8 @@
                 legend:{
                     display:true,
                     position : 'right',
-                    fontColor: 'rgb(255, 99, 132)'
+                    fontColor: 'rgb(255, 99, 132)',
+                    onClick : null
                 },
 
                 animation: {
@@ -650,7 +807,11 @@
 
             var ctx = document.getElementById("Chart1");
 
-            var myChart = new Chart(ctx, {
+            if (myChart != undefined || myChart !=null) {
+                myChart.destroy();
+            }
+
+            myChart = new Chart(ctx, {
                 type: 'horizontalBar',
                 data: {
                     datasets: [{
@@ -678,17 +839,18 @@
         }
 
     </script>
+
         <!--모달 영역 -->
-
-
-
-
- <!--       <div id="my_modal" class="modalUi">
-            &lt;!&ndash;모달 url 불러오는 영역 &ndash;&gt;
+        <div id="my_modal" class="modalUi">
             <div id="my_modal2">
             </div>
-            <a class="modal_close_btn">닫기</a>
-        </div>-->
+            <a class="modal_close_btn">
+                <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-x-circle" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                   <path fill-rule="evenodd" d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                   <path fill-rule="evenodd" d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+                </svg>
+            </a>
+        </div>
 
         <div class="row">
             <div class="col-sm-12">
@@ -741,6 +903,7 @@
                         <div id="col_totWrkTime" class="collapse show" aria-labelledby="head_totWrkTime" data-parent="#grp_totWrkTime">
                             <div class="mt-3" style="width:100%;">
                                 <div class="chart-container" style="display:block; width:100%; height:120px;">
+                                    <span id="baseEndDate" style="display:none;" ></span>
                                     <canvas id="Chart1"></canvas>
                                 </div>
                             </div>
@@ -748,29 +911,16 @@
                     </div>
                 </div>
 
-                <div class="d-flex flex-row-reverse">
+                <div class="d-flex flex-row-reverse mb-2">
                     <div>
-                        <button type="button" id="btn_showGrd">
-                            <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-card-list" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                              <path fill-rule="evenodd" d="M14.5 3h-13a.5.5 0 0 0-.5.5v9a.5.5 0 0 0 .5.5h13a.5.5 0 0 0 .5-.5v-9a.5.5 0 0 0-.5-.5zm-13-1A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h13a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2h-13z"/>
-                              <path fill-rule="evenodd" d="M5 8a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7A.5.5 0 0 1 5 8zm0-2.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5zm0 5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5z"/>
-                              <circle cx="3.5" cy="5.5" r=".5"/>
-                              <circle cx="3.5" cy="8" r=".5"/>
-                              <circle cx="3.5" cy="10.5" r=".5"/>
-                            </svg>
-                        </button>
+                        <img id="btn_showGrd" width="30px" height="30px"  src="{% static 'image/grid.png' %}" align="center">
                     </div>
-                    <div>
-                        <button type="button" id="btn_showCal">
-                            <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-calendar3" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                              <path fill-rule="evenodd" d="M14 0H2a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zM1 3.857C1 3.384 1.448 3 2 3h12c.552 0 1 .384 1 .857v10.286c0 .473-.448.857-1 .857H2c-.552 0-1-.384-1-.857V3.857z"/>
-                              <path fill-rule="evenodd" d="M6.5 7a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm-9 3a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm-9 3a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/>
-                            </svg>
-                        </button>
+                    <div style="margin-right: 10px;">
+                        <img id="btn_showCal" width="30px" height="30px"  src="{% static 'image/calendar.png' %}" align="center">
                     </div>
                     <!-- 연차등록 버튼 -->
-                    <div style="margin-right: 20px;">
-                        <button type="button" class="badge badge-danger" id="btn_anhoReg">연차등록</button>
+                    <div style="margin-right: 10px;">
+                        <button type="button" class="btn btn-info btn-sm" id="btn_anhoReg">연차등록</button>
                     </div>
                     <!-- 전체연차일수/ 남은연차일수 표기 -->
                     <div style="margin-right: 20px;">
@@ -783,7 +933,7 @@
 
                 <!-- 3. 사원 Schedule Grid 영역 -->
                 <div id="grp_grid">
-                    <div class="p-5">
+                    <div class="p-0">
                         <div class="d-flex flex-row-reverse">
                             <div>
                                 <span class="badge badge-success" id="btn_showMonth">Month</span>
@@ -798,11 +948,10 @@
                         <!-- 3-1. 사원 Schedule Grid 영역 주단위 -->
                         <div id="grp_showWeek">
                             <div class="d-flex justify-content-center mb-5">
-                                <button type="button" id="btn_weekGridDtDfr">
-                                    <svg width="0.6em" height="0.6em" viewBox="0 0 16 16" class="bi bi-caret-left-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M3.86 8.753l5.482 4.796c.646.566 1.658.106 1.658-.753V3.204a1 1 0 0 0-1.659-.753l-5.48 4.796a1 1 0 0 0 0 1.506z"/>
-                                    </svg>
-                                </button>
+
+                                <div>
+                                    <img id="btn_weekGridDtDfr" width="20px" height="20px"  src="{% static 'image/arrow_left.png' %}" align="center">
+                                </div>
                                 <input type="hidden" name="date" id="datepickerData"/>
                                 <div id="btn_datepicker" style="margin-right: 10px;margin-left: 10px;">
                                     <h5>
@@ -819,11 +968,9 @@
                                         <span id="txt_weekEndDd"></span>
                                     </h5>
                                 </div>
-                                <button type="button" id="btn_weekGridDtNxt">
-                                    <svg width="0.6em" height="0.6em" viewBox="0 0 16 16" class="bi bi-caret-right-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M12.14 8.753l-5.482 4.796c-.646.566-1.658.106-1.658-.753V3.204a1 1 0 0 1 1.659-.753l5.48 4.796a1 1 0 0 1 0 1.506z"/>
-                                    </svg>
-                                </button>
+                                <div>
+                                    <img id="btn_weekGridDtNxt" width="20px" height="20px"  src="{% static 'image/arrow_right.png' %}" align="center">
+                                </div>
                             </div>
 
                             <!--week table 영역 -->
@@ -833,12 +980,9 @@
                         <div id="grp_showMonth">
 
                             <div class="d-flex justify-content-center mb-5">
-                                <button type="button" id="btn_mmGridDtDfr">
-                                    <svg width="0.6em" height="0.6em" viewBox="0 0 16 16" class="bi bi-caret-left-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M3.86 8.753l5.482 4.796c.646.566 1.658.106 1.658-.753V3.204a1 1 0 0 0-1.659-.753l-5.48 4.796a1 1 0 0 0 0 1.506z"/>
-                                    </svg>
-                                </button>
-
+                                <div>
+                                    <img id="btn_mmGridDtDfr" width="20px" height="20px"  src="{% static 'image/arrow_left.png' %}" align="center">
+                                </div>
                                 <div id="btn_monthpicker" style="margin-right: 10px;margin-left: 10px;">
                                     <h5>
                                         <span id="txt_mmYy"></span>
@@ -846,11 +990,9 @@
                                         <span id="txt_mmMm"></span>
                                     </h5>
                                 </div>
-                                <button type="button" id="btn_mmGridDtNxt">
-                                    <svg width="0.6em" height="0.6em" viewBox="0 0 16 16" class="bi bi-caret-right-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M12.14 8.753l-5.482 4.796c-.646.566-1.658.106-1.658-.753V3.204a1 1 0 0 1 1.659-.753l5.48 4.796a1 1 0 0 1 0 1.506z"/>
-                                    </svg>
-                                </button>
+                                <div>
+                                    <img id="btn_mmGridDtNxt" width="20px" height="20px"  src="{% static 'image/arrow_right.png' %}" align="center">
+                                </div>
                             </div>
                             <!--week table 영역 -->
                             <div id="month_week"></div>
