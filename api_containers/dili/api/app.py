@@ -993,8 +993,7 @@ class saveYryApvlReq(Resource):  # Mariadb 연결 진행
                 # "TH2_APRV_STUS = %s," \
                 # "TH2_APRV_NM = %s,"
                 logger.info(sql)
-                cursor.execute(sql, (
-                email, apvlReqDivs, wrkDt, wrkTme, wrkReqRsn, th1AprvStus, th1AprvNm, th2AprvStus, th2AprvNm))
+                cursor.execute(sql, (email, apvlReqDivs, wrkDt, wrkTme, wrkReqRsn, th1AprvStus, th1AprvNm, th2AprvStus, th2AprvNm))
 
                 mysql_con.commit()
 
