@@ -354,10 +354,10 @@ class wrkApvlReq(Resource): # Mariadb 연결 진행
                       "  FROM TB_WRK_TM_MGMT_M A" \
                       " WHERE A.EMP_EMAL_ADDR = '" + data["email"] + "'" \
                       "   AND (NVL(A.HLDY_WRK_TM,'000000') != 000000 OR NVL(A.NGHT_WRK_TM,'000000') != 000000)" \
-                      "   AND EXISTS (SELECT 1" \
-                      "                 FROM TB_WRK_TM_MGMT_M B" \
-                      "                WHERE B.EMP_EMAL_ADDR = A.EMP_EMAL_ADDR" \
-                      "                  AND B.WRK_DT = A.WRK_DT)"
+                      "   AND NOT EXISTS (SELECT 1" \
+                      "                     FROM TB_APVL_REQ_MGMT_M B" \
+                      "                    WHERE B.EMP_EMAL_ADDR = A.EMP_EMAL_ADDR" \
+                      "                      AND B.WRK_DT = A.WRK_DT)"
                 logging.debug("wrkApvlReq SQL문" + sql)
                 cursor.execute(sql)
 
