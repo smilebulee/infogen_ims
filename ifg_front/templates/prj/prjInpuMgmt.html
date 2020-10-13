@@ -115,7 +115,7 @@ history
                         method : 'post',
                         callbackFn : function(data){
                             g_toast.push('저장 되었습니다.');
-                            getPrjGridList(1);
+                            /*getPrjGridList(1);*/
                         }
                     });
                 });
@@ -137,10 +137,7 @@ history
         };
 
         function getPrjGridList(page){
-            var param = {
-                "prjCd" : $('#prjCd').val()
-            }
-            $.ajaxCall( param, {
+            $('#formSearchDiv').ajaxCall({
                 method : 'GET',
                 url : "{% url 'prj_api:prjInpuSearch' %}",
                 callbackFn : function(data){

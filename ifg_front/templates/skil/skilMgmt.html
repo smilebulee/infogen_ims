@@ -6,26 +6,7 @@ history
 {% extends 'common/base.html' %}
 
 {% block content %}
-{% load static %}
-
-<style>
-#modal input {
-  width : 100%;
-  border: 0;
-  border-bottom: 1.5px solid #0489B1;
-  outline : 0;
-}
-
-#skilRegModal {
-     width:40%;
-     height:80%;
-     overflow-y: scroll;
-}
-</style>
-<div class="container">
-    <script type="text/javascript" src="{% static 'js/modal.js' %}"></script>
-    <link rel="stylesheet" type="text/css" href="{% static 'css/modal.css' %}"/>
-    <script type="text/javascript">
+    <script type="text/javascript" xmlns:max-width="http://www.w3.org/1999/xhtml">
         var firstGrid;
         $(document).ready(function(){
             firstGrid = $('[data-ax5grid="first-grid"]');
@@ -63,8 +44,9 @@ history
                     alertMsg("선택된 행이 없습니다.");
                     return false;
                 } else{
-                    modal('skilRegModal');
-                    $("#skilRegModal2").load("{% url 'skil_api:skilRegPopup' %}");
+                    var empNo = firstGrid.getList("selected")[0].EMP_NO;
+                    var empGrd = firstGrid.getList("selected")[0].CNTC_DIVS_CD;
+                    location.href = '/skil/skilMgmtDetl?empNo='+empNo+'&empGrd='+empGrd
                 }
             });
 
@@ -124,16 +106,10 @@ history
 
 
     </script>
-    <div id="skilRegModal" class="modalUi">
-        <div id="skilRegModal2">
-        </div>
-        <a class="modal_close_btn">
-            <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-x-circle" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-               <path fill-rule="evenodd" d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
-               <path fill-rule="evenodd" d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
-            </svg>
-        </a>
-    </div>
+
+    <style>
+
+    </style>
     <div class="row">
                 <div class="col-sm-12">
                     <div id="formSearchDiv">
@@ -179,5 +155,4 @@ history
                     </div>
                 </div>
     </div>
-</div>
 {% endblock %}

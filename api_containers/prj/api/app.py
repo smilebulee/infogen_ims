@@ -471,11 +471,9 @@ class prjInpuSearch(Resource):
                           "AND DEPT.CMM_CD_GRP_ID ='SLIN_BZDP' " \
                           "AND DEVP.CMM_CD_GRP_ID ='DEVP_GRD_CD' " \
                           "AND CNTC.CMM_CD_GRP_ID ='CNTC_DIVS_CD' " \
-                          "AND PRJ_CD=%s " \
                       "UNION " \
                       "SELECT PSTAR.PRJ_CD, " \
-                              "PSTAR.EMP_NO," \
-                              "EMP.EMP_NAME,  " \
+                              "PSTAR.EMP_NO,EMP.EMP_NAME,  " \
                               "DEPT.CMM_CD_NAME AS DEPT_NM, " \
                               "DEVP.CMM_CD_NAME AS SKIL_GRD," \
                               "'정규직' AS CNTC_DIVS_CD," \
@@ -495,7 +493,7 @@ class prjInpuSearch(Resource):
                           "AND DEPT.CMM_CD_GRP_ID ='SLIN_BZDP' " \
                           "AND DEVP.CMM_CD_GRP_ID ='DEVP_GRD_CD' " \
                           "AND PRJ_CD=%s"
-                cursor.execute(sql, (prjCd,prjCd))
+                cursor.execute(sql, (prjCd))
         finally:
             mysql_con.close()
 
