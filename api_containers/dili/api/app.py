@@ -837,6 +837,37 @@ class noticeOne(Resource):  # Mariadb 연결 진행
         return result1
 
 
+class noticePopCnt(Resource):  # Mariadb 연결 진행
+    def get(self):
+        logging.debug("noticePopCnt start")
+        logging.debug(request.get_json())
+
+        logging.debug('---------------SEARCH---------------')
+        logging.debug('------------------------------------')
+
+        # requirements pymysql import 후 커넥트 사용
+        mysql_con = pymysql.connect(host='218.151.225.142', port=3306, db='IFG_IMS', user='ims2', password='1234',
+                                    charset='utf8')
+        try:
+            with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+                # 쿼리문 실행
+                sql = "SELECT  COUNT(*) AS COUNT " \
+                      "FROM  TB_STTS_POST_MGMT_M " \
+                      "WHERE 1=1 " \
+                      "AND  POP_OPEN_YN = 'Y' " \
+                      "AND DATE(NOW()) BETWEEN date(POP_OPEN_DTTM_FROM) AND date(POP_OPEN_DTTM_TO) "
+
+                logging.debug(sql)
+                cursor.execute(sql)
+
+        finally:
+            mysql_con.close()
+
+        result1 = cursor.fetchall()
+
+        return result1
+
+
 class noticePopUp(Resource):  # Mariadb 연결 진행
     def get(self):
         logging.debug("noticePopUp start")
@@ -923,6 +954,8 @@ class noticeSave(Resource):
             logger.info(row + ':' + request.form[row])
             globals()[row] = request.form[row]
 
+        type = request.form['type']
+        postId = request.form['postId']
         tit = request.form['tit']
         kdDivsCd = request.form['kdDivsCd']
         mjrYn = request.form['mjrYn']
@@ -936,6 +969,8 @@ class noticeSave(Resource):
         dataUpdPgmId = request.form['dataUpdPgmId']
         #
         logging.debug("====Param data====")
+        logging.debug("type = " + type)
+        #logging.debug("postId = " + postId)
         logging.debug("tit = " + tit)
         logging.debug("kdDivsCd = " + kdDivsCd)
         logging.debug("mjrYn = " + mjrYn)
@@ -957,38 +992,35 @@ class noticeSave(Resource):
 
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
-                sql = "INSERT INTO	TB_STTS_POST_MGMT_M	(`TIT`, " \
-                                                    "`CNTN`, " \
-                                                    "`KD_DIVS_CD`, " \
-                                                    "`MJR_YN`, " \
-                                                    "`POP_OPEN_YN`, " \
-                                                    "`POP_OPEN_DTTM_FROM`, " \
-                                                    "`POP_OPEN_DTTM_TO`, " \
-                                                    "`DATA_INPT_ID`," \
-                                                    "`DATA_INPT_DTTM`," \
-                                                    "`DATA_INPT_PGM_ID`," \
-                                                    "`DATA_UPD_ID`," \
-                                                    "`DATA_UPD_DTTM`," \
-                                                    "`DATA_UPD_PGM_ID`) "\
-                "VALUES( %s, %s, %s, %s, %s, %s, %s, %s, NOW(), %s, %s, NOW(), %s)" \
-## 쿼리 안먹음 ;;
-                "ON DUPLICATE KEY UPDATE "
-                "TIT = %s, " \
-                "CNTN = %s," \
-                "KD_DIVS_CD = %s," \
-                "MJR_YN = %s," \
-                "POP_OPEN_YN = %s," \
-                "POP_OPEN_DTTM_FROM = %s," \
-                "POP_OPEN_DTTM_TO = %s," \
-                "DATA_UPD_ID = %s," \
-                "DATA_UPD_DTTM = NOW()," \
-                "DATA_UPD_PGM_ID = %s"
+                if type == "c":
+                    sql = "INSERT INTO	TB_STTS_POST_MGMT_M	(`TIT`, " \
+                                                        "`CNTN`, " \
+                                                        "`KD_DIVS_CD`, " \
+                                                        "`MJR_YN`, " \
+                                                        "`POP_OPEN_YN`, " \
+                                                        "`POP_OPEN_DTTM_FROM`, " \
+                                                        "`POP_OPEN_DTTM_TO`, " \
+                                                        "`DATA_INPT_ID`," \
+                                                        "`DATA_INPT_DTTM`," \
+                                                        "`DATA_INPT_PGM_ID`," \
+                                                        "`DATA_UPD_ID`," \
+                                                        "`DATA_UPD_DTTM`," \
+                                                        "`DATA_UPD_PGM_ID`) "\
+                    "VALUES( %s, %s, %s, %s, %s, %s, %s, %s, NOW(), %s, %s, NOW(), %s)" \
 
-                logger.info(sql)
-                cursor.execute(sql, (tit, cntn, kdDivsCd, mjrYn, popOpenYn, popOpenDttmFrom, popOpenDttmTo, dataInptId, dataInptPgmId, dataUpdId, dataUpdPgmId
-                                     ,tit, cntn, kdDivsCd, mjrYn, popOpenYn, popOpenDttmFrom, popOpenDttmTo,dataUpdId,dataUpdPgmId))
-                logger.info(sql)
-                mysql_con.commit()
+                    logger.info(sql)
+                    cursor.execute(sql, (tit, cntn, kdDivsCd, mjrYn, popOpenYn, popOpenDttmFrom, popOpenDttmTo, dataInptId, dataInptPgmId, dataUpdId, dataUpdPgmId))
+                    mysql_con.commit()
+
+                elif type == "u":
+                    logging.debug('[dili_api] app.py : update')
+                    sql = "UPDATE TB_STTS_POST_MGMT_M " \
+                        "SET TIT=%s, CNTN=%s, KD_DIVS_CD=%s, MJR_YN=%s, POP_OPEN_YN=%s, POP_OPEN_DTTM_FROM=%s, POP_OPEN_DTTM_TO=%s, DATA_UPD_ID=%s, DATA_UPD_DTTM=NOW(), DATA_UPD_PGM_ID=%s" \
+                        "WHERE POST_ID = %s "
+
+                    logger.info(sql)
+                    cursor.execute(sql, (tit, cntn, kdDivsCd, mjrYn, popOpenYn, popOpenDttmFrom, popOpenDttmTo, dataUpdId, dataUpdPgmId, postId))
+                    mysql_con.commit()
 
         finally:
             mysql_con.close()
@@ -1083,6 +1115,7 @@ api.add_resource(apvlReqHist,'/apvlReqHist') #api 선언
 api.add_resource(apvlReqHistDetl,'/apvlReqHistDetl') #api 선언
 api.add_resource(calendarData,'/calendarData') #api 선언
 api.add_resource(noticeLst,'/noticeLst') #api 선언
+api.add_resource(noticePopCnt,'/noticePopCnt') #api 선언
 api.add_resource(noticeOne,'/noticeOne') #api 선언
 api.add_resource(noticePopUp,'/noticePopUp') #api 선언
 api.add_resource(noticeMjrCnt,'/noticeMjrCnt') #api 선언
