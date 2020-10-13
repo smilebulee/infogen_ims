@@ -128,7 +128,7 @@ services:
     image: mariadb:latest
     restart: always
     ports:
-      - 9877:3306
+      - "9877:3306"
     volumes:
       - data-postgressql:/var/lib/mysql
     environment:
