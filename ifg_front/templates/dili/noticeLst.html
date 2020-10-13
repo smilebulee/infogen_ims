@@ -127,10 +127,10 @@
                 url : "{% url 'dili_api:getNoticePopCnt' %}",
                 callbackFn :  function(ret){
                     if(ret[0].COUNT > 0){
-                        debugger;
+                        //debugger;
                         getCookie();
                     } else {
-                        debugger;
+                        //debugger;
                     }
                 }
             };
@@ -143,7 +143,7 @@
                 method : 'get',
                 url : "{% url 'dili_api:getNoticePopUp' %}",
                 callbackFn :  function(ret){
-                    debugger;
+                    //debugger;
                     if(ret.length > 0) {
                         var str = "<tr><td><b>" + ret[0].TIT + "</b></td>"
                                 + "<td style='text-align: right;'>"+ ret[0].DATA_INPT_DTTM.substr(0, 10) + "</td></tr>"

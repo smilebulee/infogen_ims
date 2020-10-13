@@ -305,7 +305,7 @@
                     callbackFn:function(data){
                         if(data){
                             // 리턴
-                             //location.href = '/dili/noticeLst';
+                             location.href = '/dili/noticeLst';
                              g_toast.push("저장되었습니다.");
                              console.log("저장되었습니다.");
 
@@ -314,12 +314,12 @@
                         } else{
                             g_toast.push("저장에 실패하였습니다.");
                             console.log("저장에 실패하였습니다.");
-                            //location.reload();
+                            location.reload();
                         }
                     },
                     success:function(data){
                         // 리턴
-                         //location.href = '/dili/noticeLst';
+                         location.href = '/dili/noticeLst';
                          g_toast.push("저장되었습니다.");
                          console.log(param);
                          console.log("저장되었습니다.");
@@ -334,8 +334,6 @@
                         location.reload();
                     }
                });
-
-               console.log("sFlag " + sFlag);
             });
         }
 
@@ -347,7 +345,7 @@
 
             var param = {
                     "fileFullpath" : $('#filePath').val(),
-                    //"postId" :
+                    //"postId" : postId,
                     "dataInptId" : "TEST1",
                     "dataInptPgmId" : "noticeDtl"
             }
