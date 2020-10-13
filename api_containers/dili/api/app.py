@@ -837,6 +837,37 @@ class noticeOne(Resource):  # Mariadb 연결 진행
         return result1
 
 
+class noticePopCnt(Resource):  # Mariadb 연결 진행
+    def get(self):
+        logging.debug("noticePopCnt start")
+        logging.debug(request.get_json())
+
+        logging.debug('---------------SEARCH---------------')
+        logging.debug('------------------------------------')
+
+        # requirements pymysql import 후 커넥트 사용
+        mysql_con = pymysql.connect(host='218.151.225.142', port=3306, db='IFG_IMS', user='ims2', password='1234',
+                                    charset='utf8')
+        try:
+            with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+                # 쿼리문 실행
+                sql = "SELECT  COUNT(*) AS COUNT " \
+                      "FROM  TB_STTS_POST_MGMT_M " \
+                      "WHERE 1=1 " \
+                      "AND  POP_OPEN_YN = 'Y' " \
+                      "AND DATE(NOW()) BETWEEN date(POP_OPEN_DTTM_FROM) AND date(POP_OPEN_DTTM_TO) "
+
+                logging.debug(sql)
+                cursor.execute(sql)
+
+        finally:
+            mysql_con.close()
+
+        result1 = cursor.fetchall()
+
+        return result1
+
+
 class noticePopUp(Resource):  # Mariadb 연결 진행
     def get(self):
         logging.debug("noticePopUp start")
@@ -985,8 +1016,7 @@ class noticeSave(Resource):
                 "DATA_UPD_PGM_ID = %s"
 
                 logger.info(sql)
-                cursor.execute(sql, (tit, cntn, kdDivsCd, mjrYn, popOpenYn, popOpenDttmFrom, popOpenDttmTo, dataInptId, dataInptPgmId, dataUpdId, dataUpdPgmId
-                                     ,tit, cntn, kdDivsCd, mjrYn, popOpenYn, popOpenDttmFrom, popOpenDttmTo,dataUpdId,dataUpdPgmId))
+                cursor.execute(sql, (tit, cntn, kdDivsCd, mjrYn, popOpenYn, popOpenDttmFrom, popOpenDttmTo, dataInptId, dataInptPgmId, dataUpdId, dataUpdPgmId,tit, cntn, kdDivsCd, mjrYn, popOpenYn, popOpenDttmFrom, popOpenDttmTo,dataUpdId,dataUpdPgmId))
                 logger.info(sql)
                 mysql_con.commit()
 
@@ -1083,6 +1113,7 @@ api.add_resource(apvlReqHist,'/apvlReqHist') #api 선언
 api.add_resource(apvlReqHistDetl,'/apvlReqHistDetl') #api 선언
 api.add_resource(calendarData,'/calendarData') #api 선언
 api.add_resource(noticeLst,'/noticeLst') #api 선언
+api.add_resource(noticePopCnt,'/noticePopCnt') #api 선언
 api.add_resource(noticeOne,'/noticeOne') #api 선언
 api.add_resource(noticePopUp,'/noticePopUp') #api 선언
 api.add_resource(noticeMjrCnt,'/noticeMjrCnt') #api 선언

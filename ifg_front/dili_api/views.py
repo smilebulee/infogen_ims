@@ -232,17 +232,15 @@ def getNoticeLst(request):
     return JsonResponse(data)
 
 
-
-def getNoticeOne(request):
+def getNoticePopCnt(request):
     param = json.loads(request.GET['param'])
 
     logger.info(param)
 
     params = {
-        'postId': param['postId'],
     }
 
-    r = requests.get('http://dili_api:5006/noticeOne', params=params)
+    r = requests.get('http://dili_api:5006/noticePopCnt', params=params)
     logger.info(r)
     logger.info(r.text)
     logger.info(r.json())
