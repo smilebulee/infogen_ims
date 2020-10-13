@@ -141,7 +141,7 @@ def retrievePrjDetlInfo(request):
     logger.info(param)
     logger.info("프로젝트별투입현황관리 프로젝트 상세정보")
     params = {
-        'prjCd': param['prjCd'],
+        'prjCd': param['prjCd']
     }
     r = requests.get('http://prj_api:5002/retrievePrjDetlInfo', params=params)
     logger.info(r)
