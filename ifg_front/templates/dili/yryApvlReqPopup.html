@@ -83,13 +83,17 @@
         });
 
         function btnReqEvt2() {
+            var aryDate = [];
 
 
             confirmMsg('저장하시겠습니까?', function(){
-                var param = [{
+
+                var param = [];
+
+                var tmpParam = {
                     "email" : 'ishwang@infogen.co.kr',                                   // 추후 Session Value 연동.
                     "apvlReqDivs" : $('input[name="yryType"]:checked').val(),    //01: 야근, 02:휴일, 03: 연차
-                    "wrkDt" : '20201104',
+                    "wrkDt" : $("#ipt_holiTerm1").val(),
                     "wrkTme" : "000000",
                     "wrkReqRsn": $("#txa_holiRsn").val(),
                     "th1AprvStus": "01",
@@ -98,31 +102,34 @@
                     "th2AprvNm": "yblee1987@infogen.co.kr",
                     "holiDays" : $("#ipt_holiDays").val()
 
-                },{
-                    "email" : 'ishwang@infogen.co.kr',                                   // 추후 Session Value 연동.
-                    "apvlReqDivs" : $('input[name="yryType"]:checked').val(),    //01: 야근, 02:휴일, 03: 연차
-                    "wrkDt" : '20201102',
-                    "wrkTme" : "000000",
-                    "wrkReqRsn": $("#txa_holiRsn").val(),
-                    "th1AprvStus": "01",
-                    "th1AprvNm": "hykim@infogen.co.kr",
-                    "th2AprvStus": "01",
-                    "th2AprvNm": "yblee1987@infogen.co.kr",
-                    "holiDays" : $("#ipt_holiDays").val()
+                }
 
-                },{
-                    "email" : 'ishwang@infogen.co.kr',                                   // 추후 Session Value 연동.
-                    "apvlReqDivs" : $('input[name="yryType"]:checked').val(),    //01: 야근, 02:휴일, 03: 연차
-                    "wrkDt" : '20201103',
-                    "wrkTme" : "000000",
-                    "wrkReqRsn": $("#txa_holiRsn").val(),
-                    "th1AprvStus": "01",
-                    "th1AprvNm": "hykim@infogen.co.kr",
-                    "th2AprvStus": "01",
-                    "th2AprvNm": "yblee1987@infogen.co.kr",
-                    "holiDays" : $("#ipt_holiDays").val()
+                param.push(tmpParam);
 
-                }]
+
+                if($("#ipt_holiDays").val()-1 > 1) {
+                    var date = new Date($("#ipt_holiTerm1").val().substring(0,4), $("#ipt_holiTerm1").val().substring(5,7)-1,$("#ipt_holiTerm1").val().substring(8,10));
+                    for(var i=0; i<$("#ipt_holiDays").val()-1; i++) {
+
+                        date.setDate(date.getDate() + 1)
+
+                        var tmpParam = {
+                            "email" : 'ishwang@infogen.co.kr',                                   // 추후 Session Value 연동.
+                            "apvlReqDivs" : $('input[name="yryType"]:checked').val(),    //01: 야근, 02:휴일, 03: 연차
+                            "wrkDt" : setWeek(date).baseDate.replaceAll('/','-'),
+                            "wrkTme" : "000000",
+                            "wrkReqRsn": $("#txa_holiRsn").val(),
+                            "th1AprvStus": "01",
+                            "th1AprvNm": "hykim@infogen.co.kr",
+                            "th2AprvStus": "01",
+                            "th2AprvNm": "yblee1987@infogen.co.kr",
+                            "holiDays" : $("#ipt_holiDays").val()
+
+                        }
+                        param.push(tmpParam);
+                    }
+                }
+
 
                 $.ajaxCall( param, {
                      method : 'POST',
