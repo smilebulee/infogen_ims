@@ -21,12 +21,41 @@
 
     <script type="text/javascript" xmlns:max-width="http://www.w3.org/1999/xhtml">
 
+        /*********************************************************************
+        *   Session Email
+        *********************************************************************/
+        var params = {
+            "email" : 'sangeuny@infogen.co.kr',
+            "authId" : "ADMIN"
+        }
+
+        /*********************************************************************
+        *   urlParam
+        *********************************************************************/
+        $.urlParam = function(name){
+            var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
+            if (results == null || results == '' ){
+                console.log("postId 없음");
+                return null;
+            } else{
+                return results[1] || 0;
+            }
+        }
+
+        var type = $.urlParam("type");     <!-- url에서 type 가져오기-->
+        console.log("type: " + type);
+
+        var postId =  $.urlParam("postId");     <!-- url에서 postId 가져오기-->
+        if(postId == '' || postId == null){
+            postId = -1;
+        }
+        console.log("postId: " + postId);
+
         $(document).ready(function(){
              console.log("ready");
+             console.log("params.email: " + params.email);
 
              var url = decodeURIComponent(window.location.href);
-             var type = $.urlParam("type");     <!-- url에서 type 가져오기-->
-             console.log("type: " + type);
 
             /*********************************************************************
              *  type에 따른 버튼 show/hide 변경
@@ -35,9 +64,10 @@
                 console.log("상세보기");
                 getNoticeOne();
                 console.log(url);
-                $('#btn_R').show();
-                $('#btn_U').hide();
-                $('#btn_C').hide();
+
+                //$('#btn_R').show();
+                //$('#btn_U').hide();
+                //$('#btn_C').hide();
 
                 $('#ipt_title').attr('readonly', true);      //수정불가
                 $('#cb_mjrYn').attr('disabled', true);      //수정불가
@@ -47,16 +77,6 @@
                 $('#sbx_kdDivsCd').attr('readonly', true);      //수정불가
                 $('#ipt_cntn').attr('readonly', true);      //수정불가
 
-                $.urlParam = function(name){
-                    var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
-                    if (results == null || results == '' ){
-                        console.log("postId 없음");
-                        return null;
-                    } else{
-                        return results[1] || 0;
-                    }
-                }
-                var postId =  $.urlParam("postId");     <!-- url에서 postId 가져오기-->
                 $('#postId').val(postId);
                 console.log(postId);
             } else if(type == "c"){     //글쓰기 버튼 클릭
@@ -137,45 +157,18 @@
 
         });
 
-        /*************************************************************
-        *  url에서 postId 가져오기
-        **************************************************************/
-        $.urlParam = function(name){
-            var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
-            if (results == null || results == '' ){
-                console.log("postId 없음");
-                return null;
-            } else{
-                //getNoticeOne();
-
-                return results[1] || 0;
-            }
-        }   //End
-
-
         /*********************************************************************
          *  공지사항 상세조회
         *********************************************************************/
         function getNoticeOne() {
             console.log("getNoticeOne: ");
-            $.urlParam = function(name){
-                var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
-                if (results == null || results == '' ){
-                    console.log("postId 없음");
-                    return null;
-                } else{
-                    return results[1] || 0;
-                }
+
+            var param = {
+                "postId" :  postId
             }
 
-            console.log("postId@@@@@@@: " + $.urlParam("postId"));
-            //var param = { "postId" :  $.urlParam("postId") }
-            var param = {
-                    "postId" :  $.urlParam("postId")
-                }
-
-            $.ajaxCall(param, {
-                 'method' : 'GET',
+            var options = {
+                'method' : 'GET',
                  'url' : "{% url 'dili_api:getNoticeOne' %}",
                  'dataType' : 'json',
                  'data' : JSON.stringify(param),
@@ -201,10 +194,22 @@
                     $('#ipt_holiTerm1').val(data[0].POP_OPEN_DTTM_FROM);
                     $('#ipt_holiTerm2').val(data[0].POP_OPEN_DTTM_TO);
 
-                    g_toast.push("성공적으로 조회되었습니다.");
-
+                    //게시글 작성자랑 동일 시, 수정, 삭제 버튼 활성화
+                    if((data[0].DATA_INPT_ID) == params.email) {
+                        console.log("게시글 작성자랑 동일 시, 수정, 삭제 버튼 활성화");
+                        $('#btn_R').show();     //수정, 삭제
+                        $('#btn_U').hide();     //수정(업데이트)
+                        $('#btn_C').hide();     //취소, 등록
+                    } else {
+                        console.log("게시글 작성자랑 다름, 수정, 삭제 버튼 비활성화");
+                        $('#btn_R').hide();     //수정, 삭제
+                        $('#btn_U').hide();     //수정(업데이트)
+                        $('#btn_C').hide();     //취소, 등록
+                    }
                  }
-            });
+            }
+
+            $.ajaxCall(param, options );
         }
 
 
@@ -216,6 +221,7 @@
             var mjrYn = "N";
             var popOpenYn = "N";
             console.log('저장');
+
             //중요 체크 값 지정
             if($('#cb_mjrYn').is(":checked") == true){
                 console.log("중요체크됨");
@@ -274,7 +280,10 @@
             * 저장 실행
             **************************************/
             confirmMsg('저장하시겠습니까?', function(){
+                console.log("저장 type: " + type);
+                console.log("params.email: " + params.email);
                 var param = {
+                    "type" : type,
                     "tit" : $("#ipt_title").val(),
                     "kdDivsCd" : $("#sbx_kdDivsCd").val(),
                     "mjrYn" : mjrYn,
@@ -282,9 +291,9 @@
                     "popOpenDttmFrom" : $("#ipt_holiTerm1").val(),
                     "popOpenDttmTo" : $("#ipt_holiTerm2").val(),
                     "cntn" : $("#ipt_cntn").val(),
-                    "dataInptId" : "TEST1",
+                    "dataInptId" : params.email,
                     "dataInptPgmId" : "noticeDtl",
-                    "dataUpdId" : "TEST1",
+                    "dataUpdId" : params.email,
                     "dataUpdPgmId" : "noticeDtl"
                 }
 
@@ -296,7 +305,7 @@
                     callbackFn:function(data){
                         if(data){
                             // 리턴
-                             location.href = '/dili/noticeLst';
+                             //location.href = '/dili/noticeLst';
                              g_toast.push("저장되었습니다.");
                              console.log("저장되었습니다.");
 
@@ -305,7 +314,7 @@
                         } else{
                             g_toast.push("저장에 실패하였습니다.");
                             console.log("저장에 실패하였습니다.");
-                            location.reload();
+                            //location.reload();
                         }
                     },
                     success:function(data){
@@ -402,6 +411,7 @@
         ****************************************************************/
         function btnGoUpdt(){
             console.log("수정화면으로 이동");
+            type = "u";
 
             /*******  컴포넌트 수정 가능하게  *******/
             $('#ipt_title').attr('readonly', false);      //수정가능
@@ -441,8 +451,12 @@
             /**************************************
             * 업데이트 실행
             **************************************/
+            console.log("저장 type: " + type);
+            console.log("업데이트 postId: " + postId);
             confirmMsg('저장하시겠습니까?', function(){
                 var param = {
+                    "postId": postId,
+                    "type" : type,
                     "tit" : $("#ipt_title").val(),
                     "kdDivsCd" : $("#sbx_kdDivsCd").val(),
                     "mjrYn" : mjrYn,
@@ -450,11 +464,11 @@
                     "popOpenDttmFrom" : $("#ipt_holiTerm1").val(),
                     "popOpenDttmTo" : $("#ipt_holiTerm2").val(),
                     "cntn" : $("#ipt_cntn").val(),
-                    "dataUpdId" : "SERAMOON",
+                    "dataUpdId" : params.email,
                     "dataUpdPgmId" : "noticeDtl"
                 }
 
-               $.ajaxCall( param, {
+                $.ajaxCall( param, {
                     method:'POST',
                     url:'/dili/noticeSave/post',
                     dataType:'json',
