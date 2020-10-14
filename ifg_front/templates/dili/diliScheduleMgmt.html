@@ -599,12 +599,15 @@
             var tdYear = "";
             var tdMonth = "";
             var tdDate = "";
+            var tempSetWeek = ""
 
             for(var i = 0; i < 7; i++){
 
                 tdYear = weekGridStrtDate.getFullYear();
                 tdMonth = weekGridStrtDate.getMonth()+1;
                 tdDate = weekGridStrtDate.getDate();
+                tempSetWeek = setWeek(weekGridStrtDate).baseDate;
+                console.log("tempSetWeek : ",tempSetWeek);
 
                 weekTable += '<tr id ="grd_week'+tdYear+'/'+tdMonth+'/'+tdDate+'" onclick="onclickWeekEvt(this)"  ondblclick="ondblClickEvt(this)">';
                 weekTable += '<td class="pt-3-half" contenteditable="false">'+tdDate+'</td>';
