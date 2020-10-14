@@ -291,9 +291,9 @@ class gridData(Resource): # Mariadb 연결 진행
                     + "   ON A.WRK_DT = B.WRK_DT "\
                     + "   AND A.EMP_EMAL_ADDR = B.EMP_EMAL_ADDR "\
                     + "  WHERE 1 = 1 "\
-                    + "AND A.EMP_EMAL_ADDR = 'ishwang@infogen.co.kr' "\
-                    + "AND A.WRK_DT >= '2020-10-01' "\
-                    + "AND A.WRK_DT <= '2020-10-08' "\
+                    + "AND A.EMP_EMAL_ADDR = '" + data["email"] + "' "\
+                    + "AND A.WRK_DT >= '" + data["strtDt"] + "' "\
+                    + "AND A.WRK_DT <= '" + data["endDt"] + "' "\
                     + "ORDER BY A.WRK_DT"
                 logging.debug(sql)
                 cursor.execute(sql)
