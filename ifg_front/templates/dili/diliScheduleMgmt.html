@@ -48,6 +48,10 @@
 
         $(document).ready(function(){
 
+
+            var tempStrtDt = "";
+            var tempEndDt = "";
+
             sessionStorage.setItem("email","ishwang@infogen.co.kr");                // 임시
 
             $('#grp_grid').hide();                                                  // Calendar UI를 Default로 한다.
@@ -67,7 +71,7 @@
 
             crteMonthGrid();                                                                              // Month Grid 생성
             crteTodayShow(year, month, date, day);                                                        // Grid UI(주) 날짜 세팅
-            setGridData();
+
 
             /*********************************************************************
             *   weekGridDtDfr Btn Click Event - 주 그리드 날짜 이전 버튼 클릭
@@ -99,7 +103,10 @@
                 $('#txt_weekStrtMm').text(dfrStrtDate.getMonth()+1);
                 $('#txt_weekStrtDd').text(dfrStrtDate.getDate());
 
-                crteWeekGrid();
+                tempStrtDt = setWeek(dfrStrtDate).baseDate;
+                tempEndDt = setWeek(dfrEndDate).baseDate;
+                setGridData(tempStrtDt, tempEndDt);
+
             });
 
             /*********************************************************************
@@ -131,7 +138,9 @@
                 $('#txt_weekStrtMm').text(nxtStrtDate.getMonth()+1);
                 $('#txt_weekStrtDd').text(nxtStrtDate.getDate());
 
-                crteWeekGrid();
+                tempStrtDt = setWeek(nxtStrtDate).baseDate;
+                tempEndDt = setWeek(nxtEndDate).baseDate;
+                setGridData(tempStrtDt, tempEndDt);
             });
 
             /*********************************************************************
@@ -206,11 +215,11 @@
             /*********************************************************************
             *   Session Email 값 기준 그리드 데이터 세팅
             *********************************************************************/
-            function setGridData(){
+            function setGridData(tempStrtDt, tempEndDt){
                 var gridParam = {
                     "email"     : sessionStorage.getItem("email"),
-                    "startDate" : "",
-                    "endDate" : ""
+                    "strtDt" : tempStrtDt,
+                    "endDt" : tempEndDt
                 }
 
                 $.ajaxCall( gridParam, {
@@ -221,6 +230,8 @@
                      'async' : false,
                      'callbackFn' : function(data, status, xhr){
                         console.log("Griddata : ",data)
+                        crteWeekGrid(data);
+
                      }
                 });
             }
@@ -537,7 +548,42 @@
 
             });
 
+            /*********************************************************************
+            *   Grid UI(주) 날짜 세팅
+            *********************************************************************/
+            function crteTodayShow(year, month, date, day){
+                var strtDate = null;
+                var endDate = null;
 
+                //주tab 시작일, 종료일 입력 날짜 계산
+                for(var i = 0; i < 7; i++ ){
+
+                    if(day == i){
+
+                        strtDate = new Date(year, Number(month), Number(date) - i);
+                        endDate = new Date(year, Number(month), Number(date) + 6 - i);
+                    }
+                }
+
+                $('#txt_weekStrtYy').text(strtDate.getFullYear()); //그리드 주tab 시작년도 입력
+                $('#txt_weekStrtMm').text(strtDate.getMonth() + 1); //그리드 주tab 시작월 입력
+                $('#txt_weekStrtDd').text(strtDate.getDate()); //그리드 주tab 시작일 입력
+
+                $('#txt_weekEndYy').text(endDate.getFullYear()); //그리드 주tab 종료년도 입력
+                $('#txt_weekEndMm').text(endDate.getMonth() + 1); //그리드 주tab 종료월 입력
+                $('#txt_weekEndDd').text(endDate.getDate()); //그리드 주tab 종료일 입력
+
+
+                console.log("테스트1 :", setWeek(strtDate).baseDate);
+                console.log("테스트2 :", setWeek(endDate).baseDate);
+
+
+
+                tempStrtDt = setWeek(strtDate).baseDate;
+                tempEndDt = setWeek(endDate).baseDate;
+                setGridData(tempStrtDt, tempEndDt);
+
+            }
 
 
         });<!--ready.function_END-->
@@ -545,38 +591,12 @@
         var myChart;
 
 
-        /*********************************************************************
-        *   Grid UI(주) 날짜 세팅
-        *********************************************************************/
-        function crteTodayShow(year, month, date, day){
-            var strtDate = null;
-            var endDate = null;
 
-            //주tab 시작일, 종료일 입력 날짜 계산
-            for(var i = 0; i < 7; i++ ){
-
-                if(day == i){
-
-                    strtDate = new Date(year, Number(month), Number(date) - i);
-                    endDate = new Date(year, Number(month), Number(date) + 6 - i);
-                }
-            }
-
-            $('#txt_weekStrtYy').text(strtDate.getFullYear()); //그리드 주tab 시작년도 입력
-            $('#txt_weekStrtMm').text(strtDate.getMonth() + 1); //그리드 주tab 시작월 입력
-            $('#txt_weekStrtDd').text(strtDate.getDate()); //그리드 주tab 시작일 입력
-
-            $('#txt_weekEndYy').text(endDate.getFullYear()); //그리드 주tab 종료년도 입력
-            $('#txt_weekEndMm').text(endDate.getMonth() + 1); //그리드 주tab 종료월 입력
-            $('#txt_weekEndDd').text(endDate.getDate()); //그리드 주tab 종료일 입력
-
-            crteWeekGrid();
-        }
 
         /*********************************************************************
         *   Week Grid 생성
         *********************************************************************/
-        function crteWeekGrid(){
+        function crteWeekGrid(schdData){
 
             var weekTable = '<table class="table table-bordered table-responsive-md table-striped text-center">';
             weekTable += '<thead>';
@@ -596,25 +616,37 @@
             var weekGridStrtDd = $('#txt_weekStrtDd').text(); //현재 시작 일
 
             var weekGridStrtDate = new Date(weekGridStrtYy, weekGridStrtMm, weekGridStrtDd); //시작 날짜
-            var tdYear = "";
-            var tdMonth = "";
             var tdDate = "";
             var tempSetWeek = ""
 
             for(var i = 0; i < 7; i++){
 
-                tdYear = weekGridStrtDate.getFullYear();
-                tdMonth = weekGridStrtDate.getMonth()+1;
                 tdDate = weekGridStrtDate.getDate();
                 tempSetWeek = setWeek(weekGridStrtDate).baseDate;
-                console.log("tempSetWeek : ",tempSetWeek);
 
-                weekTable += '<tr id ="grd_week'+tdYear+'/'+tdMonth+'/'+tdDate+'" onclick="onclickWeekEvt(this)"  ondblclick="ondblClickEvt(this)">';
+                var jobStrtTm = "-";
+                var jobEndTm = "-";
+                var allWrkTm = "-";
+                var normWrkTm = "-";
+                var overWrkTm = "-";
+
+                if(schdData.length > 0){
+                    for(var j = 0; j < schdData.length; j++){
+                        if(tempSetWeek == schdData[j].WRK_DT){
+
+                            jobStrtTm = schdData[j].JOB_STRT_TM;
+                            jobEndTm = schdData[j].JOB_END_TM;
+                            allWrkTm = schdData[j].ALL_WRK_TM;
+                            normWrkTm = schdData[j].NORM_WRK_TM;
+                        }
+                    }
+                }
+                weekTable += '<tr id ="grd_week'+tempSetWeek+'" onclick="onclickWeekEvt(this)"  ondblclick="ondblClickEvt(this)">';
                 weekTable += '<td class="pt-3-half" contenteditable="false">'+tdDate+'</td>';
-                weekTable += '<td class="pt-3-half" contenteditable="false"></td>';
-                weekTable += '<td class="pt-3-half" contenteditable="false"></td>';
-                weekTable += '<td class="pt-3-half" contenteditable="false"></td>';
-                weekTable += '<td class="pt-3-half" contenteditable="false">정상근무 :  / 초과근무 : </td>';
+                weekTable += '<td class="pt-3-half" contenteditable="false">'+jobStrtTm+'</td>';
+                weekTable += '<td class="pt-3-half" contenteditable="false">'+jobEndTm+'</td>';
+                weekTable += '<td class="pt-3-half" contenteditable="false">'+allWrkTm+'</td>';
+                weekTable += '<td class="pt-3-half" contenteditable="false">정상근무 : '+normWrkTm+' / 초과근무 : '+overWrkTm+'</td>';
                 weekTable += '<td class="pt-3-half" contenteditable="false"></td>';
                 weekTable += '</tr>';
                 weekGridStrtDate.setDate(weekGridStrtDate.getDate()+1);
