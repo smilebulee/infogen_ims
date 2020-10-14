@@ -164,7 +164,6 @@ history
 
                     /* 개발자 등록 선택 */
                    $('#devSaveBtn').click(function(){
-
                         if(firstGrid.getList("selected").length == 0){
                             empNo = null;
                             modal('devRegModal');
@@ -176,16 +175,14 @@ history
                                 return false;
                             }
 
-                            skilModal('devRegModal');
+                            modal('devRegModal');
                             $("#devRegModal2").load("{% url 'skil_api:devEnrl' %}");
                         }
                     });
 
                     $('#prjSaveBtn').click(function(){
-
                         if(firstGrid.getList("selected").length == 0){
-                            empNo = null;
-                            skilModal('devRegModal');
+                            modal('devRegModal');
                             $("#devRegModal2").load("{% url 'prj_api:prjReg' %}");
                         } else{
 

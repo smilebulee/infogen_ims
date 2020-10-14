@@ -175,7 +175,7 @@ class retrievePrjInfo(Resource):
         logging.debug('retrievePrjInfo Start')
         prj_cd = request.args.get('prj_cd')
 
-        mysql_con = pymysql.connect(host='218.151.225.142', port=3306, db='IFG_IMS', user='ims2', password='1234',
+        mysql_con = pymysql.connect(host='mariadb', port=3306, db='IFG_IMS', user='ims2', password='1234',
                                     charset='utf8')
 
         try:
@@ -211,7 +211,7 @@ class retrieveReqSkil(Resource):
         logging.debug('retrieveReqSkil Start')
         prj_cd = request.args.get('prj_cd')
 
-        mysql_con = pymysql.connect(host='218.151.225.142', port=3306, db='IFG_IMS', user='ims2', password='1234',
+        mysql_con = pymysql.connect(host='mariadb', port=3306, db='IFG_IMS', user='ims2', password='1234',
                                     charset='utf8')
 
         try:
@@ -238,7 +238,7 @@ class retrieveSkilName(Resource):
 
         logging.debug('retrieveSkilName Start')
 
-        mysql_con = pymysql.connect(host='218.151.225.142', port=3306, db='IFG_IMS', user='ims2', password='1234',
+        mysql_con = pymysql.connect(host='mariadb', port=3306, db='IFG_IMS', user='ims2', password='1234',
                                     charset='utf8')
 
         try:
@@ -271,7 +271,7 @@ class prjSave(Resource):
             prj_cd = request.form['prj_cd']
             use_yn = 'Y'
 
-            mysql_con = pymysql.connect(host='218.151.225.142', port=3306, db='IFG_IMS', user='ims2', password='1234',
+            mysql_con = pymysql.connect(host='mariadb', port=3306, db='IFG_IMS', user='ims2', password='1234',
                                         charset='utf8')
 
             try:
@@ -369,7 +369,7 @@ class prjDelete(Resource):
             logging.debug("delete start")
             prj_cd = request.form['prj_cd']
 
-            mysql_con = pymysql.connect(host='218.151.225.142', port=3306, db='IFG_IMS', user='ims2',
+            mysql_con = pymysql.connect(host='mariadb', port=3306, db='IFG_IMS', user='ims2',
                                             password='1234',
                                             charset='utf8')
 
