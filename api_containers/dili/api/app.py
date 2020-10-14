@@ -587,11 +587,11 @@ class empInfo(Resource): # Mariadb 연결 진행
 
         data = request.get_json()
         # get data
-        name = data["name"]
+        #name = data["name"]
 
         logging.debug('================== App Start ==================')
         logging.debug(data)
-        logging.debug(data["email"])
+        logging.debug(data["name"])
         logging.debug('================== App End ==================')
 
         #requirements pymysql import 후 커넥트 사용
@@ -600,7 +600,7 @@ class empInfo(Resource): # Mariadb 연결 진행
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 #쿼리문 실행
-                sql = "SELECT SEQ_NO, EMP_NAME, EMP_EMAIL, EMP_TEL FROM TB_EMP_MGMT WHERE EMP_EMAIL LIKE '%" + name + "%' ORDER BY SEQ_NO"
+                sql = "SELECT SEQ_NO, EMP_NAME, EMP_EMAIL, EMP_TEL FROM TB_EMP_MGMT WHERE EMP_EMAIL LIKE '%" + data["name"] + "%' ORDER BY SEQ_NO"
 
                 logging.debug(sql)
                 cursor.execute(sql)

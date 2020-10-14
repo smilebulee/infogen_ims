@@ -1,21 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
     <meta name="viewport" content="width=device-width, initial-scale=1"><!-- 모바일 -->
-{% load static %}
+    {% load static %}
        <title>IFG-IMS</title>
-
 </head>
 <body>
     <div class="container">
-
-
         <script type="text/javascript">
         $(document).ready(function(){
             /* 메인 화면에서 받는 NAME 파라미터 */
             var param = {
-                "name" : '황이성'
+                "name" : 'PARK'
             }
 
             /* 목록조회 */
@@ -34,10 +30,59 @@
             });
 
             $('#searchBtn').click(function(){
-                onClickSearchBtn(ipt_searchEmail);
+                onClickSearchBtn(ipt_searchName);
+            });
+
+            $('#checkThis').click(function(){
+                onClickCheckThisBtn(checkbox);
             });
 
         });
+
+        function onClickSearchBtn(ipt_searchName) {
+            var param = {
+                "name" : $('[name="ipt_searchName"]').val()
+            }
+
+            /* 목록조회 */
+            $.ajaxCall( param, {
+                 'method' : 'GET',
+                 'url' : "{% url 'dili_api:getEmpInfo' %}",
+                 'dataType' : 'json',
+                 'data' : JSON.stringify(param),
+                 'async' : false,
+                 'callbackFn' : function(data){
+                    // 로그
+                    console.log("data : ",data)
+                    // 리턴
+                    empListGrd(data);
+                 }
+            });
+
+        };
+
+
+        function onClickCheckThisBtn(checkbox) {
+            var param = {
+                "checkbox" : $('[name="checkbox"]').val()
+            }
+
+            /* 목록조회 */
+            $.ajaxCall( param, {
+                 'method' : 'GET',
+                 'url' : "{% url 'dili_api:getEmpInfo' %}",
+                 'dataType' : 'json',
+                 'data' : JSON.stringify(param),
+                 'async' : false,
+                 'callbackFn' : function(data){
+                    // 로그
+                    console.log("data : ",data)
+                    // 리턴
+                    empListGrd(data);
+                 }
+            });
+
+        };
 
         /* 직원목록 생성 */
         function empListGrd(data){
@@ -45,7 +90,6 @@
             var empListTable = '<table class="table table-bordered table-responsive-md text-center">';
             empListTable += '<thead>';
             empListTable += '<tr>';
-            empListTable += '<th class="text-center">순번</th>';
             empListTable += '<th class="text-center">이름</th>';
             empListTable += '<th class="text-center">E-Mail</th>';
             empListTable += '<th class="text-center">연락처</th>';
@@ -61,7 +105,7 @@
                 for(var i = 0; i < size; i++){
 
                     empListTable += '<tr id ="grd_empList">';
-                    empListTable += '<td id="no" class="pt-3-half">'+(i+1)+'</td>';
+
                     empListTable += '<td id="empName" class="pt-3-half">'+data[i].EMP_NAME+'</td>';
                     empListTable += '<td id="empEmail" class="pt-3-half">'+data[i].EMP_EMAIL+'</td>';
                     empListTable += '<td id="empTel" class="pt-3-half">'+data[i].EMP_TEL+'</td>';
@@ -70,57 +114,35 @@
                 }
             }
 
-
             empListTable += '</tbody>';
             empListTable += '</table>';
 
             document.getElementById('grd_empListTable').innerHTML = empListTable;
         };
 
-
-
-
     </script>
         <div class="row">
             <div class="col-sm-12">
-                <div class="mb-4" role="alert">
-                    <h5>
-                        <b>직원관리</b>
-                    </h5>
-                </div>
-
                 <div class="accordion mb-4" id="grp_search">
                     <div class="card">
-
                         <div id="col_search" class="collapse show" aria-labelledby="head_search" data-parent="#grp_search">
                             <div class="card-body flex-height d-flex m-0 p-2">
-                                <div class="align-self-start align-self-center mr-3">E-mail</div>
+                                <div class="align-self-start align-self-center mr-3">직원 조회</div>
                                 <div class="align-self-center mr-3">
-                                    <input type="text" class="form-control" id="ipt_searchEmail" name="ipt_searchEmail" placeholder="E-mail을 입력해주세요." maxlength="10"/>
+                                    <input type="text" class="form-control" id="ipt_searchName" name="ipt_searchName" placeholder="이름을 입력해주세요." maxlength="10"/>
                                 </div>
                                 <div class="align-self-end align-self-center">
-                                    <button class="btn btn-primary" id="searchBtn" onclick="onclickEvt">검색</button>
+                                    <button class="btn btn-primary" id="searchBtn" type="button">검색</button>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
                 <center>
-                # 페이징 구현하기
-                    <a href ="" class="btn btn-link text-dark btn-arrow-left">
-                        [이전]
-                    </a>
-
-                    #1 #2 .. #10 최대
-
-                    <a href="" class="btn btn-link text-dark btn-arrow-right">
-                        [다음]
-                    </a>
+                    <div id="grd_empListTable"></div>
                 </center>
-
             </div>
         </div>
     </div>
-
 </body>
 </html>
