@@ -4,6 +4,7 @@ from flask_restful import Api, Resource
 import logging
 logging.basicConfig(level=logging.DEBUG)
 import bcrypt
+import socket
 
 #from bson.json_util import dumps
 import json
@@ -21,6 +22,14 @@ class DateTimeEncoder(JSONEncoder):
     def default(self, obj):
         if isinstance(obj, (datetime.date, datetime.datetime)):
             return obj.isoformat()
+
+def getSystemInfo():
+    try:
+        info={}
+        info['ip-address']=socket.gethostbyname(socket.gethostname())
+        return json.dumps(info)
+    except Exception as e:
+        logging.exception(e)
 
 
 def dateConverter(param):
@@ -302,7 +311,8 @@ class wrkTimeInfoByEml(Resource): # Mariadb 연결 진행
 
         data = request.get_json()
 
-        logging.debug('================== App Start ==================')
+        logging.debug('================== App Startasd ==================')
+        logging.debug(json.loads(getSystemInfo()))
         logging.debug(data)
         logging.debug('================== App End ==================')
 
