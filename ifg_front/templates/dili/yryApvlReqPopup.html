@@ -116,7 +116,7 @@
                         var tmpParam = {
                             "email" : 'ishwang@infogen.co.kr',                                   // 추후 Session Value 연동.
                             "apvlReqDivs" : $('input[name="yryType"]:checked').val(),    //01: 야근, 02:휴일, 03: 연차
-                            "wrkDt" : setWeek(date).baseDate.replaceAll('/','-'),
+                            "wrkDt" : setWeek(date).baseDate,
                             "wrkTme" : "000000",
                             "wrkReqRsn": $("#txa_holiRsn").val(),
                             "th1AprvStus": "01",
