@@ -396,6 +396,11 @@
             });
 
 
+            calendar.on('clickSchedule', function(event) {
+                console.log(event.schedule.end.getFullYear()+"-"+(event.schedule.end.getMonth()+1)+"-"+event.schedule.end.getDate());
+            });
+
+
 
             /*********************************************************************
             *   Draw  calendar Event - 데이터 받아오기
@@ -504,10 +509,11 @@
                 category: scheduleData.isAllDay ? 'allday' : 'time',
                 location: scheduleData.location             // 장소 정보
               };
-              // ajax DB 저장 schedule
-              // DB 저장
-              calendar.createSchedules([schedule]);
-              console.log(schedule);
+
+              if ($('.tui-full-calendar-month-guide-block').length >= 1) {
+                $('.tui-full-calendar-month-guide-block').remove();
+              }
+              console.log(schedule.end.getFullYear()+"-"+(schedule.end.getMonth()+1)+"-"+schedule.end.getDate());
             });
 
 
