@@ -392,7 +392,7 @@
                 defaultView: 'month',
                 taskView: true,
 <!--                useCreationPopup: true,-->
-                useDetailPopup: true
+<!--                useDetailPopup: true-->
             });
 
 
@@ -401,7 +401,7 @@
             *   Draw  calendar Event - 데이터 받아오기
             *********************************************************************/
             var param = {
-                "email" : 'ishwang@infogen.co.kr'
+                "email" : sessionStorage.getItem("email")
             }
 
             $.ajaxCall( param, {
@@ -413,7 +413,11 @@
                  'callbackFn' : function(data, status, xhr){
                     console.log("data111 : ",JSON.parse(data))
 
-                    setCalendar(data);
+                    if(data.length > 0) {
+                        setCalendar(data);
+                    } else {
+                        setCalendar(0);
+                    }
                  }
             });
 
@@ -536,14 +540,16 @@
             $('#calendar').click(function(event){
                 console.log('calendarClick', event.date, event.target);
 
-                modal('my_modal');  <!--근무시간 Detail-->
-                $('#my_modal2').load("{% url 'dili_api:scheduleMgmtPop' %}");
+
 
 
             });
 
             $('#calendar').dblclick(function(event){
                 console.log('calendarDbClick');
+
+                modal('my_modal');  <!--근무시간 Detail-->
+                $('#my_modal2').load("{% url 'dili_api:scheduleMgmtPop' %}");
 
 
             });
