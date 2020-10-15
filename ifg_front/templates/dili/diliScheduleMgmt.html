@@ -540,13 +540,15 @@
             $('#calendar').click(function(event){
                 console.log('calendarClick', event.date, event.target);
 
-
-
-
             });
 
+            /*********************************************************************
+            *   calendar dblClick Event - calender 더블클릭시
+            *********************************************************************/
             $('#calendar').dblclick(function(event){
                 console.log('calendarDbClick');
+
+                //메서드만들어서 파라미터 보내기
 
                 modal('my_modal');  <!--근무시간 Detail-->
                 $('#my_modal2').load("{% url 'dili_api:scheduleMgmtPop' %}");
