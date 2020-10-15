@@ -586,12 +586,15 @@ class empInfo(Resource): # Mariadb 연결 진행
     def get(self):
 
         data = request.get_json()
+
         # get data
         #name = data["name"]
 
         logging.debug('================== App Start ==================')
         logging.debug(data)
         logging.debug(data["name"])
+        logging.debug(request.args.get('name'))
+        logging.debug(request.args.get('param'))
         logging.debug('================== App End ==================')
 
         #requirements pymysql import 후 커넥트 사용
@@ -600,7 +603,7 @@ class empInfo(Resource): # Mariadb 연결 진행
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 #쿼리문 실행
-                sql = "SELECT SEQ_NO, EMP_NAME, EMP_EMAIL, EMP_TEL FROM TB_EMP_MGMT WHERE EMP_EMAIL LIKE '%" + data["name"] + "%' ORDER BY SEQ_NO"
+                sql = "SELECT SEQ_NO, EMP_NAME, EMP_EMAIL, EMP_TEL FROM TB_EMP_MGMT WHERE EMP_NAME LIKE '%" + data["name"] + "%' ORDER BY SEQ_NO"
 
                 logging.debug(sql)
                 cursor.execute(sql)

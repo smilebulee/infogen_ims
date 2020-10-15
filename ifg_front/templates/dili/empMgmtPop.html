@@ -11,16 +11,13 @@
         $(document).ready(function(){
             /* 메인 화면에서 받는 NAME 파라미터 */
             var param = {
-                "name" : 'PARK'
+                name : "이"
             }
 
             /* 목록조회 */
             $.ajaxCall( param, {
                  'method' : 'GET',
                  'url' : "{% url 'dili_api:getEmpInfo' %}",
-                 'dataType' : 'json',
-                 'data' : JSON.stringify(param),
-                 'async' : false,
                  'callbackFn' : function(data){
                     // 로그
                     console.log("data : ",data)

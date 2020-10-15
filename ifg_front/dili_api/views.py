@@ -153,7 +153,6 @@ def getEmpInfo(request):
     logger.info(r)
     logger.info(r.text)
     logger.info(r.json())
-    logger.info(json.loads(r.text))
     return JsonResponse(ast.literal_eval(r.json()), safe=False)
 
 
