@@ -28,8 +28,8 @@ class Skil_api_index(generic.TemplateView):
 
         return render(request, template_name, rr)
 
-def devEnrl(request):
-    template_name = 'skil/devEnrl.html'
+def devReg(request):
+    template_name = 'skil/devReg.html'
 
     return render(request, template_name)
 

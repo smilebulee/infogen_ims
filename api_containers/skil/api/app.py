@@ -4,6 +4,7 @@ from flask_restful import Api, Resource
 import logging
 logging.basicConfig(level=logging.DEBUG)
 import bcrypt
+import socket
 
 import json
 import pymysql
@@ -47,6 +48,18 @@ def getUserMessages(username):
     return users.find({
         "Username": username,
     })[0]["Messages"]
+
+def getSystemInfo():
+    try:
+        if (socket.gethostbyname(socket.gethostname()) == "172.20.0.6" ) :
+            logging.debug('Prod Server')
+            return "mariadb"
+        else :
+            logging.debug('Local Server')
+            return "218.151.225.142"
+
+    except Exception as e:
+        logging.exception(e)
 
 
 """
@@ -461,7 +474,7 @@ class skilMgmtSearch(Resource):
         logging.debug('skil : ' + skil)
         logging.debug('------------------------------------')
 
-        mysql_con = pymysql.connect(host='218.151.225.142', port=3306, db='IFG_IMS', user='ims2', password='1234',
+        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
                                     charset='utf8')
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
@@ -547,7 +560,7 @@ class retrieveCmmCd(Resource):
 
         grp_id = request.args.get('grp_id')
 
-        mysql_con = pymysql.connect(host='mariadb', port=3306, db='IFG_IMS', user='ims2', password='1234',
+        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
                                     charset='utf8')
 
         try:

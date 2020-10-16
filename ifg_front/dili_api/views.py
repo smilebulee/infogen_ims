@@ -321,7 +321,7 @@ def noticeSave(request):
 
     for row in param:
         logger.info("------views.py------")
-        logger.info(row + ':' + param[row])
+        #logger.info(row + ':' + param[row])
         datas.setdefault(row, param[row])
 
     r = requests.post('http://dili_api:5006/noticeSave', data=datas)
