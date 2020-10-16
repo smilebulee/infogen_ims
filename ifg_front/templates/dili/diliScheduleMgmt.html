@@ -1,16 +1,3 @@
-
-<!--
-■■■■■■■ 황이성 TO-DO List  ■■■■■■■
-1. 화면 Onload시 Session User Info를 통해 현재일이 포함된 주 근무시간 가져오기.
-   - 조회 후 해당 데이터를 정상근무/ 초과근무(승인)/ 초과근무(미승인) 값을 기준해서 차트 그리기.
-   - 동적 데이터 대상 : 근무시간 값 / 총 근무시간 / 범례 Label /
-   - 차트 색 디자인 변경.
-
-2. 직원 조회 팝업 연동 [연경씨 화면으로 이름 전달 후 Email회신]
-3. Start To End Date 기준 근무시간 가져오기 함수 개발.
-
--->
-
 {% extends 'common/base.html' %}
 {% block content %}
 {% load static %}
@@ -358,30 +345,32 @@
             $('#searchBtn').click(function(){
 
                 var url = "{% url 'dili_api:empMgmtPop' %}" ;
-                var name = $('#ipt_searchName').val();
-
-                console.log(url);
-                console.log(name);
+                var name = $('#ipt_searchNamePop').val();
 
                 $('#empModalDiv').css("width","50%");
-                $('#empModalDiv').css("height","50%");
 
-                modal('empModalDiv');  <!--근무시간 Detail-->
+                modal('empModalDiv');
 
                 $('#empModal').load(url);
 
             });
 
-
             /*********************************************************************
             *   ipt_searchName EnterKey Event - 직원 조회 엔터키 이벤트
             *********************************************************************/
-            $('#ipt_searchName').keydown(function(e){
+            $('#ipt_searchNamePop').keydown(function(e){
 
                 //엔터키 입력 + 이름컬럼에 값이 있는 경우.
-                if ( e.keyCode == 13 && $('#ipt_searchName').val() != 'undefined' && $('#ipt_searchName').val() != "" ) {
-                    var name = $('#ipt_searchName').val();
-                    alert("이름["+name+"]기준 직원조회 팝업 호출 연동하기.")
+                if ( e.keyCode == 13 && $('#ipt_searchNamePop').val() != 'undefined' && $('#ipt_searchNamePop').val() != "" ) {
+
+                    var url = "{% url 'dili_api:empMgmtPop' %}" ;
+                    var name = $('#ipt_searchNamePop').val();
+
+                    $('#empModalDiv').css("width","50%");
+
+                    modal('empModalDiv');
+
+                    $('#empModal').load(url);
                 }
             });
 
@@ -776,6 +765,11 @@
         *********************************************************************/
        function getWrkTimeByIml(email, strtDate, endDate) {
 
+            console.log(' Debug [Email] : '+email );
+            console.log(' Debug [StrtDate] : '+strtDate );
+            console.log(' Debug [EndDate] : '+endDate );
+
+
             var baseEndDate = $('#baseEndDate').text();
 
             if (baseEndDate == endDate) {
@@ -801,8 +795,6 @@
                  'async' : false,
                  'callbackFn' : function(data, status, xhr){
                     console.log("data : ",data)
-                    console.log("status : ",status)
-                    console.log("xhr : ",xhr)
 
                     $('#baseEndDate').text(endDate);                  // endDate가 변경되는 경우만 Server Call하기 위해 변수셋팅.
 
@@ -955,7 +947,7 @@
             <div id="empModalDiv" class="modalUi">
                 <div id="empModal">
                 </div>
-                <a class="modal_close_btn">
+                <a class="modal_close_btn" id="exitEmpModalBtn">
                     <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-x-circle" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                        <path fill-rule="evenodd" d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
                        <path fill-rule="evenodd" d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
@@ -990,7 +982,7 @@
                             <div class="card-body flex-height d-flex m-0 p-2">
                                 <div class="align-self-start align-self-center mr-3">성명</div>
                                 <div class="align-self-center mr-3">
-                                    <input type="text" class="form-control" id="ipt_searchName" name="ipt_searchName" placeholder="이름을 입력해주세요." maxlength="10"/>
+                                    <input type="text" class="form-control" id="ipt_searchNamePop" name="ipt_searchNamePop" placeholder="이름을 입력해주세요." maxlength="10"/>
                                 </div>
                                 <div class="align-self-end align-self-center">
                                     <button class="btn btn-primary" id="searchBtn">Search</button>
