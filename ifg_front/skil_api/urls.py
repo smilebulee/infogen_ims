@@ -11,7 +11,7 @@ app_name = 'skil_api'
 urlpatterns = [
     path('', login_required(views.Skil_api_index.as_view()), name='skil_api'),
     url(r'^$', views.Skil_api_index.as_view(), name='skil_api'),
-    url(r'^devEnrl/', views.devEnrl, name='devEnrl'),
+    url(r'^devReg/', views.devReg, name='devReg'),
     url(r'^prjMgmt/', views.prjMgmt, name='prjMgmt'),
 
     # mariadb test

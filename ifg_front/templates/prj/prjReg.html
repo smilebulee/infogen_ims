@@ -175,11 +175,12 @@
             }
     });
 
-    $(document).ready(function() {
-        retrieveCmmCd('slin_bzdp', 'SLIN_BZDP');
-        retrieveCmmCd('job_divs', 'JOB_DIVS_CD');
-        retrieveCmmCd('pgrs_stus', 'PGRS_STUS_CD');
-        retrieveCmmCd('req_skil_divs1', 'SKIL_DIVS_CD');
+    $(document).ready(async function() {
+        await retrieveCmmCd('slin_bzdp', 'SLIN_BZDP');
+        await retrieveCmmCd('job_divs', 'JOB_DIVS_CD');
+        await retrieveCmmCd('pgrs_stus', 'PGRS_STUS_CD');
+        await retrieveCmmCd('req_skil_divs1', 'SKIL_DIVS_CD');
+
         var prj_cd = null;
         <!--   프로젝트 정보 최초 등록    -->
         if(prj_cd == '' || prj_cd == null){
@@ -188,7 +189,7 @@
             console.log('prj_cd : '+ prj_cd);
             $('#prj_cd').val(prj_cd);
             retrievePrjInfo();
-            retrieveReqSkil()
+            retrieveReqSkil();
         }
     });
 
@@ -197,20 +198,22 @@
             "sbx_id" : sbx_id,
             "grp_id" : grp_id
         }
-
-         $.ajaxCall( param, {
-                 method : 'GET',
-                 'url' : '/skil/retrieveCmmCd/',
-                 'dataType' : 'json',
-                 'data' : JSON.stringify(param),
-                 'async' : false,
-                 'callbackFn' : function(data){
-                    for(var i = 0; i < data.length; i++){
-                        var option = $("<option value = "+data[i].CMM_CD+">"+data[i].CMM_CD_NAME+"</option>");
-                        $('#'+sbx_id).append(option);
-                    }
-                 }
-         });
+        return new Promise(function(resolve, reject){
+            $.ajaxCall( param, {
+                     method : 'GET',
+                     'url' : '/skil/retrieveCmmCd/',
+                     'dataType' : 'json',
+                     'data' : JSON.stringify(param),
+                     'async' : false,
+                     'callbackFn' : function(data){
+                        for(var i = 0; i < data.length; i++){
+                            var option = $("<option value = "+data[i].CMM_CD+">"+data[i].CMM_CD_NAME+"</option>");
+                            $('#'+sbx_id).append(option);
+                            resolve(data);
+                        }
+                     }
+            });
+        });
      };
 
     function retrievePrjInfo(){
@@ -242,7 +245,7 @@
                 var length = data.length;
                 for(var i=0; i<length; i++){
                     if(i != length-1){
-                        $("#addStaff").trigger("click");
+                        $("#addSkil").trigger("click");
                     }
                     $('#req_skil_divs'+(i+1)).val(data[i].SKIL_DIVS_CD).trigger('change');
                     $('#req_skil_name'+(i+1)).val(data[i].SKIL_NAME);

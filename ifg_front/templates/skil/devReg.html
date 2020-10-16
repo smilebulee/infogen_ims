@@ -11,6 +11,7 @@
  <style>
 #modal {
   z-index:100;
+  backgroundColor: 'rgba(0,0,0,0.4)'
 }
 
 #modal h2 {
@@ -107,14 +108,12 @@
     <div class="modal_layer"></div>
 </div>
 <script>
-    $(document).ready(function() {
-        <!--    공통코드 조회    -->
-        retrieveCmmCd('emp_dept', 'SLIN_BZDP');
-        retrieveCmmCd('emp_rank', 'EMP_RANK_CD');
-        retrieveCmmCd('devp_grd', 'DEVP_GRD_CD');
 
+    $(document).ready(async function() {
+        await retrieveCmmCd('emp_dept', 'SLIN_BZDP');
+        await retrieveCmmCd('emp_rank', 'EMP_RANK_CD');
+        await retrieveCmmCd('devp_grd', 'DEVP_GRD_CD');
 
-        <!--   개발자 정보 최초 등록    -->
         if(empNo == '' || empNo == null ){
             console.log('empNo is null')
         } else{  <!--   개발자 정보 수정    -->
@@ -122,6 +121,7 @@
             $('#emp_no').val(empNo);
             retrieveDevInfo();
         }
+
     });
 
     function retrieveDevInfo(){
@@ -153,21 +153,23 @@
             "sbx_id" : sbx_id,
             "grp_id" : grp_id
         }
-
-         $.ajaxCall( param, {
-                 method : 'GET',
-                 'url' : '/skil/retrieveCmmCd/',
-                 'dataType' : 'json',
-                 'data' : JSON.stringify(param),
-                 'async' : false,
-                 'callbackFn' : function(data){
-                    for(var i = 0; i < data.length; i++){
-                        var option = $("<option value = "+data[i].CMM_CD+">"+data[i].CMM_CD_NAME+"</option>");
-                        $('#'+sbx_id).append(option);
-                    }
-                 }
-         });
-     };
+        return new Promise(function(resolve, reject){
+            $.ajaxCall( param, {
+                     method : 'GET',
+                     'url' : '/skil/retrieveCmmCd/',
+                     'dataType' : 'json',
+                     'data' : JSON.stringify(param),
+                     'async' : false,
+                     'callbackFn' : function(data){
+                        for(var i = 0; i < data.length; i++){
+                            var option = $("<option value = "+data[i].CMM_CD+">"+data[i].CMM_CD_NAME+"</option>");
+                            $('#'+sbx_id).append(option);
+                        }
+                        resolve(data);
+                     }
+            });
+        });
+    };
 
     $('#saveBtn').click(function(){
         var emp_name = $('#emp_name').val();
@@ -229,7 +231,7 @@
                 method : 'POST',
                 url : '/skil/devDelete/post',
                 callbackFn : function(data){
-                    location.href = '/skil/devMgmt'
+                    $("#modal_close_btn").trigger("click");
                     g_toast.push('삭제 되었습니다.');
                 }
             });
