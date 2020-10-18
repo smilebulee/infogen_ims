@@ -1,0 +1,273 @@
+{% extends 'common/base.html' %}
+
+{% block content %}
+<script type="text/javascript" xmlns:max-width="http://www.w3.org/1999/xhtml">
+        var firstGrid;
+<!--        var skilCodeList = [];-->
+
+        var data;
+        $(document).ready(function(){
+
+            /* 스킬구분코드 공통코드 조회 */
+<!--            getCodeList();-->
+            var gridList = [        /* 그리드에 세팅할 데이터는 JSON 배열 형태 */
+                {"SKIL_SNO":"", "SKIL_DIVS_CD":"", "SKIL_NM":"", "REG_DATE":"", "REG_EMP_NO":"", "RMK":""},
+            ];
+
+            /* 스킬 구분 코드 조회 */
+<!--            function getCodeList(){-->
+            $('#formSearchDiv').ajaxCall({
+                method : 'GET',
+                url : "{% url 'skil_api:getSkilCdMgmt' %}",
+                data: data,
+                async : false,
+                callbackFn : function(ret){
+                    if($.isEmptyObject(ret)) {
+                        alertMsg('데이터가 없습니다.');
+                        return false;
+                    } else {
+                        var html;
+                        $("select[name=skilDiv]").append('<option selected value="">전체</option>');
+                        $(ret).each(function(i){
+                            html = "";
+                            console.log('CMM_CD : ' + ret[i].CMM_CD);
+                            console.log('CMM_CD_NAME : ' + ret[i].CMM_CD_NAME);
+                            html = "<option value="+ret[i].CMM_CD+">"+ret[i].CMM_CD_NAME+"</option>";
+                            console.log('html : ' + html);
+                            $("select[name=skilDiv]").append(html);
+
+<!--                                skilCodeList.push({-->
+<!--                                    CMM_CD: ret[i].CMM_CD,-->
+<!--                                    CMM_CD_NAME: ret[i].CMM_CD_NAME-->
+<!--                                });-->
+
+<!--                            console.log('skilCodeList.CMM_CD : ' + skilCodeList[i].CMM_CD);-->
+<!--                            console.log('skilCodeList.CMM_CD_NAME : ' + skilCodeList[i].CMM_CD_NAME);-->
+                        });
+                    }
+
+                    var gridOptions = {
+                        columns: [              /* columns : 그리드 헤더 및 매핑 시킬 컬럼 및 컬럼 속성 설정 항목(필수) */
+                        {
+                            key: "SKIL_SNO",
+                            label: "순번",
+                            width: 100,
+                            align: "center",
+                            hidden: true
+                        },
+                        {
+                            key: "SKIL_DIVS_CD",
+                            label: "스킬구분",
+                            width: 150,
+                            align: "center",
+                            formatter: function(){
+                                for(var i = 0; i < ret.length; i++){
+                                    if(ret[i].CMM_CD == this.value){
+                                        return ret[i].CMM_CD_NAME;
+                                    }
+                                }
+                            },
+                            editor: {
+                                type: "select",
+                                config: {
+                                    columnKeys: {
+                                        optionValue: CMM_CD, optionText: CMM_CD_NAME
+                                    },
+                                    options: ret
+                                }
+                            }
+        <!--                    editable: {type: "select",-->
+        <!--                        rule: function(value, data) {-->
+        <!--                            var editing_data = [{CMM_CD:'', CMM_CD_NAME:'전체'}];-->
+        <!--                            editing_data = editing_data.concat(skilCodeList);-->
+        <!--                            return editing_data;-->
+        <!--                        }-->
+        <!--                    },-->
+        <!--                    editor: {-->
+        <!--                        type: "select",             /* 수정시 셀렉트 박스 */-->
+        <!--                        config: {-->
+        <!--                            options: null,-->
+        <!--                            columnKeys: {-->
+        <!--                                optionValue: skilCodeList.CMM_CD, optionText: skilCodeList.CMM_CD_NAME-->
+        <!--                            }-->
+        <!--                        }-->
+        <!--                    }-->
+                        },
+                        {
+                            key: "SKIL_NAME",
+                            label: "스킬상세",
+                            width: 150,
+                            align: "center",
+                            editor : {type : 'text'}
+                        },
+                        {
+                            key: "REG_EMP_NO",
+                            label: "등록자",
+                            width: 150,
+                            align: "center"
+                        },
+                        {
+                            key: "REG_DATE",
+                            label: "등록일",
+                            width: 200,
+                            align: "center"
+                        },
+                        {
+                            key: "RMKS",
+                            label: "비고",
+                            width: 300,
+                            align: "center",
+                            editor : {type : 'text'}
+                        }
+                        ]
+                    };
+
+                    firstGrid = $('[data-ax5grid="first-grid"]').initGrid(gridOptions);
+                    firstGrid.setData(gridList);
+                    makePaging(ret);
+                }
+
+            });
+<!--            };-->
+
+            /* 조회 버튼 클릭 */
+            $('#searchBtn').click(function(){
+                    getGridList(1);
+            });
+
+            /* 코드 Row 추가 */
+            $('#grpAddBtn').click(function(){
+                console.log('코드 Row 추가');
+                debugger;
+                firstGrid.addRow({"SKIL_SNO":"", "SKIL_DIVS_CD":"", "SKIL_NM":"", "REG_DATE":"", "REG_EMP_NO":"", "RMK":""}, 'last');
+            });
+
+            /* 코드 저장 */
+            $('#grpSaveBtn').click(function(){
+                if(firstGrid.getList("modified").length == 0){
+                    alertMsg('수정 및 추가된 행이 없습니다.');
+                    return false;
+                }
+
+                confirmMsg('저장 하시겠습니까?', function(){
+                    var updateList = firstGrid.getList('modified');
+
+                    $.ajaxCall(updateList, {
+                        url : '{% url 'cmm_api:saveGrp' %}',
+                        method : 'post',
+                        callbackFn : function(data){
+                            g_toast.push('저장 되었습니다.');
+                            getGridList(1);
+                        }
+                    });
+                });
+            });
+
+            /* 코드 삭제 */
+            $('#grpDelBtn').click(function(){
+                if(firstGrid.getList("selected").length == 0){
+                    alertMsg('선택된 행이 없습니다.');
+                    return false;
+                }
+
+                confirmMsg('삭제 하시겠습니까?', function(){
+                    if(firstGrid.getList("selected")[0].__created__) firstGrid.removeRow("selected");
+                    else{
+                        var delList = firstGrid.getList('selected');
+
+                        $.ajaxCall(delList, {
+                            url : '{% url 'cmm_api:deleteGrp' %}',
+                            method : 'post',
+                            callbackFn : function(data){
+                                g_toast.push('삭제 되었습니다.');
+                                getGridList(1);
+                            }
+                        });
+                    }
+                });
+            });
+
+
+
+        });
+
+        /* 페이징 처리 */
+        function makePaging(ret){
+            $('#paging_navi').makePagingNavi(ret, 'getGridList');
+        };
+
+        /* 스킬 코드 리스트 조회 */
+        function getGridList(page){
+            var options = {
+               method : 'GET',
+                url : "{% url 'skil_api:skilCdMgmtSearch' %}",
+                callbackFn :  function(ret){
+                    if(ret.list.length == 0){
+                        alertMsg('데이터가 없습니다.');
+                        firstGrid.setData([]);
+                        return false;
+                    }
+                    firstGrid.setData(ret.list);
+                    firstGrid.select(0);
+                    makePaging(ret);
+                }
+            };
+
+            $.ajaxCall({ page : page, skilDiv : $('[name="skilDiv"]').val()}, options);
+        };
+
+
+    </script>
+
+    <style>
+
+    </style>
+    <div class="row">
+                <div class="col-sm-12">
+                    <div id="formSearchDiv">
+                        <h3>스킬 코드 관리 <a href="http://ax5.io/ax5ui-grid/api/index.html" class="badge badge-info"></a></h3>
+                        <div id="formDiv">
+                            <div class="form-row" style="padding:10px">
+                                <label class="col-sm-1" style="max-width:120px;">스킬 구분</label>
+                                <div class="col-sm-2">
+                                    <select class="form-control" name="skilDiv">
+<!--                                        <option selected value="">전체</option>-->
+                                        <!--<option value="01">DB</option>
+                                        <option value="02">LANGUAGE</option>
+                                        <option value="03">WEB</option>
+                                        <option value="04">MIDWARE</option>
+                                        <option value="05">FRAMEWORK</option>-->
+                                    </select>
+                                </div>
+                                <div class="col-sm-1" style="padding-left: 720px;">
+                                    <button class="btn btn-primary" type="button" id="searchBtn" style="width:110px;">조회</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <div style="position: relative;height:500px;" id="grid-parent">
+                        <div data-ax5grid="first-grid" style="height: 90%;"></div>
+                        <div id="paging_navi"></div>
+                    </div>
+
+                    <div style="float: right; padding-top :5px;" id="btn">
+                        <button id="grpAddBtn" type="button" class="btn btn-primary">추가</button>
+                        <button id="grpSaveBtn" type="button" class="btn btn-primary">저장</button>
+                        <button id="grpDelBtn" type="button" class="btn btn-danger">삭제</button>
+                    </div>
+
+                    <!--<div style="position: relative;height:400px;" id="grid-parent">
+                        <div data-ax5grid="first-grid" style="height: 90%;"></div>
+                        <div id="paging_navi"></div>
+                    </div>
+
+                    <div style="float: right; padding-top :10px;">
+                        <button class="btn btn-primary" id="skillDetlMentBtn" >저장</button>
+                    </div>
+                </div>-->
+                </div>
+    </div>
+{% endblock %}
