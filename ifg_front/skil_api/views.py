@@ -157,11 +157,8 @@ def skilRegPopupSearch(request):
     param = json.loads(request.GET['param'])
     logger.info("skilRegPopup : skil/views.py")
     datas = {
-        'dept': param['dept'],
-        'name': param['name'],
-        'division': param['division'],
-        'level': param['level'],
-        'empNo': param['EMP_NO'],
+        'cntcDivsCd': param['cntcDivsCd'],
+        'empNo': param['empNo'],
     }
 
     logger.info(datas)

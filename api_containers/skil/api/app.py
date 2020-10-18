@@ -579,6 +579,80 @@ class retrieveCmmCd(Resource):
 
         return result
 
+class skilRegPopupSearch(Resource):
+    def get(self):
+        params = request.get_json()
+
+        logging.debug('skilRegPopupSearch Start')
+        empNo = request.args.get('empNo')
+        cntcDivsCd = request.args.get('cntcDivsCd')
+
+
+        mysql_con = pymysql.connect(host='mariadb', port=3306, db='IFG_IMS', user='ims2', password='1234',
+                                    charset='utf8')
+        if cntcDivsCd == '01' :
+            try:
+                with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+                    sql = "SELECT A.EMP_NAME," \
+                            "A.DEPT_CD," \
+                            "A.EMP_RANK_CD," \
+                            "B.SKIL_DIVS_CD," \
+                            "B.SKIL_NM_CD," \
+                            "B.SKIL_LVL_CD," \
+                            "B.RMKS," \
+                            "'01' AS CNTC_DIVS_CD," \
+                            "'정규직' AS CNTN_DIVE_NM" \
+                            "(SELECT CMM_CD_NAME FROM TB_CMM_CD_DETL A1 " \
+                            "WHERE A1.CMM_CD_GRP_ID ='EMP_RANK_CD' " \
+                            "AND A1.CMM_CD = A.EMP_RANK_CD " \
+                            ") AS EMP_RANK_CD, " \
+                            "(SELECT CMM_CD_NAME FROM TB_CMM_CD_DETL A1 " \
+                            "WHERE A1.CMM_CD_GRP_ID ='SLIN_BZDP' "\
+                            "AND A1.CMM_CD = A.DEPT_CD "\
+                            ") AS SLIN_BZDP " \
+                        "FROM TB_EMP_MGMT A LEFT OUTER JOIN TB_SKIL_MGNT_M B ON A.EMP_ID = B.EMP_NO " \
+                        "WHERE A.EMP_ID ='" + empNo + "' "
+
+                    cursor.execute(sql, empNo)
+                    logging.debug('skilRegPopupSearch SUCCESS')
+            finally:
+                mysql_con.close()
+        else :
+            try:
+                with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+                    sql = "SELECT A.EMP_NAME," \
+                            "A.EMP_DEPT_CD," \
+                            "A.EMP_RANK_CD," \
+                            "B.SKIL_DIVS_CD," \
+                            "B.SKIL_NM_CD," \
+                            "B.SKIL_LVL_CD," \
+                            "B.RMKS," \
+                            "(SELECT CMM_CD_NAME FROM TB_CMM_CD_DETL A1 " \
+                            "WHERE A1.CMM_CD_GRP_ID ='EMP_RANK_CD' " \
+                            "AND A1.CMM_CD = A.EMP_RANK_CD " \
+                            ") AS EMP_RANK_CD, " \
+                            "(SELECT CMM_CD_NAME FROM TB_CMM_CD_DETL A1 " \
+                            "WHERE A1.CMM_CD_GRP_ID ='SLIN_BZDP' "\
+                            "AND A1.CMM_CD = A.EMP_DEPT_CD "\
+                            ") AS SLIN_BZDP " \
+                            "(SELECT CMM_CD_NAME FROM TB_CMM_CD_DETL A1 " \
+                            "WHERE A1.CMM_CD_GRP_ID ='CNTC_DIVS_CD' " \
+                            "AND A1.CMM_CD = A.CNTC_DIVS_CD " \
+                            ") AS CNTC_DIVS_NM " \
+                          "FROM TB_FRLC_DEVP_INFO A LEFT OUTER JOIN TB_SKIL_MGNT_M B ON A.EMP_ID = B.EMP_NO " \
+                        "WHERE A.EMP_NO ='" + empNo + "' "
+
+                    cursor.execute(sql, empNo)
+                    logging.debug('skilRegPopupSearch SUCCESS')
+            finally:
+                mysql_con.close()
+
+        result1 = cursor.fetchall()
+        logging.debug(result1)
+
+        return result1
+
+
 api.add_resource(Hello, '/hello')
 api.add_resource(Register, '/register')
 api.add_resource(Retrieve, '/retrieve')
@@ -599,6 +673,10 @@ api.add_resource(skilMgmtSearch, '/skilMgmtSearch')
 
 #공통 코드 조회
 api.add_resource(retrieveCmmCd, '/retrieveCmmCd')
+
+
+# 스킬 상세 관리
+api.add_resource(skilRegPopupSearch, '/skilRegPopupSearch')
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5003, debug=True)
