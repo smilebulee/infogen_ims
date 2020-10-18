@@ -23,6 +23,7 @@ class Cmm_api_index(generic.TemplateView):
 
 @login_required
 def codeMng(request):
+    logger.info(request)
     template_name = 'cmm/codeMng.html'
 
     return render(request, template_name)
@@ -31,6 +32,7 @@ def codeMng(request):
 def getCodes(request):
     param = json.loads(request.GET['param'])
     logger.info('===============================')
+    logger.info(request.user)
     logger.info(param)
     logger.info('===============================')
     grps = param['grps']   # 코드그룹 배열

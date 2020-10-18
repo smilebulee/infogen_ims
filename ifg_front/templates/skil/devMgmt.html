@@ -1,0 +1,197 @@
+<!--  ********************************************
+grid sample
+history
+    - 2020.09 김경민 최초작성
+*********************************************** -->
+{% load static %}
+<style>
+    #devRegModal {
+         width:99%;
+         height:99%;
+         overflow-y: scroll;
+    }
+</style>
+<div class="container">
+    <script type="text/javascript" src="{% static 'js/modal.js' %}"></script>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/modal.css' %}"/>
+
+        <div id="devRegModal" class="modalUi">
+            <div id="devRegModal2">
+            </div>
+            <a class="modal_close_btn" id = "modal_close_btn">
+                <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-x-circle" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                   <path fill-rule="evenodd" d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                   <path fill-rule="evenodd" d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+                </svg>
+            </a>
+        </div>
+
+        <div class="row">
+                    <div class="col-sm-12">
+                        <div id="formSearchDiv">
+                            <h3>개발자 목록조회 <a href="http://ax5.io/ax5ui-grid/api/index.html" class="badge badge-info"></a></h3>
+                            <div id="formDiv">
+                                <div class="form-row" style="padding-bottom:9px">
+                                    <label class="col-sm-1" style="max-width:50px;">부서</label>
+                                    <select size ="1" id = "devpBlco" name = "devpBlco" class="col-sm-4">
+                                        <option value = "">선택</option>
+                                    </select>
+                                    <div class="col-sm-1" style="padding-left:760px;">
+                                    <button class="btn btn-primary" id="searchBtn" style="width:120px">조회</button>
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <label class="col-sm-2" style="max-width:50px;">성명</label>
+                                    <input class="col-sm-2" type="text" name="empName" maxlength="50" placeholder="이름을 입력하세요." >
+                                </div>
+                                <div class="form-row" style="padding-top:9px;">
+                                    <label class="col-sm-1" style="max-width:50px;">구분</label>
+                                    <select size ="1" id = "devpDivsCd" name = "devpDivsCd" class="col-sm-4">
+                                        <option value = "">선택</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <hr>
+                        <div>
+                            <h3>목록조회<a class="badge badge-info"></a></h3>
+                        </div>
+                        <div style="position: relative;height:400px;" id="grid-parent">
+                            <div data-ax5grid="first-grid" style="height: 100%;"></div>
+                            <div id="paging_navi"></div>
+                        </div>
+                        <div style="float: right; padding-top :10px;">
+                            <button class="btn btn-primary" id="devSaveBtn" >개발자 등록</button>
+                            <button class="btn btn-primary" id="prjSaveBtn" >프로젝트 등록</button>
+                            <button class="btn btn-primary" id="devOutSaveBtn" >프로젝트별 투입 등록</button>
+                        </div>
+                    </div>
+        </div>
+
+        <script type="text/javascript" xmlns:max-width="http://www.w3.org/1999/xhtml">
+                $(document).ready(function(){
+
+                    <!--    공통코드 조회    -->
+
+                    retrieveCmmCd('devpBlco', 'SLIN_BZDP');
+                    retrieveCmmCd('devpDivsCd', 'CNTC_DIVS_CD');
+
+                    var firstGrid = $('[data-ax5grid="first-grid"]');
+
+                    getGridList(1);
+
+                    function getGridList(page){
+
+                        $('#formSearchDiv').ajaxCall({
+                            method : 'GET',
+                            url : "{% url 'skil_api:devMgmtSearch' %}",
+                            callbackFn : function(data){
+
+                            var gridList = data; /* 그리드에 세팅할 데이터는 JSON 배열 형태 */
+
+                            var gridOptions = {
+                                columns: [              /* columns : 그리드 헤더 및 매핑 시킬 컬럼 및 컬럼 속성 설정 항목(필수) */
+                                { key: "EMP_NAME",   label: "성명",       width: 100,  align: "center"},
+                                { key: "DEVP_BLCO",   label: "부서",       width: 80,   align: "center"},
+                                { key: "DEVP_GRD_NAME",    label: "등급",       width: 80,   align: "center"},
+                                { key: "CNTC_DIVS_NAME",    label: "구분",         width: 80,   align: "center"},
+                                { key: "DEVP_GRD_CD",     label: "등급코드",       width: 80,   align: "center", hidden : true},
+                                { key: "CNTC_DIVS_CD",     label: "구분코드",       width: 80,   align: "center", hidden : true},
+                                { key: "DEVP_BLCO_CD",     label: "부서코드",       width: 80,   align: "center", hidden : true},
+                                { key: "EMP_NO",     label: "사번",       width: 80,   align: "center", hidden : true}
+                                ]
+                            };
+                            firstGrid = $('[data-ax5grid="first-grid"]');
+                            firstGrid = firstGrid.initGrid(gridOptions);
+                            firstGrid.setData(gridList);
+                            }
+                        });
+                    }
+
+                    function retrieveCmmCd(sbx_id, grp_id){
+                        var param = {
+                            "sbx_id" : sbx_id,
+                            "grp_id" : grp_id
+                        }
+
+                         $.ajaxCall( param, {
+                                 method : 'GET',
+                                 'url' : '/skil/retrieveCmmCd/',
+                                 'dataType' : 'json',
+                                 'data' : JSON.stringify(param),
+                                 'async' : false,
+                                 'callbackFn' : function(data){
+                                    for(var i = 0; i < data.length; i++){
+                                        var option = $("<option value = "+data[i].CMM_CD+">"+data[i].CMM_CD_NAME+"</option>");
+                                        $('#'+sbx_id).append(option);
+                                    }
+                                 }
+                         });
+                     };
+
+                    function makePaging(ret){
+                        $('#paging_navi').makePagingNavi(ret, 'getGridList');
+
+                    }
+
+                    $('#searchBtn').click(function(){
+                        getGridList(1);
+                    });
+
+                    /* 프로젝트별투입 등록 선택 */
+                   $('#devOutSaveBtn').click(function(){
+
+                        if(firstGrid.getList("selected").length == 0){
+                            alertMsg("선택된 행이 없습니다.");
+                            return false;
+                        }  else{
+                            var empNo = firstGrid.getList("selected")[0].EMP_NO;
+                            var empName = firstGrid.getList("selected")[0].EMP_NAME;
+                            var devpBlco = firstGrid.getList("selected")[0].DEVP_BLCO;
+                            var devpGrdName = firstGrid.getList("selected")[0].DEVP_GRD_NAME;
+                            var cntcDivsName = firstGrid.getList("selected")[0].CNTC_DIVS_NAME;
+
+                            var list = prjGrid.getList()
+                            for(var i = 0; i < list.length; i++){
+                                if(list[i].EMP_NO == empNo){
+                                   alertMsg("이미 해당 프로젝트에 존재하는 개발자입니다.");
+                                   return;
+                                }
+                            }
+                            prjGrid.updateRow({PRJ_CD: prjCd ,EMP_NO: empNo, EMP_NAME: empName,  DEPT_NM: devpBlco,SKIL_GRD: devpGrdName, CNTC_DIVS_NM: cntcDivsName, SLIN_GRD: '', INPU_STRT_DAY: '', INPU_END_DAY: '', CNTC_STRT_DAY: '', CNTC_END_DAY: '', CRGE_JOB: '', RMKS: '', STUS :'insert', __created__ : true, __modified__ : true,}, prjGrid.selectedDataIndexs[0]);
+                        }
+                    });
+
+                    /* 개발자 등록 선택 */
+                   $('#devSaveBtn').click(function(){
+                        if(firstGrid.getList("selected").length == 0){
+                            empNo = null;
+                            modal('devRegModal');
+                            $("#devRegModal2").load("{% url 'skil_api:devReg' %}");
+                        } else{
+                            empNo = firstGrid.getList("selected")[0].EMP_NO;
+                            if(firstGrid.getList("selected")[0].CNTC_DIVS_CD == "01"){
+                                alertMsg("정규직은 개발자 정보 수정을 할 수 없습니다.");
+                                return false;
+                            }
+
+                            modal('devRegModal');
+                            $("#devRegModal2").load("{% url 'skil_api:devReg' %}");
+                        }
+                    });
+
+                    $('#prjSaveBtn').click(function(){
+                        if(firstGrid.getList("selected").length == 0){
+                            modal('devRegModal');
+                            $("#devRegModal2").load("{% url 'prj_api:prjReg' %}");
+                        } else{
+
+                        }
+                    });
+                });
+
+                $('#modal_close_btn').click(function(){
+                        $("#searchBtn").trigger("click");
+                });
+        </script>
+</div>

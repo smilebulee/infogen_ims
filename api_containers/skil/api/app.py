@@ -4,6 +4,7 @@ from flask_restful import Api, Resource
 import logging
 logging.basicConfig(level=logging.DEBUG)
 import bcrypt
+import socket
 
 import json
 import pymysql
@@ -47,6 +48,18 @@ def getUserMessages(username):
     return users.find({
         "Username": username,
     })[0]["Messages"]
+
+def getSystemInfo():
+    try:
+        if (socket.gethostbyname(socket.gethostname()) == "172.20.0.6" ) :
+            logging.debug('Prod Server')
+            return "mariadb"
+        else :
+            logging.debug('Local Server')
+            return "218.151.225.142"
+
+    except Exception as e:
+        logging.exception(e)
 
 
 """
@@ -228,44 +241,136 @@ class mariaClass(Resource):
 
         return result2
 
-class devSave(Resource):
-    def post(self):
-        params = request.get_json()
 
-        logging.debug("save start")
-        emp_no = request.form['emp_no']
-        name = request.form['name']
-        rank = request.form['rank']
-        grd = request.form['grd']
-        tlno = request.form['tlno1'] + request.form['tlno2'] + request.form['tlno3']
-        divs = request.form['divs']
-        blco = request.form['blco']
-        bday = request.form['bday']
-        rmks = request.form['rmks']
-        use_yn = 'Y'
+class devMgmtSearch(Resource):
+    def get(self):
+        # Get posted data from request
+        logging.debug("search start")
 
-        logging.debug('--------------------------------------')
-        logging.debug(name)
-        logging.debug(rank)
-        logging.debug('--------------------------------------')
+        # get data
+        devpBlco = request.args.get('devpBlco')
+        empName = request.args.get('empName')
+        devpDivsCd = request.args.get('devpDivsCd')
 
-        logging.debug('================== App Start ==================')
-        logging.debug(params)
-        logging.debug('================== App End ==================')
+        logging.debug('---------------SEARCH---------------')
+        logging.debug('devpBlco : ' + devpBlco)
+        logging.debug('empName : ' + empName)
+        logging.debug('devpDivsCd : ' + devpDivsCd)
+        logging.debug('------------------------------------')
 
         mysql_con = pymysql.connect(host='218.151.225.142', port=3306, db='IFG_IMS', user='ims2', password='1234',
+                                    charset='utf8')
+        try:
+            with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+                sql = "SELECT  A.EMP_NO, " \
+                      "        A.EMP_NAME, " \
+                      "        A.DEPT_CD AS DEVP_BLCO_CD, " \
+                      "        DEPT.CMM_CD_NAME AS DEVP_BLCO, " \
+                      "        A.CNTC_DIVS_CD, " \
+                      "        CNTC.CMM_CD_NAME AS CNTC_DIVS_NAME, " \
+                      "        A.DEVP_GRD_CD, " \
+                      "        DEVP.CMM_CD_NAME AS DEVP_GRD_NAME " \
+                      "FROM (       SELECT FRLC.EMP_NO AS EMP_NO, " \
+                      "                    FRLC.EMP_NAME AS EMP_NAME, " \
+                      "                    FRLC.EMP_DEPT_CD AS DEPT_CD, " \
+                      "                    FRLC.CNTC_DIVS_CD AS CNTC_DIVS_CD, " \
+                      "                    FRLC.DEVP_GRD_CD AS DEVP_GRD_CD " \
+                      "              FROM TB_FRLC_DEVP_INFO  FRLC " \
+                      "              WHERE FRLC.DEVP_USE_YN ='Y' " \
+                      "              GROUP BY FRLC.EMP_NO " \
+                      "              UNION ALL " \
+                      "              SELECT  EMP.EMP_ID AS EMP_NO, " \
+                      "                      EMP.EMP_NAME AS EMP_NAME, " \
+                      "                      EMP.DEPT_CD AS DEPT_CD, " \
+                      "                      '01' AS CNTC_DIVS_CD, " \
+                      "                      EMP.SKIL_GRADE AS DEVP_GRD_CD " \
+                      "              FROM TB_EMP_MGMT EMP )A, " \
+                      "              TB_CMM_CD_DETL CNTC, " \
+                      "              TB_CMM_CD_DETL DEPT, " \
+                      "              TB_CMM_CD_DETL DEVP " \
+                      "      WHERE 1=1 " \
+                      "      AND A.CNTC_DIVS_CD = CNTC.CMM_CD " \
+                      "		 AND A.DEPT_CD = DEPT.CMM_CD " \
+                      "		 AND A.DEVP_GRD_CD = DEVP.CMM_CD " \
+                      "      AND CNTC.CMM_CD_GRP_ID = 'CNTC_DIVS_CD' " \
+                      "      AND DEPT.CMM_CD_GRP_ID = 'SLIN_BZDP' " \
+                      "      AND DEVP.CMM_CD_GRP_ID = 'DEVP_GRD_CD' "
+                if devpBlco != "":
+                    sql = sql + "AND A.DEPT_CD = '" + devpBlco + "' "
+                if empName != "":
+                    sql = sql + "AND A.EMP_NAME LIKE '%" + empName + "%' "
+                if devpDivsCd != "":
+                    sql = sql + "AND A.CNTC_DIVS_CD = '" + devpDivsCd + "' "
+                logging.debug(sql)
+
+                cursor.execute(sql)
+        finally:
+            mysql_con.close()
+
+        result2 = cursor.fetchall()
+
+        return result2
+
+#프리 개발자 정보 수정 시 해당 개발자 정보 조회
+class retrieveDevInfo(Resource):
+    def get(self):
+        params = request.get_json()
+
+        logging.debug('retrieveDevInfo Start')
+        emp_no = request.args.get('emp_no')
+
+        mysql_con = pymysql.connect(host='mariadb', port=3306, db='IFG_IMS', user='ims2', password='1234',
                                     charset='utf8')
 
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+                sql = "SELECT EMP_NAME, " \
+                             "EMP_DEPT_CD, " \
+                             "EMP_RANK_CD, " \
+                             "DEVP_GRD_CD, " \
+                             "DEVP_TEL_NO, " \
+                             "CNTC_DIVS_CD, " \
+                             "DEVP_BLCO, " \
+                             "DEVP_BDAY, " \
+                             "RMKS " \
+                      "FROM TB_FRLC_DEVP_INFO " \
+                      "WHERE EMP_NO = %s"
+                cursor.execute(sql, emp_no)
+                logging.debug('retrieveDevInfo SUCCESS')
+        finally:
+            mysql_con.close()
 
-                if emp_no:
+        result1 = cursor.fetchall()
+        logging.debug(result1)
+
+        return result1
+
+#프리 개발자 정보 저장
+class devSave(Resource):
+    def post(self):
+        params = request.get_json()
+
+        logging.debug("save Start")
+
+        for row in request.form:
+            logging.debug(row + ':' + request.form[row])
+            globals()[row] = request.form[row]
+
+        emp_no = request.form['emp_no']
+        tel_no = request.form['tel_no1'] + '-' + request.form['tel_no2'] + '-' + request.form['tel_no3']
+        use_yn = 'Y'
+
+        mysql_con = pymysql.connect(host='mariadb', port=3306, db='IFG_IMS', user='ims2', password='1234',
+                                    charset='utf8')
+
+        try:
+            with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+                if emp_no: #개발자 정보 수정
                     logging.debug('emp_no exist')
                     logging.debug(emp_no)
-
-                else:
+                else: #개발자 정보 최초 등록
                     logging.debug('emp_no is null')
-                    logging.debug(emp_no)
+                    #개발자 사번 채번
                     sql = "SELECT CONCAT('F','_',( SELECT LPAD((SELECT NVL(SUBSTR(MAX(EMP_NO), 3)+1, 1) " \
                           "FROM TB_FRLC_DEVP_INFO),6,'0'))) AS EMP_NO"
                     cursor.execute(sql)
@@ -274,42 +379,61 @@ class devSave(Resource):
                     logging.debug(emp_no)
 
                 sql = "INSERT INTO TB_FRLC_DEVP_INFO (`EMP_NO`, " \
-                      "`EMP_NAME`, `EMP_RANK_CD`, `DEVP_GRD_CD`, `DEVP_TEL_NO`, `CNTC_DIVS_CD`, " \
-                      "`DEVP_BLCO`, `DEVP_BDAY`, `REG_EMP_NO`, `REG_DATE`, `CHG_EMP_NO`, `CHG_DATE`, `RMKS`, `DEVP_USE_YN`)  " \
-                      "VALUES(%s," \
-                      "%s, %s, %s, %s, %s, %s, %s, %s, NOW(), %s, NOW(), %s, %s)" \
+                                                     "`EMP_NAME`, " \
+                                                     "`EMP_DEPT_CD`, " \
+                                                     "`EMP_RANK_CD`, " \
+                                                     "`DEVP_GRD_CD`, " \
+                                                     "`DEVP_TEL_NO`, " \
+                                                     "`CNTC_DIVS_CD`, " \
+                                                     "`DEVP_BLCO`, " \
+                                                     "`DEVP_BDAY`, " \
+                                                     "`REG_EMP_NO`, " \
+                                                     "`REG_DATE`, " \
+                                                     "`CHG_EMP_NO`, " \
+                                                     "`CHG_DATE`, " \
+                                                     "`RMKS`, " \
+                                                     "`DEVP_USE_YN`)  " \
+                      "VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, NOW(), %s, NOW(), %s, %s)" \
                       "ON DUPLICATE KEY UPDATE " \
-                      "EMP_NAME = %s, EMP_RANK_CD = %s, DEVP_GRD_CD = %s, DEVP_TEL_NO = %s, CNTC_DIVS_CD = %s, DEVP_BLCO = %s, " \
-                      "DEVP_BDAY = %s, CHG_EMP_NO = %s, CHG_DATE = NOW(), RMKS = %s"
+                                      "EMP_NAME = %s, " \
+                                      "EMP_DEPT_CD = %s, " \
+                                      "EMP_RANK_CD = %s, " \
+                                      "DEVP_GRD_CD = %s, " \
+                                      "DEVP_TEL_NO = %s, " \
+                                      "CNTC_DIVS_CD = %s, " \
+                                      "DEVP_BLCO = %s, " \
+                                      "DEVP_BDAY = %s, " \
+                                      "CHG_EMP_NO = %s, " \
+                                      "CHG_DATE = NOW(), " \
+                                      "RMKS = %s"
 
-                cursor.execute(sql, (emp_no, name, rank, grd, tlno, divs, blco, bday, 'admin', 'admin', rmks, use_yn
-                                     , name, rank, grd, tlno, divs, blco, bday, 'admin', rmks))
+                cursor.execute(sql, (emp_no, emp_name, emp_dept, emp_rank, devp_grd, tel_no, cntc_divs, devp_blco, devp_bday, userId, userId, rmks, use_yn
+                                     , emp_name, emp_dept, emp_rank, devp_grd, tel_no, cntc_divs, devp_blco, devp_bday, userId, rmks))
                 mysql_con.commit()
 
         finally:
             mysql_con.close()
 
-        retJson = {
-            "status": 200,
-            "msg": "Data has been saved successfully"
-        }
+        # retJson = {
+        #     "status": 200,
+        #     "msg": "Data has been saved successfully"
+        # }
+        #
+        # return jsonify(retJson)
 
-        return jsonify(retJson)
+        return emp_no
 
-
+#프리 개발자 정보 삭제
 class devDelete(Resource):
     def post(self):
-
         params = request.get_json()
 
-        logging.debug("delete start")
+        logging.debug("delete Start")
 
-        name = request.form['name']
-        bday = request.form['bday']
+        emp_name = request.form['emp_name']
+        devp_bday = request.form['devp_bday']
 
-        logging.debug('================== SQL START ==================')
-
-        mysql_con = pymysql.connect(host='218.151.225.142', port=3306, db='IFG_IMS', user='ims2', password='1234',
+        mysql_con = pymysql.connect(host='mariadb', port=3306, db='IFG_IMS', user='ims2', password='1234',
                                     charset='utf8')
 
         try:
@@ -318,20 +442,10 @@ class devDelete(Resource):
                       "WHERE 1=1 " \
                       "AND EMP_NAME = %s " \
                       "AND DEVP_BDAY = %s"
-                cursor.execute(sql, (name, bday))
+                cursor.execute(sql, (emp_name, devp_bday))
                 mysql_con.commit()
-
         finally:
             mysql_con.close()
-
-        result2 = cursor.fetchall()
-        for row in result2:
-            logging.debug('====== row====')
-            logging.debug(row)
-            logging.debug('===============')
-        # array = list(result2)  # 결과를 리스트로
-        #
-        # return json.dumps(result2)
 
         retJson = {
             "status": 200,
@@ -339,199 +453,6 @@ class devDelete(Resource):
         }
 
         return jsonify(retJson)
-
-class prjSave(Resource):
-        def post(self):
-
-            params = request.get_json()
-
-            logging.debug("save start")
-
-            prj_cd = request.form['prj_cd']
-            prj_nm = request.form['prj_nm']
-            cnct_cd = request.form['cnct_cd']
-            gnr_ctro = request.form['gnr_ctro']
-            ctro = request.form['ctro']
-            cnct_amt = request.form['cnct_amt']
-            slin_bzdp = request.form['slin_bzdp']
-            job_divs = request.form['job_divs']
-            pgrs_stus = request.form['pgrs_stus']
-            req_skil_divs = request.form['req_skil_divs']
-            req_skil_name = request.form['req_skil_name']
-            rmks = request.form['rmks']
-            use_yn = 'Y'
-
-            logging.debug('--------------------------------------')
-            logging.debug(prj_nm)
-            logging.debug('--------------------------------------')
-
-            logging.debug('================== App Start ==================')
-            logging.debug(params)
-            logging.debug('================== App End ==================')
-
-            mysql_con = pymysql.connect(host='218.151.225.142', port=3306, db='IFG_IMS', user='ims2', password='1234',
-                                        charset='utf8')
-
-            try:
-                with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
-
-                    if prj_cd:
-                        logging.debug('prj_cd exist')
-                        logging.debug(prj_cd)
-
-                    else:
-                        logging.debug('prj_cd is null')
-                        logging.debug(prj_cd)
-                        sql = "SELECT CONCAT('PRJ','_',( SELECT LPAD((SELECT NVL(SUBSTR(MAX(PRJ_CD), 5)+1, 1) " \
-                              "FROM TB_PRJ_INFO),6,'0'))) AS PRJ_CD"
-                        cursor.execute(sql)
-                        prjResult = cursor.fetchone()
-                        prj_cd = prjResult['PRJ_CD']
-
-                    sql = "INSERT INTO TB_PRJ_INFO(`PRJ_CD`, `PRJ_NAME`, `PRJ_CNCT_CD`, `GNR_CTRO`, `CTRO`, `CNCT_AMT`," \
-                          " `SLIN_BZDP`, `JOB_DIVS_CD`, `PGRS_STUS_CD`, `REG_EMP_NO`, `REG_DATE`, `CHG_EMP_NO`," \
-                          " `CHG_DATE`, `RMKS`, `USE_YN`) " \
-                          "VALUES(%s, " \
-                          "%s, %s, %s, %s, %s, %s, %s, %s, 'admin', NOW(), 'admin', NOW(), %s, %s)" \
-                          "ON DUPLICATE KEY UPDATE " \
-                          "PRJ_NAME = %s, PRJ_CNCT_CD = %s, GNR_CTRO = %s, CTRO = %s, CNCT_AMT = %s, SLIN_BZDP = %s, " \
-                          "JOB_DIVS_CD = %s, PGRS_STUS_CD = %s, CHG_EMP_NO = 'admin', CHG_DATE = NOW(), RMKS = %s"
-                    cursor.execute(sql, (
-                        prj_cd, prj_nm, cnct_cd, gnr_ctro, ctro, cnct_amt, slin_bzdp, job_divs, pgrs_stus, rmks, use_yn,
-                        prj_nm, cnct_cd, gnr_ctro, ctro, cnct_amt, slin_bzdp, job_divs, pgrs_stus, rmks))
-                    mysql_con.commit()
-
-                    logging.debug('PRJ_INFO SUCCESS')
-                    logging.debug(prj_nm + req_skil_divs + req_skil_name)
-
-                    sql = "INSERT INTO TB_PRJ_REQ_SKIL(`PRJ_CD`, `SKIL_DIVS`, `SKIL_NAME`, `REG_EMP_NO`, `REG_DATE`," \
-                          " `CHG_EMP_NO`, `CHG_DATE`) " \
-                          "VALUES ((SELECT PRJ_CD FROM TB_PRJ_INFO A WHERE PRJ_NAME = %s)," \
-                          " %s, %s, 'admin', NOW(), 'admin', NOW())"
-                    cursor.execute(sql, (prj_nm, req_skil_divs, req_skil_name))
-                    mysql_con.commit()
-
-                    logging.debug('REQ_SKIL SUCCESS')
-
-            finally:
-                mysql_con.close()
-
-            retJson = {
-                "status": 200,
-                "msg": "Data has been saved successfully"
-            }
-
-            return jsonify(retJson)
-
-class prjDelete(Resource):
-        def post(self):
-
-            params = request.get_json()
-
-            logging.debug("delete start")
-
-            prj_nm = request.form['prj_nm']
-
-            logging.debug('--------------------------------------')
-            logging.debug(prj_nm)
-            logging.debug('--------------------------------------')
-
-            logging.debug('================== SQL Start ==================')
-
-            mysql_con = pymysql.connect(host='218.151.225.142', port=3306, db='IFG_IMS', user='ims2',
-                                            password='1234',
-                                            charset='utf8')
-
-            try:
-                with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
-                    sql = "UPDATE TB_PRJ_INFO SET USE_YN = 'N' " \
-                              "WHERE PRJ_NM = %s"
-                    cursor.execute(sql, (prj_nm))
-                    mysql_con.commit()
-
-                    logging.debug('PRJ_INFO SUCCESS')
-
-
-            finally:
-                mysql_con.close()
-
-            retJson = {
-                "status": 200,
-                "msg": "Data has been saved successfully"
-            }
-
-            return jsonify(retJson)
-
-class prjInpuSearch(Resource):
-    def get(self):
-        # Get posted data from request
-        logging.debug("search start")
-
-        # get data
-        prjCd = request.args.get('prjCd')
-
-        logging.debug('---------------SEARCH---------------')
-        logging.debug('prjCd : ' + prjCd)
-        logging.debug('------------------------------------')
-
-        mysql_con = pymysql.connect(host='218.151.225.142', port=3306, db='IFG_IMS', user='ims2', password='1234',
-                                    charset='utf8')
-
-        try:
-            with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
-                if prjCd is None or prjCd == "":
-                    sql = "SELECT PRJ_CD, EMP_NO,DIVS, SLIN_GRD, INPU_STRT_DAY, INPU_END_DAY, CNTC_STRT_DAY, CNTC_END_DAY, CRGE_JOB, RMKS FROM TB_PRJ_INPU_STAT_MGMT "
-                    cursor.execute(sql)
-                else:
-                    logging.debug("is not null")
-                    sql = "SELECT PRJ_CD, EMP_NO,DIVS, SLIN_GRD, INPU_STRT_DAY, INPU_END_DAY, CNTC_STRT_DAY, CNTC_END_DAY, CRGE_JOB, RMKS FROM TB_PRJ_INPU_STAT_MGMT WHERE PRJ_CD=%s"
-                    cursor.execute(sql, (prjCd))
-        finally:
-            mysql_con.close()
-
-        result2 = cursor.fetchall()
-        for row in result2:
-            logging.debug('====== row====')
-            logging.debug(row)
-            logging.debug('===============')
-        array = list(result2)  # 결과를 리스트로
-
-        return result2
-
-
-class prjInpuDelete(Resource):
-
-    def post(self):
-        # Get posted data from request
-
-        # get data
-        prjCd = request.form["prjCd"]
-        empNo = request.form["empNo"]
-
-        logging.debug('---------------SEARCH---------------')
-        logging.debug('prjCd : ' + prjCd)
-        logging.debug('empNo : ' + empNo)
-        logging.debug('------------------------------------')
-
-        mysql_con = pymysql.connect(host='218.151.225.142', port=3306, db='IFG_IMS', user='ims2', password='1234',
-                                    charset='utf8')
-
-        try:
-            with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
-                sql = "DELETE FROM TB_PRJ_INPU_STAT_MGMT WHERE EMP_NO= %s AND PRJ_CD = %s"
-                cursor.execute(sql, (empNo, prjCd))
-                mysql_con.commit()
-        finally:
-            mysql_con.close()
-
-        result2 = cursor.fetchall()
-        for row in result2:
-            logging.debug('====== row====')
-            logging.debug(row)
-            logging.debug('===============')
-        array = list(result2)  # 결과를 리스트로
-
-        return result2
 
 class skilMgmtSearch(Resource):
     def get(self):
@@ -553,43 +474,76 @@ class skilMgmtSearch(Resource):
         logging.debug('skil : ' + skil)
         logging.debug('------------------------------------')
 
-        mysql_con = pymysql.connect(host='218.151.225.142', port=3306, db='IFG_IMS', user='ims2', password='1234',
+        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
                                     charset='utf8')
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
-                if dept =="" and name == "" and  division =="" and skilKind == "" and skil == "":
-                    sql = "SELECT * FROM TB_SKIL_MGNT_TEST"
-                    cursor.execute(sql)
-                else:
-                    sql = "SELECT * FROM TB_SKIL_MGNT_TEST WHERE 1=1 "
-                    if dept != "":
-                        sql = sql + "AND EMP_DEPT = %s "
-                    if name != "":
-                        sql = sql + """AND EMP_NAME LIKE %s """
-                    if division != "":
-                        sql = sql + "AND DIVISION = %s "
-                    if skilKind == "1":
-                        sql += """AND SKIL_DB LIKE %s"""
-                    if skilKind == "2":
-                        sql += """AND SKIL_LANG LIKE %s"""
-                    if skilKind == "3":
-                        sql += """AND SKIL_WEB LIKE %s"""
-                    if skilKind == "4":
-                        sql += """AND SKIL_FRAME LIKE %s"""
-                    if skilKind == "5":
-                        sql += """AND SKIL_MID LIKE %s"""
-                    logging.debug(sql)
+                sql = "SELECT A.EMP_NO, " \
+                              "A.EMP_NAME, " \
+                              "A.DEPT_CD," \
+                              "DEPT.CMM_CD_NAME AS DEPT_NM," \
+                              "A.CNTC_DIVS_CD, " \
+                              "CNTC.CMM_CD_NAME AS CNTC_DIVS_NM, " \
+                              "A.SKIL_DB,A.SKIL_LANG,A.SKIL_WEB," \
+                              "A.SKIL_FRAME, A.SKIL_MID, " \
+                              "A.DEVP_TEL_NO," \
+                              "A.DEVP_BDAY " \
+                      "FROM (SELECT FRLC.EMP_NO AS EMP_NO, " \
+                                  "FRLC.EMP_NAME AS EMP_NAME, " \
+                                  "FRLC.EMP_DEPT_CD AS DEPT_CD, " \
+                                  "FRLC.CNTC_DIVS_CD AS CNTC_DIVS_CD, " \
+                                  "FRLC.DEVP_TEL_NO AS DEVP_TEL_NO, " \
+                                  "FRLC.DEVP_BDAY AS DEVP_BDAY, " \
+                                  "GROUP_CONCAT( CASE SKIL.SKIL_DIVS_CD WHEN '01' THEN CONCAT('(',(SELECT CMM_CD_NAME FROM TB_CMM_CD_DETL CMM WHERE 1=1 AND CMM_CD_GRP_ID = 'SKIL_LVL_CD' AND CMM.CMM_CD = SKIL_LVL_CD),')',SKIL.SKIL_NM_CD) ELSE NULL END  SEPARATOR  ', ' ) AS SKIL_DB, " \
+                                  "GROUP_CONCAT( CASE SKIL.SKIL_DIVS_CD WHEN '02' THEN CONCAT('(',(SELECT CMM_CD_NAME FROM TB_CMM_CD_DETL CMM WHERE 1=1 AND CMM_CD_GRP_ID = 'SKIL_LVL_CD' AND CMM.CMM_CD = SKIL_LVL_CD),')',SKIL.SKIL_NM_CD) ELSE NULL END  SEPARATOR  ', ' ) AS SKIL_LANG, " \
+                                  "GROUP_CONCAT( CASE SKIL.SKIL_DIVS_CD WHEN '03' THEN CONCAT('(',(SELECT CMM_CD_NAME FROM TB_CMM_CD_DETL CMM WHERE 1=1 AND CMM_CD_GRP_ID = 'SKIL_LVL_CD' AND CMM.CMM_CD = SKIL_LVL_CD),')',SKIL.SKIL_NM_CD) ELSE NULL END  SEPARATOR  ', ' ) AS SKIL_WEB, " \
+                                  "GROUP_CONCAT( CASE SKIL.SKIL_DIVS_CD WHEN '04' THEN CONCAT('(',(SELECT CMM_CD_NAME FROM TB_CMM_CD_DETL CMM WHERE 1=1 AND CMM_CD_GRP_ID = 'SKIL_LVL_CD' AND CMM.CMM_CD = SKIL_LVL_CD),')',SKIL.SKIL_NM_CD) ELSE NULL END  SEPARATOR  ', ' ) AS SKIL_FRAME, " \
+                                  "GROUP_CONCAT( CASE SKIL.SKIL_DIVS_CD WHEN '05' THEN CONCAT('(',(SELECT CMM_CD_NAME FROM TB_CMM_CD_DETL CMM WHERE 1=1 AND CMM_CD_GRP_ID = 'SKIL_LVL_CD' AND CMM.CMM_CD = SKIL_LVL_CD),')',SKIL.SKIL_NM_CD) ELSE NULL END  SEPARATOR  ', ' ) AS SKIL_MID " \
+                              "FROM TB_FRLC_DEVP_INFO  FRLC LEFT OUTER JOIN TB_SKIL_MGNT_M SKIL ON FRLC.EMP_NO = SKIL.EMP_NO " \
+                              "WHERE FRLC.DEVP_USE_YN ='Y' " \
+                              "GROUP BY FRLC.EMP_NO  " \
+                              "UNION " \
+                              "SELECT EMP.EMP_ID AS EMP_NO, " \
+                                      "EMP.EMP_NAME AS EMP_NAME, " \
+                                      "EMP.DEPT_CD AS DEPT_CD, " \
+                                      "'01' AS CNTC_DIVS_CD, " \
+                                      "EMP.EMP_TEL AS DEVP_TEL_NO, " \
+                                      "EMP.EMP_BDAY AS DEVP_BDAY, " \
+                                      "GROUP_CONCAT( CASE SKIL.SKIL_DIVS_CD WHEN '01' THEN CONCAT('(',(SELECT CMM_CD_NAME FROM TB_CMM_CD_DETL CMM WHERE 1=1 AND CMM_CD_GRP_ID = 'SKIL_LVL_CD' AND CMM.CMM_CD = SKIL_LVL_CD),')',SKIL.SKIL_NM_CD) ELSE NULL END  SEPARATOR  ', ' ) AS SKIL_DB, " \
+                                      "GROUP_CONCAT( CASE SKIL.SKIL_DIVS_CD WHEN '02' THEN CONCAT('(',(SELECT CMM_CD_NAME FROM TB_CMM_CD_DETL CMM WHERE 1=1 AND CMM_CD_GRP_ID = 'SKIL_LVL_CD' AND CMM.CMM_CD = SKIL_LVL_CD),')',SKIL.SKIL_NM_CD) ELSE NULL END  SEPARATOR  ', ' ) AS SKIL_LANG, " \
+                                      "GROUP_CONCAT( CASE SKIL.SKIL_DIVS_CD WHEN '03' THEN CONCAT('(',(SELECT CMM_CD_NAME FROM TB_CMM_CD_DETL CMM WHERE 1=1 AND CMM_CD_GRP_ID = 'SKIL_LVL_CD' AND CMM.CMM_CD = SKIL_LVL_CD),')',SKIL.SKIL_NM_CD) ELSE NULL END  SEPARATOR  ', ' ) AS SKIL_WEB, " \
+                                      "GROUP_CONCAT( CASE SKIL.SKIL_DIVS_CD WHEN '04' THEN CONCAT('(',(SELECT CMM_CD_NAME FROM TB_CMM_CD_DETL CMM WHERE 1=1 AND CMM_CD_GRP_ID = 'SKIL_LVL_CD' AND CMM.CMM_CD = SKIL_LVL_CD),')',SKIL.SKIL_NM_CD) ELSE NULL END  SEPARATOR  ', ' ) AS SKIL_FRAME, " \
+                                      "GROUP_CONCAT( CASE SKIL.SKIL_DIVS_CD WHEN '05' THEN CONCAT('(',(SELECT CMM_CD_NAME FROM TB_CMM_CD_DETL CMM WHERE 1=1 AND CMM_CD_GRP_ID = 'SKIL_LVL_CD' AND CMM.CMM_CD = SKIL_LVL_CD),')',SKIL.SKIL_NM_CD) ELSE NULL END  SEPARATOR  ', ' ) AS SKIL_MID " \
+                              "FROM TB_EMP_MGMT EMP LEFT OUTER JOIN TB_SKIL_MGNT_M SKIL ON EMP.EMP_ID = SKIL.EMP_NO GROUP BY EMP.EMP_ID) A, " \
+                              "TB_CMM_CD_DETL CNTC, " \
+                              "TB_CMM_CD_DETL DEPT " \
+                      "WHERE 1=1 " \
+                      "AND A.CNTC_DIVS_CD = CNTC.CMM_CD AND A.DEPT_CD = DEPT.CMM_CD " \
+                      "AND CNTC.CMM_CD_GRP_ID ='CNTC_DIVS_CD' " \
+                      "AND DEPT.CMM_CD_GRP_ID = 'SLIN_BZDP'"
+                if dept != "":
+                    sql += "AND DEPT_CD = '" + dept + "' "
+                if name != "":
+                    sql += "AND EMP_NAME LIKE '%" + name + "%' "
+                if division != "":
+                    sql += "AND CNTC_DIVS_CD = '" + division + "' "
+                if skilKind == "01":
+                    sql += "AND SKIL_DB LIKE '%" + skil + "%'"
+                if skilKind == "02":
+                    sql += "AND SKIL_LANG LIKE '%" + skil + "%'"
+                if skilKind == "03":
+                    sql += "AND SKIL_WEB LIKE '%" + skil + "%'"
+                if skilKind == "04":
+                    sql += "AND SKIL_FRAME LIKE '%" + skil + "%'"
+                if skilKind == "05":
+                    sql += "AND SKIL_MID LIKE '%" + skil + "%'"
+                logging.debug(sql)
 
-                    cursor.execute(sql, (dept,'%'+name+'%',division,'%'+skil+'%'))
+                cursor.execute(sql)
         finally:
             mysql_con.close()
 
         result2 = cursor.fetchall()
-        for row in result2:
-            logging.debug('====== row====')
-            logging.debug(row)
-            logging.debug('===============')
-        array = list(result2)  # 결과를 리스트로
 
         return result2
 
@@ -597,27 +551,132 @@ class skilMgmtDetl(Resource):
     def get(self):
         return "This is SkilDetail Management API! hohoho"
 
+#공통 코드 조회
+class retrieveCmmCd(Resource):
+    def get(self):
+        params = request.get_json()
+
+        logging.debug('retrieveCmmCd Start')
+
+        grp_id = request.args.get('grp_id')
+
+        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
+                                    charset='utf8')
+
+        try:
+            with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+                sql = "SELECT " \
+                      "CMM_CD, CMM_CD_NAME " \
+                      "FROM TB_CMM_CD_DETL A " \
+                      "WHERE CMM_CD_GRP_ID = %s;"
+                cursor.execute(sql, grp_id)
+                logging.debug('retrieveCmmCd SUCCESS')
+        finally:
+            mysql_con.close()
+
+        result = cursor.fetchall()
+        logging.debug(result)
+
+        return result
+
+class skilRegPopupSearch(Resource):
+    def get(self):
+        params = request.get_json()
+
+        logging.debug('skilRegPopupSearch Start')
+        empNo = request.args.get('empNo')
+        cntcDivsCd = request.args.get('cntcDivsCd')
+
+
+        mysql_con = pymysql.connect(host='mariadb', port=3306, db='IFG_IMS', user='ims2', password='1234',
+                                    charset='utf8')
+        if cntcDivsCd == '01' :
+            try:
+                with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+                    sql = "SELECT A.EMP_NAME," \
+                            "A.DEPT_CD," \
+                            "A.EMP_RANK_CD," \
+                            "B.SKIL_DIVS_CD," \
+                            "B.SKIL_NM_CD," \
+                            "B.SKIL_LVL_CD," \
+                            "B.RMKS," \
+                            "'01' AS CNTC_DIVS_CD," \
+                            "'정규직' AS CNTN_DIVE_NM" \
+                            "(SELECT CMM_CD_NAME FROM TB_CMM_CD_DETL A1 " \
+                            "WHERE A1.CMM_CD_GRP_ID ='EMP_RANK_CD' " \
+                            "AND A1.CMM_CD = A.EMP_RANK_CD " \
+                            ") AS EMP_RANK_CD, " \
+                            "(SELECT CMM_CD_NAME FROM TB_CMM_CD_DETL A1 " \
+                            "WHERE A1.CMM_CD_GRP_ID ='SLIN_BZDP' "\
+                            "AND A1.CMM_CD = A.DEPT_CD "\
+                            ") AS SLIN_BZDP " \
+                        "FROM TB_EMP_MGMT A LEFT OUTER JOIN TB_SKIL_MGNT_M B ON A.EMP_ID = B.EMP_NO " \
+                        "WHERE A.EMP_ID ='" + empNo + "' "
+
+                    cursor.execute(sql, empNo)
+                    logging.debug('skilRegPopupSearch SUCCESS')
+            finally:
+                mysql_con.close()
+        else :
+            try:
+                with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+                    sql = "SELECT A.EMP_NAME," \
+                            "A.EMP_DEPT_CD," \
+                            "A.EMP_RANK_CD," \
+                            "B.SKIL_DIVS_CD," \
+                            "B.SKIL_NM_CD," \
+                            "B.SKIL_LVL_CD," \
+                            "B.RMKS," \
+                            "(SELECT CMM_CD_NAME FROM TB_CMM_CD_DETL A1 " \
+                            "WHERE A1.CMM_CD_GRP_ID ='EMP_RANK_CD' " \
+                            "AND A1.CMM_CD = A.EMP_RANK_CD " \
+                            ") AS EMP_RANK_CD, " \
+                            "(SELECT CMM_CD_NAME FROM TB_CMM_CD_DETL A1 " \
+                            "WHERE A1.CMM_CD_GRP_ID ='SLIN_BZDP' "\
+                            "AND A1.CMM_CD = A.EMP_DEPT_CD "\
+                            ") AS SLIN_BZDP " \
+                            "(SELECT CMM_CD_NAME FROM TB_CMM_CD_DETL A1 " \
+                            "WHERE A1.CMM_CD_GRP_ID ='CNTC_DIVS_CD' " \
+                            "AND A1.CMM_CD = A.CNTC_DIVS_CD " \
+                            ") AS CNTC_DIVS_NM " \
+                          "FROM TB_FRLC_DEVP_INFO A LEFT OUTER JOIN TB_SKIL_MGNT_M B ON A.EMP_ID = B.EMP_NO " \
+                        "WHERE A.EMP_NO ='" + empNo + "' "
+
+                    cursor.execute(sql, empNo)
+                    logging.debug('skilRegPopupSearch SUCCESS')
+            finally:
+                mysql_con.close()
+
+        result1 = cursor.fetchall()
+        logging.debug(result1)
+
+        return result1
+
+
 api.add_resource(Hello, '/hello')
 api.add_resource(Register, '/register')
 api.add_resource(Retrieve, '/retrieve')
 api.add_resource(Save, '/save')
 api.add_resource(mariaClass,'/mariaClass')
 
-# 개발자 등록
+# 개발자 조회
+api.add_resource(devMgmtSearch, '/devMgmtSearch')
+
+# 프리 개발자 등록
+api.add_resource(retrieveDevInfo, '/retrieveDevInfo')
 api.add_resource(devSave, '/devSave')
 api.add_resource(devDelete, '/devDelete')
-
-# 프로젝트 등록
-api.add_resource(prjSave, '/prjSave')
-api.add_resource(prjDelete, '/prjDelete')
-
-# 프로젝트 투입 관리
-api.add_resource(prjInpuSearch, '/prjInpuSearch')
-api.add_resource(prjInpuDelete, '/prjInpuDelete')
 
 # 스킬관리
 api.add_resource(skilMgmtDetl, '/skilMgmtDetl')
 api.add_resource(skilMgmtSearch, '/skilMgmtSearch')
+
+#공통 코드 조회
+api.add_resource(retrieveCmmCd, '/retrieveCmmCd')
+
+
+# 스킬 상세 관리
+api.add_resource(skilRegPopupSearch, '/skilRegPopupSearch')
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5003, debug=True)

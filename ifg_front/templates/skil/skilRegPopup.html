@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1"><!-- 모바일 -->
+{% load static %}
+       <title>IFG-IMS</title>
+
+</head>
+<body>
+ <style>
+
+#modal {
+  z-index:100;
+}
+
+#modal h2 {
+}
+
+#modal input {
+  width : 100%;
+  border: 0;
+  border-bottom: 1.5px solid #0489B1;
+  outline : 0;
+}
+
+#modal button {
+  display:inline-block;
+  width:50%;
+  margin-center:calc(100% - 100px - 10px);
+  float:left;
+  color: blue;
+  background-color: rgba(0,0,0,0);
+  border: 0;
+  outline : 0;
+
+}
+
+#modal .modal_content {
+
+}
+
+#modal .modal_layer {
+
+}
+
+</style>
+
+
+<div id="modal">
+
+    <div class="modal_content">
+            <h2 style = "font-weight:bold"><U>스킬 관리 상세</U></h2><br>
+        <div id = "skilMgmtInfo">
+            <span style="color: #0489B1;
+                         font-size: 1.0em;
+                         padding:20px;">
+
+
+                <p>성명<br>
+                    <input type = "text" name = "emp_nm" placeholder="input text"></p>
+
+                <p>부서<br>
+                    <input type = "text" name = "cnct_cd" placeholder="input text"></p>
+
+                <p>구분<br>
+                   <input type = "text" name = "ctro" placeholder="input text"></p>
+
+                <p>직급<br>
+                    <input type = "text" name = "cnct_amt" placeholder="input text"></p>
+
+                <p>비고<br>
+                    <input type = "text" name = "rmks" placeholder="input text"></p>
+
+            </span>
+
+
+
+
+        <!--<button name="addStaff" class = "btn btn-primary" style="float:right">추가</button>
+        <button name="delStaff" class = "btn btn-primary" style="float:right color:red">삭제</button>-->
+        <td><input type="button" style="float:right" id="addStaff" name="addStaff" value="추가" class = "btn btn-danger"/></td>
+        <td><input type="button" style="float:right" id="delStaff" name="delStaff" value="삭제" class = "btn btn-primary"/></td>
+
+        <br>
+            <table id="hldSkil" class="table" style="margin-top: 20px;">
+                <colgroup>
+                    <col width="20%"/>
+                    <col width="20%"/>
+                    <col width="30%"/>
+                    <col width="30%"/>
+                </colgroup>
+
+                <thead>
+                <tr>
+                    <th>순번</th>
+                    <th>구분</th>
+                    <th>스킬명</th>
+                    <th>숙련도</th>
+
+                </tr>
+                </thead>
+
+                <tbody id="hldSkilBody" name = "hld_skil">
+                    <tr name="trSkil">
+                        <td id="staff_name"></td>
+                        <td><select size="1" class="form-control" id="hld_skil_divs1" name="hld_skil_divs1" onchange="skil_chg(1)">
+                            <option value = "01">DB</option>
+                            <option value = "02">언어</option>
+                            <option value = "03">WEB</option>
+                            <option value = "04">Framework</option>
+                        </select></td>
+                        <td><select size="1" class="form-control" id="hld_skil_divs2" name="hld_skil_divs1">
+                            <option value = "01">ORACLE</option>
+                            <option value = "02">MYSQL</option>
+                            <option value = "03">PL/SQL</option>
+                        </select></td>
+                        <td><select size="1" class="form-control" id="hld_skil_divs3" name="hld_skil_divs1">
+                            <option value = "01">초</option>
+                            <option value = "02">중</option>
+                            <option value = "03">고</option>
+                        </select></td>
+                    </tr>
+                </tbody>
+            </table>
+
+        </div>
+
+        <hr>
+            <button type="button" id="modal_close_btn">취소</button>
+            <button type="button" id="modal_save_btn">저장</button>
+            <button type="button" id="modal_delete_btn" style="color:red">삭제</button>
+
+        <br>
+     
+    </div>
+
+
+
+   
+    <div class="modal_layer"></div>
+</div>
+
+ <script>
+
+   $(document).ready(function(){
+
+        console.log('화면진입시작');
+        <!-- 화면 진입시 정보 조회 -->
+        var empNo =firstGrid.getList("selected")[0].EMP_NO
+        var cntcDivsCd =firstGrid.getList("selected")[0].CNTN_DIVS_CD
+
+        console.log('empNo' + empNo);
+        console.log('cntcDivsCd' + cntcDivsCd);
+
+        retrieveSkilDetl();
+
+    });
+
+    function retrieveSkilDetl(){
+
+            var param = {
+                "empNo" : empNo,
+                "cntcDivsCd" : cntcDivsCd
+            }
+
+            $.ajaxCall( param, {
+                method : 'GET',
+                     'url' : '/skil/skilRegPopupSearch/',
+                     'dataType' : 'json',
+                     'data' : JSON.stringify(param),
+                     'async' : false,
+                     'callbackFn' : function(data){
+                        for(var i = 0; i < data.length; i++){
+                            var option = $("<option value = "+data[i].CMM_CD+">"+data[i].CMM_CD_NAME+"</option>");
+                            $('#'+sbx_id).append(option);
+                        }
+                     }
+            });
+    };
+
+
+
+</script>
+
+</body>
+</html>
+
+
+

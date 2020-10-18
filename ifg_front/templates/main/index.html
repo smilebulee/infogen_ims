@@ -49,6 +49,9 @@
                   case 'SKIL':
                     location.href = '{% url 'skil_api:skil_api' %}'
                     break;
+                  case 'DILI':
+                    location.href = '{% url 'dili_api:scheduleMgmt' %}'
+                    break;
                 }
              });
           });
@@ -165,12 +168,12 @@
               <div class="card-body">
                 <!--<h1 class="card-title pricing-card-title">$15 <small class="text-muted">/ mo</small></h1>-->
                 <ul class="list-unstyled mt-3 mb-4">
-                  <li>월별계획</li>
-                  <li>월별실행</li>
-                  <li>&nbsp;</li>
-                    <li>&nbsp;</li>
+                  <li><a href="{% url 'dili_api:scheduleMgmt' %}" style="text-decoration: none;">주52시간 근태관리</a></li>
+                  <li><a href="{% url 'dili_api:empMgmt' %}"  style="text-decoration: none;">직원조회</a></li>
+                  <li><a href="{% url 'dili_api:noticeLst' %}"  style="text-decoration: none;">공지사항</a></li>
+                  <li><a href="{% url 'dili_api:apvlReqHist' %}"  style="text-decoration: none;">결재현황</a></li>
                 </ul>
-                <button type="button" class="btn btn-lg btn-block btn-primary">DILI Main</button>
+                <button type="button" class="btn btn-lg btn-block btn-primary gotoIndexBtn">DILI Main</button>
               </div>
             </div>
 
@@ -217,7 +220,6 @@
               <div class="card-body">
                 <!--<h1 class="card-title pricing-card-title">$15 <small class="text-muted">/ mo</small></h1>-->
                 <ul class="list-unstyled mt-3 mb-4">
-                  <li>근태현황</li>
                   <li>가동율현황</li>
                   <li>평가현황</li>
                     <li>KIP현황</li>

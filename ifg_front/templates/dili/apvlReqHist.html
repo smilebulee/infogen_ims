@@ -1,0 +1,229 @@
+
+
+{% extends 'common/base.html' %}
+
+{% block content %}
+    <div class="container">
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+        <script type="text/javascript">
+        $(document).ready(function(){
+
+            $("#searchBtn").click(function(){
+                /*********************************************************************
+                *   Session Email 값 기준 근무 결재요청 리스트 조회
+                *********************************************************************/
+                var param = {
+                    "email" : 'ishwang@infogen.co.kr',                                   // 추후 Session Value 연동.
+                    "apvlStusDivs" : $("#sbx_type option:selected").val(),    //TB_APVL_REQ_MGMT_M APVL_STUS 값 => 01,02: 승인, 승인반려 NULL: 미승인
+                }
+
+                $.ajaxCall( param, {
+                     'method' : 'GET',
+                     'url' : "{% url 'dili_api:getApvlReqHist' %}",
+                     'dataType' : 'json',
+                     'data' : JSON.stringify(param),
+                     'async' : false,
+                     'callbackFn' : function(data){
+
+                        // 리턴
+                        apvlReqHistGrd(data);
+                     }
+                });
+
+
+
+            });
+
+	        /*********************************************************************
+            *   근무결재요청 Grid 생성
+            *********************************************************************/
+            function apvlReqHistGrd(data){
+
+                var apvlReqHistTable = '<table class="table table-bordered table-responsive-md text-center">';
+                apvlReqHistTable += '<thead>';
+                apvlReqHistTable += '<tr>';
+                apvlReqHistTable += '<th class="text-center">순번</th>';
+                apvlReqHistTable += '<th class="text-center">성명</th>';
+                apvlReqHistTable += '<th class="text-center">근무일자</th>';
+                apvlReqHistTable += '<th class="text-center">구분</th>';
+                apvlReqHistTable += '<th class="text-center">승인상태</th>';
+                apvlReqHistTable += '</tr>';
+                apvlReqHistTable += '</thead>';
+                apvlReqHistTable += '<tbody>';
+
+                if(data.length > 0) {
+                    for(var i = 0; i < data.length; i++){
+
+                        var wrkDtm = "";
+                        if(data[i].WRK_DT != "") {
+                            if(data[i].WRK_TME != "") {
+                                wrkDtm = data[i].WRK_DT + " " + data[i].WRK_TME.substring(0,2) +":"+ data[i].WRK_TME.substring(2,4) +":"+ data[i].WRK_TME.substring(4,6)
+                            } else {
+                                wrkDtm = data[i].WRK_DT
+                            }
+                        }
+
+                        apvlReqHistTable += '<tr onclick="onclickEvt(this)">';
+                        apvlReqHistTable += '<td id="no'+i+'" class="pt-3-half">'+(i+1)+'</td>';
+                        apvlReqHistTable += '<td id="empName" class="pt-3-half">'+data[i].EMP_NAME+'</td>';
+                        apvlReqHistTable += '<td id="wrkDt" class="pt-3-half">'+wrkDtm+'</td>';
+                        apvlReqHistTable += '<td id="apvlReqNm" class="pt-3-half">'+data[i].APVL_REQ_NM+'</td>';
+                        apvlReqHistTable += '<td id="aprvStusNm" class="pt-3-half">'+data[i].APRV_STUS_NM+'</td>';
+                        apvlReqHistTable += '</tr>';
+
+                    }
+                } else {
+                    apvlReqHistTable += '<tr">';
+                    apvlReqHistTable += '<td id="no'+i+'" class="pt-3-half"></td>';
+                    apvlReqHistTable += '<td id="empName" class="pt-3-half"></td>';
+                    apvlReqHistTable += '<td id="wrkDt" class="pt-3-half"></td>';
+                    apvlReqHistTable += '<td id="apvlReqNm" class="pt-3-half"></td>';
+                    apvlReqHistTable += '<td id="aprvStusNm" class="pt-3-half"></td>';
+                    apvlReqHistTable += '</tr>';
+
+                    $("#thAprvNm1").text("");
+                    $("#thAprvNm2").text("");
+                    $("#thAprvStus1").text("");
+                    $("#thAprvStus2").text("");
+
+                }
+
+
+                apvlReqHistTable += '</tbody>';
+                apvlReqHistTable += '</table>';
+
+                document.getElementById('grd_apvlReqHist').innerHTML = apvlReqHistTable;
+            }
+
+        });
+
+        function onclickEvt(trId) {
+            var param = {
+                "email" : 'ishwang@infogen.co.kr',                                  // 추후 Session Value 연동.
+                "wrkDt" : $(trId).children().eq(2).text().substring(0,10)
+            }
+
+            $.ajaxCall( param, {
+                 'method' : 'GET',
+                 'url' : "{% url 'dili_api:getApvlReqHistDetl' %}",
+                 'dataType' : 'json',
+                 'data' : JSON.stringify(param),
+                 'async' : false,
+                 'callbackFn' : function(data){
+
+                    // 리턴
+                    setApvlReqHistDetl(data);
+                 }
+            });
+        }
+
+        function setApvlReqHistDetl(data) {
+            if(data == undefined || data == null || data.length == 0) {
+                $("#thAprvNm1").text("");
+                $("#thAprvNm2").text("");
+                $("#thAprvStus1").text("");
+                $("#thAprvStus2").text("");
+            } else {
+                $("#thAprvNm1").text(data[0].TH1_APRV_NM);
+                $("#thAprvNm2").text(data[0].TH2_APRV_NM);
+                $("#thAprvStus1").text(data[0].TH1_APRV_STUS_NM);
+                $("#thAprvStus2").text(data[0].TH2_APRV_STUS_NM);
+            }
+        }
+
+
+    </script>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="mb-4" role="alert">
+                    <h5>
+                        <b>결재요청 이력</b>
+                    </h5>
+                </div>
+
+                <!-- 1. 사원 조회영역 -->
+                <div class="accordion mb-4" id="grp_search">
+                    <div class="card">
+                        <div class="card-header p-0" id="head_search">
+                            <h2 class="mb-0">
+                                <button class="btn btn-link btn-block text-left text-dark" type="button" data-toggle="collapse" data-target="#col_search" aria-expanded="true" aria-controls="collapseOne">
+                                    <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-caret-down-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z"/>
+                                    </svg>
+                                    직원조회
+                                </button>
+                            </h2>
+                        </div>
+                        <div id="col_search" class="collapse show" aria-labelledby="head_search" data-parent="#grp_search">
+                            <div class="card-body flex-height d-flex m-0 p-2">
+                                <div class="align-self-start align-self-center mr-3">성명</div>
+                                <div class="align-self-center mr-3">
+                                    <input type="text" class="form-control" id="ipt_searchName" name="ipt_searchName" placeholder="이름을 입력해주세요." maxlength="10"/>
+                                </div>
+                                <div class="align-self-start align-self-center mr-3">구분</div>
+                                <div class="align-self-center mr-5">
+                                    <select id="sbx_type" class="form-control" name="type">
+                                        <option value="00" selected>선택</option>
+                                        <option value="01">미승인</option>
+                                        <option value="02">승인</option>
+                                    </select>
+                                </div>
+                                <div class="align-self-end align-self-center">
+                                    <button class="btn btn-primary" id="searchBtn">Search</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion mb-4" id="grp_apvlReqHist">
+                    <div class="card">
+                        <div class="card-header p-0" id="head_wrkApvlReq">
+                            <h2 class="mb-0">
+                                <button class="btn btn-link btn-block text-left text-dark" type="button" data-toggle="collapse" data-target="#col_apvlReqHist" aria-expanded="true" aria-controls="collapseOne">
+                                    <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-caret-down-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z"/>
+                                    </svg>
+                                    결재요청 이력
+                                </button>
+                            </h2>
+                        </div>
+
+                        <div id="col_apvlReqHist" class="collapse show" aria-labelledby="head_wrkApvlReq" data-parent="#grp_apvlReqHist">
+                            <div style="position: relative;" id="grid-parent">
+                                <div id="grd_apvlReqHist"></div>
+                            </div>
+
+                            <div style="position: relative;" id="grid-parent2">
+                                <div id="grd_apvlReqHistDetl">
+                                    <table class="table table-bordered table-responsive-md text-center">
+                                        <thead>
+                                        <tr>
+                                            <th class="text-center">결재 차수</th>
+                                            <th class="text-center">결재자</th>
+                                            <th class="text-center">결재상태</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr>
+                                           <td id="apvlTh1" class="pt-3-half">1</td>
+                                           <td id="thAprvNm1" class="pt-3-half"></td>
+                                           <td id="thAprvStus1" class="pt-3-half"></td>
+                                        </tr>
+                                        <tr>
+                                           <td id="apvlTh2" class="pt-3-half">2</td>
+                                           <td id="thAprvNm2" class="pt-3-half"></td>
+                                           <td id="thAprvStus2" class="pt-3-half"></td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
