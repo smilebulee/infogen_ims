@@ -285,7 +285,8 @@ class weekGridData(Resource): # Mariadb 연결 진행
                     + "       ,CONCAT(SUBSTRING(A.NORM_WRK_TM,1,2),':',SUBSTRING(A.NORM_WRK_TM,3,2),':',SUBSTRING(A.NORM_WRK_TM,5,2)) AS NORM_WRK_TM "\
                     + "       ,CONCAT(SUBSTRING(A.ALL_WRK_TM,1,2),':',SUBSTRING(A.ALL_WRK_TM,3,2),':',SUBSTRING(A.ALL_WRK_TM,5,2)) AS ALL_WRK_TM "\
                     + "       ,DATE_FORMAT(SEC_TO_TIME(TIME_TO_SEC(STR_TO_DATE( CONCAT(SUBSTRING(A.ALL_WRK_TM,1,2),':',SUBSTRING(A.ALL_WRK_TM,3,2),':',SUBSTRING(A.ALL_WRK_TM,5,2)) ,'%H:%i:%S')) "\
-                    + "                   - TIME_TO_SEC(STR_TO_DATE( CONCAT(SUBSTRING(A.NORM_WRK_TM,1,2),':',SUBSTRING(A.NORM_WRK_TM,3,2),':',SUBSTRING(A.NORM_WRK_TM,5,2)) ,'%H:%i:%S'))),'%H:%i:%s') AS OVER_WRK_TM "\
+                    + "                   - TIME_TO_SEC(STR_TO_DATE( CONCAT(SUBSTRING(A.NORM_WRK_TM,1,2),':',SUBSTRING(A.NORM_WRK_TM,3,2),':',SUBSTRING(A.NORM_WRK_TM,5,2)) ,'%H:%i:%S'))),'%H:%i:%s') AS OVER_WRK_TM " \
+                    + "       ,NVL(B.APVL_REQ_DIVS, 'N/A') AS APVL_REQ_DIVS " \
                     + "       ,NVL(B.APVL_REQ_DT, 'N/A') AS APVL_REQ_DT "\
                     + "       ,NVL(B.APVL_LAST_APRV_DT, 'N/A') AS APVL_LAST_APRV_DT "\
                     + "   FROM TB_WRK_TM_MGMT_M A "\
@@ -334,6 +335,7 @@ class monthGridData(Resource): # Mariadb 연결 진행
                     + "       ,CONCAT(SUBSTRING(A.ALL_WRK_TM,1,2),':',SUBSTRING(A.ALL_WRK_TM,3,2),':',SUBSTRING(A.ALL_WRK_TM,5,2)) AS ALL_WRK_TM "\
                     + "       ,DATE_FORMAT(SEC_TO_TIME(TIME_TO_SEC(STR_TO_DATE( CONCAT(SUBSTRING(A.ALL_WRK_TM,1,2),':',SUBSTRING(A.ALL_WRK_TM,3,2),':',SUBSTRING(A.ALL_WRK_TM,5,2)) ,'%H:%i:%S')) "\
                     + "                   - TIME_TO_SEC(STR_TO_DATE( CONCAT(SUBSTRING(A.NORM_WRK_TM,1,2),':',SUBSTRING(A.NORM_WRK_TM,3,2),':',SUBSTRING(A.NORM_WRK_TM,5,2)) ,'%H:%i:%S'))),'%H:%i:%s') AS OVER_WRK_TM "\
+                    + "       ,NVL(B.APVL_REQ_DIVS, 'N/A') AS APVL_REQ_DIVS "\
                     + "       ,NVL(B.APVL_REQ_DT, 'N/A') AS APVL_REQ_DT "\
                     + "       ,NVL(B.APVL_LAST_APRV_DT, 'N/A') AS APVL_LAST_APRV_DT "\
                     + "   FROM TB_WRK_TM_MGMT_M A "\

@@ -669,17 +669,37 @@
                 var allWrkTm = "-";
                 var normWrkTm = "-";
                 var overWrkTm = "-";
+                var apvlStus = "-"
+                var chckHldy = 0;
 
                 if(schdData.length > 0){
                     for(var j = 0; j < schdData.length; j++){
                         if(tempSetWeek == schdData[j].WRK_DT){
+                            if(schdData[j].APVL_REQ_DIVS != "03"){
 
-                            jobStrtTm = schdData[j].JOB_STRT_TM;
-                            jobEndTm = schdData[j].JOB_END_TM;
-                            allWrkTm = schdData[j].ALL_WRK_TM;
-                            normWrkTm = schdData[j].NORM_WRK_TM;
-                            if(schdData[j].OVER_WRK_TM != "00:00:00"){
-                                overWrkTm = schdData[j].OVER_WRK_TM;
+                                jobStrtTm = schdData[j].JOB_STRT_TM;
+                                jobEndTm = schdData[j].JOB_END_TM;
+                                allWrkTm = schdData[j].ALL_WRK_TM;
+                                normWrkTm = schdData[j].NORM_WRK_TM;
+
+                                if(schdData[j].OVER_WRK_TM != "00:00:00"){
+
+                                    overWrkTm = schdData[j].OVER_WRK_TM;
+                                }
+
+                            }else {
+
+                                chckHldy = 1;
+                            }
+
+                            if(schdData[j].APVL_REQ_DT == "N/A" && schdData[j].APVL_LAST_APRV_DT == "N/A" && schdData[j].OVER_WRK_TM != "00:00:00"){
+                                apvlStus = "미등록"
+                            }
+                            if(schdData[j].APVL_REQ_DT != "N/A" && schdData[j].APVL_LAST_APRV_DT == "N/A"){
+                                apvlStus = "진행중"
+                            }
+                            if(schdData[j].APVL_REQ_DT != "N/A" && schdData[j].APVL_LAST_APRV_DT != "N/A"){
+                                apvlStus = "완료"
                             }
                         }
                     }
@@ -689,8 +709,16 @@
                 weekTable += '<td class="pt-3-half" contenteditable="false">'+jobStrtTm+'</td>';
                 weekTable += '<td class="pt-3-half" contenteditable="false">'+jobEndTm+'</td>';
                 weekTable += '<td class="pt-3-half" contenteditable="false">'+allWrkTm+'</td>';
-                weekTable += '<td class="pt-3-half" contenteditable="false">정상근무 : '+normWrkTm+' / 초과근무 : '+overWrkTm+'</td>';
-                weekTable += '<td class="pt-3-half" contenteditable="false"></td>';
+
+                if(chckHldy == 0){
+
+                    weekTable += '<td class="pt-3-half" contenteditable="false">정상근무 : '+normWrkTm+' / 초과근무 : '+overWrkTm+'</td>';
+                }else {
+
+                    weekTable += '<td class="pt-3-half" contenteditable="false">휴가</td>';
+                }
+
+                weekTable += '<td class="pt-3-half" contenteditable="false">'+apvlStus+'</td>';
                 weekTable += '</tr>';
                 weekGridStrtDate.setDate(weekGridStrtDate.getDate()+1);
             }
@@ -738,17 +766,39 @@
                 var allWrkTm = "-";
                 var normWrkTm = "-";
                 var overWrkTm = "-";
+                var apvlStus = "-"
+                var chckHldy = 0;
 
 				if(schdData.length > 0){
                     for(var j = 0; j < schdData.length; j++){
                         if(tempSetMonth == schdData[j].WRK_DT){
 
-                            jobStrtTm = schdData[j].JOB_STRT_TM;
-                            jobEndTm = schdData[j].JOB_END_TM;
-                            allWrkTm = schdData[j].ALL_WRK_TM;
-                            normWrkTm = schdData[j].NORM_WRK_TM;
-                            if(schdData[j].OVER_WRK_TM != "00:00:00"){
-                                overWrkTm = schdData[j].OVER_WRK_TM;
+                            if(schdData[j].APVL_REQ_DIVS != "03"){
+
+                                jobStrtTm = schdData[j].JOB_STRT_TM;
+                                jobEndTm = schdData[j].JOB_END_TM;
+                                allWrkTm = schdData[j].ALL_WRK_TM;
+                                normWrkTm = schdData[j].NORM_WRK_TM;
+
+                                if(schdData[j].OVER_WRK_TM != "00:00:00"){
+
+                                    overWrkTm = schdData[j].OVER_WRK_TM;
+                                }
+
+
+                            }else {
+
+                                chckHldy = 1;
+                            }
+
+                            if(schdData[j].APVL_REQ_DT == "N/A" && schdData[j].APVL_LAST_APRV_DT == "N/A" && schdData[j].OVER_WRK_TM != "00:00:00"){
+                                apvlStus = "미등록"
+                            }
+                            if(schdData[j].APVL_REQ_DT != "N/A" && schdData[j].APVL_LAST_APRV_DT == "N/A"){
+                                apvlStus = "진행중"
+                            }
+                            if(schdData[j].APVL_REQ_DT != "N/A" && schdData[j].APVL_LAST_APRV_DT != "N/A"){
+                                apvlStus = "완료"
                             }
                         }
                     }
@@ -760,8 +810,16 @@
                 monthTable += '<td class="pt-3-half" contenteditable="false">'+jobStrtTm+'</td>';
                 monthTable += '<td class="pt-3-half" contenteditable="false">'+jobEndTm+'</td>';
                 monthTable += '<td class="pt-3-half" contenteditable="false">'+allWrkTm+'</td>';
-                monthTable += '<td class="pt-3-half" contenteditable="false">정상근무 : '+normWrkTm+' / 초과근무 : '+overWrkTm+'</td>';
-                monthTable += '<td class="pt-3-half" contenteditable="false"></td>';
+
+                if(chckHldy == 0){
+
+                    monthTable += '<td class="pt-3-half" contenteditable="false">정상근무 : '+normWrkTm+' / 초과근무 : '+overWrkTm+'</td>';
+                }else {
+
+                    monthTable += '<td class="pt-3-half" contenteditable="false">휴가</td>';
+                }
+
+                monthTable += '<td class="pt-3-half" contenteditable="false">'+apvlStus+'</td>';
                 monthTable += '</tr>';
                 monthGridStrtDate.setDate(monthGridStrtDate.getDate()+1);
             }
