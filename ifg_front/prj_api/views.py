@@ -11,50 +11,56 @@ import json
 
 logger = logging.getLogger(__name__)
 
+
 class Prj_api_index(generic.TemplateView):
     def get(self, request, *args, **kwargs):
         template_name = 'prj/index.html'
 
         r = requests.get('http://prj_api:5002/hello')
         rr = {
-            "result":r.text
+            "result": r.text
         }
-        
+
         return render(request, template_name, rr)
 
-#프로젝트 목록 조회 화면 호출
+
+# 프로젝트 목록 조회 화면 호출
 def prjListSrch(request):
     template_name = 'prj/prjListSrch.html'
 
     return render(request, template_name)
+
 
 @login_required
 def retrieve(request):
     headers = {'Content-Type': 'application/json; charset=utf-8'}
     params = {}  # get 일때 사용
     data = {
-        'username':'bulee',
-        'email':'bulee@infogen.co.kr'
+        'username': 'bulee',
+        'email': 'bulee@infogen.co.kr'
     }
 
     # requests.get(url, params=params)
-    res = requests.post('http://prj_api:5002/retrieve', headers=headers, json=data)        # data가 다층 구조일 땐 json.dumps(data) 사용
+    res = requests.post('http://prj_api:5002/retrieve', headers=headers,
+                        json=data)  # data가 다층 구조일 땐 json.dumps(data) 사용
 
     if res.status_code == requests.codes.ok:
         retVal = res.json()
         retVal['status'] = 'ok'
     else:
         retVal = {
-            'status':'fail'
+            'status': 'fail'
         }
     logger.debug(retVal);
     return JsonResponse(retVal)
+
 
 @login_required
 def prjReg(request):
     template_name = 'prj/prjReg.html'
 
     return render(request, template_name)
+
 
 # 프로젝트 정보 조회
 def retrievePrjInfo(request):
@@ -87,6 +93,7 @@ def retrieveReqSkil(request):
 
     return JsonResponse(r.json(), safe=False)
 
+
 # 프로젝트 등록 스킬명 조회
 def retrieveSkilName(request):
     param = json.loads(request.GET['param'])
@@ -101,6 +108,7 @@ def retrieveSkilName(request):
     logger.info(r.json())
 
     return JsonResponse(r.json(), safe=False)
+
 
 # 프로젝트 저장
 @ajax_login_required
@@ -122,10 +130,10 @@ def prjSave(request):
 
     return JsonResponse(r.json(), safe=False)
 
+
 # 프로젝트 삭제
 @ajax_login_required
 def prjDelete(request):
-
     param = json.loads(request.POST['param'])
 
     datas = {
@@ -140,6 +148,7 @@ def prjDelete(request):
     logger.info(r.json())
 
     return JsonResponse(r.json())
+
 
 # 프로젝트별투입현황관리 프로젝트 상세정보
 def retrievePrjDetlInfo(request):
@@ -162,9 +171,9 @@ def prjInpuMgmt(request):
 
     return render(request, template_name)
 
+
 # 프로젝트별투입현황관리 조회
 def prjInpuSearch(request):
-
     param = json.loads(request.GET['param'])
     logger.info("prjInpuSearch : skil/views.py")
     datas = {
@@ -173,9 +182,9 @@ def prjInpuSearch(request):
     r = requests.get('http://prj_api:5002/prjInpuSearch', params=datas)
     return JsonResponse(r.json(), safe=False)
 
+
 # 프로젝트별투입현황관리 삭제
 def prjInpuDelete(request):
-
     param = json.loads(request.POST['param'])
     logger.info(param)
     logger.info("prjInpuDelete : skil/views.py")
@@ -189,9 +198,9 @@ def prjInpuDelete(request):
     r = requests.post('http://prj_api:5002/prjInpuDelete', data=datas)
     return JsonResponse(r.json(), safe=False)
 
+
 # 프로젝트별투입현황관리 저장
 def prjInpuSave(request):
-
     param = json.loads(request.POST['param'])
     logger.info(param)
     for data in param:
@@ -226,12 +235,17 @@ def prjInpuSave(request):
         r = requests.post('http://prj_api:5002/prjInpuSave', data=datas)
     return JsonResponse(r.json())
 
-#프로젝트 목록 조회
-def prjListSearch(request) :
+
+# 프로젝트 목록 조회
+def prjListSearch(request):
     logger.info("prjListSearch : prj/views.py")
     param = json.loads(request.GET['param'])
+    logger.info(param)
 
-    datas = {}
+    datas = {
+        'dept': param['dept'],
+        'skilKind': param['skilKind']
+    }
 
     logger.info(datas)
     r = requests.get('http://prj_api:5002/prjListSearch', params=datas)

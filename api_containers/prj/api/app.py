@@ -599,18 +599,23 @@ class prjListSearch(Resource):
         logging.debug("search start")
 
         # get data
-        skilDiv = request.args.get('skilDiv')
-
+        #skilDiv = request.args.get('skilDiv')
+        dept = request.args.get('dept')
+        skilKind = request.args.get('skilKind')
         logging.debug('---------------SEARCH---------------')
-        logging.debug('skilDiv : ' + skilDiv)
+        logging.debug('dept : ' + dept)
+        logging.debug('skilKind : ' + skilKind)
         logging.debug('------------------------------------')
 
         mysql_con = pymysql.connect(host='218.151.225.142', port=3306, db='IFG_IMS', user='ims2', password='1234',
                                     charset='utf8')
         try:
-            with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
-                sql = "SELECT PRJ_NAME FROM TB_PRJ_INFO"
-                cursor.execute(sql)
+            if (dept is None or dept =='') and (skilKind is None or skilKind =='') :
+                with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+                    logging.debug('none search data')
+                    sql = "SELECT PRJ_NAME, GNR_CTRO,CTRO,PRJ_CNCT_CD,SLIN_BZDP,JOB_DIVS_CD,CNTC_STRT_DAY,CNTC_END_DAY,PGRS_STUS_CD,RMKS FROM TB_PRJ_INFO"
+                    cursor.execute(sql)
+
         finally:
             mysql_con.close()
 
