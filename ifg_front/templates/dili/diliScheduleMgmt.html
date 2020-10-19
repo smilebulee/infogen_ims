@@ -652,6 +652,9 @@
                             jobEndTm = schdData[j].JOB_END_TM;
                             allWrkTm = schdData[j].ALL_WRK_TM;
                             normWrkTm = schdData[j].NORM_WRK_TM;
+                            if(schdData[j].OVER_WRK_TM != "00:00:00"){
+                                overWrkTm = schdData[j].OVER_WRK_TM;
+                            }
                         }
                     }
                 }
