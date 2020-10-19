@@ -3,6 +3,9 @@
 <script type="text/javascript">
     $(document).ready(function(){
         dataControl();
+        console.log("초과시간테스트 : ",overWrkTmChk("10:00:00"));
+        console.log("초과시간테스트 : ",overWrkTmChk("08:00:00"));
+
     });
 
     function dataControl(){
@@ -15,6 +18,9 @@
         var apvlStus = $('#tmpPopApvlStus').text();
 
         $('#pop_dt').text(dt);
+
+        //console.log("시간차이 테스트 : ",timeControl(dt, strTm, endTm));
+
         if(getCurrentDate() == dt){
             if(strTm == "-"){
                 document.getElementById('pop_strtJob').innerHTML = '<input type="button" value="출근버튼">';
@@ -28,6 +34,12 @@
                 $('#pop_endJob').text(endTm);
             }
 
+            if(endTm != "-" && strTm != "-") {
+                $('#pop_schdDetlAllTm').text(timeControl(dt, strTm, endTm));
+            }
+
+
+
         }else {
 
             $('#pop_strtJob').text(strTm);
@@ -38,20 +50,36 @@
         }
     }
     function timeControl(date, strtTm, endTm){
+
         var tmpStrtDate = date+" "+strtTm;
         var tmpEndDate = date+" "+endTm;
 
         var strtDate = new Date(tmpStrtDate);
         var endDate = new Date(tmpEndDate);
 
-        var subtract = endDate - strtDate;
-        var hour = Math.floor((subtract % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)) - 1;
-        var minute = Math.floor((subtract % (1000 * 60 * 60)) / (1000 * 60));
-        var second = Math.floor((subtract % (1000 * 60)) / 1000);
+        var tmpSubtractTm = endDate - strtDate;
+        var hour = Math.floor((tmpSubtractTm % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)) - 1;
+        var minute = Math.floor((tmpSubtractTm % (1000 * 60 * 60)) / (1000 * 60));
+        var second = Math.floor((tmpSubtractTm % (1000 * 60)) / 1000);
 
 
+        var subtractTm = lpad((hour).toString(),2,"0")+":"+lpad((minute).toString(),2,"0")+":"+lpad((second).toString(),2,"0");
 
+        return subtractTm
     }
+
+    function overWrkTmChk(allTmData){
+        var overTmChk = 0;
+        var tmpOverTmChk = allTmData.split(':');
+
+        if(Number(tmpOverTmChk[0]) > 8){
+
+            overTmChk = 1;
+        }
+
+        return overTmChk
+    }
+
 </script>
 
 <table class="table table-bordered table-responsive-md table-striped text-center" style="width: 500px">
