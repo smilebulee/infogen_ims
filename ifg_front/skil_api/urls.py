@@ -38,6 +38,11 @@ urlpatterns = [
 
     # 공통 코드 조회
     url(r'^retrieveCmmCd/', views.retrieveCmmCd, name='retrieveCmmCd'),
+
+    # 스킬 코드 관리
+    url(r'^skilCdMgmt/', views.skilCdMgmt, name='skilCdMgmt'),
+    url(r'^skilCdMgmtSearch/', views.skilCdMgmtSearch, name='skilCdMgmtSearch'),
+    url(r'^getSkilCdMgmt/', views.getSkilCdMgmt, name='getSkilCdMgmt')
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -22,6 +22,12 @@ class Prj_api_index(generic.TemplateView):
         
         return render(request, template_name, rr)
 
+#프로젝트 목록 조회 화면 호출
+def prjListSrch(request):
+    template_name = 'prj/prjListSrch.html'
+
+    return render(request, template_name)
+
 @login_required
 def retrieve(request):
     headers = {'Content-Type': 'application/json; charset=utf-8'}
@@ -219,3 +225,20 @@ def prjInpuSave(request):
             }
         r = requests.post('http://prj_api:5002/prjInpuSave', data=datas)
     return JsonResponse(r.json())
+
+#프로젝트 목록 조회
+def prjListSearch(request) :
+    logger.info("prjListSearch : prj/views.py")
+    param = json.loads(request.GET['param'])
+
+    datas = {}
+
+    logger.info(datas)
+    r = requests.get('http://prj_api:5002/prjListSearch', params=datas)
+    logger.info(r)
+    logger.info(r.text)
+    logger.info("----------------")
+    logger.info(r.json())
+    logger.info(json.loads(r.text))
+    # return JsonResponse(r.json())
+    return JsonResponse(r.json(), safe=False)
