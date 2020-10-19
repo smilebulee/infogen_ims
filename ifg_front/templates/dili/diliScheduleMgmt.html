@@ -175,6 +175,7 @@
             var currentWeek = setWeek(currentDate);
 
             getWrkTimeByIml(null, currentWeek.strtDate, currentWeek.endDate);     // Session Email 을 기준으로 시작~종료일에 대한 근무시간 조회.
+            getCalendarSessionDate(null);     // Session Email
 
             /*********************************************************************
             *   Session Email 값 기준 연차정보 조회
@@ -424,33 +425,44 @@
             /*********************************************************************
             *   Draw  calendar Event - 데이터 받아오기
             *********************************************************************/
-            var param = {
-                "email" : sessionStorage.getItem("email")
+            function getCalendarSessionDate(email) {
+               console.log("email111 : ",email);
+
+                //email 파라미터가 null / EmptyString 으로 인입된 경우 Session 값을 기준하여 셋팅.
+                if (email == null || email == "") {
+                    email = sessionStorage.getItem("email")
+                }
+
+                var param = {
+                    "email"     : email
+                }
+
+                $.ajaxCall( param, {
+                     'method' : 'GET',
+                     'url' : "{% url 'dili_api:getCalendarData' %}",
+                     'dataType' : 'json',
+                     'data' : JSON.stringify(param),
+                     'async' : false,
+                     'callbackFn' : function(data, status, xhr){
+                        console.log("data111 : ",JSON.parse(data))
+                        console.log("data222 : ",JSON.parse(data).length)
+
+                        var dataParam = JSON.parse(data)
+
+                        if(dataParam.length > 0) {
+                            setCalendar(data);
+                        }
+                     }
+                });
             }
-
-            $.ajaxCall( param, {
-                 'method' : 'GET',
-                 'url' : "{% url 'dili_api:getCalendarData' %}",
-                 'dataType' : 'json',
-                 'data' : JSON.stringify(param),
-                 'async' : false,
-                 'callbackFn' : function(data, status, xhr){
-                    console.log("data111 : ",JSON.parse(data))
-
-                    if(data.length > 0) {
-                        setCalendar(data);
-                    } else {
-                        setCalendar(0);
-                    }
-                 }
-            });
 
             /*********************************************************************
             *   Draw  calendar Event - 받아온 데이터 캘린더에 입력
             *********************************************************************/
             function setCalendar(data){
+<!--                console.log("calendarData1 : ",data);-->
+
                 var calendarData = JSON.parse(data);
-<!--                console.log("calendarData1 : ",calendarData);-->
 
                 console.log("WRK_DT : ",calendarData[7].WRK_DT);
                 console.log("JOB_STRT_TM : ",calendarData[7].JOB_STRT_TM);
