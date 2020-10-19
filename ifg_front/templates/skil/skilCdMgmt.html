@@ -3,19 +3,16 @@
 {% block content %}
 <script type="text/javascript" xmlns:max-width="http://www.w3.org/1999/xhtml">
         var firstGrid;
-<!--        var skilCodeList = [];-->
 
         var data;
         $(document).ready(function(){
 
             /* 스킬구분코드 공통코드 조회 */
-<!--            getCodeList();-->
             var gridList = [        /* 그리드에 세팅할 데이터는 JSON 배열 형태 */
-                {"SKIL_SNO":"", "SKIL_DIVS_CD":"", "SKIL_NM":"", "REG_DATE":"", "REG_EMP_NO":"", "RMK":""},
+                {"SKIL_SNO":"", "SKIL_DIVS_CD":"", "SKIL_NAME":"", "REG_DATE":"", "REG_EMP_NO":"", "RMK":""},
             ];
 
             /* 스킬 구분 코드 조회 */
-<!--            function getCodeList(){-->
             $('#formSearchDiv').ajaxCall({
                 method : 'GET',
                 url : "{% url 'skil_api:getSkilCdMgmt' %}",
@@ -35,14 +32,6 @@
                             html = "<option value="+ret[i].CMM_CD+">"+ret[i].CMM_CD_NAME+"</option>";
                             console.log('html : ' + html);
                             $("select[name=skilDiv]").append(html);
-
-<!--                                skilCodeList.push({-->
-<!--                                    CMM_CD: ret[i].CMM_CD,-->
-<!--                                    CMM_CD_NAME: ret[i].CMM_CD_NAME-->
-<!--                                });-->
-
-<!--                            console.log('skilCodeList.CMM_CD : ' + skilCodeList[i].CMM_CD);-->
-<!--                            console.log('skilCodeList.CMM_CD_NAME : ' + skilCodeList[i].CMM_CD_NAME);-->
                         });
                     }
 
@@ -60,13 +49,6 @@
                             label: "스킬구분",
                             width: 150,
                             align: "center",
-                            formatter: function(){
-                                for(var i = 0; i < ret.length; i++){
-                                    if(ret[i].CMM_CD == this.value){
-                                        return ret[i].CMM_CD_NAME;
-                                    }
-                                }
-                            },
                             editor: {
                                 type: "select",
                                 config: {
@@ -75,23 +57,14 @@
                                     },
                                     options: ret
                                 }
+                            },
+                            formatter: function(key){
+                                for(var i = 0; i < ret.length; i++){
+                                    if(ret[i].CMM_CD == this.value){
+                                        return ret[i].CMM_CD_NAME;
+                                    }
+                                }
                             }
-        <!--                    editable: {type: "select",-->
-        <!--                        rule: function(value, data) {-->
-        <!--                            var editing_data = [{CMM_CD:'', CMM_CD_NAME:'전체'}];-->
-        <!--                            editing_data = editing_data.concat(skilCodeList);-->
-        <!--                            return editing_data;-->
-        <!--                        }-->
-        <!--                    },-->
-        <!--                    editor: {-->
-        <!--                        type: "select",             /* 수정시 셀렉트 박스 */-->
-        <!--                        config: {-->
-        <!--                            options: null,-->
-        <!--                            columnKeys: {-->
-        <!--                                optionValue: skilCodeList.CMM_CD, optionText: skilCodeList.CMM_CD_NAME-->
-        <!--                            }-->
-        <!--                        }-->
-        <!--                    }-->
                         },
                         {
                             key: "SKIL_NAME",
@@ -115,7 +88,7 @@
                         {
                             key: "RMKS",
                             label: "비고",
-                            width: 300,
+                            width: 360,
                             align: "center",
                             editor : {type : 'text'}
                         }
@@ -128,7 +101,6 @@
                 }
 
             });
-<!--            };-->
 
             /* 조회 버튼 클릭 */
             $('#searchBtn').click(function(){
@@ -138,8 +110,7 @@
             /* 코드 Row 추가 */
             $('#grpAddBtn').click(function(){
                 console.log('코드 Row 추가');
-                debugger;
-                firstGrid.addRow({"SKIL_SNO":"", "SKIL_DIVS_CD":"", "SKIL_NM":"", "REG_DATE":"", "REG_EMP_NO":"", "RMK":""}, 'last');
+                firstGrid.addRow({"SKIL_SNO":"", "SKIL_DIVS_CD":"", "SKIL_NAME":"", "REG_DATE":"", "REG_EMP_NO":"", "RMK":""}, 'last');
             });
 
             /* 코드 저장 */
@@ -153,7 +124,7 @@
                     var updateList = firstGrid.getList('modified');
 
                     $.ajaxCall(updateList, {
-                        url : '{% url 'cmm_api:saveGrp' %}',
+                        url : '{% url 'skil_api:saveSkilCd' %}',
                         method : 'post',
                         callbackFn : function(data){
                             g_toast.push('저장 되었습니다.');
@@ -174,9 +145,8 @@
                     if(firstGrid.getList("selected")[0].__created__) firstGrid.removeRow("selected");
                     else{
                         var delList = firstGrid.getList('selected');
-
                         $.ajaxCall(delList, {
-                            url : '{% url 'cmm_api:deleteGrp' %}',
+                            url : '{% url 'skil_api:deleteSkilCd' %}',
                             method : 'post',
                             callbackFn : function(data){
                                 g_toast.push('삭제 되었습니다.');
@@ -186,9 +156,6 @@
                     }
                 });
             });
-
-
-
         });
 
         /* 페이징 처리 */
@@ -200,7 +167,7 @@
         function getGridList(page){
             var options = {
                method : 'GET',
-                url : "{% url 'skil_api:skilCdMgmtSearch' %}",
+                url : "{% url 'skil_api:retrieveSkilCd' %}",
                 callbackFn :  function(ret){
                     if(ret.list.length == 0){
                         alertMsg('데이터가 없습니다.');
