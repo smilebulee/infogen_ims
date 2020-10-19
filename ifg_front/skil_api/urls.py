@@ -34,10 +34,15 @@ urlpatterns = [
     
     # 스킬관리상세팝업
     url(r'^skilRegPopup/', views.skilRegPopup, name='skilRegPopup'),
-    url(r'^skilRegPopupSearch/', views.skilRegPopupSearch, name='skilRegPopupSearch'),
+    url(r'^skilRegPopupSearch/get', views.skilRegPopupSearch, name='skilRegPopupSearch'),
 
     # 공통 코드 조회
     url(r'^retrieveCmmCd/', views.retrieveCmmCd, name='retrieveCmmCd'),
+
+    # 스킬 코드 관리
+    url(r'^skilCdMgmt/', views.skilCdMgmt, name='skilCdMgmt'),
+    url(r'^skilCdMgmtSearch/', views.skilCdMgmtSearch, name='skilCdMgmtSearch'),
+    url(r'^getSkilCdMgmt/', views.getSkilCdMgmt, name='getSkilCdMgmt')
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

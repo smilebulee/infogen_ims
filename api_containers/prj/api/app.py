@@ -522,11 +522,11 @@ class prjInpuDelete(Resource):
 
         # get data
         prjCd = request.form["prjCd"]
-        empNo = request.form["empNo"]
+        #empNo = request.form["empNo"]
 
         logging.debug('---------------SEARCH---------------')
         logging.debug('prjCd : ' + prjCd)
-        logging.debug('empNo : ' + empNo)
+        #logging.debug('empNo : ' + empNo)
         logging.debug('------------------------------------')
 
         mysql_con = pymysql.connect(host='218.151.225.142', port=3306, db='IFG_IMS', user='ims2', password='1234',
@@ -593,6 +593,41 @@ class prjInpuSave(Resource):
 
         return jsonify(retJson)
 
+class prjListSearch(Resource):
+    def get(self):
+        # Get posted data from request
+        logging.debug("search start")
+
+        # get data
+        #skilDiv = request.args.get('skilDiv')
+        dept = request.args.get('dept')
+        skilKind = request.args.get('skilKind')
+        logging.debug('---------------SEARCH---------------')
+        logging.debug('dept : ' + dept)
+        logging.debug('skilKind : ' + skilKind)
+        logging.debug('------------------------------------')
+
+        mysql_con = pymysql.connect(host='218.151.225.142', port=3306, db='IFG_IMS', user='ims2', password='1234',
+                                    charset='utf8')
+        try:
+            if (dept is None or dept =='') and (skilKind is None or skilKind =='') :
+                with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+                    logging.debug('none search data')
+                    sql = "SELECT PRJ_NAME, GNR_CTRO,CTRO,PRJ_CNCT_CD,SLIN_BZDP,JOB_DIVS_CD,CNTC_STRT_DAY,CNTC_END_DAY,PGRS_STUS_CD,RMKS FROM TB_PRJ_INFO"
+                    cursor.execute(sql)
+
+        finally:
+            mysql_con.close()
+
+        result2 = cursor.fetchall()
+        for row in result2:
+            logging.debug('====== row====')
+            logging.debug(row)
+            logging.debug('===============')
+        array = list(result2)  # 결과를 리스트로
+
+        return result2
+
 api.add_resource(Hello, '/hello')
 api.add_resource(Register, '/register')
 api.add_resource(Retrieve, '/retrieve')
@@ -611,6 +646,9 @@ api.add_resource(retrievePrjDetlInfo, '/retrievePrjDetlInfo')
 api.add_resource(prjInpuSearch, '/prjInpuSearch')
 api.add_resource(prjInpuDelete, '/prjInpuDelete')
 api.add_resource(prjInpuSave, '/prjInpuSave')
+
+# 프로젝트 목록 조회
+api.add_resource(prjListSearch, '/prjListSearch')
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5002, debug=True)

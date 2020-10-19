@@ -29,6 +29,9 @@ urlpatterns = [
     url(r'^prjInpuDelete/', views.prjInpuDelete, name='prjInpuDelete'),
     url(r'^prjInpuSave/', views.prjInpuSave, name='prjInpuSave'),
 
+    # 프로젝트 목록 관리
+    url(r'^prjListSrch/', views.prjListSrch, name='prjListSrch'),
+    url(r'^prjListSearch/', views.prjListSearch, name='prjListSearch'),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
