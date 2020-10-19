@@ -860,6 +860,12 @@
             $('#my_modal2').load("{% url 'dili_api:scheduleMgmtPop' %}");
 
             $('#tmpPopDt').text(trId.id.replace('grd_week',''));
+            $('#tmpPopStrtTm').text($('#'+trId.id).children().eq(1).text());
+            $('#tmpPopEndTm').text($('#'+trId.id).children().eq(2).text());
+            $('#tmpPopDetlTm').text($('#'+trId.id).children().eq(4).text());
+            $('#tmpPopAllTm').text($('#'+trId.id).children().eq(3).text());
+            $('#tmpPopApvlStus').text($('#'+trId.id).children().eq(5).text());
+
 
 
        }
@@ -1050,6 +1056,11 @@
                    <path fill-rule="evenodd" d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
                 </svg>
                 <span id="tmpPopDt" class="model_layout" style="display:none;" ></span>
+                <span id="tmpPopStrtTm" class="model_layout" style="display:none;" ></span>
+                <span id="tmpPopEndTm" class="model_layout" style="display:none;" ></span>
+                <span id="tmpPopDetlTm" class="model_layout" style="display:none;" ></span>
+                <span id="tmpPopAllTm" class="model_layout" style="display:none;" ></span>
+                <span id="tmpPopApvlStus" class="model_layout" style="display:none;" ></span>
             </a>
         </div>
 

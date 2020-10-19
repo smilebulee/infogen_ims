@@ -2,10 +2,53 @@
 
 <script type="text/javascript">
     $(document).ready(function(){
-        $('#tmpPopDt').text()
-        $('#pop_dt').text($('#tmpPopDt').text());
-        
+        dataControl();
     });
+
+    function dataControl(){
+
+        var dt = $('#tmpPopDt').text();
+        var strTm = $('#tmpPopStrtTm').text();
+        var endTm = $('#tmpPopEndTm').text();
+        var detlTm = $('#tmpPopDetlTm').text();
+        var allTm = $('#tmpPopAllTm').text();
+        var apvlStus = $('#tmpPopApvlStus').text();
+
+        $('#pop_dt').text(dt);
+        if(getCurrentDate() == dt){
+            if(strTm == "-"){
+                document.getElementById('pop_strtJob').innerHTML = '<input type="button" value="출근버튼">';
+            }else {
+                $('#pop_strtJob').text(strTm);
+            }
+
+            if(endTm == "-" && strTm != "-"){
+                document.getElementById('pop_strtJob').innerHTML = '<input type="button" value="퇴근버튼">';
+            }else {
+                $('#pop_endJob').text(endTm);
+            }
+
+        }else {
+
+            $('#pop_strtJob').text(strTm);
+            $('#pop_endJob').text(endTm);
+            $('#pop_schdDetlTm').text(detlTm);
+            $('#pop_schdDetlAllTm').text(allTm);
+            $('#pop_apvlStus').text(apvlStus);
+        }
+    }
+    function timeControl(date, strtTm, endTm){
+        var tmpStrtDate = date+" "+strtTm;
+        var tmpEndDate = date+" "+endTm;
+
+        var strtDate = new Date(tmpStrtDate);
+        var endDate = new Date(tmpEndDate);
+
+        //var subtract
+
+
+
+    }
 </script>
 
 <table class="table table-bordered table-responsive-md table-striped text-center" style="width: 500px">
