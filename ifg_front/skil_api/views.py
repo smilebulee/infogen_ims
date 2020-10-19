@@ -244,8 +244,8 @@ def retrieveCmmCd(request):
     return JsonResponse(r.json(), safe=False)
 
 #스킬 코드 관리 조회
-def skilCdMgmtSearch(request) :
-    logger.info("skilCdMgmtSearch : skil/views.py")
+def retrieveSkilCd(request) :
+    logger.info("retrieveSkilCd : skil/views.py")
     param = json.loads(request.GET['param'])
     logger.info(param)
 
@@ -254,7 +254,7 @@ def skilCdMgmtSearch(request) :
     }
 
     logger.info(datas)
-    r = requests.get('http://skil_api:5003/skilCdMgmtSearch', params=datas)
+    r = requests.get('http://skil_api:5003/retrieveSkilCd', params=datas)
 
     # logger.info(r)
     # logger.info(r.text)
@@ -304,3 +304,36 @@ def getSkilCdMgmt(request):
     logger.info(json.loads(r.text))
 
     return JsonResponse(r.json(), safe=False)
+
+#스킬 코드 삭제
+def deleteSkilCd(request):
+    param = json.loads(request.POST['param'])
+    logger.info(param)
+    datas = {
+        'skilSno': param[0]['SKIL_SNO']
+    }
+    logger.info(datas)
+    r = requests.post('http://skil_api:5003/deleteSkilCd', data=datas)
+    logger.info(r)
+    logger.info(r.text)
+    logger.info(r.json())
+
+    return JsonResponse(r.json())
+
+#스킬 코드 추가
+def saveSkilCd(request):
+    param = json.loads(request.POST['param'])
+    logger.info(param)
+    userId = str(request.user)
+    for data in param:
+        if '__created__' in data and data['__created__']:
+            data['userId'] = userId
+            r = requests.post('http://skil_api:5003/insertSkilCd', data=data)
+        else:
+            data['userId'] = userId
+            r = requests.post('http://skil_api:5003/updateSkilCd', data=data)
+
+    ret = {
+        'result': 'OK'
+    }
+    return JsonResponse(ret)
