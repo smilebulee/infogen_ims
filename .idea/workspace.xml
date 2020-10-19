@@ -21,7 +21,9 @@
   <component name="ChangeListManager">
     <list default="true" id="069bc5b9-482e-4fff-a242-76dbf771ee42" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ifg_front/templates/dili/diliScheduleMgmt.html" beforeDir="false" afterPath="$PROJECT_DIR$/ifg_front/templates/dili/diliScheduleMgmt.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api_containers/dili/api/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/api_containers/dili/api/app.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ifg_front/templates/dili/wrkApvlReqPopup.html" beforeDir="false" afterPath="$PROJECT_DIR$/ifg_front/templates/dili/wrkApvlReqPopup.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ifg_front/templates/dili/yryApvlReqPopup.html" beforeDir="false" afterPath="$PROJECT_DIR$/ifg_front/templates/dili/yryApvlReqPopup.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -134,23 +136,6 @@
       </list>
     </recent_temporary>
   </component>
-  <component name="ServiceViewManager">
-    <option name="viewStates">
-      <list>
-        <serviceView>
-          <treeState>
-            <expand>
-              <path>
-                <item name="services root" type="e789fda9:ObjectUtils$Sentinel" />
-                <item name="Docker" type="9fbbdea:ServiceModel$ServiceNode" />
-              </path>
-            </expand>
-            <select />
-          </treeState>
-        </serviceView>
-      </list>
-    </option>
-  </component>
   <component name="SpellCheckerSettings" BundledDictionaries="0" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" Dictionaries="0" CorrectionsLimit="5" DefaultDictionary="application-level" UseSingleDictionary="true" />
   <component name="SvnConfiguration">
     <configuration />
@@ -170,13 +155,12 @@
       <map>
         <entry key="MAIN">
           <value>
-            <State>
-              <option name="COLUMN_ORDER" />
-            </State>
+            <State />
           </value>
         </entry>
       </map>
     </option>
+    <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="WindowStateProjectService">
     <state x="-1244" y="134" key="#app" timestamp="1600842346827">
@@ -234,9 +218,10 @@
     <state x="668" y="223" width="584" height="594" key="find.popup/0.0.1920.1040/-1920.98.1920.1040@0.0.1920.1040" timestamp="1598950212258" />
     <state x="668" y="223" width="584" height="594" key="find.popup/0.0.1920.1040/62.-1080.1858.1080@0.0.1920.1040" timestamp="1602050296099" />
     <state x="668" y="223" width="584" height="594" key="find.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1599392780526" />
-    <state x="-836" y="227" width="672" height="678" key="search.everywhere.popup" timestamp="1602144420686">
-      <screen x="-1920" y="2" width="1920" height="1040" />
+    <state x="2684" y="225" width="672" height="678" key="search.everywhere.popup" timestamp="1602838450356">
+      <screen x="1600" y="0" width="1920" height="1040" />
     </state>
+    <state x="2684" y="225" width="672" height="678" key="search.everywhere.popup/0.0.1600.860/1600.0.1920.1040@1600.0.1920.1040" timestamp="1602838450356" />
     <state x="-836" y="227" width="672" height="678" key="search.everywhere.popup/0.0.1920.1040/-1920.2.1920.1040@-1920.2.1920.1040" timestamp="1602144420686" />
   </component>
   <component name="XDebuggerManager">
