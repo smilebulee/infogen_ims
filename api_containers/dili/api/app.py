@@ -1073,6 +1073,9 @@ class saveYryApvlReq(Resource):  # Mariadb 연결 진행
             th1AprvNm = row['th1AprvNm']
             th2AprvStus = row['th2AprvStus']
             th2AprvNm = row['th2AprvNm']
+            emerCtpl = row['emerCtpl']
+
+
 
             # requirements pymysql import 후 커넥트 사용
             mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
@@ -1091,8 +1094,9 @@ class saveYryApvlReq(Resource):  # Mariadb 연결 진행
                           "`TH1_APRV_NM`," \
                           "`TH2_APRV_STUS`," \
                           "`TH2_APRV_NM`," \
-                          "`APVL_LAST_APRV_DT`)" \
-                          "VALUES( %s, %s, %s, %s, %s, NOW(), %s, %s, %s, %s, NOW())" \
+                          "`APVL_LAST_APRV_DT`," \
+                          "`EMER_CTPL`)" \
+                          "VALUES( %s, %s, %s, %s, %s, NOW(), %s, %s, %s, %s, NOW(), %s)" \
      \
                         # "ON DUPLICATE KEY UPDATE "
                     # "EMP_EMAL_ADDR = %s, " \
@@ -1103,9 +1107,10 @@ class saveYryApvlReq(Resource):  # Mariadb 연결 진행
                     # "TH1_APRV_STUS = %s," \
                     # "TH1_APRV_NM = %s," \
                     # "TH2_APRV_STUS = %s," \
-                    # "TH2_APRV_NM = %s,"
+                    # "TH2_APRV_NM = %s," \
+                    # "EMER_CTPL = %s,"
                     logger.info(sql)
-                    cursor.execute(sql, (email, apvlReqDivs, wrkDt, wrkTme, wrkReqRsn, th1AprvStus, th1AprvNm, th2AprvStus, th2AprvNm))
+                    cursor.execute(sql, (email, apvlReqDivs, wrkDt, wrkTme, wrkReqRsn, th1AprvStus, th1AprvNm, th2AprvStus, th2AprvNm, emerCtpl))
 
                     mysql_con.commit()
 
