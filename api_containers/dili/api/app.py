@@ -263,7 +263,7 @@ class yryMgmt(Resource): # Mariadb 연결 진행
         return result2
 
 
-class gridData(Resource): # Mariadb 연결 진행
+class weekGridData(Resource): # Mariadb 연결 진행
     def get(self):
 
         data = request.get_json()
@@ -311,6 +311,52 @@ class gridData(Resource): # Mariadb 연결 진행
 
         return json.dumps(result2, indent=4, cls=DateTimeEncoder)
 
+class monthGridData(Resource): # Mariadb 연결 진행
+    def get(self):
+
+        data = request.get_json()
+
+        logging.debug('================== App Start ==================')
+        logging.debug(data)
+        logging.debug('================== App End ==================')
+
+        #requirements pymysql import 후 커넥트 사용
+        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
+                                        charset='utf8')
+        try:
+            with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+                #쿼리문 실행
+                sql = "SELECT  A.EMP_EMAL_ADDR "\
+                    + "       ,A.WRK_DT "\
+                    + "       ,DATE_FORMAT(A.JOB_STRT_TM, '%H:%i:%s') AS JOB_STRT_TM "\
+                    + "       ,DATE_FORMAT(A.JOB_END_TM, '%H:%i:%s') AS JOB_END_TM "\
+                    + "       ,CONCAT(SUBSTRING(A.NORM_WRK_TM,1,2),':',SUBSTRING(A.NORM_WRK_TM,3,2),':',SUBSTRING(A.NORM_WRK_TM,5,2)) AS NORM_WRK_TM "\
+                    + "       ,CONCAT(SUBSTRING(A.ALL_WRK_TM,1,2),':',SUBSTRING(A.ALL_WRK_TM,3,2),':',SUBSTRING(A.ALL_WRK_TM,5,2)) AS ALL_WRK_TM "\
+                    + "       ,DATE_FORMAT(SEC_TO_TIME(TIME_TO_SEC(STR_TO_DATE( CONCAT(SUBSTRING(A.ALL_WRK_TM,1,2),':',SUBSTRING(A.ALL_WRK_TM,3,2),':',SUBSTRING(A.ALL_WRK_TM,5,2)) ,'%H:%i:%S')) "\
+                    + "                   - TIME_TO_SEC(STR_TO_DATE( CONCAT(SUBSTRING(A.NORM_WRK_TM,1,2),':',SUBSTRING(A.NORM_WRK_TM,3,2),':',SUBSTRING(A.NORM_WRK_TM,5,2)) ,'%H:%i:%S'))),'%H:%i:%s') AS OVER_WRK_TM "\
+                    + "       ,NVL(B.APVL_REQ_DT, 'N/A') AS APVL_REQ_DT "\
+                    + "       ,NVL(B.APVL_LAST_APRV_DT, 'N/A') AS APVL_LAST_APRV_DT "\
+                    + "   FROM TB_WRK_TM_MGMT_M A "\
+                    + "        LEFT OUTER JOIN TB_APVL_REQ_MGMT_M B"\
+                    + "   ON A.WRK_DT = B.WRK_DT "\
+                    + "   AND A.EMP_EMAL_ADDR = B.EMP_EMAL_ADDR "\
+                    + "  WHERE 1 = 1 "\
+                    + "  AND A.EMP_EMAL_ADDR = '" + data["email"] + "' "\
+                    + "  AND A.WRK_DT like '"+data["mDt"]+"%' "\
+                    + "  ORDER BY A.WRK_DT"
+                logging.debug(sql)
+                cursor.execute(sql)
+        finally:
+            mysql_con.close()
+
+        result2 = cursor.fetchall()
+        for row in result2:
+            logging.debug('====== row2====')
+            logging.debug(row)
+            logging.debug('===============')
+        array = list(result2)  # 결과를 리스트로
+
+        return json.dumps(result2, indent=4, cls=DateTimeEncoder)
 
 class wrkTimeInfoByEml(Resource): # Mariadb 연결 진행
     def get(self):
@@ -1146,7 +1192,8 @@ api.add_resource(noticeSave,'/noticeSave') #api 선언
 api.add_resource(empList,'/empList') #api 선언
 api.add_resource(empInfo,'/empInfo') #api 선언
 api.add_resource(saveYryApvlReq,'/saveYryApvlReq') #api 선언
-api.add_resource(gridData,'/gridData') #api 선언
+api.add_resource(weekGridData,'/weekGridData') #api 선언
+api.add_resource(monthGridData,'/monthGridData') #api 선언
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5006, debug=True)
