@@ -54,7 +54,7 @@ def sample_ajax(request):
     param = json.loads(request.GET['param'])
 
     data = {
-        'email' : param['email'],
+        #'email' : param['email'],
         'password' : param['password'],
         'addr' : param['addr'] + ' ' + param['addrDetl'],
         'Check' : param['chk']
@@ -90,7 +90,7 @@ def signin(request):
     username = request.POST['username']
     logger.info(request.POST['username'])
     password = request.POST['password']
-    email = request.POST['email']
+    #email = request.POST['email']
     next = request.POST['next']
 
     datas = {
@@ -106,7 +106,7 @@ def signin(request):
     if user is None:
         r = requests.post('http://emp_api:5001/SingIn', data=datas)
         if userCheck is None :
-            user = User.objects.create_user(username=username,  password=password, email=email)  #임시
+            user = User.objects.create_user(username=username,  password=password)  #임시 , email=email
     else:
         r = requests.post('http://emp_api:5001/SingIn', data=datas)
         # 사용자 없으면 직원관리 api 호출
@@ -139,7 +139,7 @@ def signin2(request):
     username = request.POST['username']
     logger.info(request.POST['username'])
     password = request.POST['password']
-    email = request.POST['email']
+    #email = request.POST['email']
     next = request.POST['next']
 
     datas = {
@@ -153,7 +153,7 @@ def signin2(request):
     if user is None:
         r = requests.post('http://emp_api:5001/SingIn', data=datas)
         if userCheck is None :
-            user = User.objects.create_user(username=username, password=password, email=email)  #임시
+            user = User.objects.create_user(username=username, password=password)  #임시 , email=email
     else:
         r = requests.post('http://emp_api:5001/SingIn', data=datas)
         # 사용자 없으면 직원관리 api 호출

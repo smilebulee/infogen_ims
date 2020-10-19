@@ -434,7 +434,7 @@ class SingIn(Resource): # 사용자 정보 조회
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 #쿼리문 실행
-                sql = "SELECT * FROM TB_EMP_MGMT WHERE EMP_ID =%s AND EMP_PW =%s"
+                sql = "SELECT * FROM TB_EMP_MGMT WHERE BINARY EMP_ID =%s AND EMP_PW =%s"
                 cursor.execute(sql,(emp_id,emp_pw))
 
                 mysql_con.commit();
