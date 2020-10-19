@@ -114,6 +114,7 @@
                     console.log("ajaxcall")
                     debugger;
                     var loginstate;
+                    var loginInfo;
                     if(isNullChk("username")){
                         forms.classList.add('was-validated')
                         return false;
@@ -141,10 +142,17 @@
                                 alertMsg("로그인에 실패하였습니다.아이디와 비밀번호를 확인하여주세요!");
                               }else if (result.status=='200'){
                                     loginstate = result.status;
+                                    loginInfo = result;
                               }
                          }
                     });
                     if( loginstate == '200'){
+
+                        //2020.10.19 --황이성 임시 추가.
+                        if (loginInfo.email != null && loginInfo.email != "") {
+                            sessionStorage.setItem("email",loginInfo.email);
+                        }
+
                         reData = {'next': $form.serializeObject().next}
                         window.location.href = $form.serializeObject().next;
                     }

@@ -904,9 +904,14 @@
                 return;                                 //baseEndDate 과 endDate이 동일한 경우 기존 조회된 내용과 변동사항이 없으므로 Return한다.
             }
 
-            //email 파라미터가 null / EmptyString 으로 인입된 경우 Session 값을 기준하여 셋팅.
+            //email 파라미터가 null / EmptyString 으로 인입된 경우 $('#empEmailHidden') 값 또는, Session 값을 기준하여 셋팅.
             if (email == null || email == "") {
-                email = sessionStorage.getItem("email")
+
+                if ($('#empEmailHidden').val() == null || $('#empEmailHidden').val() == "") {
+                    email = sessionStorage.getItem("email");
+                } else {
+                    email = ('#empEmailHidden').val();
+                }
             }
 
             var param = {

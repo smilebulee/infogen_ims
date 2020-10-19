@@ -446,7 +446,8 @@ class SingIn(Resource): # 사용자 정보 조회
         if result2 is not None :
             retJson = {
                 "status": 200,
-                "msg": "Data has been saved successfully"
+                "msg": "Data has been saved successfully",
+                "email": result2['EMP_EMAIL']
             }
         else :
             retJson = {

@@ -11,6 +11,9 @@ from django.core.paginator import Paginator
 from django.views.decorators.csrf import csrf_exempt
 # from .models import TB_EMP,Cd
 
+from django.contrib.auth.decorators import login_required
+from main.helpers import ajax_login_required
+
 import requests
 import logging
 import json
@@ -29,17 +32,12 @@ class Dili_api_index(generic.TemplateView):
 
         return render(request, template_name)
 
-class scheduleMgmt(generic.TemplateView):
-    def get(self, request, *args, **kwargs):
-        template_name = 'dili/diliScheduleMgmt.html'
+@login_required
+def scheduleMgmt(request):
+    template_name = 'dili/diliScheduleMgmt.html'
 
-        # r = requests.get('http://dili_api:5006/hello')
-        # rr = {
-        #     "result": r.text
-        # }
+    return render(request, template_name)
 
-        return render(request, template_name)
-        # return render(request, template_name, rr)
 
 class scheduleMgmtPop(generic.TemplateView):
     def get(self, request, *args, **kwargs):
