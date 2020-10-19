@@ -282,8 +282,10 @@ class gridData(Resource): # Mariadb 연결 진행
                     + "       ,A.WRK_DT "\
                     + "       ,DATE_FORMAT(A.JOB_STRT_TM, '%H:%i:%s') AS JOB_STRT_TM "\
                     + "       ,DATE_FORMAT(A.JOB_END_TM, '%H:%i:%s') AS JOB_END_TM "\
-                    + "       ,A.NORM_WRK_TM "\
-                    + "       ,A.ALL_WRK_TM "\
+                    + "       ,CONCAT(SUBSTRING(A.NORM_WRK_TM,1,2),':',SUBSTRING(A.NORM_WRK_TM,3,2),':',SUBSTRING(A.NORM_WRK_TM,5,2)) AS NORM_WRK_TM "\
+                    + "       ,CONCAT(SUBSTRING(A.ALL_WRK_TM,1,2),':',SUBSTRING(A.ALL_WRK_TM,3,2),':',SUBSTRING(A.ALL_WRK_TM,5,2)) AS ALL_WRK_TM "\
+                    + "       ,DATE_FORMAT(SEC_TO_TIME(TIME_TO_SEC(STR_TO_DATE( CONCAT(SUBSTRING(A.ALL_WRK_TM,1,2),':',SUBSTRING(A.ALL_WRK_TM,3,2),':',SUBSTRING(A.ALL_WRK_TM,5,2)) ,'%H:%i:%S')) "\
+                    + "                   - TIME_TO_SEC(STR_TO_DATE( CONCAT(SUBSTRING(A.NORM_WRK_TM,1,2),':',SUBSTRING(A.NORM_WRK_TM,3,2),':',SUBSTRING(A.NORM_WRK_TM,5,2)) ,'%H:%i:%S'))),'%H:%i:%s') AS OVER_WRK_TM "\
                     + "       ,NVL(B.APVL_REQ_DT, 'N/A') AS APVL_REQ_DT "\
                     + "       ,NVL(B.APVL_LAST_APRV_DT, 'N/A') AS APVL_LAST_APRV_DT "\
                     + "   FROM TB_WRK_TM_MGMT_M A "\
@@ -291,10 +293,10 @@ class gridData(Resource): # Mariadb 연결 진행
                     + "   ON A.WRK_DT = B.WRK_DT "\
                     + "   AND A.EMP_EMAL_ADDR = B.EMP_EMAL_ADDR "\
                     + "  WHERE 1 = 1 "\
-                    + "AND A.EMP_EMAL_ADDR = '" + data["email"] + "' "\
-                    + "AND A.WRK_DT >= '" + data["strtDt"] + "' "\
-                    + "AND A.WRK_DT <= '" + data["endDt"] + "' "\
-                    + "ORDER BY A.WRK_DT"
+                    + "  AND A.EMP_EMAL_ADDR = '" + data["email"] + "' "\
+                    + "  AND A.WRK_DT >= '" + data["strtDt"] + "' "\
+                    + "  AND A.WRK_DT <= '" + data["endDt"] + "' "\
+                    + "  ORDER BY A.WRK_DT"
                 logging.debug(sql)
                 cursor.execute(sql)
         finally:

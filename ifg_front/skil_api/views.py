@@ -28,8 +28,8 @@ class Skil_api_index(generic.TemplateView):
 
         return render(request, template_name, rr)
 
-def devEnrl(request):
-    template_name = 'skil/devEnrl.html'
+def devReg(request):
+    template_name = 'skil/devReg.html'
 
     return render(request, template_name)
 
@@ -152,16 +152,19 @@ def skilRegPopup(request):
 
     return render(request, template_name)
 
+#스킬 코드 관리 화면 호출
+def skilCdMgmt(request):
+    template_name = 'skil/skilCdMgmt.html'
+
+    return render(request, template_name)
+
 def skilRegPopupSearch(request):
 
     param = json.loads(request.GET['param'])
     logger.info("skilRegPopup : skil/views.py")
     datas = {
-        'dept': param['dept'],
-        'name': param['name'],
-        'division': param['division'],
-        'level': param['level'],
-        'empNo': param['EMP_NO'],
+        'cntcDivsCd': param['cntcDivsCd'],
+        'empNo': param['empNo'],
     }
 
     logger.info(datas)
@@ -240,3 +243,64 @@ def retrieveCmmCd(request):
 
     return JsonResponse(r.json(), safe=False)
 
+#스킬 코드 관리 조회
+def skilCdMgmtSearch(request) :
+    logger.info("skilCdMgmtSearch : skil/views.py")
+    param = json.loads(request.GET['param'])
+    logger.info(param)
+
+    datas = {
+        'skilDiv': param['skilDiv']
+    }
+
+    logger.info(datas)
+    r = requests.get('http://skil_api:5003/skilCdMgmtSearch', params=datas)
+
+    # logger.info(r)
+    # logger.info(r.text)
+    # logger.info("----------------")
+    # logger.info(r.json())
+    # logger.info(json.loads(r.text))
+    # # return JsonResponse(r.json())
+    # return JsonResponse(r.json(), safe=False)
+
+    paginator = Paginator(r.json(), 10)
+    logger.info("----------------")
+    logger.info(paginator)
+    logger.info(r)
+    logger.info(r.text)
+    logger.info("----------------")
+
+    result = paginator.get_page(param['page'])
+
+    logger.info(result)
+
+    data = {
+        'list': list(result.object_list),
+        'total_records': paginator.count,
+        'total_pages': paginator.num_pages,
+        'page': result.number,
+        'has_next': result.has_next(),
+        'has_prev': result.has_previous()
+    }
+
+    # return JsonResponse(r.json())
+    return JsonResponse(data)
+
+#스킬 코드 조회
+def getSkilCdMgmt(request):
+    param = json.loads(request.GET['param'])
+    logger.info('===============================')
+    logger.info(param)
+    logger.info('===============================')
+    datas = {}
+
+    r = requests.get('http://skil_api:5003/getskilCdMgmt', params=datas)
+
+    logger.info(r)
+    logger.info(r.text)
+    logger.info("----------------")
+    logger.info(r.json())
+    logger.info(json.loads(r.text))
+
+    return JsonResponse(r.json(), safe=False)

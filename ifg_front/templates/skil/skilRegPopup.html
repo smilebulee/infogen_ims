@@ -1,32 +1,34 @@
-{% extends 'common/base.html' %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
 
-{% block content %}
+    <meta name="viewport" content="width=device-width, initial-scale=1"><!-- 모바일 -->
+{% load static %}
+       <title>IFG-IMS</title>
 
-
+</head>
+<body>
  <style>
+
 #modal {
-<!--  display:none;-->
-  position:relative;
-  width:100%;
-  height:100%;
-  z-index:1;
+  z-index:100;
 }
 
 #modal h2 {
-  margin:0;
 }
 
 #modal input {
+  width : 100%;
   border: 0;
-  border-bottom: 1px solid #0489B1;
+  border-bottom: 1.5px solid #0489B1;
   outline : 0;
 }
 
 #modal button {
   display:inline-block;
-  width:33%;
+  width:50%;
   margin-center:calc(100% - 100px - 10px);
-  float:right;
+  float:left;
   color: blue;
   background-color: rgba(0,0,0,0);
   border: 0;
@@ -35,28 +37,11 @@
 }
 
 #modal .modal_content {
-  width:600px;
-  margin:100px auto;
-  padding:0px 40px;
-  background:#fff;
-  border:2px solid #666;
+
 }
 
 #modal .modal_layer {
-  position:fixed;
-  top:0;
-  left:0;
-  width:100%;
-  height:100%;
-  background:rgb(0, 0, 0, 0.5);
-  z-index:-1;
-}
 
-tbody>tr {
-  counter-increment: aaa;
-}
-tbody>tr>td:first-child:before {
-  content: counter(aaa) " ";
 }
 
 </style>
@@ -94,8 +79,8 @@ tbody>tr>td:first-child:before {
 
         <!--<button name="addStaff" class = "btn btn-primary" style="float:right">추가</button>
         <button name="delStaff" class = "btn btn-primary" style="float:right color:red">삭제</button>-->
-        <td><input type="button" style="float:right" id="add" name="addStaff" value="추가" class = "btn btn-danger"/></td>
-        <td><input type="button" style="float:right" id="del" name="delStaff" value="삭제" class = "btn btn-primary"/></td>
+        <td><input type="button" style="float:right" id="addStaff" name="addStaff" value="추가" class = "btn btn-danger"/></td>
+        <td><input type="button" style="float:right" id="delStaff" name="delStaff" value="삭제" class = "btn btn-primary"/></td>
 
         <br>
             <table id="hldSkil" class="table" style="margin-top: 20px;">
@@ -156,128 +141,50 @@ tbody>tr>td:first-child:before {
     <div class="modal_layer"></div>
 </div>
 
+ <script>
 
+   $(document).ready(function(){
 
+        console.log('화면진입시작');
+        <!-- 화면 진입시 정보 조회 -->
+        var empNo =firstGrid.getList("selected")[0].EMP_NO
+        var cntcDivsCd =firstGrid.getList("selected")[0].CNTN_DIVS_CD
 
+        console.log('empNo' + empNo);
+        console.log('cntcDivsCd' + cntcDivsCd);
 
-
-<script>
-    document.getElementById("modal_close_btn").onclick = function() {
-        window.history.back();
-    }
-    var count = 1;
-    $(document).on("click","button[name=addStaff]",function(){
-        console.log('add');
-        count += 1;
-
-        var addStaffText =
-            '<tr name="trSkil">'+
-            '        <td id="staff_name"></td>'+
-            '        <td><select size ="1" class="form-control" id = "hld_skil_divs1'+count+'" name = "hld_skil_divs1'+count+'" onchange="skil_chg('+count+')">'+
-            '                <option>선택</option>'+
-            '                <option value = "01">DB</option>'+
-            '                <option value = "02">언어</option>'+
-            '                <option value = "03">WEB</option>'+
-            '                <option value = "04">Framework</option>'+
-            '            </select></td>'+
-            '        <td><select class="form-control" id = "hld_skil_name'+count+'" name = "hld_skil_name'+count+'"></select></td>'+
-            '</tr>';
-
-        var trHtml = $( "tr[name=trSkil]:last" );
-
-        trHtml.after(addStaffText);
+        retrieveSkilDetl();
 
     });
 
-    $(document).on("click","button[name=delStaff]",function(){
-<!--        var table = document.getElementById('hldSkilBody');-->
-<!--        if (table.rows.length < 2) return;-->
+    function retrieveSkilDetl(){
 
-<!--        $('#hldSkil tbody tr:last').remove();-->
-        console.log('del')
-        var trHtml = $(this).parent().parent();
+            var param = {
+                "empNo" : empNo,
+                "cntcDivsCd" : cntcDivsCd
+            }
 
-        trHtml.remove();
-    });
-
-
-    $('#modal_save_btn').click(function(){
-            console.log('저장');
-                confirmMsg('저장 하시겠습니까?', function(){
-                        $('#projectInfo').ajaxCall({
-                        method : 'POST',
-                        url : '/skil/prjSave/post',
-                        callbackFn : function(data){
-                            g_toast.push('저장 되었습니다.');
+            $.ajaxCall( param, {
+                method : 'GET',
+                     'url' : '/skil/skilRegPopupSearch/',
+                     'dataType' : 'json',
+                     'data' : JSON.stringify(param),
+                     'async' : false,
+                     'callbackFn' : function(data){
+                        for(var i = 0; i < data.length; i++){
+                            var option = $("<option value = "+data[i].CMM_CD+">"+data[i].CMM_CD_NAME+"</option>");
+                            $('#'+sbx_id).append(option);
                         }
-                });
+                     }
             });
-    });
-
-    $('#modal_delete_btn').click(function(){
-            console.log('삭제');
-            confirmMsg('삭제 하시겠습니까?', function(){
-                    $('#projectInfo').ajaxCall({
-                    method : 'POST',
-                    url : '/skil/prjDelete/post',
-                    callbackFn : function(data){
-                       g_toast.push('삭제 되었습니다.');
-                    }
-                });
-
-            });
-     });
-
-    function skil_chg(a){
-        console.log('스킬 변경');
-        console.log(a);
-        var DB = ["Oracle","MySql","PL/SQL"];
-        var DBValue = ["01","02","03"];
-        var Language = ["C","C++","C#","JAVA","Python"];
-        var LanguageValue = ["01","02","03","04","05"];
-        var WEB = ["HTML","JavaScript","CSS"];
-        var WEBValue = ["01","02","03"];
-        var Framework = [".net", "Spring"];
-        var FrameworkValue = ["01", "02"];
-
-        var selectSkill = $("#hld_skil_divs1"+a).val();
-        console.log(selectSkill);
-
-        var changeSkill;
-        var changeSkillValue;
-
-        if(selectSkill == "01"){
-          changeSkill = DB;
-          changeSkillValue = DBValue;
-        }
-        else if(selectSkill == "02"){
-          changeSkill = Language;
-          changeSkillValue = LanguageValue;
-        }
-        else if(selectSkill == "03"){
-          changeSkill =  WEB;
-          changeSkillValue = WEBValue;
-        }
-        else if(selectSkill == "04"){
-          changeSkill =  Framework;
-          changeSkillValue = FrameworkValue;
-        }
-
-        $("#req_skil_name"+a).empty();
-
-        for(var count = 0; count < changeSkill.length; count++){
-                        var option = $("<option value ="+changeSkillValue[count]+">"+changeSkill[count]+"</option>");
-                        console.log(option);
-                        $('#hld_skil_name'+a).append(option);
-                    }
-
     };
 
 
 
 </script>
 
+</body>
+</html>
 
 
-{% endblock %}
 
