@@ -15,7 +15,9 @@ urlpatterns = [
     path('sample/<str:sample>', views.sample, name='sample'),
     path('ajax/get', views.sample_ajax, name='sample_ajax'),
     path('login/', views.login_form, name='login_form'),
+    path('login2/', views.login_form2, name='login_form2'),
     path('signin/', views.signin, name='signin'),
+    path('signin2/', views.signin2, name='signin2'),
     path('signout/', views.signout, name='signout'),
 ]
 

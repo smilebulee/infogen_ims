@@ -420,6 +420,88 @@ class mariatestDB(Resource): # Mariadb 연결 진행
         array = list(result2)  # 결과를 리스트로
 
         return result2
+
+class SingIn(Resource): # 사용자 정보 조회
+    def post(self):
+        mysql_con = pymysql.connect(host='218.151.225.142', port=3306, db='IFG_IMS', user='ims2', password='1234',
+                                        charset='utf8')
+
+        params = request.get_json()
+
+        logging.debug("EMP Login Start")
+        emp_id = request.form['emp_id']
+        emp_pw = request.form['emp_pw']
+        try:
+            with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+                #쿼리문 실행
+                sql = "SELECT * FROM TB_EMP_MGMT WHERE EMP_ID =%s AND EMP_PW =%s"
+                cursor.execute(sql,(emp_id,emp_pw))
+
+                mysql_con.commit();
+
+        finally:
+            mysql_con.close()
+
+        result2 = cursor.fetchone()
+        if result2 is not None :
+            retJson = {
+                "status": 200,
+                "msg": "Data has been saved successfully"
+            }
+        else :
+            retJson = {
+                "status": 400,
+                "msg": "No Data"
+            }
+        # for row in result2:
+        #     logging.debug('====== row====')
+        #     logging.debug(row)
+        #     logging.debug('===============')
+        # array = list(result2)  # 결과를 리스트로
+        logging.debug(retJson)
+
+
+        return jsonify(retJson)
+
+class authSearch(Resource):  # 사용자 권한 조회
+    def post(self):
+        mysql_con = pymysql.connect(host='218.151.225.142', port=3306, db='IFG_IMS', user='ims2', password='1234',
+                                        charset='utf8')
+        params = request.get_json()
+
+        logging.debug("EMP Auth Start")
+        emp_id = request.form['emp_id']
+        logging.debug("EMP Auth Start")
+        try:
+            with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+                # 쿼리문 실행
+                sql = "SELECT AUTH_ID FROM TB_EMP_MGMT WHERE EMP_ID =%s"
+                cursor.execute(sql, (emp_id))
+
+        finally:
+            mysql_con.close()
+
+        result2 = cursor.fetchone()
+        logging.debug(result2)
+        if result2 is not None:
+            retJson = {
+                "status": 200,
+                "msg": "Data has been saved successfully",
+                "auth" : result2['AUTH_ID']
+            }
+        else:
+            retJson = {
+                "status": 400,
+                "msg": "No Data"
+            }
+            # for row in result2:
+            #     logging.debug('====== row====')
+            #     logging.debug(row)
+            #     logging.debug('===============')
+            # array = list(result2)  # 결과를 리스트로
+        logging.debug(retJson)
+
+        return jsonify(retJson)
 #
 api.add_resource(Hello, '/hello')
 api.add_resource(Save, '/save')
@@ -433,6 +515,8 @@ api.add_resource(Search2,'/search2')
 api.add_resource(empReferenceInit,'/empReferenceInit')
 api.add_resource(testDB,'/testDB')
 api.add_resource(mariatestDB,'/mariatestDB') #api 선언
+api.add_resource(SingIn,'/SingIn')
+api.add_resource(authSearch,'/authSearch')
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5001, debug=True)

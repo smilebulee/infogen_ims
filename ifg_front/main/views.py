@@ -20,11 +20,27 @@ class Main_index(generic.TemplateView):
     def get(self, request, *args, **kwargs):
 
         return HttpResponseRedirect(reverse('main:index'))
-
 def index(request):
+    userInfo = str(request.user)
+    logger.info('index user')
+    logger.info(userInfo)
+    auth='';
+    if (userInfo is not None) and (userInfo != 'AnonymousUser'):
+        # 로그인 정보
+        datas = {'emp_id':userInfo}
+        r = requests.post('http://emp_api:5001/authSearch', data=datas)
+        test= 'user ccc'
+        logger.info(json.loads(r.text))
+        json_data = json.loads(r.text)
+        auth = json_data['auth']
+    else :
+        test = 'none'
+    logger.info(test)
+    context = {
+        'auth': auth,
+    }
     template_name = 'main/index.html'
-    return render(request, template_name)
-
+    return render(request, template_name,context)
 @login_required
 def sample(request, sample):
     logger.info('>>>>>>>>>>>>>>'+sample)
@@ -49,7 +65,18 @@ def sample_ajax(request):
 def login_form(request):
     template_name = 'main/login.html'
     form = LoginForm()
+    logger.info('loginform >>>>>>>>>>>>>>>>>>>')
+    try:
+        next = request.GET['next']
+    except:
+        next = '/'
 
+    return render(request, template_name, {'form': form, 'next': next})
+
+def login_form2(request):
+    template_name = 'main/login2.html'
+    form = LoginForm()
+    logger.info('loginform >>>>>>>>>>>>>>>>>>>')
     try:
         next = request.GET['next']
     except:
@@ -58,23 +85,97 @@ def login_form(request):
     return render(request, template_name, {'form': form, 'next': next})
 
 def signin(request):
+    logger.info('data skill >>>>>>>>>>>>>>>>>>>')
+    logger.info(request.POST)
     username = request.POST['username']
+    logger.info(request.POST['username'])
     password = request.POST['password']
     email = request.POST['email']
     next = request.POST['next']
 
+    datas = {
+         'emp_id' : username,
+         'emp_pw' : password
+    }
+    logger.info('data set33333 >>>>>>>>>>>>>>>>>>>')
     user = authenticate(request, username=username, password=password)
-    if user is None:
-        user = User.objects.create_user(username=username, password=password, email=email)  #임시
+    userCheck = User.objects.filter(username=username)
 
+    logger.info(user)
+    logger.info(userCheck)
+    if user is None:
+        r = requests.post('http://emp_api:5001/SingIn', data=datas)
+        if userCheck is None :
+            user = User.objects.create_user(username=username,  password=password, email=email)  #임시
+    else:
+        r = requests.post('http://emp_api:5001/SingIn', data=datas)
         # 사용자 없으면 직원관리 api 호출
         # if 직원정보 있으면:
             # user = User.objects.create_user 직원정보로 사용자 생성
         # else: 직원정보 없으면
             # redirect('/')
 
-    login(request, user)
-    return redirect(next)
+
+    json_data = json.loads(r.text)
+    status = json_data['status']
+    logger.info('Login result3333333>>>>>>>>>>>>>>>>>>>')
+    logger.info(json.loads(r.text))
+    logger.info(status)
+    if status == 200 :
+        logger.info('login yes')
+        login(request, user)
+        logger.info(next)
+        #return HttpResponseRedirect(resolve_url(next))
+        #return redirect(next)
+        return JsonResponse(r.json())
+    else :
+        logger.info('login no')
+        next = '/main/login'
+        return JsonResponse(r.json())
+
+def signin2(request):
+    logger.info('data signin dili >>>>>>>>>>>>>>>>>>>')
+    logger.info(request.POST)
+    username = request.POST['username']
+    logger.info(request.POST['username'])
+    password = request.POST['password']
+    email = request.POST['email']
+    next = request.POST['next']
+
+    datas = {
+         'emp_id' : username,
+         'emp_pw' : password
+    }
+    user = authenticate(request, username=username, password=password)
+    userCheck = User.objects.filter(username=username)
+    logger.info(user)
+    logger.info(userCheck)
+    if user is None:
+        r = requests.post('http://emp_api:5001/SingIn', data=datas)
+        if userCheck is None :
+            user = User.objects.create_user(username=username, password=password, email=email)  #임시
+    else:
+        r = requests.post('http://emp_api:5001/SingIn', data=datas)
+        # 사용자 없으면 직원관리 api 호출
+        # if 직원정보 있으면:
+            # user = User.objects.create_user 직원정보로 사용자 생성
+        # else: 직원정보 없으면
+            # redirect('/')
+
+
+    json_data = json.loads(r.text)
+    status = json_data['status']
+    logger.info(json.loads(r.text))
+    logger.info(status)
+    if status == 200 :
+        logger.info('login yes')
+        login(request, user)
+        logger.info(next)
+        return JsonResponse(r.json())
+    else :
+        logger.info('login no')
+        next = '/main/login2'
+        return JsonResponse(r.json())
 
 @login_required
 def signout(request):

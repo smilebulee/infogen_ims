@@ -20,10 +20,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="069bc5b9-482e-4fff-a242-76dbf771ee42" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api_containers/dili/api/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/api_containers/dili/api/app.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ifg_front/templates/dili/wrkApvlReqPopup.html" beforeDir="false" afterPath="$PROJECT_DIR$/ifg_front/templates/dili/wrkApvlReqPopup.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ifg_front/templates/dili/yryApvlReqPopup.html" beforeDir="false" afterPath="$PROJECT_DIR$/ifg_front/templates/dili/yryApvlReqPopup.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api_containers/emp/api/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/api_containers/emp/api/app.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ifg_front/main/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/ifg_front/main/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ifg_front/main/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/ifg_front/main/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ifg_front/templates/main/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/ifg_front/templates/main/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ifg_front/templates/main/login.html" beforeDir="false" afterPath="$PROJECT_DIR$/ifg_front/templates/main/login.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
