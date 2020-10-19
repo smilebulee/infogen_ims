@@ -96,7 +96,7 @@ def getYryMgmt(request):
     logger.info(json.loads(r.text))
     return JsonResponse(r.json(), safe=False)
 
-def getGridData(request):
+def getWeekGridData(request):
     param = json.loads(request.GET['param'])
 
     logger.info("Parameters Start")
@@ -104,7 +104,22 @@ def getGridData(request):
     logger.info("Parameters End")
 
     # api 호출
-    r = requests.get('http://dili_api:5006/gridData', json=param)
+    r = requests.get('http://dili_api:5006/weekGridData', json=param)
+    logger.info(r)
+    logger.info(r.text)
+    logger.info(logger.info(ast.literal_eval(r.json())))
+    logger.info(json.loads(r.text))
+    return JsonResponse(ast.literal_eval(r.json()), safe=False)
+
+def getMonthGridData(request):
+    param = json.loads(request.GET['param'])
+
+    logger.info("Parameters Start")
+    logger.info(param)
+    logger.info("Parameters End")
+
+    # api 호출
+    r = requests.get('http://dili_api:5006/monthGridData', json=param)
     logger.info(r)
     logger.info(r.text)
     logger.info(logger.info(ast.literal_eval(r.json())))

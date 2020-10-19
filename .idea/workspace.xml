@@ -20,7 +20,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="069bc5b9-482e-4fff-a242-76dbf771ee42" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/ifg_front/templates/dili/diliScheduleMgmt.html" beforeDir="false" afterPath="$PROJECT_DIR$/ifg_front/templates/dili/diliScheduleMgmt.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api_containers/emp/api/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/api_containers/emp/api/app.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ifg_front/main/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/ifg_front/main/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ifg_front/main/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/ifg_front/main/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ifg_front/templates/main/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/ifg_front/templates/main/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ifg_front/templates/main/login.html" beforeDir="false" afterPath="$PROJECT_DIR$/ifg_front/templates/main/login.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -204,8 +208,8 @@
     </state>
     <state x="-1800" y="29" width="1736" height="856" key="com.intellij.history.integration.ui.views.FileHistoryDialog/0.0.1920.1040/-1920.2.1920.1040@-1920.2.1920.1040" timestamp="1601875076546" />
     <state x="-1800" y="29" width="1736" height="856" key="com.intellij.history.integration.ui.views.FileHistoryDialog/0.0.1920.1040/-1920.2.1920.1040@0.0.1920.1040" timestamp="1600823501771" />
-    <state x="668" y="223" width="584" height="594" key="find.popup" timestamp="1602835363874">
-      <screen x="0" y="0" width="1920" height="1040" />
+    <state x="906" y="229" width="622" height="631" key="find.popup" timestamp="1602418145474">
+      <screen x="0" y="0" width="1600" height="860" />
     </state>
     <state x="815" y="230" width="559" height="630" key="find.popup/0.0.1440.860/-1680.0.1680.1010@0.0.1440.860" timestamp="1601292953487" />
     <state x="906" y="229" width="622" height="631" key="find.popup/0.0.1600.860@0.0.1600.860" timestamp="1602418145474" />
@@ -213,11 +217,12 @@
     <state x="-833" y="280" width="746" height="762" key="find.popup/0.0.1920.1040/-1920.2.1920.1040@-1920.2.1920.1040" timestamp="1602146618308" />
     <state x="-834" y="330" width="745" height="615" key="find.popup/0.0.1920.1040/-1920.2.1920.1040@0.0.1920.1040" timestamp="1600913069465" />
     <state x="668" y="223" width="584" height="594" key="find.popup/0.0.1920.1040/-1920.98.1920.1040@0.0.1920.1040" timestamp="1598950212258" />
-    <state x="668" y="223" width="584" height="594" key="find.popup/0.0.1920.1040/62.-1080.1858.1080@0.0.1920.1040" timestamp="1602835363874" />
+    <state x="668" y="223" width="584" height="594" key="find.popup/0.0.1920.1040/62.-1080.1858.1080@0.0.1920.1040" timestamp="1602050296099" />
     <state x="668" y="223" width="584" height="594" key="find.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1599392780526" />
-    <state x="-836" y="227" width="672" height="678" key="search.everywhere.popup" timestamp="1602144420686">
-      <screen x="-1920" y="2" width="1920" height="1040" />
+    <state x="2684" y="225" width="672" height="678" key="search.everywhere.popup" timestamp="1602838450356">
+      <screen x="1600" y="0" width="1920" height="1040" />
     </state>
+    <state x="2684" y="225" width="672" height="678" key="search.everywhere.popup/0.0.1600.860/1600.0.1920.1040@1600.0.1920.1040" timestamp="1602838450356" />
     <state x="-836" y="227" width="672" height="678" key="search.everywhere.popup/0.0.1920.1040/-1920.2.1920.1040@-1920.2.1920.1040" timestamp="1602144420686" />
   </component>
   <component name="XDebuggerManager">
