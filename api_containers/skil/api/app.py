@@ -652,6 +652,68 @@ class skilRegPopupSearch(Resource):
 
         return result1
 
+class skilCdMgmtSearch(Resource):
+    def get(self):
+        # Get posted data from request
+        logging.debug("search start")
+
+        # get data
+        skilDiv = request.args.get('skilDiv')
+
+        logging.debug('---------------SEARCH---------------')
+        logging.debug('skilDiv : ' + skilDiv)
+        logging.debug('------------------------------------')
+
+        mysql_con = pymysql.connect(host='218.151.225.142', port=3306, db='IFG_IMS', user='ims2', password='1234',
+                                    charset='utf8')
+        try:
+            with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+                if skilDiv == "":
+                    sql = "SELECT SKIL_SNO, (SELECT CMM_CD_NAME FROM TB_CMM_CD_DETL WHERE CMM_CD_GRP_ID = 'SKIL_DIVS_CD' AND CMM_CD = A.SKIL_DIVS_CD) AS SKIL_DIVS_CD, SKIL_NAME, REG_EMP_NO, DATE_FORMAT(REG_DATE, '%Y-%m-%d') AS REG_DATE, RMKS FROM TB_SKIL_MGNT_CD A"
+                    cursor.execute(sql)
+                else:
+                    sql = "SELECT SKIL_SNO, (SELECT CMM_CD_NAME FROM TB_CMM_CD_DETL WHERE CMM_CD_GRP_ID = 'SKIL_DIVS_CD' AND CMM_CD = A.SKIL_DIVS_CD) AS SKIL_DIVS_CD, SKIL_NAME, REG_EMP_NO, DATE_FORMAT(REG_DATE, '%Y-%m-%d') AS REG_DATE, RMKS FROM TB_SKIL_MGNT_CD A WHERE 1=1 "
+                    if skilDiv != "":
+                        sql = sql + "AND SKIL_DIVS_CD = %s "
+                    logging.debug(sql)
+
+                    cursor.execute(sql, (skilDiv))
+        finally:
+            mysql_con.close()
+
+        result2 = cursor.fetchall()
+        for row in result2:
+            logging.debug('====== row====')
+            logging.debug(row)
+            logging.debug('===============')
+        array = list(result2)  # 결과를 리스트로
+
+        return result2
+
+class getskilCdMgmt(Resource):
+    def get(self):
+        # Get posted data from request
+        logging.debug("getskilCdMgmt Start")
+
+        mysql_con = pymysql.connect(host='218.151.225.142', port=3306, db='IFG_IMS', user='ims2', password='1234',
+                                    charset='utf8')
+        try:
+            with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+                sql = "SELECT CMM_CD, CMM_CD_NAME FROM TB_CMM_CD_DETL WHERE CMM_CD_GRP_ID = 'SKIL_DIVS_CD' ORDER BY CMM_CD ASC"
+
+                logging.debug(sql)
+                cursor.execute(sql)
+        finally:
+            mysql_con.close()
+
+        result2 = cursor.fetchall()
+        for row in result2:
+            logging.debug('====== row====')
+            logging.debug(row)
+            logging.debug('===============')
+        array = list(result2)  # 결과를 리스트로
+
+        return result2
 
 api.add_resource(Hello, '/hello')
 api.add_resource(Register, '/register')
@@ -677,6 +739,10 @@ api.add_resource(retrieveCmmCd, '/retrieveCmmCd')
 
 # 스킬 상세 관리
 api.add_resource(skilRegPopupSearch, '/skilRegPopupSearch')
+
+# 스킬 코드 관리
+api.add_resource(skilCdMgmtSearch, '/skilCdMgmtSearch')
+api.add_resource(getskilCdMgmt, '/getskilCdMgmt')
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5003, debug=True)
