@@ -62,7 +62,6 @@ history
                         </div>
                         <div style="float: right; padding-top :10px;">
                             <button class="btn btn-primary" id="devSaveBtn" >개발자 등록</button>
-                            <button class="btn btn-primary" id="prjSaveBtn" >프로젝트 등록</button>
                             <button class="btn btn-primary" id="devOutSaveBtn" >프로젝트별 투입 등록</button>
                         </div>
                     </div>
@@ -174,18 +173,8 @@ history
                                 alertMsg("정규직은 개발자 정보 수정을 할 수 없습니다.");
                                 return false;
                             }
-
                             modal('devRegModal');
                             $("#devRegModal2").load("{% url 'skil_api:devReg' %}");
-                        }
-                    });
-
-                    $('#prjSaveBtn').click(function(){
-                        if(firstGrid.getList("selected").length == 0){
-                            modal('devRegModal');
-                            $("#devRegModal2").load("{% url 'prj_api:prjReg' %}");
-                        } else{
-
                         }
                     });
                 });
