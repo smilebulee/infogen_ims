@@ -28,7 +28,7 @@ function getCurrentDate() {
     var date    = today.getDate();          // 날짜
     var day     = today.getDay();           // 요일 (0~6으로 출력, 0:일요일, 1:월요일, 6:토요일)
 
-    var curDate = year+"/"+lpad((month+1).toString(),2,"0")+"/"+lpad(date.toString(),2,"0");
+    var curDate = year+"-"+lpad((month+1).toString(),2,"0")+"-"+lpad(date.toString(),2,"0");
 
     return curDate
 }
