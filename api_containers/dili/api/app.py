@@ -280,8 +280,8 @@ class weekGridData(Resource): # Mariadb 연결 진행
                 #쿼리문 실행
                 sql = "SELECT  A.EMP_EMAL_ADDR "\
                     + "       ,A.WRK_DT "\
-                    + "       ,DATE_FORMAT(A.JOB_STRT_TM, '%H:%i:%s') AS JOB_STRT_TM "\
-                    + "       ,DATE_FORMAT(A.JOB_END_TM, '%H:%i:%s') AS JOB_END_TM "\
+                    + "       ,NVL(DATE_FORMAT(A.JOB_STRT_TM, '%H:%i:%s'),'-') AS JOB_STRT_TM "\
+                    + "       ,NVL(DATE_FORMAT(A.JOB_END_TM, '%H:%i:%s'),'-') AS JOB_END_TM "\
                     + "       ,CONCAT(SUBSTRING(A.NORM_WRK_TM,1,2),':',SUBSTRING(A.NORM_WRK_TM,3,2),':',SUBSTRING(A.NORM_WRK_TM,5,2)) AS NORM_WRK_TM "\
                     + "       ,CONCAT(SUBSTRING(A.ALL_WRK_TM,1,2),':',SUBSTRING(A.ALL_WRK_TM,3,2),':',SUBSTRING(A.ALL_WRK_TM,5,2)) AS ALL_WRK_TM "\
                     + "       ,DATE_FORMAT(SEC_TO_TIME(TIME_TO_SEC(STR_TO_DATE( CONCAT(SUBSTRING(A.ALL_WRK_TM,1,2),':',SUBSTRING(A.ALL_WRK_TM,3,2),':',SUBSTRING(A.ALL_WRK_TM,5,2)) ,'%H:%i:%S')) "\
@@ -329,8 +329,8 @@ class monthGridData(Resource): # Mariadb 연결 진행
                 #쿼리문 실행
                 sql = "SELECT  A.EMP_EMAL_ADDR "\
                     + "       ,A.WRK_DT "\
-                    + "       ,DATE_FORMAT(A.JOB_STRT_TM, '%H:%i:%s') AS JOB_STRT_TM "\
-                    + "       ,DATE_FORMAT(A.JOB_END_TM, '%H:%i:%s') AS JOB_END_TM "\
+                    + "       ,NVL(DATE_FORMAT(A.JOB_STRT_TM, '%H:%i:%s'),'-') AS JOB_STRT_TM "\
+                    + "       ,NVL(DATE_FORMAT(A.JOB_END_TM, '%H:%i:%s'),'-') AS JOB_END_TM "\
                     + "       ,CONCAT(SUBSTRING(A.NORM_WRK_TM,1,2),':',SUBSTRING(A.NORM_WRK_TM,3,2),':',SUBSTRING(A.NORM_WRK_TM,5,2)) AS NORM_WRK_TM "\
                     + "       ,CONCAT(SUBSTRING(A.ALL_WRK_TM,1,2),':',SUBSTRING(A.ALL_WRK_TM,3,2),':',SUBSTRING(A.ALL_WRK_TM,5,2)) AS ALL_WRK_TM "\
                     + "       ,DATE_FORMAT(SEC_TO_TIME(TIME_TO_SEC(STR_TO_DATE( CONCAT(SUBSTRING(A.ALL_WRK_TM,1,2),':',SUBSTRING(A.ALL_WRK_TM,3,2),':',SUBSTRING(A.ALL_WRK_TM,5,2)) ,'%H:%i:%S')) "\
@@ -725,8 +725,8 @@ class calendarData(Resource): # Mariadb 연결 진행
                 #쿼리문 실행
                 sql = "SELECT    A.EMP_EMAL_ADDR " \
                       + "       ,A.WRK_DT " \
-                      + "       ,DATE_FORMAT(A.JOB_STRT_TM, '%H:%i:%s') AS JOB_STRT_TM " \
-                      + "       ,DATE_FORMAT(A.JOB_END_TM, '%H:%i:%s') AS JOB_END_TM " \
+                      + "       ,NVL(DATE_FORMAT(A.JOB_STRT_TM, '%H:%i:%s'),'-') AS JOB_STRT_TM " \
+                      + "       ,NVL(DATE_FORMAT(A.JOB_END_TM, '%H:%i:%s'),'-') AS JOB_END_TM " \
                       + "       ,A.NORM_WRK_TM " \
                       + "       ,A.ALL_WRK_TM " \
                       + "       ,NVL(B.APVL_REQ_DT, 'N/A') AS APVL_REQ_DT " \
@@ -1177,6 +1177,42 @@ class saveYryApvlReq(Resource):  # Mariadb 연결 진행
 
         return jsonify(retJson)
 
+class insertStrtTm(Resource):  # Mariadb 연결 진행
+    def post(self):
+
+        params = json.loads(request.data)
+        logger.info("App Parameters Start")
+        logger.info(params['email'])
+        logger.info("App Parameters End")
+
+        email = params['email']
+
+        # requirements pymysql import 후 커넥트 사용
+        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
+                                    charset='utf8')
+        try:
+            with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+                # 쿼리문 실행
+                sql = "INSERT INTO TB_WRK_TM_MGMT_M( `EMP_EMAL_ADDR` " \
+                      ",`WRK_DT` " \
+                      ",`JOB_STRT_TM` " \
+                      ") VALUES( %s ,CURDATE() ,CURTIME() )"
+                logger.info(sql)
+                cursor.execute(sql, (email))
+
+                mysql_con.commit()
+
+        finally:
+            mysql_con.close()
+
+        retJson = {
+            "status": 200,
+            "msg": "Data has been saved successfully"
+        }
+
+        return jsonify(retJson)
+
+
 api.add_resource(Hello, '/hello')
 api.add_resource(Register, '/register')
 api.add_resource(Retrieve, '/retrieve')
@@ -1201,6 +1237,6 @@ api.add_resource(empInfo,'/empInfo') #api 선언
 api.add_resource(saveYryApvlReq,'/saveYryApvlReq') #api 선언
 api.add_resource(weekGridData,'/weekGridData') #api 선언
 api.add_resource(monthGridData,'/monthGridData') #api 선언
-
+api.add_resource(insertStrtTm,'/insertStrtTm') #api 선언
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5006, debug=True)

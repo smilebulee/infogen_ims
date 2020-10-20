@@ -72,3 +72,17 @@ function setDateFormat(date) {
 
     return date
 }
+/*********************************************************************
+*   현재시간 호출
+*********************************************************************/
+function getCurrentTime() {
+
+    var tgtTime     = new Date();
+    var hours    = tgtTime.getHours();      // 시
+    var minutes   = tgtTime.getMinutes();         // 분 (today.getMonth()는 0~11로 출력)
+    var seconds    = tgtTime.getSeconds();          // 초
+
+    var curTime = lpad(hours.toString(),2,"0")+":"+lpad(minutes.toString(),2,"0")+":"+lpad(seconds.toString(),2,"0");
+
+    return curTime
+}

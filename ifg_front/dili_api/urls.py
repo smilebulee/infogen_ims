@@ -46,6 +46,8 @@ urlpatterns = [
     url(r'^getWeekGridData/', views.getWeekGridData, name='getWeekGridData'),
     url(r'^getMonthGridData/', views.getMonthGridData, name='getMonthGridData'),
 
+    url(r'^saveStrtTm/', views.saveStrtTm, name='saveStrtTm'),
+
 
     # 공지사항 파일업로드 추가
     url(r'^my_view/', views.my_view, name='my-view'),

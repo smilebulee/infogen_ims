@@ -3,15 +3,16 @@
 <script type="text/javascript">
     $(document).ready(function(){
         dataControl();
-        console.log("초과시간테스트 : ",overWrkTmChk("10:00:00"));
-        console.log("초과시간테스트 : ",overWrkTmChk("08:00:00"));
+
 
     });
-
+    /*********************************************************************
+     *
+     *********************************************************************/
     function dataControl(){
 
         var dt = $('#tmpPopDt').text();
-        var strTm = $('#tmpPopStrtTm').text();
+        var strtTm = $('#tmpPopStrtTm').text();
         var endTm = $('#tmpPopEndTm').text();
         var detlTm = $('#tmpPopDetlTm').text();
         var allTm = $('#tmpPopAllTm').text();
@@ -19,67 +20,89 @@
 
         $('#pop_dt').text(dt);
 
-        //console.log("시간차이 테스트 : ",timeControl(dt, strTm, endTm));
 
         if(getCurrentDate() == dt){
-            if(strTm == "-"){
-                document.getElementById('pop_strtJob').innerHTML = '<input type="button" value="출근버튼">';
-            }else {
-                $('#pop_strtJob').text(strTm);
-            }
-
-            if(endTm == "-" && strTm != "-"){
-                document.getElementById('pop_strtJob').innerHTML = '<input type="button" value="퇴근버튼">';
-            }else {
+            if(strtTm == "-"){
+                document.getElementById('pop_strtJob').innerHTML = '<input type="button" onclick="onclickStrtTm()" value="출근버튼">';
                 $('#pop_endJob').text(endTm);
+                $('#pop_schdDetlTm').text(detlTm);
+                $('#pop_schdDetlAllTm').text(allTm);
+                $('#pop_apvlStus').text(apvlStus);
+            }else {
+                $('#pop_strtJob').text(strtTm);
             }
-
-            if(endTm != "-" && strTm != "-") {
-                $('#pop_schdDetlAllTm').text(timeControl(dt, strTm, endTm));
+            if(endTm == "-" && strtTm != "-"){
+                document.getElementById('pop_strtJob').innerHTML = '<input type="button" onclick="onclickEndTm()" value="퇴근버튼">';
+                $('#pop_schdDetlTm').text(detlTm);
+                $('#pop_schdDetlAllTm').text(allTm);
+                $('#pop_apvlStus').text(apvlStus);
             }
-
-
-
+            if(endTm != "-" && strtTm != "-") {
+                $('#pop_strtJob').text(strtTm);
+                $('#pop_endJob').text(endTm);
+                $('#pop_schdDetlTm').text(detlTm);
+                $('#pop_schdDetlAllTm').text(allTm);
+                if(apvlStus == "미등록"){
+                    document.getElementById('pop_apvlStus').innerHTML = '<input type="button" onclick="onclickApvlUpld()" value="결재올리기">';
+                }else {
+                    $('#pop_apvlStus').text(apvlStus);
+                }
+            }
         }else {
-
-            $('#pop_strtJob').text(strTm);
+            $('#pop_strtJob').text(strtTm);
             $('#pop_endJob').text(endTm);
             $('#pop_schdDetlTm').text(detlTm);
             $('#pop_schdDetlAllTm').text(allTm);
-            $('#pop_apvlStus').text(apvlStus);
+            if(apvlStus == "미등록"){
+                document.getElementById('pop_apvlStus').innerHTML = '<input type="button" onclick="onclickApvlUpld()" value="결재올리기">';
+            }else {
+                $('#pop_apvlStus').text(apvlStus);
+            }
         }
     }
-    function timeControl(date, strtTm, endTm){
+    /*********************************************************************
+     *
+     *********************************************************************/
+    function onclickStrtTm() {
+        $('#pop_strtJob').text("출근 등록 중...");
+        setStrtTm(sessionStorage.getItem("email"));
 
-        var tmpStrtDate = date+" "+strtTm;
-        var tmpEndDate = date+" "+endTm;
+    }
+     /*********************************************************************
+     *
+     *********************************************************************/
+    function onclickEndTm() {
+        $('#pop_endJob').text("퇴근 등록 중...");
 
-        var strtDate = new Date(tmpStrtDate);
-        var endDate = new Date(tmpEndDate);
+    }
+     /*********************************************************************
+     *
+     *********************************************************************/
+    function onclickApvlUpld() {
 
-        var tmpSubtractTm = endDate - strtDate;
-        var hour = Math.floor((tmpSubtractTm % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)) - 1;
-        var minute = Math.floor((tmpSubtractTm % (1000 * 60 * 60)) / (1000 * 60));
-        var second = Math.floor((tmpSubtractTm % (1000 * 60)) / 1000);
-
-
-        var subtractTm = lpad((hour).toString(),2,"0")+":"+lpad((minute).toString(),2,"0")+":"+lpad((second).toString(),2,"0");
-
-        return subtractTm
     }
 
-    function overWrkTmChk(allTmData){
-        var overTmChk = 0;
-        var tmpOverTmChk = allTmData.split(':');
-
-        if(Number(tmpOverTmChk[0]) > 8){
-
-            overTmChk = 1;
+    /*********************************************************************
+    *  출근 INSERT
+    *********************************************************************/
+    function setStrtTm(sesnEmal){
+        console.log("메일정보 :", sesnEmal);
+        var param = {
+            "email"     : sesnEmal
         }
 
-        return overTmChk
+        $.ajaxCall( param, {
+             'method' : 'POST',
+             'url' : "{% url 'dili_api:saveStrtTm' %}",
+             'dataType' : 'json',
+             'data' : JSON.stringify(param),
+             'async' : false,
+             'callbackFn' : function(data){
+                // 리턴
+                g_toast.push('저장 되었습니다.');
+             }
+        });
     }
-
 </script>
 
 <table class="table table-bordered table-responsive-md table-striped text-center" style="width: 500px">

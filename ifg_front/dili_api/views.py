@@ -502,3 +502,19 @@ def my_view(request):
     # Render list page with the documents and the form
     context = {'documents': documents, 'form': form, 'message': message}
     return render(request, 'dili/noticeDtl.html', context)
+
+#출근시간 저장
+def saveStrtTm(request):
+    param = json.loads(request.POST['param'])
+
+    logger.info("Parameters Start")
+    logger.info(param)
+    logger.info("Parameters End")
+
+
+    r = requests.post('http://dili_api:5006/insertStrtTm', data=json.dumps(param))
+
+    logger.info(r)
+    logger.info(r.text)
+    logger.info(r.json())
+    return JsonResponse(r.json())
