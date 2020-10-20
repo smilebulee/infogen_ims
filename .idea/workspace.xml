@@ -20,7 +20,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="069bc5b9-482e-4fff-a242-76dbf771ee42" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/api_containers/dili/api/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/api_containers/dili/api/app.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api_containers/skil/api/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/api_containers/skil/api/app.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -176,10 +177,11 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="666" y="111" key="#views/0.0.1920.1040/62.-1080.1858.1080@0.0.1920.1040" timestamp="1598492186600" />
-    <state x="466" y="282" key="ANALYSIS_DLG_com.intellij.analysis.BaseAnalysisAction$1" timestamp="1601040059546">
-      <screen x="0" y="0" width="1440" height="860" />
+    <state x="621" y="341" key="ANALYSIS_DLG_com.intellij.analysis.BaseAnalysisAction$1" timestamp="1603170259211">
+      <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="466" y="282" key="ANALYSIS_DLG_com.intellij.analysis.BaseAnalysisAction$1/0.0.1440.860/-1680.0.1680.1010@0.0.1440.860" timestamp="1601040059546" />
+    <state x="621" y="341" key="ANALYSIS_DLG_com.intellij.analysis.BaseAnalysisAction$1/0.0.1920.1040/62.-1080.1858.1080@0.0.1920.1040" timestamp="1603170259211" />
     <state x="789" y="393" key="DockerComposeFileDialog" timestamp="1594891289940">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
