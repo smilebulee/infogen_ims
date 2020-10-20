@@ -445,7 +445,6 @@
                      'async' : false,
                      'callbackFn' : function(data, status, xhr){
                         console.log("data111 : ",JSON.parse(data))
-                        console.log("data222 : ",JSON.parse(data).length)
 
                         var dataParam = JSON.parse(data)
 
@@ -590,7 +589,7 @@
             *   calendar dblClick Event - calender 더블클릭시
             *********************************************************************/
             $('#calendar').dblclick(function(event){
-                console.log('calendarDbClick');
+                console.log('calendarDbClick: ', event);
 
                 //메서드만들어서 파라미터 보내기
 
