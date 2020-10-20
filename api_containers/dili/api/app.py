@@ -1021,57 +1021,39 @@ class noticeSave(Resource):
             globals()[row] = request.form[row]
 
         type = request.form['type']
+        postId = request.form['postId']
+        tit = request.form['tit']
+        kdDivsCd = request.form['kdDivsCd']
+        mjrYn = request.form['mjrYn']
+        popOpenYn = request.form['popOpenYn']
+        popOpenDttmFrom = request.form['popOpenDttmFrom']
+        popOpenDttmTo = request.form['popOpenDttmTo']
+        cntn = request.form['cntn']
+        dataUpdId = request.form['dataUpdId']
+        dataUpdPgmId = request.form['dataUpdPgmId']
         if type == "c":
-            postId = request.form['postId']
-            tit = request.form['tit']
-            kdDivsCd = request.form['kdDivsCd']
-            mjrYn = request.form['mjrYn']
-            popOpenYn = request.form['popOpenYn']
-            popOpenDttmFrom = request.form['popOpenDttmFrom']
-            popOpenDttmTo = request.form['popOpenDttmTo']
-            cntn = request.form['cntn']
             dataInptId = request.form['dataInptId']
             dataInptPgmId = request.form['dataInptPgmId']
-            dataUpdId = request.form['dataUpdId']
-            dataUpdPgmId = request.form['dataUpdPgmId']
-            #
-            logging.debug("====Param data====")
-            logging.debug("type = " + type)
-            # logging.debug("postId = " + postId)
-            logging.debug("tit = " + tit)
-            logging.debug("kdDivsCd = " + kdDivsCd)
-            logging.debug("mjrYn = " + mjrYn)
-            logging.debug("popOpenYn = " + popOpenYn)
-            # logging.debug("popOpenDttmFrom = " + popOpenDttmFrom) -> error:must be str, not tuple -> 타입 달라서 오류남
-            # logging.debug("popOpenDttmTo = " + popOpenDttmTo) -> error:must be str, not tuple -> 타입 달라서 오류남
-            logging.debug("cntn = " + cntn)
+
+        #
+        logging.debug("====Param data====")
+        logging.debug("type = " + type)
+        # logging.debug("postId = " + postId)
+        logging.debug("tit = " + tit)
+        logging.debug("kdDivsCd = " + kdDivsCd)
+        logging.debug("mjrYn = " + mjrYn)
+        logging.debug("popOpenYn = " + popOpenYn)
+        # logging.debug("popOpenDttmFrom = " + popOpenDttmFrom) -> error:must be str, not tuple -> 타입 달라서 오류남
+        # logging.debug("popOpenDttmTo = " + popOpenDttmTo) -> error:must be str, not tuple -> 타입 달라서 오류남
+        logging.debug("cntn = " + cntn)
+        logging.debug("dataUpdId = " + dataUpdId)
+        logging.debug("dataUpdPgmId = " + dataUpdPgmId)
+        if type == "c":
             logging.debug("dataInptId = " + dataInptId)
             logging.debug("dataInptPgmId = " + dataInptPgmId)
-            logging.debug("dataUpdId = " + dataUpdId)
-            logging.debug("dataUpdPgmId = " + dataUpdPgmId)
-            logging.debug("=====================")
-        elif type == "u":
-            postId = request.form['postId']
-            tit = request.form['tit']
-            kdDivsCd = request.form['kdDivsCd']
-            mjrYn = request.form['mjrYn']
-            popOpenYn = request.form['popOpenYn']
-            popOpenDttmFrom = request.form['popOpenDttmFrom']
-            popOpenDttmTo = request.form['popOpenDttmTo']
-            cntn = request.form['cntn']
-            dataUpdId = request.form['dataUpdId']
-            dataUpdPgmId = request.form['dataUpdPgmId']
-            #
-            logging.debug("====Param data====")
-            logging.debug("type = " + type)
-            logging.debug("tit = " + tit)
-            logging.debug("kdDivsCd = " + kdDivsCd)
-            logging.debug("mjrYn = " + mjrYn)
-            logging.debug("popOpenYn = " + popOpenYn)
-            logging.debug("cntn = " + cntn)
-            logging.debug("dataUpdId = " + dataUpdId)
-            logging.debug("dataUpdPgmId = " + dataUpdPgmId)
-            logging.debug("=====================")
+        logging.debug("=====================")
+
+
 
         mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
                                     charset='utf8')
