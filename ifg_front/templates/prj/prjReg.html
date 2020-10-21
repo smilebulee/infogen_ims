@@ -265,12 +265,6 @@
             '<tr name="trSkil">'+
             '        <td id="skil_no"></td>'+
             '        <td><select size ="1" class="form-control" id = "req_skil_divs'+count+'" name = "req_skil_divs'+count+'" onchange="skil_chg('+count+')">'+
-            '                <option value = "00">선택</option>'+
-            '                <option value = "01">DB</option>'+
-            '                <option value = "02">LANGUAGE</option>'+
-            '                <option value = "03">WEB</option>'+
-            '                <option value = "04">MIDWARE</option>'+
-            '                <option value = "05">Framework</option>'+
             '            </select></td>'+
             '        <td><select class="form-control" id = "req_skil_name'+count+'" name = "req_skil_name'+count+'"></select></td>'+
             '        <td><input type="button" style="float:right;" id="delSkil" name="delSkil" value="삭제" class = "btn btn-primary"/></td>'+
@@ -279,6 +273,11 @@
         var trHtml = $( "tr[name=trSkil]:last" );
 
         trHtml.after(addSkilText);
+
+        var elms = req_skil_divs1.options;
+        for(var i=0; i<elms.length; i++){
+            $('#req_skil_divs'+count).append("<option value = "+elms[i].value+">"+elms[i].text+"</option>");
+        }
     });
 
     $(document).on("click","input[name=delSkil]",function(){
@@ -350,7 +349,6 @@
                     method : 'POST',
                     url : '/prj/prjDelete/post',
                     callbackFn : function(data){
-<!--                       location.href = '/prj/prjReg'-->
                        g_toast.push('삭제 되었습니다.');
                     }
                 });
