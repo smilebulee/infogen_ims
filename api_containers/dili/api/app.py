@@ -1216,6 +1216,48 @@ class insertStrtTm(Resource):  # Mariadb 연결 진행
 
         return jsonify(retJson)
 
+class updateEndTm(Resource):  # Mariadb 연결 진행
+    def post(self):
+
+        params = json.loads(request.data)
+        logger.info("App Parameters Start")
+        logger.info(params['email'])
+        logger.info("App Parameters End")
+
+        email = params['email']
+        dt = params['dt']
+        tm = params['tm']
+        normWrkTm = params['normWrkTm']
+        overWrkTm = params['overWrkTm']
+        allWrkTm = params['allWrkTm']
+
+
+        # requirements pymysql import 후 커넥트 사용
+        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
+                                    charset='utf8')
+        try:
+            with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+                # 쿼리문 실행
+                sql = "UPDATE TB_WRK_TM_MGMT_M " \
+                      "   SET JOB_END_TM  = %s " \
+                      "      ,NORM_WRK_TM = %s " \
+                      "      ,NGHT_WRK_TM = %s " \
+                      "      ,ALL_WRK_TM  = %s " \
+                      "   WHERE EMP_EMAL_ADDR = %s " \
+                      "   AND WRK_DT = %s "
+                logger.info(sql)
+                cursor.execute(sql, (tm, normWrkTm, overWrkTm, allWrkTm, email, dt))
+                mysql_con.commit()
+
+        finally:
+            mysql_con.close()
+
+        retJson = {
+            "status": 200,
+            "msg": "Data has been saved successfully"
+        }
+
+        return jsonify(retJson)
 
 api.add_resource(Hello, '/hello')
 api.add_resource(Register, '/register')
@@ -1242,5 +1284,6 @@ api.add_resource(saveYryApvlReq,'/saveYryApvlReq') #api 선언
 api.add_resource(weekGridData,'/weekGridData') #api 선언
 api.add_resource(monthGridData,'/monthGridData') #api 선언
 api.add_resource(insertStrtTm,'/insertStrtTm') #api 선언
+api.add_resource(updateEndTm,'/updateEndTm') #api 선언
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5006, debug=True)

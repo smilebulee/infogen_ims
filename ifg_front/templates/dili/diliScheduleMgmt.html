@@ -635,6 +635,24 @@
                 setWeekGridData(tempStrtDt, tempEndDt);
 
             }
+            $('#exitSchdModal').click(function(){
+
+                var dfrWeekEndYy = $('#txt_weekEndYy').text(); //현재 종료 년도
+                var dfrWeekEndMm = $('#txt_weekEndMm').text()-1; //현재 종료 월
+                var dfrWeekEndDd = $('#txt_weekEndDd').text(); //현재 종료 일
+
+                var dfrWeekStrtYy = $('#txt_weekStrtYy').text(); // 현재 시작 년도
+                var dfrWeekStrtMm = $('#txt_weekStrtMm').text()-1; //현재 시작 월
+                var dfrWeekStrtDd = $('#txt_weekStrtDd').text(); // 현재 시작 일
+
+                var dfrEndDate = new Date(dfrWeekEndYy, dfrWeekEndMm, dfrWeekEndDd); //현재 종료 날짜 등록
+                var dfrStrtDate = new Date(dfrWeekStrtYy, dfrWeekStrtMm, dfrWeekStrtDd); //현재 시작 날짜 등록
+
+                tempStrtDt = setWeek(dfrStrtDate).baseDate;
+                tempEndDt = setWeek(dfrEndDate).baseDate;
+                setWeekGridData(tempStrtDt, tempEndDt);
+
+            });
 
 
         });<!--ready.function_END-->
@@ -1081,7 +1099,7 @@
         <div id="my_modal" class="modalUi">
             <div id="my_modal2" class="model_layout">
             </div>
-            <a class="modal_close_btn">
+            <a class="modal_close_btn" id="exitSchdModal">
                 <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-x-circle" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                    <path fill-rule="evenodd" d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
                    <path fill-rule="evenodd" d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
