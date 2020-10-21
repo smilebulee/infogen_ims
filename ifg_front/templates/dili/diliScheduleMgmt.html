@@ -877,12 +877,23 @@
             $('#tmpPopDt').text(trId.id.replace('grd_week',''));
             $('#tmpPopStrtTm').text($('#'+trId.id).children().eq(1).text());
             $('#tmpPopEndTm').text($('#'+trId.id).children().eq(2).text());
-            $('#tmpPopDetlTm').text($('#'+trId.id).children().eq(4).text());
+            var detlSchd = $('#'+trId.id).children().eq(4).text();
+            var normWrkTm = "-";
+            var overWrkTm = "-";
+            var holi = "-";
+            if(detlSchd != "휴가"){
+
+                normWrkTm = detlSchd.split('/')[0].replace('정상근무 : ','').trim();
+                overWrkTm = detlSchd.split('/')[1].replace('초과근무 : ','').trim();
+            }else {
+
+                holi = detlSchd;
+            }
+            $('#tmpNormWrkTm').text(normWrkTm);
+            $('#tmpOverWrkTm').text(overWrkTm);
+            $('#tmpHoli').text(holi);
             $('#tmpPopAllTm').text($('#'+trId.id).children().eq(3).text());
             $('#tmpPopApvlStus').text($('#'+trId.id).children().eq(5).text());
-
-
-
        }
 
         /*********************************************************************
@@ -1078,7 +1089,11 @@
                 <span id="tmpPopDt" class="model_layout" style="display:none;" ></span>
                 <span id="tmpPopStrtTm" class="model_layout" style="display:none;" ></span>
                 <span id="tmpPopEndTm" class="model_layout" style="display:none;" ></span>
-                <span id="tmpPopDetlTm" class="model_layout" style="display:none;" ></span>
+
+                <span id="tmpNormWrkTm" class="model_layout" style="display:none;" ></span>
+                <span id="tmpOverWrkTm" class="model_layout" style="display:none;" ></span>
+                <span id="tmpHoli" class="model_layout" style="display:none;" ></span>
+
                 <span id="tmpPopAllTm" class="model_layout" style="display:none;" ></span>
                 <span id="tmpPopApvlStus" class="model_layout" style="display:none;" ></span>
             </a>

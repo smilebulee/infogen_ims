@@ -14,33 +14,46 @@
         var dt = $('#tmpPopDt').text();
         var strtTm = $('#tmpPopStrtTm').text();
         var endTm = $('#tmpPopEndTm').text();
-        var detlTm = $('#tmpPopDetlTm').text();
+        var normWrkTm = $('#tmpNormWrkTm').text();
+        var overWrkTm = $('#tmpOverWrkTm').text();
+        var holi = $('#tmpHoli').text();
         var allTm = $('#tmpPopAllTm').text();
         var apvlStus = $('#tmpPopApvlStus').text();
 
         $('#pop_dt').text(dt);
 
-
-        if(getCurrentDate() == dt){
-            if(strtTm == "-"){
-                document.getElementById('pop_strtJob').innerHTML = '<input type="button" onclick="onclickStrtTm()" value="출근버튼">';
-                $('#pop_endJob').text(endTm);
-                $('#pop_schdDetlTm').text(detlTm);
-                $('#pop_schdDetlAllTm').text(allTm);
-                $('#pop_apvlStus').text(apvlStus);
+        if(holi != "휴가"){
+            if(getCurrentDate() == dt){
+                if(strtTm == "-"){
+                    document.getElementById('pop_strtJob').innerHTML = '<input type="button" onclick="onclickStrtTm()" value="출근버튼">';
+                    $('#pop_endJob').text(endTm);
+                    document.getElementById('pop_schdDetlTm').innerHTML = '정상근무 : '+normWrkTm+' / 초과근무 : '+overWrkTm;
+                    $('#pop_schdDetlAllTm').text(allTm);
+                    $('#pop_apvlStus').text(apvlStus);
+                }else {
+                    $('#pop_strtJob').text(strtTm);
+                }
+                if(endTm == "-" && strtTm != "-"){
+                    document.getElementById('pop_strtJob').innerHTML = '<input type="button" onclick="onclickEndTm()" value="퇴근버튼">';
+                    document.getElementById('pop_schdDetlTm').innerHTML = '정상근무 : '+normWrkTm+' / 초과근무 : '+overWrkTm;
+                    $('#pop_schdDetlAllTm').text(allTm);
+                    $('#pop_apvlStus').text(apvlStus);
+                }
+                if(endTm != "-" && strtTm != "-") {
+                    $('#pop_strtJob').text(strtTm);
+                    $('#pop_endJob').text(endTm);
+                    document.getElementById('pop_schdDetlTm').innerHTML = '정상근무 : '+normWrkTm+' / 초과근무 : '+overWrkTm;
+                    $('#pop_schdDetlAllTm').text(allTm);
+                    if(apvlStus == "미등록"){
+                        document.getElementById('pop_apvlStus').innerHTML = '<input type="button" onclick="onclickApvlUpld()" value="결재올리기">';
+                    }else {
+                        $('#pop_apvlStus').text(apvlStus);
+                    }
+                }
             }else {
                 $('#pop_strtJob').text(strtTm);
-            }
-            if(endTm == "-" && strtTm != "-"){
-                document.getElementById('pop_strtJob').innerHTML = '<input type="button" onclick="onclickEndTm()" value="퇴근버튼">';
-                $('#pop_schdDetlTm').text(detlTm);
-                $('#pop_schdDetlAllTm').text(allTm);
-                $('#pop_apvlStus').text(apvlStus);
-            }
-            if(endTm != "-" && strtTm != "-") {
-                $('#pop_strtJob').text(strtTm);
                 $('#pop_endJob').text(endTm);
-                $('#pop_schdDetlTm').text(detlTm);
+                document.getElementById('pop_schdDetlTm').innerHTML = '정상근무 : '+normWrkTm+' / 초과근무 : '+overWrkTm;
                 $('#pop_schdDetlAllTm').text(allTm);
                 if(apvlStus == "미등록"){
                     document.getElementById('pop_apvlStus').innerHTML = '<input type="button" onclick="onclickApvlUpld()" value="결재올리기">';
@@ -51,13 +64,9 @@
         }else {
             $('#pop_strtJob').text(strtTm);
             $('#pop_endJob').text(endTm);
-            $('#pop_schdDetlTm').text(detlTm);
+            $('#pop_schdDetlTm').text(holi);
             $('#pop_schdDetlAllTm').text(allTm);
-            if(apvlStus == "미등록"){
-                document.getElementById('pop_apvlStus').innerHTML = '<input type="button" onclick="onclickApvlUpld()" value="결재올리기">';
-            }else {
-                $('#pop_apvlStus').text(apvlStus);
-            }
+            $('#pop_apvlStus').text(apvlStus);
         }
     }
     /*********************************************************************
