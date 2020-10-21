@@ -1188,6 +1188,8 @@ class insertStrtTm(Resource):  # Mariadb 연결 진행
         logger.info("App Parameters End")
 
         email = params['email']
+        dt = params['dt']
+        tm = params['tm']
 
         # requirements pymysql import 후 커넥트 사용
         mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
@@ -1198,9 +1200,9 @@ class insertStrtTm(Resource):  # Mariadb 연결 진행
                 sql = "INSERT INTO TB_WRK_TM_MGMT_M( `EMP_EMAL_ADDR` " \
                       ",`WRK_DT` " \
                       ",`JOB_STRT_TM` " \
-                      ") VALUES( %s ,CURDATE() ,CURTIME() )"
+                      ") VALUES( %s ,%s ,%s )"
                 logger.info(sql)
-                cursor.execute(sql, (email))
+                cursor.execute(sql, (email, dt, tm))
 
                 mysql_con.commit()
 

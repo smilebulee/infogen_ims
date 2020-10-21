@@ -74,7 +74,7 @@
      *********************************************************************/
     function onclickStrtTm() {
         $('#pop_strtJob').text("출근 등록 중...");
-        setStrtTm(sessionStorage.getItem("email"));
+        setStrtTm(sessionStorage.getItem("email"), getCurrentDate(), getCurrentTime());
 
     }
      /*********************************************************************
@@ -94,10 +94,11 @@
     /*********************************************************************
     *  출근 INSERT
     *********************************************************************/
-    function setStrtTm(sesnEmal){
-        console.log("메일정보 :", sesnEmal);
+    function setStrtTm(email, dt, tm ){
         var param = {
-            "email"     : sesnEmal
+            "email"     : email,
+            "dt"     : dt,
+            "tm"     : tm
         }
 
         $.ajaxCall( param, {
