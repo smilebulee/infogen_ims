@@ -2,11 +2,47 @@
 
 <script type="text/javascript">
     $(document).ready(function(){
+
         dataControl();
-    });
+
+        /*********************************************************************
+        *   결재요청 모달 닫기버튼 클릭 이벤트
+        *********************************************************************/
+        $('#exitApvlModal').click(function(){
+            var email = sessionStorage.getItem("email");
+            var dt = $('#pop_dt').text();
+
+            getApvlInfo(email, dt);
+
+            $('#apvlUpld_modal').empty();
+        });
+
+        /*********************************************************************
+        *   Session Email , 근무시간상세팝업 일자 값 기준 결재상태 가져오기
+        *********************************************************************/
+        function getApvlInfo(email, dt){
+            var param = {
+                "email" : email,
+                "dt"    : dt
+            }
+
+            $.ajaxCall( param, {
+                 'method' : 'GET',
+                 'url' : "{% url 'dili_api:getApvlInfo' %}",
+                 'dataType' : 'json',
+                 'data' : JSON.stringify(param),
+                 'async' : false,
+                 'callbackFn' : function(data, status, xhr){
+                    setApvlStusChg(data);
+                 }
+            });
+        }
+
+    }); <!--ready.function_END-->
+
     /*********************************************************************
-     *Grid set Data
-     *********************************************************************/
+    *   Grid set Data
+    *********************************************************************/
     function dataControl(){
 
         var dt = $('#tmpPopDt').text();
@@ -68,8 +104,8 @@
         }
     }
     /*********************************************************************
-     *출근버튼 클릭
-     *********************************************************************/
+    *   출근버튼 클릭
+    *********************************************************************/
     function onclickStrtTm() {
 
         $('#pop_strtJob').text("출근 등록 중...");
@@ -80,9 +116,9 @@
         $('#tmpPopStrtTm').text(tm);
         dataControl();
     }
-     /*********************************************************************
-     *퇴근버튼 클릭
-     *********************************************************************/
+    /*********************************************************************
+    *   퇴근버튼 클릭
+    *********************************************************************/
     function onclickEndTm() {
         $('#pop_endJob').text("퇴근 등록 중...");
         var email = sessionStorage.getItem("email");
@@ -108,11 +144,13 @@
             $('#pop_apvlStus').text("-");
         }
     }
-     /*********************************************************************
-     *결재 버튼클릭
-     *********************************************************************/
+    /*********************************************************************
+    *   결재 버튼클릭
+    *********************************************************************/
     function onclickApvlUpld() {
 
+        modal('apvlUpldDiv_modal');                  //근무요청결재 화면 모달 띄우기
+        $("#apvlUpld_modal").load("{% url 'dili_api:wrkApvlReq' %}");
     }
     /*********************************************************************
     *  출근 INSERT
@@ -160,6 +198,20 @@
              }
         });
     }
+    /*********************************************************************
+    *   결재상태변경
+    *********************************************************************/
+    function setApvlStusChg(apvlStus){
+        if(apvlStus.length > 0){
+            if(apvlStus[0].APVL_REQ_DT != "N/A" && apvlStus[0].APVL_LAST_APRV_DT == "N/A"){
+                $('#pop_apvlStus').text("진행중");
+            }
+            if(apvlStus[0].APVL_REQ_DT != "N/A" && apvlStus[0].APVL_LAST_APRV_DT != "N/A"){
+                $('#pop_apvlStus').text("완료");
+            }
+        }
+    }
+
 </script>
 
 <table class="table table-bordered table-responsive-md table-striped text-center" style="width: 500px">

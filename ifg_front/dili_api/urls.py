@@ -49,6 +49,8 @@ urlpatterns = [
     url(r'^saveStrtTm/', views.saveStrtTm, name='saveStrtTm'),
     url(r'^saveEndTm/', views.saveEndTm, name='saveEndTm'),
 
+    url(r'^getApvlInfo/', views.getApvlInfo, name='getApvlInfo'),
+
 
     # 공지사항 파일업로드 추가
     url(r'^my_view/', views.my_view, name='my-view'),

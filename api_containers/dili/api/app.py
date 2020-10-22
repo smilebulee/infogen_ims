@@ -312,6 +312,40 @@ class weekGridData(Resource): # Mariadb 연결 진행
 
         return json.dumps(result2, indent=4, cls=DateTimeEncoder)
 
+class apvlInfo(Resource): # Mariadb 연결 진행
+    def get(self):
+
+        data = request.get_json()
+
+        logging.debug('================== App Start ==================')
+        logging.debug(data)
+        logging.debug('================== App End ==================')
+
+        #requirements pymysql import 후 커넥트 사용
+        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
+                                        charset='utf8')
+        try:
+            with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+                #쿼리문 실행
+                sql = "SELECT  NVL(APVL_REQ_DT, 'N/A') AS APVL_REQ_DT "\
+                    + "       ,NVL(APVL_LAST_APRV_DT, 'N/A') AS APVL_LAST_APRV_DT "\
+                    + "     FROM TB_APVL_REQ_MGMT_M "\
+                    + "   WHERE EMP_EMAL_ADDR = '" + data["email"] + "' "\
+                    + "   AND WRK_DT = '" + data["dt"] + "'"
+                logging.debug(sql)
+                cursor.execute(sql)
+        finally:
+            mysql_con.close()
+
+        result2 = cursor.fetchall()
+        for row in result2:
+            logging.debug('====== row2====')
+            logging.debug(row)
+            logging.debug('===============')
+        array = list(result2)  # 결과를 리스트로
+
+        return json.dumps(result2, indent=4, cls=DateTimeEncoder)
+
 class monthGridData(Resource): # Mariadb 연결 진행
     def get(self):
 
@@ -1282,6 +1316,7 @@ api.add_resource(empList,'/empList') #api 선언
 api.add_resource(empInfo,'/empInfo') #api 선언
 api.add_resource(saveYryApvlReq,'/saveYryApvlReq') #api 선언
 api.add_resource(weekGridData,'/weekGridData') #api 선언
+api.add_resource(apvlInfo,'/apvlInfo') #api 선언
 api.add_resource(monthGridData,'/monthGridData') #api 선언
 api.add_resource(insertStrtTm,'/insertStrtTm') #api 선언
 api.add_resource(updateEndTm,'/updateEndTm') #api 선언
