@@ -32,6 +32,7 @@ urlpatterns = [
     # 프로젝트 목록 관리
     url(r'^prjListSrch/', views.prjListSrch, name='prjListSrch'),
     url(r'^prjListSearch/', views.prjListSearch, name='prjListSearch'),
+    url(r'^getDeptCd/', views.getDeptCd, name='getDeptCd')
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
