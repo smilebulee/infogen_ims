@@ -2,14 +2,222 @@
 
 <script type="text/javascript">
     $(document).ready(function(){
-        
-    });
+
+        dataControl();
+
+        /*********************************************************************
+        *   결재요청 모달 닫기버튼 클릭 이벤트
+        *********************************************************************/
+        $('#exitApvlModal').click(function(){
+            var email = sessionStorage.getItem("email");
+            var dt = $('#pop_dt').text();
+
+            getApvlInfo(email, dt);
+
+            $('#apvlUpld_modal').empty();
+        });
+
+        /*********************************************************************
+        *   Session Email , 근무시간상세팝업 일자 값 기준 결재상태 가져오기
+        *********************************************************************/
+        function getApvlInfo(email, dt){
+            var param = {
+                "email" : email,
+                "dt"    : dt
+            }
+
+            $.ajaxCall( param, {
+                 'method' : 'GET',
+                 'url' : "{% url 'dili_api:getApvlInfo' %}",
+                 'dataType' : 'json',
+                 'data' : JSON.stringify(param),
+                 'async' : false,
+                 'callbackFn' : function(data, status, xhr){
+                    setApvlStusChg(data);
+                 }
+            });
+        }
+
+    }); <!--ready.function_END-->
+
+    /*********************************************************************
+    *   Grid set Data
+    *********************************************************************/
+    function dataControl(){
+
+        var dt = $('#tmpPopDt').text();
+        var strtTm = $('#tmpPopStrtTm').text();
+        var endTm = $('#tmpPopEndTm').text();
+        var normWrkTm = $('#tmpNormWrkTm').text();
+        var overWrkTm = $('#tmpOverWrkTm').text();
+        var holi = $('#tmpHoli').text();
+        var allTm = $('#tmpPopAllTm').text();
+        var apvlStus = $('#tmpPopApvlStus').text();
+
+        $('#pop_dt').text(dt);
+
+        if(holi != "휴가"){
+            if(getCurrentDate() == dt){
+                if(strtTm == "-"){
+                    document.getElementById('pop_strtJob').innerHTML = '<input type="button" onclick="onclickStrtTm()" value="출근버튼">';
+                    $('#pop_endJob').text(endTm);
+                    document.getElementById('pop_schdDetlTm').innerHTML = '정상근무 : '+normWrkTm+' / 초과근무 : '+overWrkTm;
+                    $('#pop_schdDetlAllTm').text(allTm);
+                    $('#pop_apvlStus').text(apvlStus);
+                }else {
+                    $('#pop_strtJob').text(strtTm);
+                }
+                if(endTm == "-" && strtTm != "-"){
+                    document.getElementById('pop_endJob').innerHTML = '<input type="button" onclick="onclickEndTm()" value="퇴근버튼">';
+                    document.getElementById('pop_schdDetlTm').innerHTML = '정상근무 : '+normWrkTm+' / 초과근무 : '+overWrkTm;
+                    $('#pop_schdDetlAllTm').text(allTm);
+                    $('#pop_apvlStus').text(apvlStus);
+                }
+                if(endTm != "-" && strtTm != "-") {
+                    $('#pop_strtJob').text(strtTm);
+                    $('#pop_endJob').text(endTm);
+                    document.getElementById('pop_schdDetlTm').innerHTML = '정상근무 : '+normWrkTm+' / 초과근무 : '+overWrkTm;
+                    $('#pop_schdDetlAllTm').text(allTm);
+                    if(apvlStus == "미등록"){
+                        document.getElementById('pop_apvlStus').innerHTML = '<input type="button" onclick="onclickApvlUpld()" value="결재올리기">';
+                    }else {
+                        $('#pop_apvlStus').text(apvlStus);
+                    }
+                }
+            }else {
+                $('#pop_strtJob').text(strtTm);
+                $('#pop_endJob').text(endTm);
+                document.getElementById('pop_schdDetlTm').innerHTML = '정상근무 : '+normWrkTm+' / 초과근무 : '+overWrkTm;
+                $('#pop_schdDetlAllTm').text(allTm);
+                if(apvlStus == "미등록"){
+                    document.getElementById('pop_apvlStus').innerHTML = '<input type="button" onclick="onclickApvlUpld()" value="결재올리기">';
+                }else {
+                    $('#pop_apvlStus').text(apvlStus);
+                }
+            }
+        }else {
+            $('#pop_strtJob').text(strtTm);
+            $('#pop_endJob').text(endTm);
+            $('#pop_schdDetlTm').text(holi);
+            $('#pop_schdDetlAllTm').text(allTm);
+            $('#pop_apvlStus').text(apvlStus);
+        }
+    }
+    /*********************************************************************
+    *   출근버튼 클릭
+    *********************************************************************/
+    function onclickStrtTm() {
+
+        $('#pop_strtJob').text("출근 등록 중...");
+        var email = sessionStorage.getItem("email");
+        var dt = getCurrentDate();
+        var tm = getCurrentTime();
+        setStrtTm(email, dt, tm);
+        $('#tmpPopStrtTm').text(tm);
+        dataControl();
+    }
+    /*********************************************************************
+    *   퇴근버튼 클릭
+    *********************************************************************/
+    function onclickEndTm() {
+        $('#pop_endJob').text("퇴근 등록 중...");
+        var email = sessionStorage.getItem("email");
+        var dt = getCurrentDate();
+        var tm = getCurrentTime();
+        var strtTm = $('#pop_strtJob').text();
+        var allWrkTm = allWrkTmCall(dt, strtTm, tm);
+        var overWrkTm = overWrkTmCall(dt, allWrkTm);
+        var normWrkTm = "";
+        if(overWrkTm == "00:00:00"){
+
+            normWrkTm = allWrkTm;
+        }else {
+            normWrkTm = "08:00:00";
+        }
+        setEndTm(email, dt, tm, normWrkTm.replaceAll(':',''), overWrkTm.replaceAll(':',''), allWrkTm.replaceAll(':','') );
+        $('#pop_endJob').text(tm);
+        document.getElementById('pop_schdDetlTm').innerHTML = '정상근무 : '+normWrkTm+' / 초과근무 : '+overWrkTm;
+        $('#pop_schdDetlAllTm').text(allWrkTm);
+        if(overWrkTm != "00:00:00"){
+            document.getElementById('pop_apvlStus').innerHTML = '<input type="button" onclick="onclickApvlUpld()" value="결재올리기">';
+        }else {
+            $('#pop_apvlStus').text("-");
+        }
+    }
+    /*********************************************************************
+    *   결재 버튼클릭
+    *********************************************************************/
+    function onclickApvlUpld() {
+
+        modal('apvlUpldDiv_modal');                  //근무요청결재 화면 모달 띄우기
+        $("#apvlUpld_modal").load("{% url 'dili_api:wrkApvlReq' %}");
+    }
+    /*********************************************************************
+    *  출근 INSERT
+    *********************************************************************/
+    function setStrtTm(email, dt, tm ){
+        var param = {
+            "email"  : email,
+            "dt"     : dt,
+            "tm"     : tm
+        }
+
+        $.ajaxCall( param, {
+             'method' : 'POST',
+             'url' : "{% url 'dili_api:saveStrtTm' %}",
+             'dataType' : 'json',
+             'data' : JSON.stringify(param),
+             'async' : false,
+             'callbackFn' : function(data){
+                g_toast.push('저장 되었습니다.');
+             }
+        });
+    }
+
+    /*********************************************************************
+    *  퇴근 update
+    *********************************************************************/
+    function setEndTm(email, dt, tm, normWrkTm, overWrkTm, allWrkTm ){
+        var param = {
+            "email"     : email,
+            "dt"        : dt,
+            "tm"        : tm,
+            "normWrkTm" : normWrkTm,
+            "overWrkTm" : overWrkTm,
+            "allWrkTm"  : allWrkTm
+        }
+
+        $.ajaxCall( param, {
+             'method' : 'POST',
+             'url' : "{% url 'dili_api:saveEndTm' %}",
+             'dataType' : 'json',
+             'data' : JSON.stringify(param),
+             'async' : false,
+             'callbackFn' : function(data){
+                g_toast.push('저장 되었습니다.');
+             }
+        });
+    }
+    /*********************************************************************
+    *   결재상태변경
+    *********************************************************************/
+    function setApvlStusChg(apvlStus){
+        if(apvlStus.length > 0){
+            if(apvlStus[0].APVL_REQ_DT != "N/A" && apvlStus[0].APVL_LAST_APRV_DT == "N/A"){
+                $('#pop_apvlStus').text("진행중");
+            }
+            if(apvlStus[0].APVL_REQ_DT != "N/A" && apvlStus[0].APVL_LAST_APRV_DT != "N/A"){
+                $('#pop_apvlStus').text("완료");
+            }
+        }
+    }
+
 </script>
 
 <table class="table table-bordered table-responsive-md table-striped text-center" style="width: 500px">
     <tr>
         <th class="text-center" style="width: 200px">일자</th>
-        <td class="pt-3-half" contenteditable="false" id="pop_dt">2020-10-08</td>
+        <td class="pt-3-half" contenteditable="false" id="pop_dt"></td>
     </tr>
     <tr>
         <th class="text-center">업무시작시간</th>

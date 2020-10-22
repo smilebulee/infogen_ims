@@ -1,5 +1,6 @@
 from django.conf.urls import url, include
 from django.urls import path
+from django.contrib.auth.decorators import login_required
 from . import views
 
 # 공지사항 파일업로드 임시추가
@@ -11,6 +12,7 @@ from django.conf.urls.static import static
 app_name = 'dili_api'
 
 urlpatterns = [
+    path('', login_required(views.Dili_api_index.as_view()), name='dili_api'),
     url(r'^$', views.Dili_api_index.as_view(), name='dili_api'),
 
     #mariadb 연결 샘플
@@ -18,7 +20,7 @@ urlpatterns = [
     url(r'^getMaria/', views.getMaria, name='getMaria'),
     url(r'^getWrkTimeInfoByEml/', views.getWrkTimeInfoByEml, name='getWrkTimeInfoByEml'),
     url(r'^getYryMgmt/', views.getYryMgmt, name='getYryMgmt'),
-    url(r'^scheduleMgmt/', views.scheduleMgmt.as_view(), name='scheduleMgmt'),
+    url(r'^scheduleMgmt/', views.scheduleMgmt, name='scheduleMgmt'),
     url(r'^scheduleMgmtPop/', views.scheduleMgmtPop.as_view(), name='scheduleMgmtPop'),
     url(r'^wrkApvlReq/', views.wrkApvlReq.as_view(), name='wrkApvlReq'),
     url(r'^yryApvlReq/', views.yryApvlReq.as_view(), name='yryApvlReq'),
@@ -41,7 +43,13 @@ urlpatterns = [
     url(r'^getApvlReqHistDetl/', views.getApvlReqHistDetl, name='getApvlReqHistDetl'),
     url(r'^getCalendarData/', views.getCalendarData, name='getCalendarData'),
     url(r'^saveYryApvlReq/post', views.saveYryApvlReq, name='saveYryApvlReq'),
-    url(r'^getGridData/', views.getGridData, name='getGridData'),
+    url(r'^getWeekGridData/', views.getWeekGridData, name='getWeekGridData'),
+    url(r'^getMonthGridData/', views.getMonthGridData, name='getMonthGridData'),
+
+    url(r'^saveStrtTm/', views.saveStrtTm, name='saveStrtTm'),
+    url(r'^saveEndTm/', views.saveEndTm, name='saveEndTm'),
+
+    url(r'^getApvlInfo/', views.getApvlInfo, name='getApvlInfo'),
 
 
     # 공지사항 파일업로드 추가

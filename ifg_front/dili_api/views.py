@@ -11,6 +11,9 @@ from django.core.paginator import Paginator
 from django.views.decorators.csrf import csrf_exempt
 # from .models import TB_EMP,Cd
 
+from django.contrib.auth.decorators import login_required
+from main.helpers import ajax_login_required
+
 import requests
 import logging
 import json
@@ -29,17 +32,12 @@ class Dili_api_index(generic.TemplateView):
 
         return render(request, template_name)
 
-class scheduleMgmt(generic.TemplateView):
-    def get(self, request, *args, **kwargs):
-        template_name = 'dili/diliScheduleMgmt.html'
+@login_required
+def scheduleMgmt(request):
+    template_name = 'dili/diliScheduleMgmt.html'
 
-        # r = requests.get('http://dili_api:5006/hello')
-        # rr = {
-        #     "result": r.text
-        # }
+    return render(request, template_name)
 
-        return render(request, template_name)
-        # return render(request, template_name, rr)
 
 class scheduleMgmtPop(generic.TemplateView):
     def get(self, request, *args, **kwargs):
@@ -96,7 +94,7 @@ def getYryMgmt(request):
     logger.info(json.loads(r.text))
     return JsonResponse(r.json(), safe=False)
 
-def getGridData(request):
+def getWeekGridData(request):
     param = json.loads(request.GET['param'])
 
     logger.info("Parameters Start")
@@ -104,7 +102,37 @@ def getGridData(request):
     logger.info("Parameters End")
 
     # api 호출
-    r = requests.get('http://dili_api:5006/gridData', json=param)
+    r = requests.get('http://dili_api:5006/weekGridData', json=param)
+    logger.info(r)
+    logger.info(r.text)
+    logger.info(logger.info(ast.literal_eval(r.json())))
+    logger.info(json.loads(r.text))
+    return JsonResponse(ast.literal_eval(r.json()), safe=False)
+
+def getApvlInfo(request):
+    param = json.loads(request.GET['param'])
+
+    logger.info("Parameters Start")
+    logger.info(param)
+    logger.info("Parameters End")
+
+    # api 호출
+    r = requests.get('http://dili_api:5006/apvlInfo', json=param)
+    logger.info(r)
+    logger.info(r.text)
+    logger.info(logger.info(ast.literal_eval(r.json())))
+    logger.info(json.loads(r.text))
+    return JsonResponse(ast.literal_eval(r.json()), safe=False)
+
+def getMonthGridData(request):
+    param = json.loads(request.GET['param'])
+
+    logger.info("Parameters Start")
+    logger.info(param)
+    logger.info("Parameters End")
+
+    # api 호출
+    r = requests.get('http://dili_api:5006/monthGridData', json=param)
     logger.info(r)
     logger.info(r.text)
     logger.info(logger.info(ast.literal_eval(r.json())))
@@ -489,3 +517,35 @@ def my_view(request):
     # Render list page with the documents and the form
     context = {'documents': documents, 'form': form, 'message': message}
     return render(request, 'dili/noticeDtl.html', context)
+
+#출근시간 저장
+def saveStrtTm(request):
+    param = json.loads(request.POST['param'])
+
+    logger.info("Parameters Start")
+    logger.info(param)
+    logger.info("Parameters End")
+
+
+    r = requests.post('http://dili_api:5006/insertStrtTm', data=json.dumps(param))
+
+    logger.info(r)
+    logger.info(r.text)
+    logger.info(r.json())
+    return JsonResponse(r.json())
+
+#퇴근시간 저장
+def saveEndTm(request):
+    param = json.loads(request.POST['param'])
+
+    logger.info("Parameters Start")
+    logger.info(param)
+    logger.info("Parameters End")
+
+
+    r = requests.post('http://dili_api:5006/updateEndTm', data=json.dumps(param))
+
+    logger.info(r)
+    logger.info(r.text)
+    logger.info(r.json())
+    return JsonResponse(r.json())

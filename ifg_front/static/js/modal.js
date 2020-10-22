@@ -37,7 +37,6 @@ function modal(id) {
         .find('.modal_close_btn')
         .on('click', function() {
             bg.remove();
-            $('.model_layout').empty();
             modal.hide();
         });
 }

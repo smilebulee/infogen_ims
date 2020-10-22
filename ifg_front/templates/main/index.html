@@ -85,9 +85,10 @@
 
         <div class="container">
           <div class="card-deck mb-3 text-center">
+            <div class="col-sm-4">
             <div class="card mb-4 shadow-sm">
               <div class="card-header">
-                <h4 class="my-0 font-weight-normal">Employee</h4>
+                <h4 class="my-0 font-weight-normal">직원관리</h4>
               </div>
               <div class="card-body">
                 <!--<h1 class="card-title pricing-card-title">$0 <small class="text-muted">/ mo</small></h1>-->
@@ -100,9 +101,12 @@
                 <button type="button" class="btn btn-lg btn-block btn-primary gotoIndexBtn">EMP Main</button>
               </div>
             </div>
+            </div>
+
+            <div class="col-sm-4">
             <div class="card mb-4 shadow-sm">
               <div class="card-header">
-                <h4 class="my-0 font-weight-normal">Project</h4>
+                <h4 class="my-0 font-weight-normal">프로젝트관리</h4>
               </div>
               <div class="card-body">
                 <!--<h1 class="card-title pricing-card-title">$15 <small class="text-muted">/ mo</small></h1>-->
@@ -114,9 +118,12 @@
                 <button type="button" class="btn btn-lg btn-block btn-primary gotoIndexBtn">PRJ Main</button>
               </div>
             </div>
+            </div>
+
+            <div class="col-sm-4">
             <div class="card mb-4 shadow-sm">
               <div class="card-header">
-                <h4 class="my-0 font-weight-normal">Skill</h4>
+                <h4 class="my-0 font-weight-normal">스킬관리</h4>
               </div>
               <div class="card-body">
                 <!--<h1 class="card-title pricing-card-title">$29 <small class="text-muted">/ mo</small></h1>-->
@@ -128,10 +135,12 @@
                 <button type="button" class="btn btn-lg btn-block btn-primary gotoIndexBtn">SKIL Main</button>
               </div>
             </div>
-
+            </div>
+            {% if context.auth != "ADMIN" %}
+            <div class="col-sm-4">
             <div class="card mb-4 shadow-sm">
               <div class="card-header">
-                <h4 class="my-0 font-weight-normal">Common</h4>
+                <h4 class="my-0 font-weight-normal">공통관리</h4>
               </div>
               <div class="card-body">
                 <!--<h1 class="card-title pricing-card-title">$15 <small class="text-muted">/ mo</small></h1>-->
@@ -144,7 +153,11 @@
                 <button type="button" class="btn btn-lg btn-block btn-primary gotoIndexBtn">CMM Main</button>
               </div>
             </div>
+            </div>
+            {% endif %}
 
+            {% if user.is_anonymous %}
+            <div class="col-sm-4">
               <div class="card mb-4 shadow-sm">
               <div class="card-header">
                 <h4 class="my-0 font-weight-normal">Connect</h4>
@@ -160,10 +173,13 @@
                 <button type="button" class="btn btn-lg btn-block btn-primary gotoIndexBtn">CNC Main</button>
               </div>
             </div>
+            </div>
+            {% endif %}
 
+            <div class="col-sm-4">
               <div class="card mb-4 shadow-sm">
               <div class="card-header">
-                <h4 class="my-0 font-weight-normal">Diligence & Laziness</h4>
+                <h4 class="my-0 font-weight-normal">근태관리</h4>
               </div>
               <div class="card-body">
                 <!--<h1 class="card-title pricing-card-title">$15 <small class="text-muted">/ mo</small></h1>-->
@@ -176,7 +192,10 @@
                 <button type="button" class="btn btn-lg btn-block btn-primary gotoIndexBtn">DILI Main</button>
               </div>
             </div>
+            </div>
 
+            {% if user.is_anonymous %} <!-- 로그아웃여분 -->
+            <div class="col-sm-4">
               <div class="card mb-4 shadow-sm">
               <div class="card-header">
                 <h4 class="my-0 font-weight-normal">Evaluation</h4>
@@ -194,7 +213,9 @@
                 <button type="button" class="btn btn-lg btn-block btn-primary">EVAL Main</button>
               </div>
             </div>
+          </div>
 
+            <div class="col-sm-4">
               <div class="card mb-4 shadow-sm">
               <div class="card-header">
                 <h4 class="my-0 font-weight-normal">KPI</h4>
@@ -212,7 +233,9 @@
                 <button type="button" class="btn btn-lg btn-block btn-primary">KPI Main</button>
               </div>
             </div>
+            </div>
 
+            <div class="col-sm-4">
             <div class="card mb-4 shadow-sm">
               <div class="card-header">
                 <h4 class="my-0 font-weight-normal">State</h4>
@@ -220,6 +243,7 @@
               <div class="card-body">
                 <!--<h1 class="card-title pricing-card-title">$15 <small class="text-muted">/ mo</small></h1>-->
                 <ul class="list-unstyled mt-3 mb-4">
+                  <li>근태현황</li>
                   <li>가동율현황</li>
                   <li>평가현황</li>
                     <li>KIP현황</li>
@@ -229,8 +253,10 @@
                 <button type="button" class="btn btn-lg btn-block btn-primary">STAT Main</button>
               </div>
             </div>
+            </div>
 
-              <div class="card mb-4 shadow-sm">
+            <div class="col-sm-12">
+            <div class="card mb-4 shadow-sm">
               <div class="card-header">
                 <h4 class="my-0 font-weight-normal">Site</h4>
               </div>
@@ -242,14 +268,10 @@
                 <button type="button" class="btn btn-lg btn-block btn-primary">SITE Main</button>
               </div>
             </div>
-
-
-
-
-
+            </div>
+            {% endif %}
 
           </div>
-
 
         </div>
        {% include 'common/footer.html' %}
