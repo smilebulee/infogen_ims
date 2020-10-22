@@ -39,7 +39,7 @@
             var tempStrtDt = "";
             var tempEndDt = "";
             console.log(sessionStorage.getItem("email"));
-            sessionStorage.setItem("email","ishwang@infogen.co.kr");                // 임시
+            //sessionStorage.setItem("email","ishwang@infogen.co.kr");                // 임시
 
             $('#grp_grid').hide();                                                  // Calendar UI를 Default로 한다.
             $('#grp_showMonth').hide();                                             // Grid UI의 week를 Default로 한다.
@@ -58,6 +58,7 @@
 
             setMonthGridData()                                                                              // Month Grid 생성
             crteTodayShow(year, month, date, day);                                                        // Grid UI(주) 날짜 세팅
+            setAnhoMgmt(); 연차정보 입력
 
 
             /*********************************************************************
@@ -180,25 +181,33 @@
             /*********************************************************************
             *   Session Email 값 기준 연차정보 조회
             *********************************************************************/
-            var param = {
-                email : sessionStorage.getItem("email")
+            function setAnhoMgmt(){
+                var param = {
+                    email : sessionStorage.getItem("email")
+                }
+
+                $.ajaxCall( param, {
+
+                     'method' : 'GET',
+                     'url' : "{% url 'dili_api:getYryMgmt' %}",
+                     'dataType' : 'json',
+                     'data' : JSON.stringify(param),
+                     'async' : false,
+                     'callbackFn' : function(data){
+
+                        console.log("data : ",data)
+                        if(data.length > 0){
+                            $('#txt_allAnhoDays').text(data[0].ALL_YRY_DAYS) //전체연차일수
+                            $('#txt_rmnAnhoDays').text(data[0].ALL_YRY_DAYS - data[0].USE_YRY_DAYS) //남은연차일수
+
+                        }else {
+
+                            $('#txt_allAnhoDays').text(0) //전체연차일수
+                            $('#txt_rmnAnhoDays').text(0) //남은연차일수
+                        }
+                     }
+                });
             }
-
-            $.ajaxCall( param, {
-
-                 'method' : 'GET',
-                 'url' : "{% url 'dili_api:getYryMgmt' %}",
-                 'dataType' : 'json',
-                 'data' : JSON.stringify(param),
-                 'async' : false,
-                 'callbackFn' : function(data){
-
-                    console.log("data : ",data)
-
-                    $('#txt_allAnhoDays').text(data[0].ALL_YRY_DAYS) //전체연차일수
-                    $('#txt_rmnAnhoDays').text(data[0].ALL_YRY_DAYS - data[0].USE_YRY_DAYS) //남은연차일수
-                 }
-            });
 
             /*********************************************************************
             *   Session Email , StrtDt, endDt 값 기준 주 그리드 데이터 세팅
