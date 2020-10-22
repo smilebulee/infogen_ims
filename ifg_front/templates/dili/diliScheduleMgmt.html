@@ -35,10 +35,16 @@
 
         $(document).ready(function(){
 
+            if(sessionStorage.getItem("email") == null){
+
+                location.href = "{% url 'main:login_form' %}";
+            }
+
+            console.log(sessionStorage.getItem("email"));
 
             var tempStrtDt = "";
             var tempEndDt = "";
-            console.log(sessionStorage.getItem("email"));
+
             //sessionStorage.setItem("email","ishwang@infogen.co.kr");                // 임시
 
             $('#grp_grid').hide();                                                  // Calendar UI를 Default로 한다.
