@@ -636,6 +636,9 @@
                 setWeekGridData(tempStrtDt, tempEndDt);
 
             }
+            /*********************************************************************
+            *   my_modal 영역 닫기 버튼 클릭이벤트
+            *********************************************************************/
             $('#exitSchdModal').click(function(){
 
                 var dfrWeekEndYy = $('#txt_weekEndYy').text(); //현재 종료 년도
@@ -652,16 +655,12 @@
                 tempStrtDt = setWeek(dfrStrtDate).baseDate;
                 tempEndDt = setWeek(dfrEndDate).baseDate;
                 setWeekGridData(tempStrtDt, tempEndDt);
-
+                setMonthGridData();
             });
-
 
         });<!--ready.function_END-->
 
         var myChart;
-
-
-
 
         /*********************************************************************
         *   Week Grid 생성
@@ -709,8 +708,15 @@
 
                                 jobStrtTm = schdData[j].JOB_STRT_TM;
                                 jobEndTm = schdData[j].JOB_END_TM;
-                                allWrkTm = schdData[j].ALL_WRK_TM;
-                                normWrkTm = schdData[j].NORM_WRK_TM;
+                                if(schdData[j].ALL_WRK_TM != "00:00:00"){
+
+									allWrkTm = schdData[j].ALL_WRK_TM;
+								}
+
+								if(schdData[j].NORM_WRK_TM != "00:00:00"){
+
+									normWrkTm = schdData[j].NORM_WRK_TM;
+								}
 
                                 if(schdData[j].OVER_WRK_TM != "00:00:00"){
 
@@ -807,8 +813,16 @@
 
                                 jobStrtTm = schdData[j].JOB_STRT_TM;
                                 jobEndTm = schdData[j].JOB_END_TM;
-                                allWrkTm = schdData[j].ALL_WRK_TM;
-                                normWrkTm = schdData[j].NORM_WRK_TM;
+
+                                if(schdData[j].ALL_WRK_TM != "00:00:00"){
+
+									allWrkTm = schdData[j].ALL_WRK_TM;
+								}
+
+								if(schdData[j].NORM_WRK_TM != "00:00:00"){
+
+									normWrkTm = schdData[j].NORM_WRK_TM;
+								}
 
                                 if(schdData[j].OVER_WRK_TM != "00:00:00"){
 
@@ -885,9 +899,8 @@
        }
 
        /*********************************************************************
-        *
+        *주 그리드 더블클릭 이벤트
         *********************************************************************/
-
        function ondblClickEvt(trId) {
 
             modal('my_modal');
