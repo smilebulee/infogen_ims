@@ -223,7 +223,7 @@
                      'method' : 'GET',
                      'url' : "{% url 'dili_api:getWeekGridData' %}",
                      'dataType' : 'json',
-                     'data' : JSON.stringify(param),
+                     'data' : JSON.stringify(gridParam),
                      'async' : false,
                      'callbackFn' : function(data, status, xhr){
                         console.log("weekGridData : ",data)
@@ -248,7 +248,7 @@
                      'method' : 'GET',
                      'url' : "{% url 'dili_api:getMonthGridData' %}",
                      'dataType' : 'json',
-                     'data' : JSON.stringify(param),
+                     'data' : JSON.stringify(gridParam),
                      'async' : false,
                      'callbackFn' : function(data, status, xhr){
                         console.log("monthGridData : ",data)
