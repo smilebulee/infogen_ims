@@ -657,6 +657,7 @@
                 setWeekGridData(tempStrtDt, tempEndDt);
                 setMonthGridData();
                 $('#my_modal2').empty();
+                $('.model_layout').empty();
             });
 
         });<!--ready.function_END-->
@@ -850,7 +851,7 @@
                 }
 
 
-                monthTable += '<tr id ="grd_month'+tempSetMonth+'" onclick="onclickMonthEvt(this)">';
+                monthTable += '<tr id ="grd_month'+tempSetMonth+'" onclick="onclickMonthEvt(this)" ondblclick="ondblClickMonthEvt(this)">';
                 monthTable += '<td class="pt-3-half" contenteditable="false">'+mTdDate+'</td>';
                 monthTable += '<td class="pt-3-half" contenteditable="false">'+jobStrtTm+'</td>';
                 monthTable += '<td class="pt-3-half" contenteditable="false">'+jobEndTm+'</td>';
@@ -900,7 +901,7 @@
        }
 
        /*********************************************************************
-        *주 그리드 더블클릭 이벤트
+        *   주 그리드 더블클릭 이벤트
         *********************************************************************/
        function ondblClickEvt(trId) {
 
@@ -908,6 +909,35 @@
             $('#my_modal2').load("{% url 'dili_api:scheduleMgmtPop' %}");
 
             $('#tmpPopDt').text(trId.id.replace('grd_week',''));
+            $('#tmpPopStrtTm').text($('#'+trId.id).children().eq(1).text());
+            $('#tmpPopEndTm').text($('#'+trId.id).children().eq(2).text());
+            var detlSchd = $('#'+trId.id).children().eq(4).text();
+            var normWrkTm = "-";
+            var overWrkTm = "-";
+            var holi = "-";
+            if(detlSchd != "휴가"){
+
+                normWrkTm = detlSchd.split('/')[0].replace('정상근무 : ','').trim();
+                overWrkTm = detlSchd.split('/')[1].replace('초과근무 : ','').trim();
+            }else {
+
+                holi = detlSchd;
+            }
+            $('#tmpNormWrkTm').text(normWrkTm);
+            $('#tmpOverWrkTm').text(overWrkTm);
+            $('#tmpHoli').text(holi);
+            $('#tmpPopAllTm').text($('#'+trId.id).children().eq(3).text());
+            $('#tmpPopApvlStus').text($('#'+trId.id).children().eq(5).text());
+       }
+       /*********************************************************************
+        *   월 그리드 더블클릭 이벤트
+        *********************************************************************/
+       function ondblClickMonthEvt(trId) {
+
+            modal('my_modal');
+            $('#my_modal2').load("{% url 'dili_api:scheduleMgmtPop' %}");
+
+            $('#tmpPopDt').text(trId.id.replace('grd_month',''));
             $('#tmpPopStrtTm').text($('#'+trId.id).children().eq(1).text());
             $('#tmpPopEndTm').text($('#'+trId.id).children().eq(2).text());
             var detlSchd = $('#'+trId.id).children().eq(4).text();

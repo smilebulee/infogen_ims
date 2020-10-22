@@ -1172,7 +1172,7 @@ class saveYryApvlReq(Resource):  # Mariadb 연결 진행
             try:
                 with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                     # 쿼리문 실행
-                    sql = "INSERT INTO TB_APVL_REQ_MGMT_M (" \
+                    sql1 = "INSERT INTO TB_APVL_REQ_MGMT_M (" \
                           "`EMP_EMAL_ADDR`," \
                           "`APVL_REQ_DIVS`," \
                           "`WRK_DT`," \
@@ -1185,21 +1185,18 @@ class saveYryApvlReq(Resource):  # Mariadb 연결 진행
                           "`TH2_APRV_NM`," \
                           "`APVL_LAST_APRV_DT`," \
                           "`EMER_CTPL`)" \
-                          "VALUES( %s, %s, %s, %s, %s, NOW(), %s, %s, %s, %s, NOW(), %s)" \
-     \
-                        # "ON DUPLICATE KEY UPDATE "
-                    # "EMP_EMAL_ADDR = %s, " \
-                    # "APVL_REQ_DIVS = %s," \
-                    # "WRK_DT = %s," \
-                    # "WRK_TME = %s," \
-                    # "WRK_REQ_RSN = %s," \
-                    # "TH1_APRV_STUS = %s," \
-                    # "TH1_APRV_NM = %s," \
-                    # "TH2_APRV_STUS = %s," \
-                    # "TH2_APRV_NM = %s," \
-                    # "EMER_CTPL = %s,"
-                    logger.info(sql)
-                    cursor.execute(sql, (email, apvlReqDivs, wrkDt, wrkTme, wrkReqRsn, th1AprvStus, th1AprvNm, th2AprvStus, th2AprvNm, emerCtpl))
+                          "VALUES( %s, %s, %s, %s, %s, NOW(), %s, %s, %s, %s, NOW(), %s)"
+
+                    logger.info(sql1)
+                    cursor.execute(sql1, (email, apvlReqDivs, wrkDt, wrkTme, wrkReqRsn, th1AprvStus, th1AprvNm, th2AprvStus, th2AprvNm, emerCtpl))
+
+                    sql2 = "INSERT INTO TB_WRK_TM_MGMT_M(" \
+                           "`EMP_EMAL_ADDR`," \
+                           "`WRK_DT`)" \
+                           "VALUES( %s, %s )"
+
+                    logger.info(sql2)
+                    cursor.execute(sql2, (email, wrkDt))
 
                     mysql_con.commit()
 
