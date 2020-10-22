@@ -161,7 +161,9 @@
                     modal('prjRegModal');
                     $("#prjRegModal2").load("{% url 'prj_api:prjReg' %}");
                 } else{
-
+                    prj_cd = firstGrid.getList("selected")[0].PRJ_CD;
+                    modal('prjRegModal');
+                    $("#prjRegModal2").load("{% url 'prj_api:prjReg' %}");
                 }
             });
         });
