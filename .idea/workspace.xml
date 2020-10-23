@@ -23,7 +23,6 @@
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ifg_front/templates/prj/prjListSrch.html" beforeDir="false" afterPath="$PROJECT_DIR$/ifg_front/templates/prj/prjListSrch.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ifg_front/templates/prj/prjReg.html" beforeDir="false" afterPath="$PROJECT_DIR$/ifg_front/templates/prj/prjReg.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ifg_front/templates/skil/devMgmt.html" beforeDir="false" afterPath="$PROJECT_DIR$/ifg_front/templates/skil/devMgmt.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ifg_front/templates/skil/devReg.html" beforeDir="false" afterPath="$PROJECT_DIR$/ifg_front/templates/skil/devReg.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />

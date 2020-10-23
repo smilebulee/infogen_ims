@@ -161,7 +161,7 @@
                  modal('prjRegModal');
                  $("#prjRegModal2").load("{% url 'prj_api:prjReg' %}");
             });
-            console.log(firstGrid);
+
             /* 프로젝트 정보 수정 */
             firstGrid.dblclick(function(){
                  prj_cd = firstGrid.getList("selected")[0].PRJ_CD;

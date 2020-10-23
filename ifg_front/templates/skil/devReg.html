@@ -4,7 +4,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1"><!-- 모바일 -->
 {% load static %}
        <title>IFG-IMS</title>
-
 </head>
 <body>
  <style>
@@ -12,25 +11,22 @@
 }
 
 #modal input {
-  width : 100%;
+  width: 100%;
   border: 0;
   border-bottom: 1.5px solid #0489B1;
   outline : 0;
 }
 
 #modal button {
-  display:inline-block;
-  width:50%;
-  margin-center:calc(100% - 100px - 10px);
-  float:left;
+  display: inline-block;
+  width: 50%;
+  margin-center: calc(100% - 100px - 10px);
+  float: left;
   color: blue;
   background-color: rgba(0,0,0,0);
   border: 0;
-  outline : 0;
+  outline: 0;
 }
-
-
-
 </style>
 
 <div id="modal">
@@ -85,16 +81,15 @@
                 <p>비고<br>
                     <input type = "text" id = "rmks" name = "rmks" placeholder="input text" ></p>
             </span>
-            </div>
-            <hr>
+        </div>
+                <hr>
                     <button type="button" id="saveBtn">저장</button>
                     <button type="button" id="deleteBtn" style="color:red">삭제</button>
     </div>
 </div>
 <script>
-
     $(document).ready(async function() {
-
+        <!--  공통코드 조회  -->
         await retrieveCmmCd('emp_dept', 'SLIN_BZDP');
         await retrieveCmmCd('emp_rank', 'EMP_RANK_CD');
         await retrieveCmmCd('devp_grd', 'DEVP_GRD_CD');
@@ -110,6 +105,7 @@
 
     });
 
+    <!--  개발자 정보 조회  -->
     function retrieveDevInfo(){
             $('#developerEnrollment').ajaxCall({
                  method : 'GET',
@@ -134,6 +130,7 @@
             });
     };
 
+    <!--  공통코드 조회  -->
     function retrieveCmmCd(sbx_id, grp_id){
         var param = {
             "sbx_id" : sbx_id,
@@ -157,7 +154,7 @@
         });
     };
 
-
+    <!--  개발자 정보 저장  -->
     $('#saveBtn').click(function(){
         var emp_name = $('#emp_name').val();
         var emp_dept = $('#emp_dept').val();
@@ -205,6 +202,7 @@
         });
     });
 
+    <!--  개발자 정보 삭제  -->
     $('#deleteBtn').click(function(){
         console.log('삭제');
         confirmMsg('삭제 하시겠습니까?', function(){
@@ -224,8 +222,6 @@
             });
         });
     });
-
 </script>
-
 </body>
 </html>
