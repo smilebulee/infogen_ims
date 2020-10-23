@@ -65,7 +65,7 @@ def getMariaDB(request):
     logger.info(json.loads(r.text))
     return JsonResponse(r.json(), safe=False)
 
-@login_required
+@ajax_login_required
 def devMgmt(request):
     template_name = 'skil/devMgmt.html'
 
