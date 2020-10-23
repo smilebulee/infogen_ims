@@ -469,14 +469,9 @@
             *   Draw  calendar Event - 받아온 데이터 캘린더에 입력
             *********************************************************************/
             function setCalendar(data){
-<!--                console.log("calendarData1 : ",data);-->
+                console.log("calendarData1 : ",data);
 
                 var calendarData = JSON.parse(data);
-
-                console.log("WRK_DT : ",calendarData[7].WRK_DT);
-                console.log("JOB_STRT_TM : ",calendarData[7].JOB_STRT_TM);
-                console.log("JOB_END_TM : ",calendarData[7].JOB_END_TM);
-
 
                 var dataCustomArray = new Array();
                 for(var i=0; i < calendarData.length; i++) {
@@ -485,7 +480,8 @@
                     var endTm  = calendarData[i].JOB_END_TM;
                     var startTimeAdd = wrkDt + "T" + statTm;
                     var endTimeAdd = wrkDt + "T" + endTm;
-
+                    var normTm  = calendarData[i].NORM_WRK_TM;
+                    var overTm  = calendarData[i].OVER_WRK_TM;
 
                     var dataCustom = {
                         calendarId: i,
@@ -494,7 +490,9 @@
                         isAllDay: false,
                         start: startTimeAdd,
                         end: startTimeAdd,
-                        category: "time"
+                        category: "time",
+                        normTm: normTm,
+                        overTm: overTm
                     };
                     dataCustomArray.push(dataCustom);
 
@@ -505,7 +503,9 @@
                         isAllDay: false,
                         start: endTimeAdd,
                         end: endTimeAdd,
-                        category: "time"
+                        category: "time",
+                        normTm: normTm,
+                        overTm: overTm
                     };
                     dataCustomArray.push(dataCustom);
 
@@ -558,6 +558,14 @@
                 var tmp = schedule.end.getFullYear()+"-"+(schedule.end.getMonth()+1)+"-"+schedule.end.getDate();
                 weekDate = setWeek(tmp);                                   // 선택된 일이 포함된 주의 Start,End Date 조회
                 getWrkTimeByIml(null, weekDate.strtDate, weekDate.endDate);     // Session Email 을 기준으로 시작~종료일에 대한 근무시간 조회.
+
+                $('#tmpPopDt').text(schedule.end.getFullYear()+"-"+(schedule.end.getMonth()+1)+"-"+schedule.end.getDate());
+                console.log('111 ', calendar);
+
+                //시작시간, 종료시간, 정상근무, 초과근무시간 셋팅해야함
+<!--                $('#tmpPopStrtTm').text($('#'+trId.id).children().eq(1).text());-->
+<!--                $('#tmpPopEndTm').text($('#'+trId.id).children().eq(2).text());-->
+
             });
 
 
@@ -988,7 +996,7 @@
                 if ($('#empEmailHidden').val() == null || $('#empEmailHidden').val() == "") {
                     email = sessionStorage.getItem("email");
                 } else {
-                    email = ('#empEmailHidden').val();
+                    email = $('#empEmailHidden').val();
                 }
             }
 
