@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
     <meta name="viewport" content="width=device-width, initial-scale=1"><!-- 모바일 -->
 {% load static %}
        <title>IFG-IMS</title>
@@ -10,10 +9,6 @@
 <body>
  <style>
 #modal {
-  z-index:1;
-}
-
-#modal h2 {
 }
 
 #modal input {
@@ -32,14 +27,8 @@
   background-color: rgba(0,0,0,0);
   border: 0;
   outline : 0;
-
 }
 
-#modal .modal_content {
-}
-
-#modal .modal_layer {
-}
 
 #modal tbody>tr {
   counter-increment: aaa;
@@ -54,7 +43,7 @@
 <div id="modal">
 
     <div class="modal_content">
-            <h2 style = "font-weight:bold"><U>프로젝트 등록</U></h2><br>
+            <h2 class = "title">프로젝트 등록</h2><br>
         <div id = "projectInfo">
             <span style="color: #0489B1;
                          font-size: 1.0em;
@@ -136,15 +125,11 @@
                     <input type = "text" id = "trCount" name = "trCount"></p>
             </span>
         </div>
-
         <hr>
             <button type="button" id="deleteBtn" style="color:red">삭제</button>
             <button type="button" id="saveBtn">저장</button>
-        <br>
-     
+        <br>   
     </div>
-
-    <div class="modal_layer"></div>
 </div>
 
 <script>
@@ -186,6 +171,7 @@
         if(prj_cd == '' || prj_cd == null){
             console.log('prj_cd is null')
         } else{  <!--   프로젝트 정보 수정    -->
+            $('.title').text('프로젝트 수정');
             console.log('prj_cd : '+ prj_cd);
             $('#prj_cd').val(prj_cd);
             retrievePrjInfo();

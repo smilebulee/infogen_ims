@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
     <meta name="viewport" content="width=device-width, initial-scale=1"><!-- 모바일 -->
 {% load static %}
        <title>IFG-IMS</title>
@@ -10,11 +9,6 @@
 <body>
  <style>
 #modal {
-  z-index:100;
-  backgroundColor: 'rgba(0,0,0,0.4)'
-}
-
-#modal h2 {
 }
 
 #modal input {
@@ -33,23 +27,15 @@
   background-color: rgba(0,0,0,0);
   border: 0;
   outline : 0;
-
 }
 
-#modal .modal_content {
-
-}
-
-#modal .modal_layer {
-
-}
 
 
 </style>
 
 <div id="modal">
     <div class="modal_content">
-            <h2>개발자 등록</h2><br>
+            <h2 class = "title">개발자 등록</h2><br>
         <div id = developerEnrollment>
             <span style="color: #0489B1;
                          font-size: 1.0em;
@@ -104,12 +90,11 @@
                     <button type="button" id="saveBtn">저장</button>
                     <button type="button" id="deleteBtn" style="color:red">삭제</button>
     </div>
-
-    <div class="modal_layer"></div>
 </div>
 <script>
 
     $(document).ready(async function() {
+
         await retrieveCmmCd('emp_dept', 'SLIN_BZDP');
         await retrieveCmmCd('emp_rank', 'EMP_RANK_CD');
         await retrieveCmmCd('devp_grd', 'DEVP_GRD_CD');
@@ -117,6 +102,7 @@
         if(empNo == '' || empNo == null ){
             console.log('empNo is null')
         } else{  <!--   개발자 정보 수정    -->
+            $('.title').text('개발자 수정');
             console.log('empNo : '+empNo)
             $('#emp_no').val(empNo);
             retrieveDevInfo();
