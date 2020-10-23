@@ -1,44 +1,31 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
     <meta name="viewport" content="width=device-width, initial-scale=1"><!-- 모바일 -->
 {% load static %}
        <title>IFG-IMS</title>
-
 </head>
 <body>
  <style>
 #modal {
-  z-index:1;
-}
-
-#modal h2 {
 }
 
 #modal input {
-  width:100%;
+  width: 100%;
   border: 0;
   border-bottom: 1.5px solid #0489B1;
-  outline : 0;
+  outline: 0;
 }
 
 #modal button {
-  display:inline-block;
-  width:50%;
-  margin-center:calc(100% - 100px - 10px);
-  float:right;
+  display: inline-block;
+  width: 50%;
+  margin-center: calc(100% - 100px - 10px);
+  float: right;
   color: blue;
   background-color: rgba(0,0,0,0);
   border: 0;
-  outline : 0;
-
-}
-
-#modal .modal_content {
-}
-
-#modal .modal_layer {
+  outline: 0;
 }
 
 #modal tbody>tr {
@@ -47,19 +34,15 @@
 #modal tbody>tr>td:first-child:before {
   content: counter(aaa) " ";
 }
-
 </style>
 
-
 <div id="modal">
-
     <div class="modal_content">
-            <h2 style = "font-weight:bold"><U>프로젝트 등록</U></h2><br>
+            <h2 class = "title">프로젝트 등록</h2><br>
         <div id = "projectInfo">
             <span style="color: #0489B1;
                          font-size: 1.0em;
                          padding:20px;">
-
                 <p style = "display:none">프로젝트 코드<br>
                     <input type = "text" id = "prj_cd" name = "prj_cd"></p>
 
@@ -136,15 +119,11 @@
                     <input type = "text" id = "trCount" name = "trCount"></p>
             </span>
         </div>
-
         <hr>
             <button type="button" id="deleteBtn" style="color:red">삭제</button>
             <button type="button" id="saveBtn">저장</button>
-        <br>
-     
+        <br>   
     </div>
-
-    <div class="modal_layer"></div>
 </div>
 
 <script>
@@ -154,6 +133,7 @@
     var MIDWARE = [];
     var Framework = [];
 
+    <!--  요구스킬 구분 조회  -->
     $('#projectInfo').ajaxCall({
             method : 'GET',
             url : "{% url 'prj_api:retrieveSkilName' %}",
@@ -171,21 +151,21 @@
                         Framework.push(data[i].SKIL_NAME);
                     }
                 }
-
             }
     });
 
     $(document).ready(async function() {
+        <!--    공통코드 조회    -->
         await retrieveCmmCd('slin_bzdp', 'SLIN_BZDP');
         await retrieveCmmCd('job_divs', 'JOB_DIVS_CD');
         await retrieveCmmCd('pgrs_stus', 'PGRS_STUS_CD');
         await retrieveCmmCd('req_skil_divs1', 'SKIL_DIVS_CD');
 
-        var prj_cd = null;
         <!--   프로젝트 정보 최초 등록    -->
         if(prj_cd == '' || prj_cd == null){
             console.log('prj_cd is null')
         } else{  <!--   프로젝트 정보 수정    -->
+            $('.title').text('프로젝트 수정');
             console.log('prj_cd : '+ prj_cd);
             $('#prj_cd').val(prj_cd);
             retrievePrjInfo();
@@ -193,6 +173,7 @@
         }
     });
 
+    <!--  공통코드 조회  -->
     function retrieveCmmCd(sbx_id, grp_id){
         var param = {
             "sbx_id" : sbx_id,
@@ -216,6 +197,7 @@
         });
      };
 
+    <!--  프로젝트 정보 조회  -->
     function retrievePrjInfo(){
         $('#projectInfo').ajaxCall({
             method : 'GET',
@@ -237,6 +219,7 @@
         });
     };
 
+    <!--  프로젝트 요구스킬 조회  -->
     function retrieveReqSkil(){
         $('#projectInfo').ajaxCall({
             method : 'GET',
@@ -255,6 +238,7 @@
 
     };
 
+    <!--  요구스킬 추가 버튼  -->
     var count = 1;
     $(document).on("click","button[name=addSkil]",function(){
         console.log('add');
@@ -265,12 +249,6 @@
             '<tr name="trSkil">'+
             '        <td id="skil_no"></td>'+
             '        <td><select size ="1" class="form-control" id = "req_skil_divs'+count+'" name = "req_skil_divs'+count+'" onchange="skil_chg('+count+')">'+
-            '                <option value = "00">선택</option>'+
-            '                <option value = "01">DB</option>'+
-            '                <option value = "02">LANGUAGE</option>'+
-            '                <option value = "03">WEB</option>'+
-            '                <option value = "04">MIDWARE</option>'+
-            '                <option value = "05">Framework</option>'+
             '            </select></td>'+
             '        <td><select class="form-control" id = "req_skil_name'+count+'" name = "req_skil_name'+count+'"></select></td>'+
             '        <td><input type="button" style="float:right;" id="delSkil" name="delSkil" value="삭제" class = "btn btn-primary"/></td>'+
@@ -279,8 +257,14 @@
         var trHtml = $( "tr[name=trSkil]:last" );
 
         trHtml.after(addSkilText);
+
+        var elms = req_skil_divs1.options;
+        for(var i=0; i<elms.length; i++){
+            $('#req_skil_divs'+count).append("<option value = "+elms[i].value+">"+elms[i].text+"</option>");
+        }
     });
 
+    <!--  요구스킬 삭제 버튼  -->
     $(document).on("click","input[name=delSkil]",function(){
         console.log('del')
         var trHtml = $(this).parent().parent();
@@ -288,6 +272,7 @@
         trHtml.remove();
     });
 
+    <!--  프로젝트 저장  -->
     $('#saveBtn').click(function(){
             $('#trCount').val($('#reqSkil tbody tr').length);
 
@@ -343,6 +328,7 @@
             });
     });
 
+    <!--  프로젝트 삭제  -->
     $('#deleteBtn').click(function(){
             console.log('삭제');
             confirmMsg('삭제 하시겠습니까?', function(){
@@ -350,7 +336,6 @@
                     method : 'POST',
                     url : '/prj/prjDelete/post',
                     callbackFn : function(data){
-<!--                       location.href = '/prj/prjReg'-->
                        g_toast.push('삭제 되었습니다.');
                     }
                 });
@@ -358,6 +343,7 @@
             });
      });
 
+    <!--  요구스킬 구분 변경 시 요구스킬명 세팅  -->
     function skil_chg(a){
         var selectSkill = $("#req_skil_divs"+a).val();
         var changeSkill;
@@ -386,10 +372,11 @@
                     }
     };
 
-
-
+    <!--  팝업 닫기  -->
+    $('#modal_close_btn').click(function(){
+        $("#searchBtn").trigger("click");
+    });
 </script>
-
 </body>
 </html>
 

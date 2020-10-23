@@ -243,8 +243,8 @@ def prjListSearch(request):
     logger.info(param)
 
     datas = {
-        'dept': param['dept'],
-        'skilKind': param['skilKind']
+        'deptDiv': param['deptDiv'],
+        'skilDiv': param['skilDiv']
     }
 
     logger.info(datas)
@@ -255,4 +255,22 @@ def prjListSearch(request):
     logger.info(r.json())
     logger.info(json.loads(r.text))
     # return JsonResponse(r.json())
+    return JsonResponse(r.json(), safe=False)
+
+#부서 코드 조회
+def getDeptCd(request):
+    param = json.loads(request.GET['param'])
+    logger.info('===============================')
+    logger.info(param)
+    logger.info('===============================')
+    datas = {}
+
+    r = requests.get('http://prj_api:5002/getDeptCd', params=datas)
+
+    logger.info(r)
+    logger.info(r.text)
+    logger.info("----------------")
+    logger.info(r.json())
+    logger.info(json.loads(r.text))
+
     return JsonResponse(r.json(), safe=False)

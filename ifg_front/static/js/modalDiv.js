@@ -3,7 +3,7 @@ function modal(id) {
     var modal = $('#' + id);
 
     // 모달 div 뒤에 희끄무레한 레이어
-    var bg = $('<div>')
+    var bg = $('<mDiv>')
         .css({
             position: 'fixed',
             zIndex: zIndex,
@@ -37,6 +37,7 @@ function modal(id) {
         .find('.modal_close_btn')
         .on('click', function() {
             bg.remove();
+            $('.model_layout').empty();
             modal.hide();
         });
 }

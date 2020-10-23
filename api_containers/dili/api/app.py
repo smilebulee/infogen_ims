@@ -263,7 +263,7 @@ class yryMgmt(Resource): # Mariadb 연결 진행
         return result2
 
 
-class gridData(Resource): # Mariadb 연결 진행
+class weekGridData(Resource): # Mariadb 연결 진행
     def get(self):
 
         data = request.get_json()
@@ -280,12 +280,13 @@ class gridData(Resource): # Mariadb 연결 진행
                 #쿼리문 실행
                 sql = "SELECT  A.EMP_EMAL_ADDR "\
                     + "       ,A.WRK_DT "\
-                    + "       ,DATE_FORMAT(A.JOB_STRT_TM, '%H:%i:%s') AS JOB_STRT_TM "\
-                    + "       ,DATE_FORMAT(A.JOB_END_TM, '%H:%i:%s') AS JOB_END_TM "\
+                    + "       ,NVL(DATE_FORMAT(A.JOB_STRT_TM, '%H:%i:%s'),'-') AS JOB_STRT_TM "\
+                    + "       ,NVL(DATE_FORMAT(A.JOB_END_TM, '%H:%i:%s'),'-') AS JOB_END_TM "\
                     + "       ,CONCAT(SUBSTRING(A.NORM_WRK_TM,1,2),':',SUBSTRING(A.NORM_WRK_TM,3,2),':',SUBSTRING(A.NORM_WRK_TM,5,2)) AS NORM_WRK_TM "\
                     + "       ,CONCAT(SUBSTRING(A.ALL_WRK_TM,1,2),':',SUBSTRING(A.ALL_WRK_TM,3,2),':',SUBSTRING(A.ALL_WRK_TM,5,2)) AS ALL_WRK_TM "\
                     + "       ,DATE_FORMAT(SEC_TO_TIME(TIME_TO_SEC(STR_TO_DATE( CONCAT(SUBSTRING(A.ALL_WRK_TM,1,2),':',SUBSTRING(A.ALL_WRK_TM,3,2),':',SUBSTRING(A.ALL_WRK_TM,5,2)) ,'%H:%i:%S')) "\
-                    + "                   - TIME_TO_SEC(STR_TO_DATE( CONCAT(SUBSTRING(A.NORM_WRK_TM,1,2),':',SUBSTRING(A.NORM_WRK_TM,3,2),':',SUBSTRING(A.NORM_WRK_TM,5,2)) ,'%H:%i:%S'))),'%H:%i:%s') AS OVER_WRK_TM "\
+                    + "                   - TIME_TO_SEC(STR_TO_DATE( CONCAT(SUBSTRING(A.NORM_WRK_TM,1,2),':',SUBSTRING(A.NORM_WRK_TM,3,2),':',SUBSTRING(A.NORM_WRK_TM,5,2)) ,'%H:%i:%S'))),'%H:%i:%s') AS OVER_WRK_TM " \
+                    + "       ,NVL(B.APVL_REQ_DIVS, 'N/A') AS APVL_REQ_DIVS " \
                     + "       ,NVL(B.APVL_REQ_DT, 'N/A') AS APVL_REQ_DT "\
                     + "       ,NVL(B.APVL_LAST_APRV_DT, 'N/A') AS APVL_LAST_APRV_DT "\
                     + "   FROM TB_WRK_TM_MGMT_M A "\
@@ -311,6 +312,87 @@ class gridData(Resource): # Mariadb 연결 진행
 
         return json.dumps(result2, indent=4, cls=DateTimeEncoder)
 
+class apvlInfo(Resource): # Mariadb 연결 진행
+    def get(self):
+
+        data = request.get_json()
+
+        logging.debug('================== App Start ==================')
+        logging.debug(data)
+        logging.debug('================== App End ==================')
+
+        #requirements pymysql import 후 커넥트 사용
+        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
+                                        charset='utf8')
+        try:
+            with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+                #쿼리문 실행
+                sql = "SELECT  NVL(APVL_REQ_DT, 'N/A') AS APVL_REQ_DT "\
+                    + "       ,NVL(APVL_LAST_APRV_DT, 'N/A') AS APVL_LAST_APRV_DT "\
+                    + "     FROM TB_APVL_REQ_MGMT_M "\
+                    + "   WHERE EMP_EMAL_ADDR = '" + data["email"] + "' "\
+                    + "   AND WRK_DT = '" + data["dt"] + "'"
+                logging.debug(sql)
+                cursor.execute(sql)
+        finally:
+            mysql_con.close()
+
+        result2 = cursor.fetchall()
+        for row in result2:
+            logging.debug('====== row2====')
+            logging.debug(row)
+            logging.debug('===============')
+        array = list(result2)  # 결과를 리스트로
+
+        return json.dumps(result2, indent=4, cls=DateTimeEncoder)
+
+class monthGridData(Resource): # Mariadb 연결 진행
+    def get(self):
+
+        data = request.get_json()
+
+        logging.debug('================== App Start ==================')
+        logging.debug(data)
+        logging.debug('================== App End ==================')
+
+        #requirements pymysql import 후 커넥트 사용
+        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
+                                        charset='utf8')
+        try:
+            with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+                #쿼리문 실행
+                sql = "SELECT  A.EMP_EMAL_ADDR "\
+                    + "       ,A.WRK_DT "\
+                    + "       ,NVL(DATE_FORMAT(A.JOB_STRT_TM, '%H:%i:%s'),'-') AS JOB_STRT_TM "\
+                    + "       ,NVL(DATE_FORMAT(A.JOB_END_TM, '%H:%i:%s'),'-') AS JOB_END_TM "\
+                    + "       ,CONCAT(SUBSTRING(A.NORM_WRK_TM,1,2),':',SUBSTRING(A.NORM_WRK_TM,3,2),':',SUBSTRING(A.NORM_WRK_TM,5,2)) AS NORM_WRK_TM "\
+                    + "       ,CONCAT(SUBSTRING(A.ALL_WRK_TM,1,2),':',SUBSTRING(A.ALL_WRK_TM,3,2),':',SUBSTRING(A.ALL_WRK_TM,5,2)) AS ALL_WRK_TM "\
+                    + "       ,DATE_FORMAT(SEC_TO_TIME(TIME_TO_SEC(STR_TO_DATE( CONCAT(SUBSTRING(A.ALL_WRK_TM,1,2),':',SUBSTRING(A.ALL_WRK_TM,3,2),':',SUBSTRING(A.ALL_WRK_TM,5,2)) ,'%H:%i:%S')) "\
+                    + "                   - TIME_TO_SEC(STR_TO_DATE( CONCAT(SUBSTRING(A.NORM_WRK_TM,1,2),':',SUBSTRING(A.NORM_WRK_TM,3,2),':',SUBSTRING(A.NORM_WRK_TM,5,2)) ,'%H:%i:%S'))),'%H:%i:%s') AS OVER_WRK_TM "\
+                    + "       ,NVL(B.APVL_REQ_DIVS, 'N/A') AS APVL_REQ_DIVS "\
+                    + "       ,NVL(B.APVL_REQ_DT, 'N/A') AS APVL_REQ_DT "\
+                    + "       ,NVL(B.APVL_LAST_APRV_DT, 'N/A') AS APVL_LAST_APRV_DT "\
+                    + "   FROM TB_WRK_TM_MGMT_M A "\
+                    + "        LEFT OUTER JOIN TB_APVL_REQ_MGMT_M B"\
+                    + "   ON A.WRK_DT = B.WRK_DT "\
+                    + "   AND A.EMP_EMAL_ADDR = B.EMP_EMAL_ADDR "\
+                    + "  WHERE 1 = 1 "\
+                    + "  AND A.EMP_EMAL_ADDR = '" + data["email"] + "' "\
+                    + "  AND A.WRK_DT like '"+data["mDt"]+"%' "\
+                    + "  ORDER BY A.WRK_DT"
+                logging.debug(sql)
+                cursor.execute(sql)
+        finally:
+            mysql_con.close()
+
+        result2 = cursor.fetchall()
+        for row in result2:
+            logging.debug('====== row2====')
+            logging.debug(row)
+            logging.debug('===============')
+        array = list(result2)  # 결과를 리스트로
+
+        return json.dumps(result2, indent=4, cls=DateTimeEncoder)
 
 class wrkTimeInfoByEml(Resource): # Mariadb 연결 진행
     def get(self):
@@ -677,12 +759,14 @@ class calendarData(Resource): # Mariadb 연결 진행
                 #쿼리문 실행
                 sql = "SELECT    A.EMP_EMAL_ADDR " \
                       + "       ,A.WRK_DT " \
-                      + "       ,DATE_FORMAT(A.JOB_STRT_TM, '%H:%i:%s') AS JOB_STRT_TM " \
-                      + "       ,DATE_FORMAT(A.JOB_END_TM, '%H:%i:%s') AS JOB_END_TM " \
+                      + "       ,NVL(DATE_FORMAT(A.JOB_STRT_TM, '%H:%i:%s'),'-') AS JOB_STRT_TM " \
+                      + "       ,NVL(DATE_FORMAT(A.JOB_END_TM, '%H:%i:%s'),'-') AS JOB_END_TM " \
                       + "       ,A.NORM_WRK_TM " \
                       + "       ,A.ALL_WRK_TM " \
                       + "       ,NVL(B.APVL_REQ_DT, 'N/A') AS APVL_REQ_DT " \
                       + "       ,NVL(B.APVL_LAST_APRV_DT, 'N/A') AS APVL_LAST_APRV_DT " \
+                      + "       ,DATE_FORMAT(SEC_TO_TIME(TIME_TO_SEC(STR_TO_DATE( CONCAT(SUBSTRING(A.ALL_WRK_TM,1,2),':',SUBSTRING(A.ALL_WRK_TM,3,2),':',SUBSTRING(A.ALL_WRK_TM,5,2)) ,'%H:%i:%S')) " \
+                      + "                   - TIME_TO_SEC(STR_TO_DATE( CONCAT(SUBSTRING(A.NORM_WRK_TM,1,2),':',SUBSTRING(A.NORM_WRK_TM,3,2),':',SUBSTRING(A.NORM_WRK_TM,5,2)) ,'%H:%i:%S'))),'%H:%i:%s') AS OVER_WRK_TM " \
                       + "   FROM TB_WRK_TM_MGMT_M A " \
                       + "        LEFT OUTER JOIN TB_APVL_REQ_MGMT_M B" \
                       + "     ON A.WRK_DT = B.WRK_DT " \
@@ -981,26 +1065,31 @@ class noticeSave(Resource):
         popOpenDttmFrom = request.form['popOpenDttmFrom']
         popOpenDttmTo = request.form['popOpenDttmTo']
         cntn = request.form['cntn']
-        dataInptId = request.form['dataInptId']
-        dataInptPgmId = request.form['dataInptPgmId']
         dataUpdId = request.form['dataUpdId']
         dataUpdPgmId = request.form['dataUpdPgmId']
+        if type == "c":
+            dataInptId = request.form['dataInptId']
+            dataInptPgmId = request.form['dataInptPgmId']
+
         #
         logging.debug("====Param data====")
         logging.debug("type = " + type)
-        #logging.debug("postId = " + postId)
+        # logging.debug("postId = " + postId)
         logging.debug("tit = " + tit)
         logging.debug("kdDivsCd = " + kdDivsCd)
         logging.debug("mjrYn = " + mjrYn)
         logging.debug("popOpenYn = " + popOpenYn)
-        #logging.debug("popOpenDttmFrom = " + popOpenDttmFrom) -> error:must be str, not tuple -> 타입 달라서 오류남
-        #logging.debug("popOpenDttmTo = " + popOpenDttmTo) -> error:must be str, not tuple -> 타입 달라서 오류남
+        # logging.debug("popOpenDttmFrom = " + popOpenDttmFrom) -> error:must be str, not tuple -> 타입 달라서 오류남
+        # logging.debug("popOpenDttmTo = " + popOpenDttmTo) -> error:must be str, not tuple -> 타입 달라서 오류남
         logging.debug("cntn = " + cntn)
-        logging.debug("dataInptId = " + dataInptId)
-        logging.debug("dataInptPgmId = " + dataInptPgmId)
         logging.debug("dataUpdId = " + dataUpdId)
         logging.debug("dataUpdPgmId = " + dataUpdPgmId)
+        if type == "c":
+            logging.debug("dataInptId = " + dataInptId)
+            logging.debug("dataInptPgmId = " + dataInptPgmId)
         logging.debug("=====================")
+
+
 
         mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
                                     charset='utf8')
@@ -1083,7 +1172,7 @@ class saveYryApvlReq(Resource):  # Mariadb 연결 진행
             try:
                 with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                     # 쿼리문 실행
-                    sql = "INSERT INTO TB_APVL_REQ_MGMT_M (" \
+                    sql1 = "INSERT INTO TB_APVL_REQ_MGMT_M (" \
                           "`EMP_EMAL_ADDR`," \
                           "`APVL_REQ_DIVS`," \
                           "`WRK_DT`," \
@@ -1096,21 +1185,18 @@ class saveYryApvlReq(Resource):  # Mariadb 연결 진행
                           "`TH2_APRV_NM`," \
                           "`APVL_LAST_APRV_DT`," \
                           "`EMER_CTPL`)" \
-                          "VALUES( %s, %s, %s, %s, %s, NOW(), %s, %s, %s, %s, NOW(), %s)" \
-     \
-                        # "ON DUPLICATE KEY UPDATE "
-                    # "EMP_EMAL_ADDR = %s, " \
-                    # "APVL_REQ_DIVS = %s," \
-                    # "WRK_DT = %s," \
-                    # "WRK_TME = %s," \
-                    # "WRK_REQ_RSN = %s," \
-                    # "TH1_APRV_STUS = %s," \
-                    # "TH1_APRV_NM = %s," \
-                    # "TH2_APRV_STUS = %s," \
-                    # "TH2_APRV_NM = %s," \
-                    # "EMER_CTPL = %s,"
-                    logger.info(sql)
-                    cursor.execute(sql, (email, apvlReqDivs, wrkDt, wrkTme, wrkReqRsn, th1AprvStus, th1AprvNm, th2AprvStus, th2AprvNm, emerCtpl))
+                          "VALUES( %s, %s, %s, %s, %s, NOW(), %s, %s, %s, %s, NOW(), %s)"
+
+                    logger.info(sql1)
+                    cursor.execute(sql1, (email, apvlReqDivs, wrkDt, wrkTme, wrkReqRsn, th1AprvStus, th1AprvNm, th2AprvStus, th2AprvNm, emerCtpl))
+
+                    sql2 = "INSERT INTO TB_WRK_TM_MGMT_M(" \
+                           "`EMP_EMAL_ADDR`," \
+                           "`WRK_DT`)" \
+                           "VALUES( %s, %s )"
+
+                    logger.info(sql2)
+                    cursor.execute(sql2, (email, wrkDt))
 
                     mysql_con.commit()
 
@@ -1121,6 +1207,86 @@ class saveYryApvlReq(Resource):  # Mariadb 연결 진행
                 "status": 200,
                 "msg": "Data has been saved successfully"
             }
+
+        return jsonify(retJson)
+
+class insertStrtTm(Resource):  # Mariadb 연결 진행
+    def post(self):
+
+        params = json.loads(request.data)
+        logger.info("App Parameters Start")
+        logger.info(params['email'])
+        logger.info("App Parameters End")
+
+        email = params['email']
+        dt = params['dt']
+        tm = params['tm']
+
+        # requirements pymysql import 후 커넥트 사용
+        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
+                                    charset='utf8')
+        try:
+            with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+                # 쿼리문 실행
+                sql = "INSERT INTO TB_WRK_TM_MGMT_M( `EMP_EMAL_ADDR` " \
+                      ",`WRK_DT` " \
+                      ",`JOB_STRT_TM` " \
+                      ") VALUES( %s ,%s ,%s )"
+                logger.info(sql)
+                cursor.execute(sql, (email, dt, tm))
+
+                mysql_con.commit()
+
+        finally:
+            mysql_con.close()
+
+        retJson = {
+            "status": 200,
+            "msg": "Data has been saved successfully"
+        }
+
+        return jsonify(retJson)
+
+class updateEndTm(Resource):  # Mariadb 연결 진행
+    def post(self):
+
+        params = json.loads(request.data)
+        logger.info("App Parameters Start")
+        logger.info(params['email'])
+        logger.info("App Parameters End")
+
+        email = params['email']
+        dt = params['dt']
+        tm = params['tm']
+        normWrkTm = params['normWrkTm']
+        overWrkTm = params['overWrkTm']
+        allWrkTm = params['allWrkTm']
+
+
+        # requirements pymysql import 후 커넥트 사용
+        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
+                                    charset='utf8')
+        try:
+            with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+                # 쿼리문 실행
+                sql = "UPDATE TB_WRK_TM_MGMT_M " \
+                      "   SET JOB_END_TM  = %s " \
+                      "      ,NORM_WRK_TM = %s " \
+                      "      ,NGHT_WRK_TM = %s " \
+                      "      ,ALL_WRK_TM  = %s " \
+                      "   WHERE EMP_EMAL_ADDR = %s " \
+                      "   AND WRK_DT = %s "
+                logger.info(sql)
+                cursor.execute(sql, (tm, normWrkTm, overWrkTm, allWrkTm, email, dt))
+                mysql_con.commit()
+
+        finally:
+            mysql_con.close()
+
+        retJson = {
+            "status": 200,
+            "msg": "Data has been saved successfully"
+        }
 
         return jsonify(retJson)
 
@@ -1146,7 +1312,10 @@ api.add_resource(noticeSave,'/noticeSave') #api 선언
 api.add_resource(empList,'/empList') #api 선언
 api.add_resource(empInfo,'/empInfo') #api 선언
 api.add_resource(saveYryApvlReq,'/saveYryApvlReq') #api 선언
-api.add_resource(gridData,'/gridData') #api 선언
-
+api.add_resource(weekGridData,'/weekGridData') #api 선언
+api.add_resource(apvlInfo,'/apvlInfo') #api 선언
+api.add_resource(monthGridData,'/monthGridData') #api 선언
+api.add_resource(insertStrtTm,'/insertStrtTm') #api 선언
+api.add_resource(updateEndTm,'/updateEndTm') #api 선언
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5006, debug=True)

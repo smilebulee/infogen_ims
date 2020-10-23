@@ -62,7 +62,6 @@ history
                         </div>
                         <div style="float: right; padding-top :10px;">
                             <button class="btn btn-primary" id="devSaveBtn" >개발자 등록</button>
-                            <button class="btn btn-primary" id="prjSaveBtn" >프로젝트 등록</button>
                             <button class="btn btn-primary" id="devOutSaveBtn" >프로젝트별 투입 등록</button>
                         </div>
                     </div>
@@ -159,39 +158,36 @@ history
                                 }
                             }
                             prjGrid.updateRow({PRJ_CD: prjCd ,EMP_NO: empNo, EMP_NAME: empName,  DEPT_NM: devpBlco,SKIL_GRD: devpGrdName, CNTC_DIVS_NM: cntcDivsName, SLIN_GRD: '', INPU_STRT_DAY: '', INPU_END_DAY: '', CNTC_STRT_DAY: '', CNTC_END_DAY: '', CRGE_JOB: '', RMKS: '', STUS :'insert', __created__ : true, __modified__ : true,}, prjGrid.selectedDataIndexs[0]);
+
+                            $("mDiv").removeAttr("style");
+                            $("#devMgmtModal").hide();
                         }
                     });
 
                     /* 개발자 등록 선택 */
                    $('#devSaveBtn').click(function(){
-                        if(firstGrid.getList("selected").length == 0){
-                            empNo = null;
-                            modal('devRegModal');
-                            $("#devRegModal2").load("{% url 'skil_api:devReg' %}");
-                        } else{
-                            empNo = firstGrid.getList("selected")[0].EMP_NO;
-                            if(firstGrid.getList("selected")[0].CNTC_DIVS_CD == "01"){
-                                alertMsg("정규직은 개발자 정보 수정을 할 수 없습니다.");
-                                return false;
-                            }
+                        empNo = null;
+                        modal('devRegModal');
+                        $("#devRegModal2").load("{% url 'skil_api:devReg' %}");
 
-                            modal('devRegModal');
-                            $("#devRegModal2").load("{% url 'skil_api:devReg' %}");
-                        }
                     });
 
-                    $('#prjSaveBtn').click(function(){
-                        if(firstGrid.getList("selected").length == 0){
-                            modal('devRegModal');
-                            $("#devRegModal2").load("{% url 'prj_api:prjReg' %}");
-                        } else{
-
+                   /* 개발자 정보 수정 */
+                   firstGrid.dblclick(function(){
+                        empNo = firstGrid.getList("selected")[0].EMP_NO;
+                        if(firstGrid.getList("selected")[0].CNTC_DIVS_CD == "01"){
+                              alertMsg("정규직은 개발자 정보 수정을 할 수 없습니다.");
+                              return false;
                         }
-                    });
+                        modal('devRegModal');
+                        $("#devRegModal2").load("{% url 'skil_api:devReg' %}");
+                   });
                 });
 
                 $('#modal_close_btn').click(function(){
                         $("#searchBtn").trigger("click");
                 });
+
+
         </script>
 </div>

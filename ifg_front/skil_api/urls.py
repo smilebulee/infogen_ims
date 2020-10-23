@@ -41,8 +41,10 @@ urlpatterns = [
 
     # 스킬 코드 관리
     url(r'^skilCdMgmt/', views.skilCdMgmt, name='skilCdMgmt'),
-    url(r'^skilCdMgmtSearch/', views.skilCdMgmtSearch, name='skilCdMgmtSearch'),
-    url(r'^getSkilCdMgmt/', views.getSkilCdMgmt, name='getSkilCdMgmt')
+    url(r'^retrieveSkilCd/', views.retrieveSkilCd, name='retrieveSkilCd'),
+    url(r'^getSkilCdMgmt/', views.getSkilCdMgmt, name='getSkilCdMgmt'),
+    url(r'^deleteSkilCd/', views.deleteSkilCd, name='deleteSkilCd'),
+    url(r'^saveSkilCd/', views.saveSkilCd, name='saveSkilCd')
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

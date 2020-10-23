@@ -35,11 +35,17 @@
 
         $(document).ready(function(){
 
+            if(sessionStorage.getItem("email") == null){
+
+                location.href = "{% url 'main:login_form' %}";
+            }
+
+            console.log(sessionStorage.getItem("email"));
 
             var tempStrtDt = "";
             var tempEndDt = "";
 
-            sessionStorage.setItem("email","ishwang@infogen.co.kr");                // 임시
+            //sessionStorage.setItem("email","ishwang@infogen.co.kr");                // 임시
 
             $('#grp_grid').hide();                                                  // Calendar UI를 Default로 한다.
             $('#grp_showMonth').hide();                                             // Grid UI의 week를 Default로 한다.
@@ -56,8 +62,9 @@
             $('#txt_mmYy').text(year); //그리드 월tab 년도 초기값 입력
             $('#txt_mmMm').text(month + 1); //그리드 월tab 월 초기값 입력
 
-            crteMonthGrid();                                                                              // Month Grid 생성
+            setMonthGridData()                                                                              // Month Grid 생성
             crteTodayShow(year, month, date, day);                                                        // Grid UI(주) 날짜 세팅
+            setAnhoMgmt(); //연차정보 입력
 
 
             /*********************************************************************
@@ -92,7 +99,7 @@
 
                 tempStrtDt = setWeek(dfrStrtDate).baseDate;
                 tempEndDt = setWeek(dfrEndDate).baseDate;
-                setGridData(tempStrtDt, tempEndDt);
+                setWeekGridData(tempStrtDt, tempEndDt);
 
             });
 
@@ -127,7 +134,7 @@
 
                 tempStrtDt = setWeek(nxtStrtDate).baseDate;
                 tempEndDt = setWeek(nxtEndDate).baseDate;
-                setGridData(tempStrtDt, tempEndDt);
+                setWeekGridData(tempStrtDt, tempEndDt);
             });
 
             /*********************************************************************
@@ -144,7 +151,7 @@
                 $('#txt_mmYy').text(showMmGridDtDfr.getFullYear()); //그리드 월tab 년도 이전 값 입력
                 $('#txt_mmMm').text(showMmGridDtDfr.getMonth() + 1); //그리드 월tab 월 이전 값 입력
 
-                crteMonthGrid();
+                setMonthGridData();
 
             });
 
@@ -162,7 +169,7 @@
                 $('#txt_mmYy').text(showMmGridDtDfr.getFullYear()); //그리드 월tab 년도 이후 값 입력
                 $('#txt_mmMm').text(showMmGridDtDfr.getMonth() + 1); //그리드 월tab 월 이후 값 입력
 
-                crteMonthGrid();
+                setMonthGridData();
 
 
             });
@@ -175,34 +182,41 @@
             var currentWeek = setWeek(currentDate);
 
             getWrkTimeByIml(null, currentWeek.strtDate, currentWeek.endDate);     // Session Email 을 기준으로 시작~종료일에 대한 근무시간 조회.
+            getCalendarSessionDate(null);     // Session Email
 
             /*********************************************************************
             *   Session Email 값 기준 연차정보 조회
             *********************************************************************/
-            var param = {
-                email : sessionStorage.getItem("email")
+            function setAnhoMgmt(){
+                var param = {
+                    email : sessionStorage.getItem("email")
+                }
+
+                $.ajaxCall( param, {
+
+                     'method' : 'GET',
+                     'url' : "{% url 'dili_api:getYryMgmt' %}",
+                     'dataType' : 'json',
+                     'data' : JSON.stringify(param),
+                     'async' : false,
+                     'callbackFn' : function(data){
+                        if(data.length > 0){
+                            $('#txt_allAnhoDays').text(data[0].ALL_YRY_DAYS) //전체연차일수
+                            $('#txt_rmnAnhoDays').text(data[0].ALL_YRY_DAYS - data[0].USE_YRY_DAYS) //남은연차일수
+
+                        }else {
+
+                            $('#txt_allAnhoDays').text(0) //전체연차일수
+                            $('#txt_rmnAnhoDays').text(0) //남은연차일수
+                        }
+                     }
+                });
             }
 
-            $.ajaxCall( param, {
-
-                 'method' : 'GET',
-                 'url' : "{% url 'dili_api:getYryMgmt' %}",
-                 'dataType' : 'json',
-                 'data' : JSON.stringify(param),
-                 'async' : false,
-                 'callbackFn' : function(data){
-
-                    console.log("data : ",data)
-
-                    $('#txt_allAnhoDays').text(data[0].ALL_YRY_DAYS) //전체연차일수
-                    $('#txt_rmnAnhoDays').text(data[0].ALL_YRY_DAYS - data[0].USE_YRY_DAYS) //남은연차일수
-                 }
-            });
-
             /*********************************************************************
-            *   Session Email 값 기준 그리드 데이터 세팅
+            *   Session Email , StrtDt, endDt 값 기준 주 그리드 데이터 세팅
             *********************************************************************/
-            function setGridData(tempStrtDt, tempEndDt){
+            function setWeekGridData(tempStrtDt, tempEndDt){
                 var gridParam = {
                     "email"     : sessionStorage.getItem("email"),
                     "strtDt" : tempStrtDt,
@@ -211,16 +225,38 @@
 
                 $.ajaxCall( gridParam, {
                      'method' : 'GET',
-                     'url' : "{% url 'dili_api:getGridData' %}",
+                     'url' : "{% url 'dili_api:getWeekGridData' %}",
                      'dataType' : 'json',
-                     'data' : JSON.stringify(param),
+                     'data' : JSON.stringify(gridParam),
                      'async' : false,
                      'callbackFn' : function(data, status, xhr){
-                        console.log("Griddata : ",data)
                         crteWeekGrid(data);
-
                      }
                 });
+            }
+
+            /*********************************************************************
+            *   Session Email , StrtDt, endDt 값 기준 월 그리드 데이터 세팅
+            *********************************************************************/
+            function setMonthGridData(){
+
+                var setMDt = $('#txt_mmYy').text() + "-" + $('#txt_mmMm').text()
+                var gridParam = {
+                    "email"     : sessionStorage.getItem("email"),
+                    "mDt" : setMDt
+                }
+
+                $.ajaxCall( gridParam, {
+                     'method' : 'GET',
+                     'url' : "{% url 'dili_api:getMonthGridData' %}",
+                     'dataType' : 'json',
+                     'data' : JSON.stringify(gridParam),
+                     'async' : false,
+                     'callbackFn' : function(data, status, xhr){
+                        crteMonthGrid(data);
+                     }
+                });
+
             }
 
             /*********************************************************************
@@ -337,6 +373,7 @@
 
                     $('#txt_mmYy').text(selectMonthpickerData.getFullYear()); //그리드 월tab 년도 값 입력
                     $('#txt_mmMm').text(selectMonthpickerData.getMonth() + 1); //그리드 월tab 월 값 입력
+                    setMonthGridData();
             });
 
             /*********************************************************************
@@ -398,33 +435,43 @@
             /*********************************************************************
             *   Draw  calendar Event - 데이터 받아오기
             *********************************************************************/
-            var param = {
-                "email" : sessionStorage.getItem("email")
+            function getCalendarSessionDate(email) {
+               console.log("email111 : ",email);
+
+                //email 파라미터가 null / EmptyString 으로 인입된 경우 Session 값을 기준하여 셋팅.
+                if (email == null || email == "") {
+                    email = sessionStorage.getItem("email")
+                }
+
+                var param = {
+                    "email"     : email
+                }
+
+                $.ajaxCall( param, {
+                     'method' : 'GET',
+                     'url' : "{% url 'dili_api:getCalendarData' %}",
+                     'dataType' : 'json',
+                     'data' : JSON.stringify(param),
+                     'async' : false,
+                     'callbackFn' : function(data, status, xhr){
+                        console.log("data111 : ",JSON.parse(data))
+
+                        var dataParam = JSON.parse(data)
+
+                        if(dataParam.length > 0) {
+                            setCalendar(data);
+                        }
+                     }
+                });
             }
-
-            $.ajaxCall( param, {
-                 'method' : 'GET',
-                 'url' : "{% url 'dili_api:getCalendarData' %}",
-                 'dataType' : 'json',
-                 'data' : JSON.stringify(param),
-                 'async' : false,
-                 'callbackFn' : function(data, status, xhr){
-                    console.log("data111 : ",JSON.parse(data))
-
-                    if(data.length > 0) {
-                        setCalendar(data);
-                    } else {
-                        setCalendar(0);
-                    }
-                 }
-            });
 
             /*********************************************************************
             *   Draw  calendar Event - 받아온 데이터 캘린더에 입력
             *********************************************************************/
             function setCalendar(data){
+<!--                console.log("calendarData1 : ",data);-->
+
                 var calendarData = JSON.parse(data);
-<!--                console.log("calendarData1 : ",calendarData);-->
 
                 console.log("WRK_DT : ",calendarData[7].WRK_DT);
                 console.log("JOB_STRT_TM : ",calendarData[7].JOB_STRT_TM);
@@ -552,7 +599,7 @@
             *   calendar dblClick Event - calender 더블클릭시
             *********************************************************************/
             $('#calendar').dblclick(function(event){
-                console.log('calendarDbClick');
+                console.log('calendarDbClick: ', event);
 
                 //메서드만들어서 파라미터 보내기
 
@@ -587,25 +634,38 @@
                 $('#txt_weekEndMm').text(endDate.getMonth() + 1); //그리드 주tab 종료월 입력
                 $('#txt_weekEndDd').text(endDate.getDate()); //그리드 주tab 종료일 입력
 
-
-                console.log("테스트1 :", setWeek(strtDate).baseDate);
-                console.log("테스트2 :", setWeek(endDate).baseDate);
-
-
-
                 tempStrtDt = setWeek(strtDate).baseDate;
                 tempEndDt = setWeek(endDate).baseDate;
-                setGridData(tempStrtDt, tempEndDt);
+                setWeekGridData(tempStrtDt, tempEndDt);
 
             }
+            /*********************************************************************
+            *   my_modal 영역 닫기 버튼 클릭이벤트
+            *********************************************************************/
+            $('#exitSchdModal').click(function(){
 
+                var dfrWeekEndYy = $('#txt_weekEndYy').text(); //현재 종료 년도
+                var dfrWeekEndMm = $('#txt_weekEndMm').text()-1; //현재 종료 월
+                var dfrWeekEndDd = $('#txt_weekEndDd').text(); //현재 종료 일
+
+                var dfrWeekStrtYy = $('#txt_weekStrtYy').text(); // 현재 시작 년도
+                var dfrWeekStrtMm = $('#txt_weekStrtMm').text()-1; //현재 시작 월
+                var dfrWeekStrtDd = $('#txt_weekStrtDd').text(); // 현재 시작 일
+
+                var dfrEndDate = new Date(dfrWeekEndYy, dfrWeekEndMm, dfrWeekEndDd); //현재 종료 날짜 등록
+                var dfrStrtDate = new Date(dfrWeekStrtYy, dfrWeekStrtMm, dfrWeekStrtDd); //현재 시작 날짜 등록
+
+                tempStrtDt = setWeek(dfrStrtDate).baseDate;
+                tempEndDt = setWeek(dfrEndDate).baseDate;
+                setWeekGridData(tempStrtDt, tempEndDt);
+                setMonthGridData();
+                $('#my_modal2').empty();
+                $('.model_layout').empty();
+            });
 
         });<!--ready.function_END-->
 
         var myChart;
-
-
-
 
         /*********************************************************************
         *   Week Grid 생성
@@ -643,17 +703,44 @@
                 var allWrkTm = "-";
                 var normWrkTm = "-";
                 var overWrkTm = "-";
+                var apvlStus = "-"
+                var chckHldy = 0;
 
                 if(schdData.length > 0){
                     for(var j = 0; j < schdData.length; j++){
                         if(tempSetWeek == schdData[j].WRK_DT){
+                            if(schdData[j].APVL_REQ_DIVS != "03"){
 
-                            jobStrtTm = schdData[j].JOB_STRT_TM;
-                            jobEndTm = schdData[j].JOB_END_TM;
-                            allWrkTm = schdData[j].ALL_WRK_TM;
-                            normWrkTm = schdData[j].NORM_WRK_TM;
-                            if(schdData[j].OVER_WRK_TM != "00:00:00"){
-                                overWrkTm = schdData[j].OVER_WRK_TM;
+                                jobStrtTm = schdData[j].JOB_STRT_TM;
+                                jobEndTm = schdData[j].JOB_END_TM;
+                                if(schdData[j].ALL_WRK_TM != "00:00:00"){
+
+									allWrkTm = schdData[j].ALL_WRK_TM;
+								}
+
+								if(schdData[j].NORM_WRK_TM != "00:00:00"){
+
+									normWrkTm = schdData[j].NORM_WRK_TM;
+								}
+
+                                if(schdData[j].OVER_WRK_TM != "00:00:00"){
+
+                                    overWrkTm = schdData[j].OVER_WRK_TM;
+                                }
+
+                            }else {
+
+                                chckHldy = 1;
+                            }
+
+                            if(schdData[j].APVL_REQ_DT == "N/A" && schdData[j].APVL_LAST_APRV_DT == "N/A" && schdData[j].OVER_WRK_TM != "00:00:00"){
+                                apvlStus = "미등록"
+                            }
+                            if(schdData[j].APVL_REQ_DT != "N/A" && schdData[j].APVL_LAST_APRV_DT == "N/A"){
+                                apvlStus = "진행중"
+                            }
+                            if(schdData[j].APVL_REQ_DT != "N/A" && schdData[j].APVL_LAST_APRV_DT != "N/A"){
+                                apvlStus = "완료"
                             }
                         }
                     }
@@ -663,8 +750,16 @@
                 weekTable += '<td class="pt-3-half" contenteditable="false">'+jobStrtTm+'</td>';
                 weekTable += '<td class="pt-3-half" contenteditable="false">'+jobEndTm+'</td>';
                 weekTable += '<td class="pt-3-half" contenteditable="false">'+allWrkTm+'</td>';
-                weekTable += '<td class="pt-3-half" contenteditable="false">정상근무 : '+normWrkTm+' / 초과근무 : '+overWrkTm+'</td>';
-                weekTable += '<td class="pt-3-half" contenteditable="false"></td>';
+
+                if(chckHldy == 0){
+
+                    weekTable += '<td class="pt-3-half" contenteditable="false">정상근무 : '+normWrkTm+' / 초과근무 : '+overWrkTm+'</td>';
+                }else {
+
+                    weekTable += '<td class="pt-3-half" contenteditable="false">휴가</td>';
+                }
+
+                weekTable += '<td class="pt-3-half" contenteditable="false">'+apvlStus+'</td>';
                 weekTable += '</tr>';
                 weekGridStrtDate.setDate(weekGridStrtDate.getDate()+1);
             }
@@ -678,7 +773,7 @@
         /*********************************************************************
         *   Month Grid 생성
         *********************************************************************/
-        function crteMonthGrid(){
+        function crteMonthGrid(schdData){
 
             var monthTable = '<table class="table table-bordered table-responsive-md table-striped text-center">';
             monthTable += '<thead>';
@@ -699,23 +794,81 @@
             var monthGridStrtDate = new Date(monthGridStrtYy, monthGridStrtMm, 1); //시작 날짜
             var tempMonthEndDate = new Date(monthGridStrtYy, monthGridStrtMm, 32); //다음 년도,월 세팅
             var monthEndDate = new Date(tempMonthEndDate.getFullYear(), tempMonthEndDate.getMonth(), 0); //종료 날짜
-            var mTdYear = "";
-            var mTdMonth = "";
             var mTdDate = "";
+            var tempSetMonth = "";
 
 
             for(var i = 0; i < monthEndDate.getDate(); i++){
-                mTdYear = monthGridStrtDate.getFullYear();
-                mTdMonth = monthGridStrtDate.getMonth()+1;
-                mTdDate = monthGridStrtDate.getDate();
 
-                monthTable += '<tr id ="grd_month'+mTdYear+'/'+mTdMonth+'/'+mTdDate+'" onclick="onclickMonthEvt(this)">';
+                mTdDate = monthGridStrtDate.getDate();
+                tempSetMonth = setWeek(monthGridStrtDate).baseDate;
+				var jobStrtTm = "-";
+                var jobEndTm = "-";
+                var allWrkTm = "-";
+                var normWrkTm = "-";
+                var overWrkTm = "-";
+                var apvlStus = "-"
+                var chckHldy = 0;
+
+				if(schdData.length > 0){
+                    for(var j = 0; j < schdData.length; j++){
+                        if(tempSetMonth == schdData[j].WRK_DT){
+
+                            if(schdData[j].APVL_REQ_DIVS != "03"){
+
+                                jobStrtTm = schdData[j].JOB_STRT_TM;
+                                jobEndTm = schdData[j].JOB_END_TM;
+
+                                if(schdData[j].ALL_WRK_TM != "00:00:00"){
+
+									allWrkTm = schdData[j].ALL_WRK_TM;
+								}
+
+								if(schdData[j].NORM_WRK_TM != "00:00:00"){
+
+									normWrkTm = schdData[j].NORM_WRK_TM;
+								}
+
+                                if(schdData[j].OVER_WRK_TM != "00:00:00"){
+
+                                    overWrkTm = schdData[j].OVER_WRK_TM;
+                                }
+
+
+                            }else {
+
+                                chckHldy = 1;
+                            }
+
+                            if(schdData[j].APVL_REQ_DT == "N/A" && schdData[j].APVL_LAST_APRV_DT == "N/A" && schdData[j].OVER_WRK_TM != "00:00:00"){
+                                apvlStus = "미등록"
+                            }
+                            if(schdData[j].APVL_REQ_DT != "N/A" && schdData[j].APVL_LAST_APRV_DT == "N/A"){
+                                apvlStus = "진행중"
+                            }
+                            if(schdData[j].APVL_REQ_DT != "N/A" && schdData[j].APVL_LAST_APRV_DT != "N/A"){
+                                apvlStus = "완료"
+                            }
+                        }
+                    }
+                }
+
+
+                monthTable += '<tr id ="grd_month'+tempSetMonth+'" onclick="onclickMonthEvt(this)" ondblclick="ondblClickMonthEvt(this)">';
                 monthTable += '<td class="pt-3-half" contenteditable="false">'+mTdDate+'</td>';
-                monthTable += '<td class="pt-3-half" contenteditable="false"></td>';
-                monthTable += '<td class="pt-3-half" contenteditable="false"></td>';
-                monthTable += '<td class="pt-3-half" contenteditable="false"></td>';
-                monthTable += '<td class="pt-3-half" contenteditable="false">정상근무 :  / 초과근무 : </td>';
-                monthTable += '<td class="pt-3-half" contenteditable="false"></td>';
+                monthTable += '<td class="pt-3-half" contenteditable="false">'+jobStrtTm+'</td>';
+                monthTable += '<td class="pt-3-half" contenteditable="false">'+jobEndTm+'</td>';
+                monthTable += '<td class="pt-3-half" contenteditable="false">'+allWrkTm+'</td>';
+
+                if(chckHldy == 0){
+
+                    monthTable += '<td class="pt-3-half" contenteditable="false">정상근무 : '+normWrkTm+' / 초과근무 : '+overWrkTm+'</td>';
+                }else {
+
+                    monthTable += '<td class="pt-3-half" contenteditable="false">휴가</td>';
+                }
+
+                monthTable += '<td class="pt-3-half" contenteditable="false">'+apvlStus+'</td>';
                 monthTable += '</tr>';
                 monthGridStrtDate.setDate(monthGridStrtDate.getDate()+1);
             }
@@ -731,7 +884,6 @@
         *********************************************************************/
        function onclickWeekEvt(trId) {
             var wClickDt = trId.id.replace('grd_week','');
-            console.log(wClickDt);
 
             weekDate = setWeek(wClickDt);                                   // 선택된 일이 포함된 주의 Start,End Date 조회
             getWrkTimeByIml(null, weekDate.strtDate, weekDate.endDate);     // Session Email 을 기준으로 시작~종료일에 대한 근무시간 조회.
@@ -743,18 +895,69 @@
         *********************************************************************/
        function onclickMonthEvt(trId) {
             var mClickDt = trId.id.replace('grd_month','');
-            console.log(mClickDt);
 
             weekDate = setWeek(mClickDt);                                   // 선택된 일이 포함된 주의 Start,End Date 조회
             getWrkTimeByIml(null, weekDate.strtDate, weekDate.endDate);     // Session Email 을 기준으로 시작~종료일에 대한 근무시간 조회.
 
        }
 
-       function ondblClickEvt(dbl) {
+       /*********************************************************************
+        *   주 그리드 더블클릭 이벤트
+        *********************************************************************/
+       function ondblClickEvt(trId) {
 
             modal('my_modal');
             $('#my_modal2').load("{% url 'dili_api:scheduleMgmtPop' %}");
 
+            $('#tmpPopDt').text(trId.id.replace('grd_week',''));
+            $('#tmpPopStrtTm').text($('#'+trId.id).children().eq(1).text());
+            $('#tmpPopEndTm').text($('#'+trId.id).children().eq(2).text());
+            var detlSchd = $('#'+trId.id).children().eq(4).text();
+            var normWrkTm = "-";
+            var overWrkTm = "-";
+            var holi = "-";
+            if(detlSchd != "휴가"){
+
+                normWrkTm = detlSchd.split('/')[0].replace('정상근무 : ','').trim();
+                overWrkTm = detlSchd.split('/')[1].replace('초과근무 : ','').trim();
+            }else {
+
+                holi = detlSchd;
+            }
+            $('#tmpNormWrkTm').text(normWrkTm);
+            $('#tmpOverWrkTm').text(overWrkTm);
+            $('#tmpHoli').text(holi);
+            $('#tmpPopAllTm').text($('#'+trId.id).children().eq(3).text());
+            $('#tmpPopApvlStus').text($('#'+trId.id).children().eq(5).text());
+       }
+       /*********************************************************************
+        *   월 그리드 더블클릭 이벤트
+        *********************************************************************/
+       function ondblClickMonthEvt(trId) {
+
+            modal('my_modal');
+            $('#my_modal2').load("{% url 'dili_api:scheduleMgmtPop' %}");
+
+            $('#tmpPopDt').text(trId.id.replace('grd_month',''));
+            $('#tmpPopStrtTm').text($('#'+trId.id).children().eq(1).text());
+            $('#tmpPopEndTm').text($('#'+trId.id).children().eq(2).text());
+            var detlSchd = $('#'+trId.id).children().eq(4).text();
+            var normWrkTm = "-";
+            var overWrkTm = "-";
+            var holi = "-";
+            if(detlSchd != "휴가"){
+
+                normWrkTm = detlSchd.split('/')[0].replace('정상근무 : ','').trim();
+                overWrkTm = detlSchd.split('/')[1].replace('초과근무 : ','').trim();
+            }else {
+
+                holi = detlSchd;
+            }
+            $('#tmpNormWrkTm').text(normWrkTm);
+            $('#tmpOverWrkTm').text(overWrkTm);
+            $('#tmpHoli').text(holi);
+            $('#tmpPopAllTm').text($('#'+trId.id).children().eq(3).text());
+            $('#tmpPopApvlStus').text($('#'+trId.id).children().eq(5).text());
        }
 
         /*********************************************************************
@@ -779,9 +982,14 @@
                 return;                                 //baseEndDate 과 endDate이 동일한 경우 기존 조회된 내용과 변동사항이 없으므로 Return한다.
             }
 
-            //email 파라미터가 null / EmptyString 으로 인입된 경우 Session 값을 기준하여 셋팅.
+            //email 파라미터가 null / EmptyString 으로 인입된 경우 $('#empEmailHidden') 값 또는, Session 값을 기준하여 셋팅.
             if (email == null || email == "") {
-                email = sessionStorage.getItem("email")
+
+                if ($('#empEmailHidden').val() == null || $('#empEmailHidden').val() == "") {
+                    email = sessionStorage.getItem("email");
+                } else {
+                    email = ('#empEmailHidden').val();
+                }
             }
 
             var param = {
@@ -933,11 +1141,33 @@
 
     </script>
 
-        <!--모달 영역 -->
+        <!--근무시간관리상세 모달 영역 -->
         <div id="my_modal" class="modalUi">
-            <div id="my_modal2" class="model_layout">
+            <div id="my_modal2">
             </div>
-            <a class="modal_close_btn">
+            <a class="modal_close_btn" id="exitSchdModal">
+                <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-x-circle" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                   <path fill-rule="evenodd" d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                   <path fill-rule="evenodd" d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+                </svg>
+                <span id="tmpPopDt" class="model_layout" style="display:none;" ></span>
+                <span id="tmpPopStrtTm" class="model_layout" style="display:none;" ></span>
+                <span id="tmpPopEndTm" class="model_layout" style="display:none;" ></span>
+
+                <span id="tmpNormWrkTm" class="model_layout" style="display:none;" ></span>
+                <span id="tmpOverWrkTm" class="model_layout" style="display:none;" ></span>
+                <span id="tmpHoli" class="model_layout" style="display:none;" ></span>
+
+                <span id="tmpPopAllTm" class="model_layout" style="display:none;" ></span>
+                <span id="tmpPopApvlStus" class="model_layout" style="display:none;" ></span>
+            </a>
+        </div>
+
+        <!--결재올리기기 모달 영역 -->
+        <div id="apvlUpldDiv_modal" class="modalUi">
+            <div id="apvlUpld_modal">
+            </div>
+            <a class="modal_close_btn" id="exitApvlModal">
                 <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-x-circle" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                    <path fill-rule="evenodd" d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
                    <path fill-rule="evenodd" d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>

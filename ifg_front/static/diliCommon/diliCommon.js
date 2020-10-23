@@ -28,7 +28,7 @@ function getCurrentDate() {
     var date    = today.getDate();          // 날짜
     var day     = today.getDay();           // 요일 (0~6으로 출력, 0:일요일, 1:월요일, 6:토요일)
 
-    var curDate = year+"/"+lpad((month+1).toString(),2,"0")+"/"+lpad(date.toString(),2,"0");
+    var curDate = year+"-"+lpad((month+1).toString(),2,"0")+"-"+lpad(date.toString(),2,"0");
 
     return curDate
 }
@@ -71,4 +71,72 @@ function setDateFormat(date) {
     date = year+"-"+lpad((month+1).toString(),2,"0")+"-"+lpad(date.toString(),2,"0");
 
     return date
+}
+/*********************************************************************
+*   현재시간 호출
+*********************************************************************/
+function getCurrentTime() {
+
+    var tgtTime     = new Date();
+    var hours    = tgtTime.getHours();      // 시
+    var minutes   = tgtTime.getMinutes();         // 분 (today.getMonth()는 0~11로 출력)
+    var seconds    = tgtTime.getSeconds();          // 초
+
+    var curTime = lpad(hours.toString(),2,"0")+":"+lpad(minutes.toString(),2,"0")+":"+lpad(seconds.toString(),2,"0");
+
+    return curTime
+}
+
+/*********************************************************************
+*   전체근무시간 호출
+*********************************************************************/
+function allWrkTmCall(date, strtTm, endTm){
+
+    var tmpStrtDate = date+" "+strtTm;
+    var tmpEndDate = date+" "+endTm;
+
+    var strtDate = new Date(tmpStrtDate);
+    var endDate = new Date(tmpEndDate);
+
+    var tmpSubtractTm = endDate - strtDate;
+    var hour = Math.floor((tmpSubtractTm % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    if(hour > 8){
+        hour -= 1
+    }
+    var minute = Math.floor((tmpSubtractTm % (1000 * 60 * 60)) / (1000 * 60));
+    var second = Math.floor((tmpSubtractTm % (1000 * 60)) / 1000);
+
+
+    var subtractTm = lpad((hour).toString(),2,"0")+":"+lpad((minute).toString(),2,"0")+":"+lpad((second).toString(),2,"0");
+
+    return subtractTm
+}
+
+/*********************************************************************
+*   초과근무시간 호출
+*********************************************************************/
+function overWrkTmCall(date, allTmData){
+    var overTmChk = "";
+    var tmpOverTmChk = allTmData.split(':');
+
+    if(Number(tmpOverTmChk[0]) > 8){
+        var tmpStrtDate = date+" 08:00:00";
+        var tmpEndDate = date+" "+allTmData;
+
+        var strtDate = new Date(tmpStrtDate);
+        var endDate = new Date(tmpEndDate);
+
+        var tmpSubtractTm = endDate - strtDate;
+        var hour = Math.floor((tmpSubtractTm % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        var minute = Math.floor((tmpSubtractTm % (1000 * 60 * 60)) / (1000 * 60));
+        var second = Math.floor((tmpSubtractTm % (1000 * 60)) / 1000);
+
+
+        var subtractTm = lpad((hour).toString(),2,"0")+":"+lpad((minute).toString(),2,"0")+":"+lpad((second).toString(),2,"0");
+        overTmChk = subtractTm;
+    }else {
+        overTmChk = "00:00:00";
+    }
+
+    return overTmChk
 }

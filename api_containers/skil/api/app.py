@@ -319,7 +319,7 @@ class retrieveDevInfo(Resource):
         logging.debug('retrieveDevInfo Start')
         emp_no = request.args.get('emp_no')
 
-        mysql_con = pymysql.connect(host='mariadb', port=3306, db='IFG_IMS', user='ims2', password='1234',
+        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
                                     charset='utf8')
 
         try:
@@ -360,7 +360,7 @@ class devSave(Resource):
         tel_no = request.form['tel_no1'] + '-' + request.form['tel_no2'] + '-' + request.form['tel_no3']
         use_yn = 'Y'
 
-        mysql_con = pymysql.connect(host='mariadb', port=3306, db='IFG_IMS', user='ims2', password='1234',
+        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
                                     charset='utf8')
 
         try:
@@ -433,7 +433,7 @@ class devDelete(Resource):
         emp_name = request.form['emp_name']
         devp_bday = request.form['devp_bday']
 
-        mysql_con = pymysql.connect(host='mariadb', port=3306, db='IFG_IMS', user='ims2', password='1234',
+        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
                                     charset='utf8')
 
         try:
@@ -652,7 +652,7 @@ class skilRegPopupSearch(Resource):
 
         return result1
 
-class skilCdMgmtSearch(Resource):
+class retrieveSkilCd(Resource):
     def get(self):
         # Get posted data from request
         logging.debug("search start")
@@ -669,7 +669,7 @@ class skilCdMgmtSearch(Resource):
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 if skilDiv == "":
-                    sql = "SELECT SKIL_SNO, (SELECT CMM_CD_NAME FROM TB_CMM_CD_DETL WHERE CMM_CD_GRP_ID = 'SKIL_DIVS_CD' AND CMM_CD = A.SKIL_DIVS_CD) AS SKIL_DIVS_CD, SKIL_NAME, REG_EMP_NO, DATE_FORMAT(REG_DATE, '%Y-%m-%d') AS REG_DATE, RMKS FROM TB_SKIL_MGNT_CD A"
+                    sql = "SELECT SKIL_SNO,  SKIL_DIVS_CD, SKIL_NAME, REG_EMP_NO, DATE_FORMAT(REG_DATE, '%Y-%m-%d') AS REG_DATE, RMKS FROM TB_SKIL_MGNT_CD A"
                     cursor.execute(sql)
                 else:
                     sql = "SELECT SKIL_SNO, (SELECT CMM_CD_NAME FROM TB_CMM_CD_DETL WHERE CMM_CD_GRP_ID = 'SKIL_DIVS_CD' AND CMM_CD = A.SKIL_DIVS_CD) AS SKIL_DIVS_CD, SKIL_NAME, REG_EMP_NO, DATE_FORMAT(REG_DATE, '%Y-%m-%d') AS REG_DATE, RMKS FROM TB_SKIL_MGNT_CD A WHERE 1=1 "
@@ -715,6 +715,104 @@ class getskilCdMgmt(Resource):
 
         return result2
 
+#스킬 코드 삭제
+class deleteSkilCd(Resource):
+    def post(self):
+        params = request.get_json()
+
+        logging.debug("deleteSkilCd start")
+        skil_sno = request.form['skilSno']
+
+        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2',
+                                    password='1234',
+                                    charset='utf8')
+
+        try:
+            with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+                sql = "DELETE FROM TB_SKIL_MGNT_CD " \
+                      "WHERE SKIL_SNO = %s"
+                cursor.execute(sql, skil_sno)
+                mysql_con.commit()
+                logging.debug('deleteSkilCd success')
+        finally:
+            mysql_con.close()
+
+        retJson = {
+            "status": 200,
+            "msg": "deleteSkilCd success"
+        }
+
+        return jsonify(retJson)
+
+#스킬 코드 insert
+class insertSkilCd(Resource):
+    def post(self):
+        params = request.get_json()
+
+        logging.debug("insertSkilCd Start")
+
+        for row in request.form:
+            logging.debug(row + ':' + request.form[row])
+            globals()[row] = request.form[row]
+
+        mysql_con = pymysql.connect(host='218.151.225.142', port=3306, db='IFG_IMS', user='ims2', password='1234',
+                                    charset='utf8')
+        logging.debug("CONNET Start")
+        try:
+            with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+                logging.debug("SQL Start")
+                sql = "SELECT MAX(SKIL_SNO) + 1 AS SKIL_SNO FROM TB_SKIL_MGNT_CD"
+                cursor.execute(sql)
+                snoResult = cursor.fetchone()
+                skil_sno = snoResult['SKIL_SNO']
+                logging.debug(skil_sno)
+
+                sql2 = "INSERT INTO TB_SKIL_MGNT_CD (`SKIL_SNO`, " \
+                      "`SKIL_DIVS_CD`, " \
+                      "`SKIL_NAME`, " \
+                      "`REG_EMP_NO`, " \
+                      "`REG_DATE`, " \
+                      "`CHG_EMP_NO`, " \
+                      "`CHG_DATE`, " \
+                      "`RMKS`) " \
+                      "VALUES(%s, %s, %s, %s, NOW(), %s, NOW(), %s)"
+
+                cursor.execute(sql2, (skil_sno, SKIL_DIVS_CD, SKIL_NAME, userId, REG_DATE, RMK))
+                mysql_con.commit()
+
+        finally:
+            mysql_con.close()
+
+        return skil_sno
+
+#스킬 코드 update
+class updateSkilCd(Resource):
+    def post(self):
+        params = request.get_json()
+
+        logging.debug("updateSkilCd Start")
+
+        for row in request.form:
+            logging.debug(row + ':' + request.form[row])
+            globals()[row] = request.form[row]
+
+        mysql_con = pymysql.connect(host='218.151.225.142', port=3306, db='IFG_IMS', user='ims2', password='1234',
+                                    charset='utf8')
+
+        try:
+            with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+                sql = "UPDATE TB_SKIL_MGNT_CD " \
+                        "SET SKIL_DIVS_CD=%s, SKIL_NAME=%s, REG_EMP_NO=%s, REG_DATE=NOW(), RMKS=%s" \
+                        "WHERE SKIL_SNO = %s"
+
+                cursor.execute(sql, (SKIL_DIVS_CD, SKIL_NAME, userId, RMKS, SKIL_SNO))
+                mysql_con.commit()
+
+        finally:
+            mysql_con.close()
+
+        return skil_sno
+
 api.add_resource(Hello, '/hello')
 api.add_resource(Register, '/register')
 api.add_resource(Retrieve, '/retrieve')
@@ -736,13 +834,15 @@ api.add_resource(skilMgmtSearch, '/skilMgmtSearch')
 #공통 코드 조회
 api.add_resource(retrieveCmmCd, '/retrieveCmmCd')
 
-
 # 스킬 상세 관리
 api.add_resource(skilRegPopupSearch, '/skilRegPopupSearch')
 
 # 스킬 코드 관리
-api.add_resource(skilCdMgmtSearch, '/skilCdMgmtSearch')
+api.add_resource(retrieveSkilCd, '/retrieveSkilCd')
 api.add_resource(getskilCdMgmt, '/getskilCdMgmt')
+api.add_resource(deleteSkilCd, '/deleteSkilCd')
+api.add_resource(insertSkilCd, '/insertSkilCd')
+api.add_resource(updateSkilCd, '/updateSkilCd')
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5003, debug=True)
