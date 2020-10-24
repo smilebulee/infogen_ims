@@ -65,23 +65,24 @@
                             key: "PRJ_CD",
                             label: "프로젝트코드",
                             width: 100,
-                            align: "center"
-                        },
-                        {
-                            key: "SKIL_NAME",
-                            label: "프로젝트명",
-                            width: 80,
-                            align: "center"
+                            align: "center",
+                            hidden : true
                         },
                         {
                             key: "PRJ_NAME",
                             label: "프로젝트명",
-                            width: 80,
+                            width: 120,
+                            align: "center"
+                        },
+                        {
+                            key: "SKIL_NAME",
+                            label: "요구스킬",
+                            width: 150,
                             align: "center"
                         },
                         {
                             key: "GNR_CTRO",
-                            label: "고객사",
+                            label: "원청사",
                             width: 80,
                             align: "center"
                         },
@@ -94,19 +95,19 @@
                         {
                             key: "PRJ_CNCT_CD",
                             label: "고객사 계약코드",
-                            width: 120,
+                            width: 100,
                             align: "center"
                         },
                         {
                             key: "SLIN_BZDP",
                             label: "매출 사업부",
-                            width: 120,
+                            width: 100,
                             align: "center"
                         },
                         {
                             key: "JOB_DIVS_CD",
                             label: "업부구분",
-                            width: 120,
+                            width: 80,
                             align: "center"
                         },
                         {
@@ -168,6 +169,19 @@
                  modal('prjRegModal');
                  $("#prjRegModal2").load("{% url 'prj_api:prjReg' %}");
             });
+
+            /* 투입 인원 관리 */
+            $('#prjInpuMgmtBtn').click(function(){
+
+                if(firstGrid.getList("selected").length != 0){
+                    modal('prjRegModal');
+                    $("#prjRegModal2").load("{% url 'prj_api:prjInpuMgmt' %}");
+                } else{
+                    /* 행 선택됐는지 체크 */
+                    alertMsg("선택된 행이 없습니다.");
+                    return;
+                }
+            });
         });
 
         /* 페이징 처리 */
@@ -202,10 +216,10 @@
     <div class="row">
         <div class="col-sm-12">
             <div id="formSearchDiv">
-                <h3>프로젝트 관리<a href="http://ax5.io/ax5ui-grid/api/index.html" class="badge badge-info"></a></h3>
+                <h3 style="padding-bottom:20px;">프로젝트 관리<a href="http://ax5.io/ax5ui-grid/api/index.html" class="badge badge-info"></a></h3>
                 <div id="formDiv">
-                    <div class="form-row" style="padding-bottom:9px">
-                        <label class="col-sm-1" style="max-width:50px;">부서</label>
+                    <div class="form-row" style="padding-bottom:5px;">
+                        <label class="col-sm-1" style="max-width:120px; text-align:center; line-height: 32px;">부서구분</label>
                         <div class="col-sm-2">
                             <select class="form-control" name="deptDiv">
                                 <!--<option selected></option>
@@ -218,8 +232,8 @@
                         </div>
                     </div>
 
-                    <div class="form-row" style="padding-top:9px;">
-                        <label class="col-sm-1" style="max-width:50px;">스킬</label>
+                    <div class="form-row" style="padding-top:5px;">
+                        <label class="col-sm-1" style="max-width:120px; text-align:center; line-height: 32px;">요구스킬</label>
                          <div class="col-sm-2">
                             <select class="form-control" name="skilDiv">
                                 <!--<option selected></option>

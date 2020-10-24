@@ -610,31 +610,36 @@ class prjListSearch(Resource):
                                     charset='utf8')
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
-                sql = "SELECT A.PRJ_CD, PRJ_NAME, B.SKIL_NAME, CTRO,PRJ_CNCT_CD" \
-                      ", (SELECT CMM_CD_NAME FROM TB_CMM_CD_DETL WHERE CMM_CD_GRP_ID = 'SLIN_BZDP' AND A.SLIN_BZDP = CMM_CD) AS SLIN_BZDP" \
-                      ", (SELECT CMM_CD_NAME FROM TB_CMM_CD_DETL WHERE CMM_CD_GRP_ID = 'JOB_DIVS_CD' AND A.JOB_DIVS_CD = CMM_CD) AS JOB_DIVS_CD" \
-                      ", CNTC_STRT_DAY, CNTC_END_DAY" \
-                      ", (SELECT CMM_CD_NAME FROM TB_CMM_CD_DETL WHERE CMM_CD_GRP_ID = 'PGRS_STUS_CD' AND A.PGRS_STUS_CD = CMM_CD) AS PGRS_STUS_CD, RMKS " \
-                      "FROM TB_PRJ_INFO A " \
-                      "LEFT JOIN TB_PRJ_REQ_SKIL B " \
-                      "ON A.PRJ_CD = B.PRJ_CD WHERE 1=1 "
+                sql = "SELECT PRJ_CD, PRJ_NAME, GROUP_CONCAT(C.SKIL_NAME) AS SKIL_NAME, GNR_CTRO, CTRO, PRJ_CNCT_CD, SLIN_BZDP, JOB_DIVS_CD, CNTC_STRT_DAY" \
+                      ", CNTC_END_DAY, PGRS_STUS_CD, RMKS " \
+                      "FROM (SELECT A.PRJ_CD, PRJ_NAME, B.SKIL_NAME, GNR_CTRO, CTRO,PRJ_CNCT_CD" \
+                        ", (SELECT CMM_CD_NAME FROM TB_CMM_CD_DETL WHERE CMM_CD_GRP_ID = 'SLIN_BZDP' AND A.SLIN_BZDP = CMM_CD) AS SLIN_BZDP" \
+                        ", (SELECT CMM_CD_NAME FROM TB_CMM_CD_DETL WHERE CMM_CD_GRP_ID = 'JOB_DIVS_CD' AND A.JOB_DIVS_CD = CMM_CD) AS JOB_DIVS_CD" \
+                        ", CNTC_STRT_DAY, CNTC_END_DAY" \
+                        ", (SELECT CMM_CD_NAME FROM TB_CMM_CD_DETL WHERE CMM_CD_GRP_ID = 'PGRS_STUS_CD' AND A.PGRS_STUS_CD = CMM_CD) AS PGRS_STUS_CD" \
+                        ", RMKS " \
+                        "FROM TB_PRJ_INFO A " \
+                        "LEFT JOIN TB_PRJ_REQ_SKIL B " \
+                        "ON A.PRJ_CD = B.PRJ_CD " \
+                        "WHERE 1=1 "
+                sql2 = ") C GROUP BY PRJ_CD"
                 if deptDiv == "" and skilDiv == "":
-                    logging.debug('##### sql : ' + sql)
-                    cursor.execute(sql)
+                    logging.debug('##### sql : ' + sql + sql2)
+                    cursor.execute(sql + sql2)
                 else:
                     if deptDiv != "" and skilDiv != "":
                         sql += "AND SLIN_BZDP = %s" \
                                "AND SKIL_DIVS_CD = %s"
-                        logging.debug('##### sql : ' + sql)
-                        cursor.execute(sql, (deptDiv, skilDiv))
+                        logging.debug('##### sql : ' + sql + sql2)
+                        cursor.execute(sql + sql2, (deptDiv, skilDiv))
                     elif deptDiv != "":
                         sql += "AND SLIN_BZDP = %s"
-                        logging.debug('##### sql : ' + sql)
-                        cursor.execute(sql, (deptDiv))
+                        logging.debug('##### sql : ' + sql + sql2)
+                        cursor.execute(sql + sql2, (deptDiv))
                     else:
                         sql += "AND SKIL_DIVS_CD = %s"
-                        logging.debug('##### sql : ' + sql)
-                        cursor.execute(sql, (skilDiv))
+                        logging.debug('##### sql : ' + sql + sql2)
+                        cursor.execute(sql + sql2, (skilDiv))
         finally:
             mysql_con.close()
 
