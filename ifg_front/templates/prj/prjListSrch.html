@@ -5,8 +5,10 @@
 <script type="text/javascript" xmlns:max-width="http://www.w3.org/1999/xhtml">
 
         var data;
+        var firstGrid;
         $(document).ready(function(){
-            var firstGrid = $('[data-ax5grid="first-grid"]');
+            firstGrid = $('[data-ax5grid="first-grid"]');
+
             var gridList = [        /* 그리드에 세팅할 데이터는 JSON 배열 형태 */
                 {"NO":"", "PRJ_NAME":"", "GNR_CTRO":"", "CTRO":"", "PRJ_CNCT_CD":"", "SLIN_BZDP":"", "JOB_DIVS_CD":"", "CNTC_STRT_DAY":"", "CNTC_END_DAY":"", "PGRS_STUS_CD":"", "RMKS":""},
             ];
@@ -138,22 +140,13 @@
                     };
 
                     firstGrid = $('[data-ax5grid="first-grid"]').initGrid(gridOptions);
-                    firstGrid.setData(gridList);
-                    makePaging(ret);
+                    getGridList(0);
                 }
             });
 
             /* 조회 버튼 클릭 */
             $('#searchBtn').click(function(){
-                $('#formSearchDiv').ajaxCall({
-                    method : 'GET',
-                    url : "{% url 'prj_api:prjListSearch' %}",
-                    callbackFn : function(data){
-                        var gridList = data; /* 그리드에 세팅할 데이터는 JSON 배열 형태 */
-
-                        firstGrid.setData(gridList);
-                    }
-                });
+                getGridList(1);
             });
 
             /* 프로젝트 등록 선택 */
@@ -172,7 +165,6 @@
 
             /* 투입 인원 관리 */
             $('#prjInpuMgmtBtn').click(function(){
-
                 if(firstGrid.getList("selected").length != 0){
                     modal('prjRegModal');
                     $("#prjRegModal2").load("{% url 'prj_api:prjInpuMgmt' %}");
@@ -187,6 +179,25 @@
         /* 페이징 처리 */
         function makePaging(ret){
             $('#paging_navi').makePagingNavi(ret, 'getGridList');
+        };
+
+        /* 데이터 조회 */
+        function getGridList(page){
+            var options = {
+               method : 'GET',
+                url : "{% url 'prj_api:prjListSearch' %}",
+                callbackFn :  function(ret){
+                    firstGrid.setData(ret.list);
+                    firstGrid.select(0);
+                    makePaging(ret);
+                }
+            };
+            if(page == 0) {
+                $.ajaxCall({ page : page, skilDiv : "", deptDiv : ""}, options);
+            } else {
+                $.ajaxCall({ page : page, skilDiv : $('[name="skilDiv"]').val(), deptDiv : $('[name="deptDiv"]').val()}, options);
+            }
+
         };
 
     </script>
@@ -227,7 +238,7 @@
                                 <option value="2">전자</option>-->
                             </select>
                         </div>
-                        <div class="col-sm-1" style="padding-left:760px;">
+                        <div class="col-sm-1" style="padding-left:720px;">
                         <button class="btn btn-primary" id="searchBtn" style="width:120px">조회</button>
                         </div>
                     </div>
