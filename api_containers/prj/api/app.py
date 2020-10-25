@@ -606,7 +606,7 @@ class prjListSearch(Resource):
         logging.debug('skilDiv : ' + skilDiv)
         logging.debug('------------------------------------')
 
-        mysql_con = pymysql.connect(host='218.151.225.142', port=3306, db='IFG_IMS', user='ims2', password='1234',
+        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
                                     charset='utf8')
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
@@ -635,11 +635,11 @@ class prjListSearch(Resource):
                     elif deptDiv != "":
                         sql += "AND SLIN_BZDP = %s"
                         logging.debug('##### sql : ' + sql + sql2)
-                        cursor.execute(sql + sql2, (deptDiv))
+                        cursor.execute(sql + sql2, deptDiv)
                     else:
                         sql += "AND SKIL_DIVS_CD = %s"
                         logging.debug('##### sql : ' + sql + sql2)
-                        cursor.execute(sql + sql2, (skilDiv))
+                        cursor.execute(sql + sql2, skilDiv)
         finally:
             mysql_con.close()
 
@@ -658,7 +658,7 @@ class getDeptCd(Resource):
         # Get posted data from request
         logging.debug("getDeptCd Start")
 
-        mysql_con = pymysql.connect(host='218.151.225.142', port=3306, db='IFG_IMS', user='ims2', password='1234',
+        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
                                     charset='utf8')
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:

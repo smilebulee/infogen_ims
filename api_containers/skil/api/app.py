@@ -664,20 +664,16 @@ class retrieveSkilCd(Resource):
         logging.debug('skilDiv : ' + skilDiv)
         logging.debug('------------------------------------')
 
-        mysql_con = pymysql.connect(host='218.151.225.142', port=3306, db='IFG_IMS', user='ims2', password='1234',
+        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
                                     charset='utf8')
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+                sql = "SELECT SKIL_SNO, SKIL_DIVS_CD, SKIL_NAME, REG_EMP_NO, DATE_FORMAT(REG_DATE, '%Y-%m-%d') AS REG_DATE, RMKS FROM TB_SKIL_MGNT_CD WHERE 1=1 "
                 if skilDiv == "":
-                    sql = "SELECT SKIL_SNO,  SKIL_DIVS_CD, SKIL_NAME, REG_EMP_NO, DATE_FORMAT(REG_DATE, '%Y-%m-%d') AS REG_DATE, RMKS FROM TB_SKIL_MGNT_CD A"
                     cursor.execute(sql)
                 else:
-                    sql = "SELECT SKIL_SNO, (SELECT CMM_CD_NAME FROM TB_CMM_CD_DETL WHERE CMM_CD_GRP_ID = 'SKIL_DIVS_CD' AND CMM_CD = A.SKIL_DIVS_CD) AS SKIL_DIVS_CD, SKIL_NAME, REG_EMP_NO, DATE_FORMAT(REG_DATE, '%Y-%m-%d') AS REG_DATE, RMKS FROM TB_SKIL_MGNT_CD A WHERE 1=1 "
-                    if skilDiv != "":
-                        sql = sql + "AND SKIL_DIVS_CD = %s "
-                    logging.debug(sql)
-
-                    cursor.execute(sql, (skilDiv))
+                    sql += "AND SKIL_DIVS_CD = " + skilDiv
+                    cursor.execute(sql)
         finally:
             mysql_con.close()
 
@@ -695,7 +691,7 @@ class getskilCdMgmt(Resource):
         # Get posted data from request
         logging.debug("getskilCdMgmt Start")
 
-        mysql_con = pymysql.connect(host='218.151.225.142', port=3306, db='IFG_IMS', user='ims2', password='1234',
+        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
                                     charset='utf8')
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
@@ -755,7 +751,7 @@ class insertSkilCd(Resource):
             logging.debug(row + ':' + request.form[row])
             globals()[row] = request.form[row]
 
-        mysql_con = pymysql.connect(host='218.151.225.142', port=3306, db='IFG_IMS', user='ims2', password='1234',
+        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
                                     charset='utf8')
         logging.debug("CONNET Start")
         try:
@@ -796,7 +792,7 @@ class updateSkilCd(Resource):
             logging.debug(row + ':' + request.form[row])
             globals()[row] = request.form[row]
 
-        mysql_con = pymysql.connect(host='218.151.225.142', port=3306, db='IFG_IMS', user='ims2', password='1234',
+        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
                                     charset='utf8')
 
         try:
