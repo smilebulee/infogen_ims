@@ -7,12 +7,12 @@ class LoginForm(forms.ModelForm):
         fields = ('username','password') #, 'email'
 
         widgets = {
-            'username': forms.TextInput(attrs={'id':'username', 'class': 'form-control', 'placeholder': '닉네임', 'value':''}),
+            'username': forms.TextInput(attrs={'id':'username', 'class': 'form-control', 'placeholder': 'ID', 'value':''}),
             #'email': forms.EmailInput(attrs={'id':'email', 'class': 'form-control', 'value':'bulee@infogen.co.kr', 'placeholder': 'Email'}),
             'password': forms.PasswordInput(attrs={'id':'password', 'class': 'form-control', 'value':'', 'placeholder': 'Password'})
         }
         labels = {
-            'username': '닉네임',
+            'username': '아이디',
             #'email': '이메일',
             'password': '패스워드'
         }
