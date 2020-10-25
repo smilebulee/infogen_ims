@@ -6,7 +6,7 @@ from flask_restful import Api, Resource
 import logging
 logging.basicConfig(level=logging.DEBUG)
 import bcrypt
-
+import socket
 
 #from bson.json_util import dumps
 
@@ -48,7 +48,17 @@ def existsEmail(email):
 
         return True
 
+def getSystemInfo():
+    try:
+        if (socket.gethostbyname(socket.gethostname()) == "172.20.0.6" ) :
+            logging.debug('Prod Server')
+            return "mariadb"
+        else :
+            logging.debug('Local Server')
+            return "218.151.225.142"
 
+    except Exception as e:
+        logging.exception(e)
 """
 RESOURCES
 """
@@ -182,7 +192,7 @@ class Search(Resource):
         #     #     "email": email
         #     # })
 
-        mysql_con = pymysql.connect(host='mariadb', port=3306, db='test11', user='root', password='infogen')
+        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='test11', user='root', password='infogen')
         cursor = mysql_con.cursor()
 
         logging.debug("3")
@@ -295,7 +305,7 @@ class Search2(Resource):
 
         logging.debug("is not null id")
 
-        mysql_con = pymysql.connect(host='mariadb', port='3306:3306', db='test11', user='root', password='infogen',charset ='utf8')
+        mysql_con = pymysql.connect(getSystemInfo(), port='3306:3306', db='test11', user='root', password='infogen',charset ='utf8')
 
         try :
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
@@ -344,7 +354,7 @@ class empReferenceInit(Resource):
         logging.debug('------------------------------------')
 
 
-        mysql_con = pymysql.connect(host='mariadb', port='3306', db='test11', user='root', password='infogen',charset ='utf8')
+        mysql_con = pymysql.connect(getSystemInfo(), port='3306', db='test11', user='root', password='infogen',charset ='utf8')
         logging.debug('init sql end')
         try :
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
@@ -376,7 +386,7 @@ class empReferenceInit(Resource):
 
 class testDB(Resource):
     def get(self):
-        mysql_con = pymysql.connect(host='218.151.225.142', port=3306, db='IFG_IMS', user='ims2', password='1234',
+        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
                                         charset='utf8')
 
         try:
@@ -399,7 +409,7 @@ class testDB(Resource):
 class mariatestDB(Resource): # Mariadb 연결 진행
     def get(self):
         #requirements pymysql import 후 커넥트 사용
-        mysql_con = pymysql.connect(host='218.151.225.142', port=3306, db='IFG_IMS', user='ims2', password='1234',
+        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
                                         charset='utf8')
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
@@ -423,7 +433,7 @@ class mariatestDB(Resource): # Mariadb 연결 진행
 
 class SingIn(Resource): # 사용자 정보 조회
     def post(self):
-        mysql_con = pymysql.connect(host='218.151.225.142', port=3306, db='IFG_IMS', user='ims2', password='1234',
+        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
                                         charset='utf8')
 
         params = request.get_json()
@@ -466,7 +476,7 @@ class SingIn(Resource): # 사용자 정보 조회
 
 class authSearch(Resource):  # 사용자 권한 조회
     def post(self):
-        mysql_con = pymysql.connect(host='218.151.225.142', port=3306, db='IFG_IMS', user='ims2', password='1234',
+        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
                                         charset='utf8')
         params = request.get_json()
 
