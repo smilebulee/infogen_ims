@@ -1,14 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta name="viewport" content="width=device-width, initial-scale=1"><!-- 모바일 -->
-    {% load static %}
-       <title>IFG-IMS</title>
-</head>
-<body>
-    <div class="container">
+
         <script type="text/javascript">
-        $(document).ready(function(){
+          $(document).ready(function(){
             /* 메인 화면에서 받는 NAME 파라미터 */
 
             name = $('#ipt_searchNamePop').val();
@@ -31,7 +23,7 @@
                      'url' : "{% url 'dili_api:getEmpInfo' %}",
                      'callbackFn' : function(data){
                         // 로그
-                        console.log("data : ",data)
+                        console.log("data : ",data);
                         // 리턴
 
                         if(data.length >= 1) {
@@ -48,6 +40,7 @@
                                 empListGrd(data);
                             }
                         }
+
                      }
                 });
             }
@@ -60,29 +53,42 @@
                 onClickselectBtn();
             });
 
-        });
 
+
+        });
+        <!--ready end -->
+
+
+
+        /* 선택버튼 클릭 이벤트 */
         function onClickselectBtn() {
-            $(".modal_close_btn").click();
-            // 이성씨 함수 호출
-        }
+
+            if( $("#empEmailHidden").val() != null && $("#empEmailHidden").val() != "" ){
+                $(".modal_close_btn").click();
+                weekDate = setWeek(getCurrentDate());                                                       // 현재일이 포함된 주의 Start,End Date 조회
+                getWrkTimeByIml(null, weekDate.strtDate, weekDate.endDate);
+            }
+        };
 
 
         /* 그리드 클릭 이벤트 */
         function onClickEvt(i) {
+            debugger;
+            console.log(' onClickEvt :  ', i.id);
+            console.log(' onClickEvt :  ', $('#'+i.id).children().eq(1).text());
 
-         console.log(' onClickEvt : Test ' );
-   <!--
-            $(`#sel${i}`).click();
-            if($(`#sel${i}`).is(":checked")) {
-                grd_empList${i}.style.background = "black";
+            /* 하이라이트 */
+            for (var j = 1; j < $('#grd_empListTable tr').length; j++ ) {
+                $('#'+$('#grd_empListTable tr')[1].id).css("background","white");
             }
-            $("#empEmailHidden").val($('#'+i.id).children().eq(1).text());
-            $('#empEmailHidden').val($(`#empEmail${i}`).val());
-            -->
 
-        }
+            $('#'+i.id).css("background","lightgray");
 
+            var email = $('#'+i.id).children().eq(1).text(); // 그리드에서 선택한 email 값
+            $("#empEmailHidden").val(email);
+        };
+
+        /* 검색버튼 클릭 이벤트 */
         function onClickSearchBtn(ipt_searchName) {
             var param = {
                 "name" : $('[name="ipt_searchName"]').val()
@@ -105,6 +111,29 @@
 
         };
 
+        /* 직원목록 엔터 조회 */
+        $('#ipt_searchName').keydown(function(e){
+
+                //엔터키 입력 + 이름컬럼에 값이 있는 경우.
+                if ( e.keyCode == 13 && $('#ipt_searchName').val() != 'undefined' && $('#ipt_searchName').val() != "" ) {
+                    var param = $('#ipt_searchNamePop').val();
+                    /* 목록조회 */
+                    $.ajaxCall( param, {
+                         'method' : 'GET',
+                         'url' : "{% url 'dili_api:getEmpInfo' %}",
+                         'dataType' : 'json',
+                         'data' : JSON.stringify(param),
+                         'async' : false,
+                         'callbackFn' : function(data){
+                            // 로그
+                            console.log("data : ",data)
+                            // 리턴
+                            empListGrd(data);
+                         }
+                    });
+                }
+            });
+
 
         /* 직원목록 생성 */
         function empListGrd(data){
@@ -120,17 +149,17 @@
             empListTable += '</thead>';
             empListTable += '<tbody>';
 
-            console.log("Start")
-            console.log(data)
-            console.log(typeof(data))
+            console.log("Start");
+            console.log(data);
+            console.log(typeof(data));
 
             if(data.length > 0) {
                 for(var i = 0; i < size; i++){
-                    empListTable += `<tr id ="grd_empList${i}" onclick="onClickEvt(this)">`;
-                    empListTable += `<td id="empName${i}" class="pt-3-half">${data[i].EMP_NAME}</td>`;
-                    empListTable += `<td id="empEmail${i}" class="pt-3-half">${data[i].EMP_EMAIL}</td>`;
-                    empListTable += `<td id="empTel${i}" class="pt-3-half">${data[i].EMP_TEL}</td>`;
-                    empListTable += `<td id="sel${i}" class="pt-3-half" style="display: none;">checkbox</td>`;
+                    empListTable += '<tr id ="grd_empList'+i+'" onclick="onClickEvt(this)">';
+                    empListTable += '<td class="pt-3-half">'+data[i].EMP_NAME+'</td>';
+                    empListTable += '<td class="pt-3-half">'+data[i].EMP_EMAIL+'</td>';
+                    empListTable += '<td class="pt-3-half">'+data[i].EMP_TEL+'</td>';
+                    empListTable += '<td class="pt-3-half" style="display: none;">checkbox</td>';
                     empListTable += '</tr>';
 
                 }
@@ -141,6 +170,9 @@
 
             document.getElementById('grd_empListTable').innerHTML = empListTable;
         };
+
+
+
 
 
 
@@ -170,5 +202,3 @@
             </div>
         </div>
     </div>
-</body>
-</html>

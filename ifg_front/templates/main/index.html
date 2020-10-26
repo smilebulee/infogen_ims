@@ -32,8 +32,9 @@
         <script type="text/javascript">
           $(document).ready(function(){
              $('.gotoIndexBtn').click(function(e){
-                var txt = ($(this).text()).split(' ')[0];
-                switch(txt){
+                //var txt = ($(this).text()).split(' ')[0];
+                var value = ($(this).val()).split(' ')[0]
+                switch(value){
                   case 'EMP':
                     location.href = '{% url 'emp_api:emp_api' %}'
                     break;
@@ -98,7 +99,7 @@
                     <li>&nbsp;</li>
 
                 </ul>
-                <button type="button" class="btn btn-lg btn-block btn-primary gotoIndexBtn">EMP Main</button>
+                <button type="button" class="btn btn-lg btn-block btn-primary gotoIndexBtn" value="EMP Main">EMP Main</button>
               </div>
             </div>
             </div>
@@ -115,7 +116,7 @@
                   <li>예상프로젝트</li>
                   <li>투입가능정보</li>
                 </ul>
-                <button type="button" class="btn btn-lg btn-block btn-primary gotoIndexBtn">PRJ Main</button>
+                <button type="button" class="btn btn-lg btn-block btn-primary gotoIndexBtn" value="PRJ Main">PRJ Main</button>
               </div>
             </div>
             </div>
@@ -128,11 +129,11 @@
               <div class="card-body">
                 <!--<h1 class="card-title pricing-card-title">$29 <small class="text-muted">/ mo</small></h1>-->
                 <ul class="list-unstyled mt-3 mb-4">
-                  <li>개발정보</li>
-                  <li>분석/설계정보</li>
-                    <li>&nbsp;</li>
+                  <li><a href="{% url 'skil_api:skilMgmt' %}" style="text-decoration: none;">스킬관리</a></li>
+                  <li>&nbsp;</li>
+                  <li>&nbsp;</li>
                 </ul>
-                <button type="button" class="btn btn-lg btn-block btn-primary gotoIndexBtn">SKIL Main</button>
+                <button type="button" class="btn btn-lg btn-block btn-primary gotoIndexBtn" value="SKIL Main">스킬관리 메인</button>
               </div>
             </div>
             </div>
@@ -150,7 +151,7 @@
                   <li>MAIN정보</li>
                     <li>TO-DO정보</li>
                 </ul>
-                <button type="button" class="btn btn-lg btn-block btn-primary gotoIndexBtn">CMM Main</button>
+                <button type="button" class="btn btn-lg btn-block btn-primary gotoIndexBtn" value="CMM Main">CMM Main</button>
               </div>
             </div>
             </div>
@@ -170,7 +171,7 @@
                   <li>&nbsp;</li>
                     <li>&nbsp;</li>
                 </ul>
-                <button type="button" class="btn btn-lg btn-block btn-primary gotoIndexBtn">CNC Main</button>
+                <button type="button" class="btn btn-lg btn-block btn-primary gotoIndexBtn" value="CNC Main">CNC Main</button>
               </div>
             </div>
             </div>
@@ -189,7 +190,7 @@
                   <li><a href="{% url 'dili_api:noticeLst' %}"  style="text-decoration: none;">공지사항</a></li>
                   <li><a href="{% url 'dili_api:apvlReqHist' %}"  style="text-decoration: none;">결재현황</a></li>
                 </ul>
-                <button type="button" class="btn btn-lg btn-block btn-primary gotoIndexBtn">DILI Main</button>
+                <button type="button" class="btn btn-lg btn-block btn-primary gotoIndexBtn"value="DILI Main">DILI Main</button>
               </div>
             </div>
             </div>
@@ -210,7 +211,7 @@
                     <li>&nbsp;</li>
                     <li>&nbsp;</li>
                 </ul>
-                <button type="button" class="btn btn-lg btn-block btn-primary">EVAL Main</button>
+                <button type="button" class="btn btn-lg btn-block btn-primary" value="EVAL Main">EVAL Main</button>
               </div>
             </div>
           </div>
@@ -230,7 +231,7 @@
                   <li>상반기보고</li>
                   <li>하반기보고</li>
                 </ul>
-                <button type="button" class="btn btn-lg btn-block btn-primary">KPI Main</button>
+                <button type="button" class="btn btn-lg btn-block btn-primary" value="KPI Main">KPI Main</button>
               </div>
             </div>
             </div>
@@ -250,7 +251,7 @@
                   <li>Skill현황</li>
                   <li>&nbsp;</li>
                 </ul>
-                <button type="button" class="btn btn-lg btn-block btn-primary">STAT Main</button>
+                <button type="button" class="btn btn-lg btn-block btn-primary" value="STAT Main">STAT Main</button>
               </div>
             </div>
             </div>
@@ -265,7 +266,7 @@
                 <ul class="list-unstyled mt-3 mb-4">
                   <li>사이트맵</li>
                 </ul>
-                <button type="button" class="btn btn-lg btn-block btn-primary">SITE Main</button>
+                <button type="button" class="btn btn-lg btn-block btn-primary"value="SITE Main">SITE Main</button>
               </div>
             </div>
             </div>

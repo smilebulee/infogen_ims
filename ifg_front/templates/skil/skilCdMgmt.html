@@ -3,7 +3,6 @@
 {% block content %}
 <script type="text/javascript" xmlns:max-width="http://www.w3.org/1999/xhtml">
         var firstGrid;
-
         var data;
         $(document).ready(function(){
 
@@ -96,15 +95,14 @@
                     };
 
                     firstGrid = $('[data-ax5grid="first-grid"]').initGrid(gridOptions);
-                    firstGrid.setData(gridList);
-                    makePaging(ret);
+                    getGridList(1);
                 }
 
             });
 
             /* 조회 버튼 클릭 */
             $('#searchBtn').click(function(){
-                    getGridList(1);
+                getGridList(1);
             });
 
             /* 코드 Row 추가 */
@@ -195,7 +193,7 @@
                         <h3>스킬 코드 관리 <a href="http://ax5.io/ax5ui-grid/api/index.html" class="badge badge-info"></a></h3>
                         <div id="formDiv">
                             <div class="form-row" style="padding:10px">
-                                <label class="col-sm-1" style="max-width:120px;">스킬 구분</label>
+                                <label class="col-sm-1" style="max-width:120px; text-align:center; line-height: 32px;">스킬 구분</label>
                                 <div class="col-sm-2">
                                     <select class="form-control" name="skilDiv">
 <!--                                        <option selected value="">전체</option>-->

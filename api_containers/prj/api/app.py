@@ -522,11 +522,11 @@ class prjInpuDelete(Resource):
 
         # get data
         prjCd = request.form["prjCd"]
-        #empNo = request.form["empNo"]
+        empNo = request.form["empNo"]
 
         logging.debug('---------------SEARCH---------------')
         logging.debug('prjCd : ' + prjCd)
-        #logging.debug('empNo : ' + empNo)
+        logging.debug('empNo : ' + empNo)
         logging.debug('------------------------------------')
 
         mysql_con = pymysql.connect(host='218.151.225.142', port=3306, db='IFG_IMS', user='ims2', password='1234',
@@ -596,26 +596,76 @@ class prjInpuSave(Resource):
 class prjListSearch(Resource):
     def get(self):
         # Get posted data from request
-        logging.debug("search start")
+        logging.debug("prjListSearch start")
 
         # get data
-        #skilDiv = request.args.get('skilDiv')
-        dept = request.args.get('dept')
-        skilKind = request.args.get('skilKind')
+        deptDiv = request.args.get('deptDiv')
+        skilDiv = request.args.get('skilDiv')
         logging.debug('---------------SEARCH---------------')
-        logging.debug('dept : ' + dept)
-        logging.debug('skilKind : ' + skilKind)
+        logging.debug('deptDiv : ' + deptDiv)
+        logging.debug('skilDiv : ' + skilDiv)
         logging.debug('------------------------------------')
 
-        mysql_con = pymysql.connect(host='218.151.225.142', port=3306, db='IFG_IMS', user='ims2', password='1234',
+        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
                                     charset='utf8')
         try:
-            if (dept is None or dept =='') and (skilKind is None or skilKind =='') :
-                with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
-                    logging.debug('none search data')
-                    sql = "SELECT PRJ_NAME, GNR_CTRO,CTRO,PRJ_CNCT_CD,SLIN_BZDP,JOB_DIVS_CD,CNTC_STRT_DAY,CNTC_END_DAY,PGRS_STUS_CD,RMKS FROM TB_PRJ_INFO"
-                    cursor.execute(sql)
+            with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+                sql = "SELECT PRJ_CD, PRJ_NAME, GROUP_CONCAT(C.SKIL_NAME) AS SKIL_NAME, GNR_CTRO, CTRO, PRJ_CNCT_CD, SLIN_BZDP, JOB_DIVS_CD, CNTC_STRT_DAY" \
+                      ", CNTC_END_DAY, PGRS_STUS_CD, RMKS " \
+                      "FROM (SELECT A.PRJ_CD, PRJ_NAME, B.SKIL_NAME, GNR_CTRO, CTRO,PRJ_CNCT_CD" \
+                        ", (SELECT CMM_CD_NAME FROM TB_CMM_CD_DETL WHERE CMM_CD_GRP_ID = 'SLIN_BZDP' AND A.SLIN_BZDP = CMM_CD) AS SLIN_BZDP" \
+                        ", (SELECT CMM_CD_NAME FROM TB_CMM_CD_DETL WHERE CMM_CD_GRP_ID = 'JOB_DIVS_CD' AND A.JOB_DIVS_CD = CMM_CD) AS JOB_DIVS_CD" \
+                        ", CNTC_STRT_DAY, CNTC_END_DAY" \
+                        ", (SELECT CMM_CD_NAME FROM TB_CMM_CD_DETL WHERE CMM_CD_GRP_ID = 'PGRS_STUS_CD' AND A.PGRS_STUS_CD = CMM_CD) AS PGRS_STUS_CD" \
+                        ", RMKS " \
+                        "FROM TB_PRJ_INFO A " \
+                        "LEFT JOIN TB_PRJ_REQ_SKIL B " \
+                        "ON A.PRJ_CD = B.PRJ_CD " \
+                        "WHERE 1=1 "
+                sql2 = ") C GROUP BY PRJ_CD"
+                if deptDiv == "" and skilDiv == "":
+                    logging.debug('##### sql : ' + sql + sql2)
+                    cursor.execute(sql + sql2)
+                else:
+                    if deptDiv != "" and skilDiv != "":
+                        sql += "AND SLIN_BZDP = %s" \
+                               "AND SKIL_DIVS_CD = %s"
+                        logging.debug('##### sql : ' + sql + sql2)
+                        cursor.execute(sql + sql2, (deptDiv, skilDiv))
+                    elif deptDiv != "":
+                        sql += "AND SLIN_BZDP = %s"
+                        logging.debug('##### sql : ' + sql + sql2)
+                        cursor.execute(sql + sql2, deptDiv)
+                    else:
+                        sql += "AND SKIL_DIVS_CD = %s"
+                        logging.debug('##### sql : ' + sql + sql2)
+                        cursor.execute(sql + sql2, skilDiv)
+        finally:
+            mysql_con.close()
 
+        result2 = cursor.fetchall()
+        for row in result2:
+            logging.debug('====== row====')
+            logging.debug(row)
+            logging.debug('===============')
+        array = list(result2)  # 결과를 리스트로
+
+        return result2
+
+#부서 코드 조회
+class getDeptCd(Resource):
+    def get(self):
+        # Get posted data from request
+        logging.debug("getDeptCd Start")
+
+        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
+                                    charset='utf8')
+        try:
+            with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+                sql = "SELECT CMM_CD, CMM_CD_NAME FROM TB_CMM_CD_DETL WHERE CMM_CD_GRP_ID = 'SLIN_BZDP'"
+
+                logging.debug(sql)
+                cursor.execute(sql)
         finally:
             mysql_con.close()
 
@@ -649,6 +699,7 @@ api.add_resource(prjInpuSave, '/prjInpuSave')
 
 # 프로젝트 목록 조회
 api.add_resource(prjListSearch, '/prjListSearch')
+api.add_resource(getDeptCd, '/getDeptCd')
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5002, debug=True)

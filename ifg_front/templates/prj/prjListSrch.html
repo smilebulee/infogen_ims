@@ -3,108 +3,203 @@
 {% block content %}
 {% load static %}
 <script type="text/javascript" xmlns:max-width="http://www.w3.org/1999/xhtml">
+
+        var data;
+        var firstGrid;
         $(document).ready(function(){
+            firstGrid = $('[data-ax5grid="first-grid"]');
 
             var gridList = [        /* 그리드에 세팅할 데이터는 JSON 배열 형태 */
                 {"NO":"", "PRJ_NAME":"", "GNR_CTRO":"", "CTRO":"", "PRJ_CNCT_CD":"", "SLIN_BZDP":"", "JOB_DIVS_CD":"", "CNTC_STRT_DAY":"", "CNTC_END_DAY":"", "PGRS_STUS_CD":"", "RMKS":""},
             ];
 
-            var gridOptions = {
-                columns: [              /* columns : 그리드 헤더 및 매핑 시킬 컬럼 및 컬럼 속성 설정 항목(필수) */
-                {
-                    key: "NO",
-                    label: "순번",
-                    width: 100,
-                    align: "center"
-                },
-                {
-                    key: "PRJ_NAME",
-                    label: "프로젝트명",
-                    width: 80,
-                    align: "center"
-                },
-                {
-                    key: "GNR_CTRO",
-                    label: "고객사",
-                    width: 80,
-                    align: "center"
-                },
-                {
-                    key: "CTRO",
-                    label: "계약사",
-                    width: 80,
-                    align: "center"
-                },
-                {
-                    key: "PRJ_CNCT_CD",
-                    label: "고객사 계약코드",
-                    width: 120,
-                    align: "center"
-                },
-                {
-                    key: "SLIN_BZDP",
-                    label: "매출 사업부",
-                    width: 120,
-                    align: "center"
-                },
-                {
-                    key: "JOB_DIVS_CD",
-                    label: "업부구분",
-                    width: 120,
-                    align: "center"
-                },
-                {
-                    key: "CNTC_STRT_DAY",
-                    label: "계약시작일",
-                    width: 80,
-                    align: "center"
-                },
-                {
-                    key: "CNTC_END_DAY",
-                    label: "계약종료일",
-                    width: 80,
-                    align: "center",
-                },
-                {
-                    key: "PGRS_STUS_CD",
-                    label: "진행사항",
-                    width: 80,
-                    align: "center",
-                },
-                {
-                    key: "RMKS",
-                    label: "비고",
-                    width: 80,
-                    align: "center",
-                }
-                ]
-            };
-
-            var firstGrid = $('[data-ax5grid="first-grid"]').initGrid(gridOptions);
-            firstGrid.setData(gridList);
-
-            $('#searchBtn').click(function(){
-                $('#formSearchDiv').ajaxCall({
-                    method : 'GET',
-                    url : "{% url 'prj_api:prjListSearch' %}",
-                    callbackFn : function(data){
-                        var gridList = data; /* 그리드에 세팅할 데이터는 JSON 배열 형태 */
-
-                        firstGrid.setData(gridList);
+            /* 부서 구분 코드 조회 */
+            $('#formSearchDiv').ajaxCall({
+                method : 'GET',
+                url : "{% url 'prj_api:getDeptCd' %}",
+                data: data,
+                async : false,
+                callbackFn : function(ret){
+                    if($.isEmptyObject(ret)) {
+                        alertMsg('데이터가 없습니다.');
+                        return false;
+                    } else {
+                        var html;
+                        $("select[name=deptDiv]").append('<option selected value="">전체</option>');
+                        $(ret).each(function(i){
+                            html = "";
+                            console.log('CMM_CD : ' + ret[i].CMM_CD);
+                            console.log('CMM_CD_NAME : ' + ret[i].CMM_CD_NAME);
+                            html = "<option value="+ret[i].CMM_CD+">"+ret[i].CMM_CD_NAME+"</option>";
+                            console.log('html : ' + html);
+                            $("select[name=deptDiv]").append(html);
+                        });
                     }
-                });
+                }
+            });
+
+            /* 스킬 구분 코드 조회 */
+            $('#formSearchDiv').ajaxCall({
+                method : 'GET',
+                url : "{% url 'skil_api:getSkilCdMgmt' %}",
+                data: data,
+                async : false,
+                callbackFn : function(ret){
+                    if($.isEmptyObject(ret)) {
+                        alertMsg('데이터가 없습니다.');
+                        return false;
+                    } else {
+                        var html;
+                        $("select[name=skilDiv]").append('<option selected value="">전체</option>');
+                        $(ret).each(function(i){
+                            html = "";
+                            console.log('CMM_CD : ' + ret[i].CMM_CD);
+                            console.log('CMM_CD_NAME : ' + ret[i].CMM_CD_NAME);
+                            html = "<option value="+ret[i].CMM_CD+">"+ret[i].CMM_CD_NAME+"</option>";
+                            console.log('html : ' + html);
+                            $("select[name=skilDiv]").append(html);
+                        });
+                    }
+
+                    var gridOptions = {
+                        columns: [              /* columns : 그리드 헤더 및 매핑 시킬 컬럼 및 컬럼 속성 설정 항목(필수) */
+                        {
+                            key: "PRJ_CD",
+                            label: "프로젝트코드",
+                            width: 100,
+                            align: "center",
+                            hidden : true
+                        },
+                        {
+                            key: "PRJ_NAME",
+                            label: "프로젝트명",
+                            width: 120,
+                            align: "center"
+                        },
+                        {
+                            key: "SKIL_NAME",
+                            label: "요구스킬",
+                            width: 150,
+                            align: "center"
+                        },
+                        {
+                            key: "GNR_CTRO",
+                            label: "원청사",
+                            width: 80,
+                            align: "center"
+                        },
+                        {
+                            key: "CTRO",
+                            label: "계약사",
+                            width: 80,
+                            align: "center"
+                        },
+                        {
+                            key: "PRJ_CNCT_CD",
+                            label: "고객사 계약코드",
+                            width: 100,
+                            align: "center"
+                        },
+                        {
+                            key: "SLIN_BZDP",
+                            label: "매출 사업부",
+                            width: 100,
+                            align: "center"
+                        },
+                        {
+                            key: "JOB_DIVS_CD",
+                            label: "업부구분",
+                            width: 80,
+                            align: "center"
+                        },
+                        {
+                            key: "CNTC_STRT_DAY",
+                            label: "계약시작일",
+                            width: 80,
+                            align: "center"
+                        },
+                        {
+                            key: "CNTC_END_DAY",
+                            label: "계약종료일",
+                            width: 80,
+                            align: "center",
+                        },
+                        {
+                            key: "PGRS_STUS_CD",
+                            label: "진행사항",
+                            width: 80,
+                            align: "center",
+                        },
+                        {
+                            key: "RMKS",
+                            label: "비고",
+                            width: 120,
+                            align: "center",
+                        }
+                        ]
+                    };
+
+                    firstGrid = $('[data-ax5grid="first-grid"]').initGrid(gridOptions);
+                    getGridList(0);
+                }
+            });
+
+            /* 조회 버튼 클릭 */
+            $('#searchBtn').click(function(){
+                getGridList(1);
             });
 
             /* 프로젝트 등록 선택 */
             $('#prjDetlMgmtBtn').click(function(){
-                if(firstGrid.getList("selected").length == 0){
-                    modal('prjRegModal');
-                    $("#prjRegModal2").load("{% url 'prj_api:prjReg' %}");
-                } else{
+                 prj_cd = null;
+                 modal('prjRegModal');
+                 $("#prjRegModal2").load("{% url 'prj_api:prjReg' %}");
+            });
 
+            /* 프로젝트 정보 수정 */
+            firstGrid.dblclick(function(){
+                 prj_cd = firstGrid.getList("selected")[0].PRJ_CD;
+                 modal('prjRegModal');
+                 $("#prjRegModal2").load("{% url 'prj_api:prjReg' %}");
+            });
+
+            /* 투입 인원 관리 */
+            $('#prjInpuMgmtBtn').click(function(){
+                if(firstGrid.getList("selected").length != 0){
+                    modal('prjRegModal');
+                    $("#prjRegModal2").load("{% url 'prj_api:prjInpuMgmt' %}");
+                } else{
+                    /* 행 선택됐는지 체크 */
+                    alertMsg("선택된 행이 없습니다.");
+                    return;
                 }
             });
         });
+
+        /* 페이징 처리 */
+        function makePaging(ret){
+            $('#paging_navi').makePagingNavi(ret, 'getGridList');
+        };
+
+        /* 데이터 조회 */
+        function getGridList(page){
+            var options = {
+               method : 'GET',
+                url : "{% url 'prj_api:prjListSearch' %}",
+                callbackFn :  function(ret){
+                    firstGrid.setData(ret.list);
+                    firstGrid.select(0);
+                    makePaging(ret);
+                }
+            };
+            if(page == 0) {
+                $.ajaxCall({ page : page, skilDiv : "", deptDiv : ""}, options);
+            } else {
+                $.ajaxCall({ page : page, skilDiv : $('[name="skilDiv"]').val(), deptDiv : $('[name="deptDiv"]').val()}, options);
+            }
+
+        };
+
     </script>
 
     <style>
@@ -132,32 +227,32 @@
     <div class="row">
         <div class="col-sm-12">
             <div id="formSearchDiv">
-                <h3>프로젝트 관리<a href="http://ax5.io/ax5ui-grid/api/index.html" class="badge badge-info"></a></h3>
+                <h3 style="padding-bottom:20px;">프로젝트 관리<a href="http://ax5.io/ax5ui-grid/api/index.html" class="badge badge-info"></a></h3>
                 <div id="formDiv">
-                    <div class="form-row" style="padding-bottom:9px">
-                        <label class="col-sm-1" style="max-width:50px;">부서</label>
+                    <div class="form-row" style="padding-bottom:5px;">
+                        <label class="col-sm-1" style="max-width:120px; text-align:center; line-height: 32px;">부서구분</label>
                         <div class="col-sm-2">
-                            <select class="form-control" name="dept">
-                                <option selected></option>
+                            <select class="form-control" name="deptDiv">
+                                <!--<option selected></option>
                                 <option value="1">통신</option>
-                                <option value="2">전자</option>
+                                <option value="2">전자</option>-->
                             </select>
                         </div>
-                        <div class="col-sm-1" style="padding-left:760px;">
+                        <div class="col-sm-1" style="padding-left:720px;">
                         <button class="btn btn-primary" id="searchBtn" style="width:120px">조회</button>
                         </div>
                     </div>
 
-                    <div class="form-row" style="padding-top:9px;">
-                        <label class="col-sm-1" style="max-width:50px;">스킬</label>
+                    <div class="form-row" style="padding-top:5px;">
+                        <label class="col-sm-1" style="max-width:120px; text-align:center; line-height: 32px;">요구스킬</label>
                          <div class="col-sm-2">
-                            <select class="form-control" id="skilKind" name="skilKind">
-                                <option selected></option>
+                            <select class="form-control" name="skilDiv">
+                                <!--<option selected></option>
                                 <option value="1">DB</option>
                                 <option value="2">언어</option>
                                 <option value="3">WEB</option>
                                 <option value="4">FRAME WORK</option>
-                                <option value="5">MID-WARE</option>
+                                <option value="5">MID-WARE</option>-->
                             </select>
                          </div>
                         <label style="width:30px"></label>
@@ -168,9 +263,9 @@
                 <hr>
 
                 <div>
-                    <h3>----<a class="badge badge-info"></a></h3>
+                    <h3><a class="badge badge-info"></a></h3>
                 </div>
-                <div style="position: relative;height:400px;" id="grid-parent">
+                <div style="position:relative; height:500px;" id="grid-parent">
                     <div data-ax5grid="first-grid" style="height: 100%;"></div>
                 </div>
             </div>

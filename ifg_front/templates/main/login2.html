@@ -85,7 +85,7 @@
         <script type="text/javascript">
           $(document).ready(function(){
             //var forms = document.getElementsByClassName('needs-validation');
-            var forms = document.getElementById("logintest")
+            var forms = document.getElementById("loginForm")
             var key = getCookie("key");
             $("#username").val(key);
 
@@ -108,7 +108,7 @@
                 }
             });
             // Loop over them and prevent submission
-            $('#logintest').submit(function(event){
+            $('#loginForm').submit(function(event){
                     event.preventDefault();
                     var $form = $(this);
                     console.log("ajaxcall")
@@ -127,6 +127,21 @@
                     //    forms.classList.add('was-validated')
                     //    return false;
                     //}
+                    if (forms.username.value.length < 4 || forms.username.value.length > 12)
+                    {
+                       alertMsg("아이디는 4~12자 이내로 입력 가능합니다!");
+
+                       forms.username.select();//입력한 문자를 선택 상태로 만듬.
+                       return;
+                    }
+
+                    if (forms.password.value.length < 4 || forms.password.value.length > 12)
+                    {
+                         alertMsg("비밀번호는 4~12자 이내로 입력 가능 합니다!");
+
+                         forms.password.select();
+                         return;
+                    }
 
                     $.ajax({
                          type: $form.attr('method'),
@@ -234,7 +249,7 @@
         </div>-->
 
         <div class="container text-center">
-          <form id = "logintest" method="POST" class="form-signin needs-validation" action="{% url 'main:signin2' %}" novalidate>
+          <form id = "loginForm" method="POST" class="form-signin needs-validation" action="{% url 'main:signin2' %}" novalidate>
               <h1 class="h3 mb-3 font-weight-normal">IFG-IMS Dili Login</h1>
               {% csrf_token %}
               {% for field in form %}

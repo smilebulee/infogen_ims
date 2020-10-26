@@ -89,14 +89,14 @@ services:
     ports: 
       - "5001:5001"     # 로컬의 5001포트로 요청일 들어오면 emp_api 컨테이너의 5001 포트로 연결
     links:
-      - emp_db
+#      - emp_db
       - emp_db2    # emp_api컨테이너는 emp_db 컨테이너로 접속가능 (maria db 연결 진행)
     environment:
       - SPRING_PROFILES_ACTIVE=local      # 이미지 생성시 세팅될 환경변수들
       - SPRING_APPLICATION_NAME=emp_api
       - SIDECAR_PORT=5001
-  emp_db:
-    build: "./api_containers/emp/db"   # Dockerfile의 경로
+#  emp_db:
+#    build: "./api_containers/emp/db"   # Dockerfile의 경로
   emp_db2:
     build: "./api_containers/emp/db"   # Dockerfile의 경로
     #container_name: mariadb

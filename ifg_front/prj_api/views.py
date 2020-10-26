@@ -5,6 +5,7 @@ from main.helpers import ajax_login_required
 from django.views import View
 from django.views import generic
 from django.http import JsonResponse
+from django.core.paginator import Paginator
 import requests
 import logging
 import json
@@ -243,16 +244,50 @@ def prjListSearch(request):
     logger.info(param)
 
     datas = {
-        'dept': param['dept'],
-        'skilKind': param['skilKind']
+        'deptDiv': param['deptDiv'],
+        'skilDiv': param['skilDiv']
     }
 
     logger.info(datas)
     r = requests.get('http://prj_api:5002/prjListSearch', params=datas)
+
+    paginator = Paginator(r.json(), 10)
+    logger.info("----------------")
+    logger.info(paginator)
+    logger.info(r)
+    logger.info(r.text)
+    logger.info("----------------")
+
+    result = paginator.get_page(param['page'])
+
+    logger.info(result)
+
+    data = {
+        'list': list(result.object_list),
+        'total_records': paginator.count,
+        'total_pages': paginator.num_pages,
+        'page': result.number,
+        'has_next': result.has_next(),
+        'has_prev': result.has_previous()
+    }
+
+    # return JsonResponse(r.json())
+    return JsonResponse(data)
+
+#부서 코드 조회
+def getDeptCd(request):
+    param = json.loads(request.GET['param'])
+    logger.info('===============================')
+    logger.info(param)
+    logger.info('===============================')
+    datas = {}
+
+    r = requests.get('http://prj_api:5002/getDeptCd', params=datas)
+
     logger.info(r)
     logger.info(r.text)
     logger.info("----------------")
     logger.info(r.json())
     logger.info(json.loads(r.text))
-    # return JsonResponse(r.json())
+
     return JsonResponse(r.json(), safe=False)
