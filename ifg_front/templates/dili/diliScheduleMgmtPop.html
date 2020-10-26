@@ -38,7 +38,7 @@
             });
         }
 
-    }); <!--ready.function_END-->
+    }); /*ready.function_END*/
 
     /*********************************************************************
     *   Grid set Data
@@ -59,7 +59,18 @@
         if(holi != "휴가"){
             if(getCurrentDate() == dt){
                 if(strtTm == "-"){
-                    document.getElementById('pop_strtJob').innerHTML = '<input type="button" onclick="onclickStrtTm()" value="출근버튼">';
+
+                    if ($('#empEmailHidden').val() == null || $('#empEmailHidden').val() == "") {
+
+                        document.getElementById('pop_strtJob').innerHTML = '<input type="button" onclick="onclickStrtTm()" value="출근버튼">';
+
+                    }else if($('#empEmailHidden').val() == sessionStorage.getItem("email")){
+
+                        document.getElementById('pop_strtJob').innerHTML = '<input type="button" onclick="onclickStrtTm()" value="출근버튼">';
+                    }else {
+                        $('#pop_strtJob').text("-");
+                    }
+
                     $('#pop_endJob').text(endTm);
                     document.getElementById('pop_schdDetlTm').innerHTML = '정상근무 : '+normWrkTm+' / 초과근무 : '+overWrkTm;
                     $('#pop_schdDetlAllTm').text(allTm);
@@ -68,7 +79,17 @@
                     $('#pop_strtJob').text(strtTm);
                 }
                 if(endTm == "-" && strtTm != "-"){
-                    document.getElementById('pop_endJob').innerHTML = '<input type="button" onclick="onclickEndTm()" value="퇴근버튼">';
+
+                    if ($('#empEmailHidden').val() == null || $('#empEmailHidden').val() == "") {
+
+                        document.getElementById('pop_endJob').innerHTML = '<input type="button" onclick="onclickEndTm()" value="퇴근버튼">';
+
+                    }else if($('#empEmailHidden').val() == sessionStorage.getItem("email")){
+
+                        document.getElementById('pop_endJob').innerHTML = '<input type="button" onclick="onclickEndTm()" value="퇴근버튼">';
+                    }else {
+                        $('#pop_endJob').text("-");
+                    }
                     document.getElementById('pop_schdDetlTm').innerHTML = '정상근무 : '+normWrkTm+' / 초과근무 : '+overWrkTm;
                     $('#pop_schdDetlAllTm').text(allTm);
                     $('#pop_apvlStus').text(apvlStus);
@@ -79,7 +100,18 @@
                     document.getElementById('pop_schdDetlTm').innerHTML = '정상근무 : '+normWrkTm+' / 초과근무 : '+overWrkTm;
                     $('#pop_schdDetlAllTm').text(allTm);
                     if(apvlStus == "미등록"){
-                        document.getElementById('pop_apvlStus').innerHTML = '<input type="button" onclick="onclickApvlUpld()" value="결재올리기">';
+                        if ($('#empEmailHidden').val() == null || $('#empEmailHidden').val() == "") {
+
+                            document.getElementById('pop_apvlStus').innerHTML = '<input type="button" onclick="onclickApvlUpld()" value="결재올리기">';
+
+                        }else if($('#empEmailHidden').val() == sessionStorage.getItem("email")){
+
+                            document.getElementById('pop_apvlStus').innerHTML = '<input type="button" onclick="onclickApvlUpld()" value="결재올리기">';
+
+                        }else {
+                            $('#pop_apvlStus').text("-");
+                        }
+
                     }else {
                         $('#pop_apvlStus').text(apvlStus);
                     }
@@ -90,7 +122,18 @@
                 document.getElementById('pop_schdDetlTm').innerHTML = '정상근무 : '+normWrkTm+' / 초과근무 : '+overWrkTm;
                 $('#pop_schdDetlAllTm').text(allTm);
                 if(apvlStus == "미등록"){
-                    document.getElementById('pop_apvlStus').innerHTML = '<input type="button" onclick="onclickApvlUpld()" value="결재올리기">';
+
+                    if ($('#empEmailHidden').val() == null || $('#empEmailHidden').val() == "") {
+
+                        document.getElementById('pop_apvlStus').innerHTML = '<input type="button" onclick="onclickApvlUpld()" value="결재올리기">';
+
+                    }else if($('#empEmailHidden').val() == sessionStorage.getItem("email")){
+
+                        document.getElementById('pop_apvlStus').innerHTML = '<input type="button" onclick="onclickApvlUpld()" value="결재올리기">';
+
+                    }else {
+                        $('#pop_apvlStus').text("-");
+                    }
                 }else {
                     $('#pop_apvlStus').text(apvlStus);
                 }

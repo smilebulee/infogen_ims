@@ -188,8 +188,16 @@
             *   Session Email 값 기준 연차정보 조회
             *********************************************************************/
             function setAnhoMgmt(){
+                var email = "";
+
+                if ($('#empEmailHidden').val() == null || $('#empEmailHidden').val() == "") {
+                    email = sessionStorage.getItem("email");
+                } else {
+                    email = $('#empEmailHidden').val();
+                }
+
                 var param = {
-                    email : sessionStorage.getItem("email")
+                    "email" : email
                 }
 
                 $.ajaxCall( param, {
@@ -217,8 +225,16 @@
             *   Session Email , StrtDt, endDt 값 기준 주 그리드 데이터 세팅
             *********************************************************************/
             function setWeekGridData(tempStrtDt, tempEndDt){
+                var email = "";
+
+                if ($('#empEmailHidden').val() == null || $('#empEmailHidden').val() == "") {
+                    email = sessionStorage.getItem("email");
+                } else {
+                    email = $('#empEmailHidden').val();
+                }
+
                 var gridParam = {
-                    "email"     : sessionStorage.getItem("email"),
+                    "email"     : email,
                     "strtDt" : tempStrtDt,
                     "endDt" : tempEndDt
                 }
@@ -239,10 +255,17 @@
             *   Session Email , StrtDt, endDt 값 기준 월 그리드 데이터 세팅
             *********************************************************************/
             function setMonthGridData(){
+                var email = "";
+
+                if ($('#empEmailHidden').val() == null || $('#empEmailHidden').val() == "") {
+                    email = sessionStorage.getItem("email");
+                } else {
+                    email = $('#empEmailHidden').val();
+                }
 
                 var setMDt = $('#txt_mmYy').text() + "-" + $('#txt_mmMm').text()
                 var gridParam = {
-                    "email"     : sessionStorage.getItem("email"),
+                    "email"     : email,
                     "mDt" : setMDt
                 }
 
@@ -417,8 +440,10 @@
             var calendar = new tui.Calendar(document.getElementById('calendar'), {
                 defaultView: 'month',
                 taskView: true,
-<!--                useCreationPopup: true,-->
-<!--                useDetailPopup: true-->
+                 /*
+                 useCreationPopup: true,
+                 useDetailPopup: true
+                 */
             });
 
 
@@ -563,8 +588,8 @@
                 console.log('111 ', calendar);
 
                 //시작시간, 종료시간, 정상근무, 초과근무시간 셋팅해야함
-<!--                $('#tmpPopStrtTm').text($('#'+trId.id).children().eq(1).text());-->
-<!--                $('#tmpPopEndTm').text($('#'+trId.id).children().eq(2).text());-->
+/*                $('#tmpPopStrtTm').text($('#'+trId.id).children().eq(1).text());*/
+/*                $('#tmpPopEndTm').text($('#'+trId.id).children().eq(2).text());*/
 
             });
 
@@ -611,7 +636,7 @@
 
                 //메서드만들어서 파라미터 보내기
 
-                modal('my_modal');  <!--근무시간 Detail-->
+                modal('my_modal');  /*근무시간 Detail*/
                 $('#my_modal2').load("{% url 'dili_api:scheduleMgmtPop' %}");
 
 
@@ -671,7 +696,7 @@
                 $('.model_layout').empty();
             });
 
-        });<!--ready.function_END-->
+        });/*ready.function_END*/
 
         var myChart;
 
