@@ -3,9 +3,12 @@ grid sample
 history
     - 2020.08 김은희 최초작성
 *********************************************** -->
-{% extends 'common/base.html' %}
-{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
 {% load static %}
+</head>
+<body>
 <style>
 #modal1 input {
   width : 100%;
@@ -30,8 +33,7 @@ history
             document.getElementById("modal1").style.display="block";
             prjGrid = $('[data-ax5grid="prj-grid"]');
 
-            <!--   프로젝트 CD 임시(수정예정)   -->
-            prjCd = '100'
+            prjCd = firstGrid.getList("selected")[0].PRJ_CD;
             $('#prjCd').val(prjCd);
 
             retrievePrjInfo()
@@ -63,11 +65,6 @@ history
                     prjGrid.deleteRow(prjGrid.selectedDataIndexs[0]); //선택한 행 삭제
                 });
             });
-
-             /* 팝업 취소 버튼 (수정필요.)*/
-            document.getElementById("closeBtn").onclick = function() {
-                history.back()
-            }
 
             /* 개발자 추가 버튼 */
            $('#devpAddBtn').click(function(){
@@ -228,7 +225,6 @@ history
                 <div style="float: right; float: right; padding-top :5px;" id="btn">
                     <button class="btn btn-primary" id="devpAddBtn">개발자 추가</button>
                     <button class="btn btn-primary" id="savaBtn">저장</button>
-                    <button class="btn btn-primary" id="closeBtn">닫기</button>
                 </div>
             </div>
         </div>
@@ -236,5 +232,5 @@ history
         <div class="modal_layer"></div>
     </div>
 </div>
-
-{% endblock %}
+</body>
+</html>
