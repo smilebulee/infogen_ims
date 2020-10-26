@@ -337,3 +337,54 @@ def saveSkilCd(request):
         'result': 'OK'
     }
     return JsonResponse(ret)
+
+
+def retrieveskilCd(request):
+    param = json.loads(request.GET['param'])
+    logger.info('param')
+    logger.info(param)
+
+    params = {
+
+    }
+
+    r = requests.get('http://skil_api:5003/retrieveskilCd', params=params)
+    logger.info(r)
+    logger.info(r.text)
+    logger.info(r.json())
+
+    return JsonResponse(r.json(), safe=False)
+
+def deleteSkilDetl(request):
+    param = json.loads(request.GET['param'])
+    logger.info('param')
+    logger.info(param)
+
+    params = {
+        'empNo': param['empNo'],
+     }
+
+    r = requests.get('http://skil_api:5003/deleteSkilDetl', params=params)
+    logger.info(r)
+    logger.info(r.text)
+    logger.info(r.json())
+
+    return JsonResponse(r.json(), safe=False)
+
+
+def saveSkilDetl(request):
+    param = json.loads(request.GET['param'])
+    logger.info('param')
+    logger.info(param)
+
+    params = {
+        'empNo': param['empNo'],
+        'skilNo': param['skilNo'],
+    }
+
+    r = requests.get('http://skil_api:5003/saveSkilDetl', params=params)
+    logger.info(r)
+    logger.info(r.text)
+    logger.info(r.json())
+
+    return JsonResponse(r.json(), safe=False)

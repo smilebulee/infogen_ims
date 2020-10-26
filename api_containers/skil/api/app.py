@@ -589,8 +589,10 @@ class skilRegPopupSearch(Resource):
         empNo = request.args.get('empNo')
         cntcDivsCd = request.args.get('cntcDivsCd')
 
+        logging.debug('skilRegPopupSearch empNo' + empNo)
+        logging.debug('skilRegPopupSearch cntcDivsCd' + cntcDivsCd)
 
-        mysql_con = pymysql.connect(host='mariadb', port=3306, db='IFG_IMS', user='ims2', password='1234',
+        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
                                     charset='utf8')
         if cntcDivsCd == '01' :
             try:
@@ -603,19 +605,20 @@ class skilRegPopupSearch(Resource):
                             "B.SKIL_LVL_CD," \
                             "B.RMKS," \
                             "'01' AS CNTC_DIVS_CD," \
-                            "'정규직' AS CNTN_DIVE_NM" \
+                            "'정규직' AS CNTN_DIVE_NM," \
                             "(SELECT CMM_CD_NAME FROM TB_CMM_CD_DETL A1 " \
                             "WHERE A1.CMM_CD_GRP_ID ='EMP_RANK_CD' " \
                             "AND A1.CMM_CD = A.EMP_RANK_CD " \
-                            ") AS EMP_RANK_CD, " \
+                            ") AS EMP_RANK_NM, " \
                             "(SELECT CMM_CD_NAME FROM TB_CMM_CD_DETL A1 " \
                             "WHERE A1.CMM_CD_GRP_ID ='SLIN_BZDP' "\
                             "AND A1.CMM_CD = A.DEPT_CD "\
                             ") AS SLIN_BZDP " \
-                        "FROM TB_EMP_MGMT A LEFT OUTER JOIN TB_SKIL_MGNT_M B ON A.EMP_ID = B.EMP_NO " \
-                        "WHERE A.EMP_ID ='" + empNo + "' "
+                         "FROM TB_EMP_MGMT A LEFT OUTER JOIN TB_SKIL_MGNT_M B ON A.EMP_ID = B.EMP_NO " \
+                         "WHERE A.EMP_ID ='" + empNo + "' "
 
-                    cursor.execute(sql, empNo)
+
+                    cursor.execute(sql)
                     logging.debug('skilRegPopupSearch SUCCESS')
             finally:
                 mysql_con.close()
@@ -632,7 +635,7 @@ class skilRegPopupSearch(Resource):
                             "(SELECT CMM_CD_NAME FROM TB_CMM_CD_DETL A1 " \
                             "WHERE A1.CMM_CD_GRP_ID ='EMP_RANK_CD' " \
                             "AND A1.CMM_CD = A.EMP_RANK_CD " \
-                            ") AS EMP_RANK_CD, " \
+                            ") AS EMP_RANK_NM, " \
                             "(SELECT CMM_CD_NAME FROM TB_CMM_CD_DETL A1 " \
                             "WHERE A1.CMM_CD_GRP_ID ='SLIN_BZDP' "\
                             "AND A1.CMM_CD = A.EMP_DEPT_CD "\
@@ -641,10 +644,11 @@ class skilRegPopupSearch(Resource):
                             "WHERE A1.CMM_CD_GRP_ID ='CNTC_DIVS_CD' " \
                             "AND A1.CMM_CD = A.CNTC_DIVS_CD " \
                             ") AS CNTC_DIVS_NM " \
-                          "FROM TB_FRLC_DEVP_INFO A LEFT OUTER JOIN TB_SKIL_MGNT_M B ON A.EMP_ID = B.EMP_NO " \
-                        "WHERE A.EMP_NO ='" + empNo + "' "
+                            "FROM TB_FRLC_DEVP_INFO A LEFT OUTER JOIN TB_SKIL_MGNT_M B ON A.EMP_ID = B.EMP_NO " \
+                            "WHERE A.EMP_NO ='" + empNo + "' "
 
-                    cursor.execute(sql, empNo)
+
+                    cursor.execute(sql)
                     logging.debug('skilRegPopupSearch SUCCESS')
             finally:
                 mysql_con.close()
@@ -653,6 +657,93 @@ class skilRegPopupSearch(Resource):
         logging.debug(result1)
 
         return result1
+
+#스킬 코드 조회
+class retrieveskilCd(Resource):
+    def get(self):
+        params = request.get_json()
+
+        logging.debug('retrieveskilCd Start')
+
+        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
+                                    charset='utf8')
+
+        try:
+            with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+                sql = "SELECT " \
+                      "SKIL_DIVS_CD, " \
+                      "SKIL_NAME " \
+                      "FROM TB_SKIL_MGNT_CD "
+                cursor.execute(sql)
+
+                logging.debug('retrieveskilCd SUCCESS')
+        finally:
+            mysql_con.close()
+
+        result = cursor.fetchall()
+        logging.debug(result)
+
+        return result
+
+class deleteSkilDetl(Resource):
+    def get(self):
+        params = request.get_json()
+
+        logging.debug('deleteSkilDetl Start')
+
+        empNo = request.args.get('empNo')
+
+        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
+                                    charset='utf8')
+        try:
+            with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+                sql = "DELETE FROM TB_SKIL_MGNT_M WHERE EMP_NO = %s " \
+
+                cursor.execute(sql, empNo)
+                logging.debug('deleteSkilDetl SUCCESS')
+        finally:
+            mysql_con.close()
+
+        retJson = {
+            "status": 200,
+            "msg": "Data has been delete successfully"
+        }
+
+        return jsonify(retJson)
+
+class saveSkilDetl(Resource):
+    def get(self):
+        params = request.get_json()
+
+        logging.debug('saveSkilDetl Start')
+
+        empNo = request.args.get('empNo')
+
+
+
+        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
+                                    charset='utf8')
+        try:
+            with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+
+                sql = "DELETE FROM TB_SKIL_MGNT_M WHERE EMP_NO = %s "
+
+                cursor.execute(sql, empNo)
+                mysql_con.commit()
+                logging.debug('delete SkilDetl SUCCESS')
+
+                sql = "INSERT INTO TB_SKIL_MGNT_M ('EMP_NO','' )"
+
+
+        finally:
+            mysql_con.close()
+
+        retJson = {
+            "status": 200,
+            "msg": "Data has been save successfully"
+        }
+
+        return jsonify(retJson)
 
 class retrieveSkilCd(Resource):
     def get(self):
@@ -834,6 +925,10 @@ api.add_resource(retrieveCmmCd, '/retrieveCmmCd')
 
 # 스킬 상세 관리
 api.add_resource(skilRegPopupSearch, '/skilRegPopupSearch')
+api.add_resource(retrieveskilCd, '/retrieveskilCd')
+api.add_resource(deleteSkilDetl, '/deleteSkilDetl')
+api.add_resource(saveSkilDetl, '/saveSkilDetl')
+
 
 # 스킬 코드 관리
 api.add_resource(retrieveSkilCd, '/retrieveSkilCd')
