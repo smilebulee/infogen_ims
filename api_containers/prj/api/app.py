@@ -416,7 +416,7 @@ class retrievePrjDetlInfo(Resource):
         logging.debug('retrievePrjDetlInfo Start')
         prjCd = request.args.get('prjCd')
 
-        mysql_con = pymysql.connect(host='218.151.225.142', port=3306, db='IFG_IMS', user='ims2', password='1234',
+        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
                                     charset='utf8')
 
         try:
@@ -454,7 +454,7 @@ class prjInpuSearch(Resource):
         logging.debug('prjCd : ' + prjCd)
         logging.debug('------------------------------------')
 
-        mysql_con = pymysql.connect(host='218.151.225.142', port=3306, db='IFG_IMS', user='ims2', password='1234',
+        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
                                     charset='utf8')
 
         try:
@@ -529,7 +529,7 @@ class prjInpuDelete(Resource):
         logging.debug('empNo : ' + empNo)
         logging.debug('------------------------------------')
 
-        mysql_con = pymysql.connect(host='218.151.225.142', port=3306, db='IFG_IMS', user='ims2', password='1234',
+        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
                                     charset='utf8')
 
         try:
@@ -564,7 +564,7 @@ class prjInpuSave(Resource):
         logging.debug(params)
         logging.debug('================== App End ==================')
 
-        mysql_con = pymysql.connect(host='218.151.225.142', port=3306, db='IFG_IMS', user='ims2', password='1234',
+        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
                                     charset='utf8')
 
         try:
