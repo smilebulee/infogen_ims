@@ -62,7 +62,7 @@
             $('#txt_mmYy').text(year); //그리드 월tab 년도 초기값 입력
             $('#txt_mmMm').text(month + 1); //그리드 월tab 월 초기값 입력
 
-            setMonthGridData()                                                                              // Month Grid 생성
+            setMonthGridData();                                                                              // Month Grid 생성
             crteTodayShow(year, month, date, day);                                                        // Grid UI(주) 날짜 세팅
             setAnhoMgmt(); //연차정보 입력
 
@@ -221,66 +221,9 @@
                 });
             }
 
-            /*********************************************************************
-            *   Session Email , StrtDt, endDt 값 기준 주 그리드 데이터 세팅
-            *********************************************************************/
-            function setWeekGridData(tempStrtDt, tempEndDt){
-                var email = "";
 
-                if ($('#empEmailHidden').val() == null || $('#empEmailHidden').val() == "") {
-                    email = sessionStorage.getItem("email");
-                } else {
-                    email = $('#empEmailHidden').val();
-                }
 
-                var gridParam = {
-                    "email"     : email,
-                    "strtDt" : tempStrtDt,
-                    "endDt" : tempEndDt
-                }
 
-                $.ajaxCall( gridParam, {
-                     'method' : 'GET',
-                     'url' : "{% url 'dili_api:getWeekGridData' %}",
-                     'dataType' : 'json',
-                     'data' : JSON.stringify(gridParam),
-                     'async' : false,
-                     'callbackFn' : function(data, status, xhr){
-                        crteWeekGrid(data);
-                     }
-                });
-            }
-
-            /*********************************************************************
-            *   Session Email , StrtDt, endDt 값 기준 월 그리드 데이터 세팅
-            *********************************************************************/
-            function setMonthGridData(){
-                var email = "";
-
-                if ($('#empEmailHidden').val() == null || $('#empEmailHidden').val() == "") {
-                    email = sessionStorage.getItem("email");
-                } else {
-                    email = $('#empEmailHidden').val();
-                }
-
-                var setMDt = $('#txt_mmYy').text() + "-" + $('#txt_mmMm').text()
-                var gridParam = {
-                    "email"     : email,
-                    "mDt" : setMDt
-                }
-
-                $.ajaxCall( gridParam, {
-                     'method' : 'GET',
-                     'url' : "{% url 'dili_api:getMonthGridData' %}",
-                     'dataType' : 'json',
-                     'data' : JSON.stringify(gridParam),
-                     'async' : false,
-                     'callbackFn' : function(data, status, xhr){
-                        crteMonthGrid(data);
-                     }
-                });
-
-            }
 
             /*********************************************************************
             *   Grid Btn Click Event - 그리드 버튼 클릭
@@ -643,36 +586,6 @@
             });
 
             /*********************************************************************
-            *   Grid UI(주) 날짜 세팅
-            *********************************************************************/
-            function crteTodayShow(year, month, date, day){
-                var strtDate = null;
-                var endDate = null;
-
-                //주tab 시작일, 종료일 입력 날짜 계산
-                for(var i = 0; i < 7; i++ ){
-
-                    if(day == i){
-
-                        strtDate = new Date(year, Number(month), Number(date) - i);
-                        endDate = new Date(year, Number(month), Number(date) + 6 - i);
-                    }
-                }
-
-                $('#txt_weekStrtYy').text(strtDate.getFullYear()); //그리드 주tab 시작년도 입력
-                $('#txt_weekStrtMm').text(strtDate.getMonth() + 1); //그리드 주tab 시작월 입력
-                $('#txt_weekStrtDd').text(strtDate.getDate()); //그리드 주tab 시작일 입력
-
-                $('#txt_weekEndYy').text(endDate.getFullYear()); //그리드 주tab 종료년도 입력
-                $('#txt_weekEndMm').text(endDate.getMonth() + 1); //그리드 주tab 종료월 입력
-                $('#txt_weekEndDd').text(endDate.getDate()); //그리드 주tab 종료일 입력
-
-                tempStrtDt = setWeek(strtDate).baseDate;
-                tempEndDt = setWeek(endDate).baseDate;
-                setWeekGridData(tempStrtDt, tempEndDt);
-
-            }
-            /*********************************************************************
             *   my_modal 영역 닫기 버튼 클릭이벤트
             *********************************************************************/
             $('#exitSchdModal').click(function(){
@@ -699,6 +612,98 @@
         });/*ready.function_END*/
 
         var myChart;
+
+        /*********************************************************************
+        *   Session Email , StrtDt, endDt 값 기준 주 그리드 데이터 세팅
+        *********************************************************************/
+        function setWeekGridData(tempStrtDt, tempEndDt){
+            var email = "";
+
+            if ($('#empEmailHidden').val() == null || $('#empEmailHidden').val() == "") {
+                email = sessionStorage.getItem("email");
+            } else {
+                email = $('#empEmailHidden').val();
+            }
+
+            var gridParam = {
+                "email"     : email,
+                "strtDt" : tempStrtDt,
+                "endDt" : tempEndDt
+            }
+
+            $.ajaxCall( gridParam, {
+                 'method' : 'GET',
+                 'url' : "{% url 'dili_api:getWeekGridData' %}",
+                 'dataType' : 'json',
+                 'data' : JSON.stringify(gridParam),
+                 'async' : false,
+                 'callbackFn' : function(data, status, xhr){
+                    crteWeekGrid(data);
+                 }
+            });
+        }
+
+        /*********************************************************************
+        *   Grid UI(주) 날짜 세팅
+        *********************************************************************/
+        function crteTodayShow(year, month, date, day){
+            var strtDate = null;
+            var endDate = null;
+
+            //주tab 시작일, 종료일 입력 날짜 계산
+            for(var i = 0; i < 7; i++ ){
+
+                if(day == i){
+
+                    strtDate = new Date(year, Number(month), Number(date) - i);
+                    endDate = new Date(year, Number(month), Number(date) + 6 - i);
+                }
+            }
+
+            $('#txt_weekStrtYy').text(strtDate.getFullYear()); //그리드 주tab 시작년도 입력
+            $('#txt_weekStrtMm').text(strtDate.getMonth() + 1); //그리드 주tab 시작월 입력
+            $('#txt_weekStrtDd').text(strtDate.getDate()); //그리드 주tab 시작일 입력
+
+            $('#txt_weekEndYy').text(endDate.getFullYear()); //그리드 주tab 종료년도 입력
+            $('#txt_weekEndMm').text(endDate.getMonth() + 1); //그리드 주tab 종료월 입력
+            $('#txt_weekEndDd').text(endDate.getDate()); //그리드 주tab 종료일 입력
+
+            tempStrtDt = setWeek(strtDate).baseDate;
+            tempEndDt = setWeek(endDate).baseDate;
+            setWeekGridData(tempStrtDt, tempEndDt);
+
+        }
+
+        /*********************************************************************
+        *   Session Email , StrtDt, endDt 값 기준 월 그리드 데이터 세팅
+        *********************************************************************/
+        function setMonthGridData(){
+            var email = "";
+
+            if ($('#empEmailHidden').val() == null || $('#empEmailHidden').val() == "") {
+                email = sessionStorage.getItem("email");
+            } else {
+                email = $('#empEmailHidden').val();
+            }
+
+            var setMDt = $('#txt_mmYy').text() + "-" + $('#txt_mmMm').text()
+            var gridParam = {
+                "email"     : email,
+                "mDt" : setMDt
+            }
+
+            $.ajaxCall( gridParam, {
+                 'method' : 'GET',
+                 'url' : "{% url 'dili_api:getMonthGridData' %}",
+                 'dataType' : 'json',
+                 'data' : JSON.stringify(gridParam),
+                 'async' : false,
+                 'callbackFn' : function(data, status, xhr){
+                    crteMonthGrid(data);
+                 }
+            });
+
+        }
 
         /*********************************************************************
         *   Week Grid 생성
