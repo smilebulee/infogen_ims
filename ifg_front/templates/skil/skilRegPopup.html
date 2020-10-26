@@ -11,7 +11,7 @@
  <style>
 
 #modal {
-  z-index:100;
+  z-index:200;
 }
 
 #modal h2 {
@@ -44,6 +44,13 @@
 
 }
 
+#modal tbody>tr {
+  counter-increment: aaa;
+}
+#modal tbody>tr>td:first-child:before {
+  content: counter(aaa) " ";
+}
+
 </style>
 
 
@@ -58,19 +65,19 @@
 
 
                 <p>성명<br>
-                    <input type = "text" name = "emp_nm" placeholder="input text"></p>
+                    <input type = "text" name = "emp_nm" id="emp_nm"></p>
 
                 <p>부서<br>
-                    <input type = "text" name = "cnct_cd" placeholder="input text"></p>
+                    <input type = "text" name = "slin_bzdp" id="slin_bzdp"></p>
 
                 <p>구분<br>
-                   <input type = "text" name = "ctro" placeholder="input text"></p>
+                   <input type = "text" name = "cntn_dive_nm" id="cntn_dive_nm"></p>
 
                 <p>직급<br>
-                    <input type = "text" name = "cnct_amt" placeholder="input text"></p>
+                    <input type = "text" name = "emp_rank_nm" id="emp_rank_nm"></p>
 
                 <p>비고<br>
-                    <input type = "text" name = "rmks" placeholder="input text"></p>
+                    <input type = "text" name = "rmks" id="rmks"></p>
 
             </span>
 
@@ -79,16 +86,18 @@
 
         <!--<button name="addStaff" class = "btn btn-primary" style="float:right">추가</button>
         <button name="delStaff" class = "btn btn-primary" style="float:right color:red">삭제</button>-->
-        <td><input type="button" style="float:right" id="addStaff" name="addStaff" value="추가" class = "btn btn-danger"/></td>
-        <td><input type="button" style="float:right" id="delStaff" name="delStaff" value="삭제" class = "btn btn-primary"/></td>
+         <!--<td><input type="button" style="float:right" id="addStaff" name="addStaff" value="추가" class = "btn btn-danger"/></td>
+        <td><input type="button" style="float:right" id="delStaff" name="delStaff" value="삭제" class = "btn btn-primary"/></td>-->
+            <button id = "addSkil" name="addSkil" class = "btn btn-primary" style="width:33%; float:right;">추가</button>
 
         <br>
             <table id="hldSkil" class="table" style="margin-top: 20px;">
                 <colgroup>
+                    <col width="15%"/>
                     <col width="20%"/>
                     <col width="20%"/>
-                    <col width="30%"/>
-                    <col width="30%"/>
+                    <col width="20%"/>
+                    <col width="20%"/>
                 </colgroup>
 
                 <thead>
@@ -97,28 +106,22 @@
                     <th>구분</th>
                     <th>스킬명</th>
                     <th>숙련도</th>
+                    <th></th>
 
                 </tr>
                 </thead>
 
-                <tbody id="hldSkilBody" name = "hld_skil">
+                <tbody id="hldSkilBody" name = "hldSkilBody">
                     <tr name="trSkil">
-                        <td id="staff_name"></td>
-                        <td><select size="1" class="form-control" id="hld_skil_divs1" name="hld_skil_divs1" onchange="skil_chg(1)">
-                            <option value = "01">DB</option>
-                            <option value = "02">언어</option>
-                            <option value = "03">WEB</option>
-                            <option value = "04">Framework</option>
+                        <td id="skilNo"></td>
+                        <td><select size="1" class="form-control" id="skil_hight1" name="skil_hight1" onchange="skil_chg(1)">
+                            <option value = "">선택</option>
                         </select></td>
-                        <td><select size="1" class="form-control" id="hld_skil_divs2" name="hld_skil_divs1">
-                            <option value = "01">ORACLE</option>
-                            <option value = "02">MYSQL</option>
-                            <option value = "03">PL/SQL</option>
+                        <td><select size="1" class="form-control" id="skil_middle1" name="skil_middle1">
+                            <option value = "">선택</option>
                         </select></td>
-                        <td><select size="1" class="form-control" id="hld_skil_divs3" name="hld_skil_divs1">
-                            <option value = "01">초</option>
-                            <option value = "02">중</option>
-                            <option value = "03">고</option>
+                        <td><select size="1" class="form-control" id="skil_lvl1" name="skil_lvl1">
+                            <option value = "">선택</option>
                         </select></td>
                     </tr>
                 </tbody>
@@ -127,28 +130,64 @@
         </div>
 
         <hr>
-            <button type="button" id="modal_close_btn">취소</button>
             <button type="button" id="modal_save_btn">저장</button>
             <button type="button" id="modal_delete_btn" style="color:red">삭제</button>
 
         <br>
-     
-    </div>
+ </div>
 
 
 
-   
-    <div class="modal_layer"></div>
+ <div class="modal_layer"></div>
 </div>
 
  <script>
 
-   $(document).ready(function(){
+    var DB = [];
+    var Language = [];
+    var WEB = [];
+    var MIDWARE = [];
+    var Framework = [];
+
+    var param = null;
+
+       $.ajaxCall( param, {
+             method : 'GET',
+             'url' : '/skil/retrieveskilCd/',
+             'dataType' : 'json',
+             'data' : JSON.stringify(param),
+             'async' : false,
+             'callbackFn' : function(data){
+                console.log(data);
+                for(var i = 0; i < data.length; i++){
+                   if(data[i].SKIL_DIVS_CD == '01'){
+                        DB.push(data[i].SKIL_NAME);
+                    } else if(data[i].SKIL_DIVS_CD == '02'){
+                        Language.push(data[i].SKIL_NAME);
+                    } else if(data[i].SKIL_DIVS_CD == '03'){
+                        WEB.push(data[i].SKIL_NAME);
+                    } else if(data[i].SKIL_DIVS_CD == '04'){
+                        MIDWARE.push(data[i].SKIL_NAME);
+                    } else if(data[i].SKIL_DIVS_CD == '05'){
+                        Framework.push(data[i].SKIL_NAME);
+                    }
+                }
+             }
+         });
+
+
+
+    $(document).ready(function(){
 
         console.log('화면진입시작');
         <!-- 화면 진입시 정보 조회 -->
-        var empNo =firstGrid.getList("selected")[0].EMP_NO
-        var cntcDivsCd =firstGrid.getList("selected")[0].CNTN_DIVS_CD
+
+        retrieveCmmCd('skil_hight1', 'SKIL_DIVS_CD');
+        retrieveCmmCd('skil_lvl1', 'SKIL_LVL_CD');
+
+        empNo = firstGrid.getList("selected")[0].EMP_NO;
+        cntcDivsCd = firstGrid.getList("selected")[0].CNTC_DIVS_CD;
+
 
         console.log('empNo' + empNo);
         console.log('cntcDivsCd' + cntcDivsCd);
@@ -159,14 +198,49 @@
 
     function retrieveSkilDetl(){
 
+            console.log('retrieve 시작');
+
             var param = {
                 "empNo" : empNo,
                 "cntcDivsCd" : cntcDivsCd
             }
 
             $.ajaxCall( param, {
-                method : 'GET',
-                     'url' : '/skil/skilRegPopupSearch/',
+                method : 'get',
+                     'url' : "{% url 'skil_api:skilRegPopupSearch' %}",
+                     'dataType' : 'json',
+                     'data' : JSON.stringify(param),
+                     'async' : false,
+                     'callbackFn' : function(data){
+                        console.log('data' + data);
+                        $('#emp_nm').val(data[0].EMP_NAME);
+                        $('#slin_bzdp').val(data[0].SLIN_BZDP);
+                        $('#cntn_dive_nm').val(data[0].CNTN_DIVE_NM);
+                        $('#emp_rank_nm').val(data[0].EMP_RANK_NM);
+                        $('#rmks').val(data[0].RMKS);
+
+                        for(var i=0; i<length; i++){
+                            if(i != length-1){
+                                $("#addSkil").trigger("click");
+                            }
+                            $('#skil_hight'+(i+1)).val(data[i].SKIL_DIVS_CD).trigger('change');
+                            $('#skil_middle'+(i+1)).val(data[i].SKIL_NM_CD);
+                            $('#skil_lvl'+(i+1)).val(data[i].SKIL_LVL_CD);
+                        }
+
+                     }
+            });
+    };
+
+    function retrieveCmmCd(sbx_id, grp_id){
+        var param = {
+            "sbx_id" : sbx_id,
+            "grp_id" : grp_id
+        }
+        return new Promise(function(resolve, reject){
+            $.ajaxCall( param, {
+                     method : 'GET',
+                     'url' : '/skil/retrieveCmmCd/',
                      'dataType' : 'json',
                      'data' : JSON.stringify(param),
                      'async' : false,
@@ -174,10 +248,125 @@
                         for(var i = 0; i < data.length; i++){
                             var option = $("<option value = "+data[i].CMM_CD+">"+data[i].CMM_CD_NAME+"</option>");
                             $('#'+sbx_id).append(option);
+                            resolve(data);
                         }
                      }
             });
+        });
+     };
+
+
+
+
+
+    function skil_chg(a){
+        var selectSkill = $("#skil_hight"+a).val();
+        var changeSkill;
+
+        if(selectSkill == "01"){
+          changeSkill = DB;
+        }
+        else if(selectSkill == "02"){
+          changeSkill = Language;
+        }
+        else if(selectSkill == "03"){
+          changeSkill =  WEB;
+        }
+        else if(selectSkill == "04"){
+          changeSkill =  MIDWARE;
+        }
+        else if(selectSkill == "05"){
+          changeSkill =  Framework;
+        }
+        console.log(changeSkill);
+        $("#skil_middle"+a).empty();
+
+            for(var i = 0; i < changeSkill.length; i++){
+                            var option = $("<option>"+changeSkill[i]+"</option>");
+                            $('#skil_middle'+a).append(option);
+            }
     };
+
+
+    var count = 1;
+    $(document).on("click","button[name=addSkil]",function(){
+        console.log('add');
+        count += 1;
+        var rowCount = $('#hldSkil tbody tr').length+1;
+
+        var addSkilText =
+            '<tr name="trSkil">'+
+            '        <td id="skil_no"></td>'+
+            '        <td><select size ="1" class="form-control" id = "skil_hight'+count+'" name = "skil_hight'+count+'" onchange="skil_chg('+count+')">'+
+            '                <option value = "00">선택</option>'+
+            '                <option value = "01">DB</option>'+
+            '                <option value = "02">LANGUAGE</option>'+
+            '                <option value = "03">WEB</option>'+
+            '                <option value = "04">MIDWARE</option>'+
+            '                <option value = "05">Framework</option>'+
+            '            </select></td>'+
+            '         <td><select class="form-control" id = "skil_middle'+count+'" name = "skil_middle'+count+'"></select></td>'+
+            '        <td><select class="form-control" id = "skil_lvl'+count+'" name = "skil_lvl'+count+'"></select></td>'+
+            '        <td><input type="button" style="float:right;" id="delSkil" name="delSkil" value="삭제" class = "btn btn-primary"/></td>'+
+            '</tr>';
+
+        var trHtml = $( "tr[name=trSkil]:last" );
+
+        trHtml.after(addSkilText);
+    });
+
+    $(document).on("click","input[name=delSkil]",function(){
+        console.log('del')
+        var trHtml = $(this).parent().parent();
+
+        trHtml.remove();
+    });
+
+
+    $('#modal_delete_btn').click(function(){
+
+            var param = {
+                "empNo" : empNo,
+            }
+            console.log('삭제');
+            confirmMsg('삭제 하시겠습니까?', function(){
+
+                    $.ajaxCall( param, {
+                     method : 'POST',
+                     'url' : '/skil/deleteSkilDetl/post',
+                     'dataType' : 'json',
+                     'data' : JSON.stringify(param),
+                     'async' : false,
+                     'callbackFn' : function(data){
+                         g_toast.push('삭제 되었습니다.');
+                      }
+                  });
+            });
+
+     });
+
+    $('#modal_save_btn').click(function(){
+
+            var param = {
+                "empNo" : empNo
+            }
+            console.log('저장');
+            confirmMsg('저장 하시겠습니까?', function(){
+
+
+                    $.ajaxCall( param, {
+                     method : 'POST',
+                     'url' : '/skil/saveSkilDetl/post',
+                     'dataType' : 'json',
+                     'data' : JSON.stringify(param),
+                     'async' : false,
+                     'callbackFn' : function(data){
+                         g_toast.push('저장 되었습니다.');
+                     }
+                  });
+            });
+
+    });
 
 
 
