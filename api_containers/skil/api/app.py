@@ -258,7 +258,7 @@ class devMgmtSearch(Resource):
         logging.debug('devpDivsCd : ' + devpDivsCd)
         logging.debug('------------------------------------')
 
-        mysql_con = pymysql.connect(host='218.151.225.142', port=3306, db='IFG_IMS', user='ims2', password='1234',
+        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
                                     charset='utf8')
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
