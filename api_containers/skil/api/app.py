@@ -53,7 +53,7 @@ def getSystemInfo():
     logging.debug('skil Server')
     logging.debug(socket.gethostbyname(socket.gethostname()))
     try:
-        if (socket.gethostbyname(socket.gethostname()) == "172.20.0.14" ) :
+        if (socket.gethostbyname(socket.gethostname()) == "172.20.0.7" ) :
             logging.debug('Prod Server')
             return "mariadb"
         else :
@@ -562,7 +562,7 @@ class retrieveCmmCd(Resource):
 
         grp_id = request.args.get('grp_id')
 
-        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
+        mysql_con = pymysql.connect(host='mariadb', port=3306, db='IFG_IMS', user='ims2', password='1234',
                                     charset='utf8')
 
         try:
