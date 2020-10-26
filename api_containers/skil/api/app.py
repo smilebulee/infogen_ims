@@ -50,6 +50,8 @@ def getUserMessages(username):
     })[0]["Messages"]
 
 def getSystemInfo():
+    logging.debug('skil Server')
+    logging.debug(socket.gethostbyname(socket.gethostname()))
     try:
         if (socket.gethostbyname(socket.gethostname()) == "172.20.0.6" ) :
             logging.debug('Prod Server')
