@@ -35,7 +35,7 @@ urlpatterns = [
     # 스킬관리상세팝업
     url(r'^skilRegPopup/', views.skilRegPopup, name='skilRegPopup'),
     url(r'^skilRegPopupSearch/get', views.skilRegPopupSearch, name='skilRegPopupSearch'),
-    url(r'^retrieveskilCd/', views.retrieveskilCd, name='retrieveskilCd'),
+    url(r'^retrieveEmpSkilCd/', views.retrieveEmpSkilCd, name='retrieveEmpSkilCd'),
     url(r'^deleteSkilDetl/post', views.deleteSkilDetl, name='deleteSkilDetl'),
     url(r'^saveSkilDetl/post', views.deleteSkilDetl, name='saveSkilDetl'),
 

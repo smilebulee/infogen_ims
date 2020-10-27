@@ -339,7 +339,7 @@ def saveSkilCd(request):
     return JsonResponse(ret)
 
 
-def retrieveskilCd(request):
+def retrieveEmpSkilCd(request):
     param = json.loads(request.GET['param'])
     logger.info('param')
     logger.info(param)
@@ -348,7 +348,7 @@ def retrieveskilCd(request):
 
     }
 
-    r = requests.get('http://skil_api:5003/retrieveskilCd', params=params)
+    r = requests.get('http://skil_api:5003/retrieveEmpSkilCd', params=params)
     logger.info(r)
     logger.info(r.text)
     logger.info(r.json())
