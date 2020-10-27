@@ -562,7 +562,7 @@ class retrieveCmmCd(Resource):
 
         grp_id = request.args.get('grp_id')
 
-        mysql_con = pymysql.connect(host='mariadb', port=3306, db='IFG_IMS', user='ims2', password='1234',
+        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
                                     charset='utf8')
 
         try:
@@ -659,7 +659,7 @@ class skilRegPopupSearch(Resource):
         return result1
 
 #스킬 코드 조회
-class retrieveskilCd(Resource):
+class retrieveEmpSkilCd(Resource):
     def get(self):
         params = request.get_json()
 
@@ -925,7 +925,7 @@ api.add_resource(retrieveCmmCd, '/retrieveCmmCd')
 
 # 스킬 상세 관리
 api.add_resource(skilRegPopupSearch, '/skilRegPopupSearch')
-api.add_resource(retrieveskilCd, '/retrieveskilCd')
+api.add_resource(retrieveEmpSkilCd, '/retrieveEmpSkilCd')
 api.add_resource(deleteSkilDetl, '/deleteSkilDetl')
 api.add_resource(saveSkilDetl, '/saveSkilDetl')
 
