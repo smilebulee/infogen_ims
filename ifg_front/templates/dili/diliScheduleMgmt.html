@@ -182,7 +182,7 @@
             var currentWeek = setWeek(currentDate);
 
             getWrkTimeByIml(null, currentWeek.strtDate, currentWeek.endDate);     // Session Email 을 기준으로 시작~종료일에 대한 근무시간 조회.
-            getCalendarSessionDate();     // Session Email
+            getCalendarSessionDate2();     // Session Email
 
 
             /*********************************************************************
@@ -337,173 +337,36 @@
                 }
             });
 
-            /*********************************************************************
-            *   Draw  calendar Event - 캘린더 API 그리기
-            *********************************************************************/
-            var calendar = new tui.Calendar(document.getElementById('calendar'), {
-                defaultView: 'month',
-                taskView: true,
-                 /*
-                 useCreationPopup: true,
-                 useDetailPopup: true
-                 */
-            });
-
-
-            calendar.on('clickSchedule', function(event) {
-                console.log(event.schedule.end.getFullYear()+"-"+(event.schedule.end.getMonth()+1)+"-"+event.schedule.end.getDate());
-
-                var tmp = event.schedule.end.getFullYear()+"-"+(event.schedule.end.getMonth()+1)+"-"+event.schedule.end.getDate();
-                weekDate = setWeek(tmp);                                   // 선택된 일이 포함된 주의 Start,End Date 조회
-                getWrkTimeByIml(null, weekDate.strtDate, weekDate.endDate);     // Session Email 을 기준으로 시작~종료일에 대한 근무시간 조회.
-            });
-
 
 
             /*********************************************************************
-            *   Draw  calendar Event - 데이터 받아오기
+            *   my_modal 영역 닫기 버튼 클릭이벤트
             *********************************************************************/
-            function getCalendarSessionDate() {
-               var email = "";
+            $('#exitSchdModal').click(function(){
 
-                if ($('#empEmailHidden').val() == null || $('#empEmailHidden').val() == "") {
-                    email = sessionStorage.getItem("email");
-                } else {
-                    email = $('#empEmailHidden').val();
-                }
+                var dfrWeekEndYy = $('#txt_weekEndYy').text(); //현재 종료 년도
+                var dfrWeekEndMm = $('#txt_weekEndMm').text()-1; //현재 종료 월
+                var dfrWeekEndDd = $('#txt_weekEndDd').text(); //현재 종료 일
 
-                var param = {
-                    "email"     : email
-                }
+                var dfrWeekStrtYy = $('#txt_weekStrtYy').text(); // 현재 시작 년도
+                var dfrWeekStrtMm = $('#txt_weekStrtMm').text()-1; //현재 시작 월
+                var dfrWeekStrtDd = $('#txt_weekStrtDd').text(); // 현재 시작 일
 
-                $.ajaxCall( param, {
-                     'method' : 'GET',
-                     'url' : "{% url 'dili_api:getCalendarData' %}",
-                     'dataType' : 'json',
-                     'data' : JSON.stringify(param),
-                     'async' : false,
-                     'callbackFn' : function(data, status, xhr){
-                        console.log("data111 : ",JSON.parse(data))
+                var dfrEndDate = new Date(dfrWeekEndYy, dfrWeekEndMm, dfrWeekEndDd); //현재 종료 날짜 등록
+                var dfrStrtDate = new Date(dfrWeekStrtYy, dfrWeekStrtMm, dfrWeekStrtDd); //현재 시작 날짜 등록
 
-                        var dataParam = JSON.parse(data)
-
-                        if(dataParam.length > 0) {
-                            setCalendar(data);
-                        }
-                     }
-                });
-            }
-
-            /*********************************************************************
-            *   Draw  calendar Event - 받아온 데이터 캘린더에 입력
-            *********************************************************************/
-            function setCalendar(data){
-                console.log("calendarData1 : ",data);
-
-                var calendarData = JSON.parse(data);
-
-                var dataCustomArray = new Array();
-                for(var i=0; i < calendarData.length; i++) {
-                    var wrkDt  = calendarData[i].WRK_DT;
-                    var statTm  = calendarData[i].JOB_STRT_TM;
-                    var endTm  = calendarData[i].JOB_END_TM;
-                    var startTimeAdd = wrkDt + "T" + statTm;
-                    var endTimeAdd = wrkDt + "T" + endTm;
-                    var normTm  = calendarData[i].NORM_WRK_TM;
-                    var overTm  = calendarData[i].OVER_WRK_TM;
-
-                    var dataCustom = {
-                        calendarId: i,
-                        id: String(Math.random() * 100000000000000000),
-                        title : "시작시간: " + statTm,
-                        isAllDay: false,
-                        start: startTimeAdd,
-                        end: startTimeAdd,
-                        category: "time",
-                        normTm: normTm,
-                        overTm: overTm
-                    };
-                    dataCustomArray.push(dataCustom);
-
-                    dataCustom = {
-                        calendarId: i + 1,
-                        id: String(Math.random() * 100000000000000000),
-                        title : "종료시간: " + endTm,
-                        isAllDay: false,
-                        start: endTimeAdd,
-                        end: endTimeAdd,
-                        category: "time",
-                        normTm: normTm,
-                        overTm: overTm
-                    };
-                    dataCustomArray.push(dataCustom);
-
-
-                }
-
-                console.log("dataCustomArray : ",dataCustomArray);
-
-                calendar.createSchedules(dataCustomArray);
-            }
-
-
-            /*********************************************************************
-            *   Draw  calendar Event - 캘린더 색입히기
-            *********************************************************************/
-            calendar.setCalendarColor('1', {
-                color: '#e8e8e8',
-                bgColor: '#585858',
-                borderColor: '#a1b56c',
-                dragBgColor: '#585858',
+                tempStrtDt = setWeek(dfrStrtDate).baseDate;
+                tempEndDt = setWeek(dfrEndDate).baseDate;
+                setWeekGridData(tempStrtDt, tempEndDt);
+                setMonthGridData();
+                $('#my_modal2').empty();
+                $('.model_layout').empty();
             });
-            calendar.setCalendarColor('2', {
-                color: '#282828',
-                bgColor: '#dc9656',
-                borderColor: '#a1b56c',
-                dragBgColor: '#dc9656',
-            });
-
-
-            /*********************************************************************
-            *  저장, 수정, 삭제 이벤트
-            *********************************************************************/
-            calendar.on("beforeCreateSchedule", function(scheduleData){
-                var schedule = {
-                  calendarId: scheduleData.calendarId,
-                  id: String(Math.random() * 100000000000000000),
-                  title: scheduleData.title,
-                  isAllDay: scheduleData.isAllDay,
-                  start: scheduleData.start,
-                  end: scheduleData.end,
-                  category: scheduleData.isAllDay ? 'allday' : 'time',
-                  location: scheduleData.location             // 장소 정보
-                };
-
-                if ($('.tui-full-calendar-month-guide-block').length >= 1) {
-                    $('.tui-full-calendar-month-guide-block').addClass("notFocused")
-                }
-
-                console.log(schedule.end.getFullYear()+"-"+(schedule.end.getMonth()+1)+"-"+schedule.end.getDate());
-                var tmp = schedule.end.getFullYear()+"-"+(schedule.end.getMonth()+1)+"-"+schedule.end.getDate();
-                weekDate = setWeek(tmp);                                   // 선택된 일이 포함된 주의 Start,End Date 조회
-                getWrkTimeByIml(null, weekDate.strtDate, weekDate.endDate);     // Session Email 을 기준으로 시작~종료일에 대한 근무시간 조회.
-
-                $('#tmpPopDt').text(schedule.end.getFullYear()+"-"+(schedule.end.getMonth()+1)+"-"+schedule.end.getDate());
-                console.log('111 ', calendar);
-
-                //시작시간, 종료시간, 정상근무, 초과근무시간 셋팅해야함
-/*                $('#tmpPopStrtTm').text($('#'+trId.id).children().eq(1).text());*/
-/*                $('#tmpPopEndTm').text($('#'+trId.id).children().eq(2).text());*/
-
-            });
-
 
 
             /*********************************************************************
             *   calendar 버튼제어 - today,이전날 다음달
             *********************************************************************/
-            setLabel(calendar);
-
             $("#today").click(function(){
               calendar.today();
               setLabel(calendar);
@@ -516,10 +379,6 @@
               calendar.next();
               setLabel(calendar);
             });
-
-            function setLabel(calendar){
-              $("#calendarLabel").text(calendar.getDate().getFullYear() + "." + (calendar.getDate().getMonth()+1));
-            }
 
             /*********************************************************************
             *   calendar Click Event - calender 클릭시
@@ -546,29 +405,6 @@
 
             });
 
-            /*********************************************************************
-            *   my_modal 영역 닫기 버튼 클릭이벤트
-            *********************************************************************/
-            $('#exitSchdModal').click(function(){
-
-                var dfrWeekEndYy = $('#txt_weekEndYy').text(); //현재 종료 년도
-                var dfrWeekEndMm = $('#txt_weekEndMm').text()-1; //현재 종료 월
-                var dfrWeekEndDd = $('#txt_weekEndDd').text(); //현재 종료 일
-
-                var dfrWeekStrtYy = $('#txt_weekStrtYy').text(); // 현재 시작 년도
-                var dfrWeekStrtMm = $('#txt_weekStrtMm').text()-1; //현재 시작 월
-                var dfrWeekStrtDd = $('#txt_weekStrtDd').text(); // 현재 시작 일
-
-                var dfrEndDate = new Date(dfrWeekEndYy, dfrWeekEndMm, dfrWeekEndDd); //현재 종료 날짜 등록
-                var dfrStrtDate = new Date(dfrWeekStrtYy, dfrWeekStrtMm, dfrWeekStrtDd); //현재 시작 날짜 등록
-
-                tempStrtDt = setWeek(dfrStrtDate).baseDate;
-                tempEndDt = setWeek(dfrEndDate).baseDate;
-                setWeekGridData(tempStrtDt, tempEndDt);
-                setMonthGridData();
-                $('#my_modal2').empty();
-                $('.model_layout').empty();
-            });
 
         });/*ready.function_END*/
 
@@ -1174,6 +1010,185 @@
                 options: barOptions_stacked,
             });
         }
+
+        var calendar;
+
+        /*********************************************************************
+        *   Draw  calendar Event - 캘린더 API 그리기
+        *********************************************************************/
+        function getCalendarSessionDate2(){
+            if (calendar != "undefined" && calendar != null && calendar != "") {
+                calendar.destroy();
+            }
+
+                calendar = new tui.Calendar(document.getElementById('calendar'), {
+                defaultView: 'month',
+                taskView: true,
+                 /*
+                 useCreationPopup: true,
+                 useDetailPopup: true
+                 */
+            });
+
+
+            calendar.on('clickSchedule', function(event) {
+                console.log(event.schedule.end.getFullYear()+"-"+(event.schedule.end.getMonth()+1)+"-"+event.schedule.end.getDate());
+
+                var tmp = event.schedule.end.getFullYear()+"-"+(event.schedule.end.getMonth()+1)+"-"+event.schedule.end.getDate();
+                weekDate = setWeek(tmp);                                   // 선택된 일이 포함된 주의 Start,End Date 조회
+                getWrkTimeByIml(null, weekDate.strtDate, weekDate.endDate);     // Session Email 을 기준으로 시작~종료일에 대한 근무시간 조회.
+            });
+
+            /*********************************************************************
+            *   Draw  calendar Event - 캘린더 색입히기
+            *********************************************************************/
+            calendar.setCalendarColor('1', {
+                color: '#e8e8e8',
+                bgColor: '#585858',
+                borderColor: '#a1b56c',
+                dragBgColor: '#585858',
+            });
+            calendar.setCalendarColor('2', {
+                color: '#282828',
+                bgColor: '#dc9656',
+                borderColor: '#a1b56c',
+                dragBgColor: '#dc9656',
+            });
+
+            /*********************************************************************
+            *  저장, 수정, 삭제 이벤트
+            *********************************************************************/
+            calendar.on("beforeCreateSchedule", function(scheduleData){
+                var schedule = {
+                  calendarId: scheduleData.calendarId,
+                  id: String(Math.random() * 100000000000000000),
+                  title: scheduleData.title,
+                  isAllDay: scheduleData.isAllDay,
+                  start: scheduleData.start,
+                  end: scheduleData.end,
+                  category: scheduleData.isAllDay ? 'allday' : 'time',
+                  location: scheduleData.location             // 장소 정보
+                };
+
+                if ($('.tui-full-calendar-month-guide-block').length >= 1) {
+                    $('.tui-full-calendar-month-guide-block').addClass("notFocused")
+                }
+
+                console.log(schedule.end.getFullYear()+"-"+(schedule.end.getMonth()+1)+"-"+schedule.end.getDate());
+                var tmp = schedule.end.getFullYear()+"-"+(schedule.end.getMonth()+1)+"-"+schedule.end.getDate();
+                weekDate = setWeek(tmp);                                   // 선택된 일이 포함된 주의 Start,End Date 조회
+                getWrkTimeByIml(null, weekDate.strtDate, weekDate.endDate);     // Session Email 을 기준으로 시작~종료일에 대한 근무시간 조회.
+
+                $('#tmpPopDt').text(schedule.end.getFullYear()+"-"+(schedule.end.getMonth()+1)+"-"+schedule.end.getDate());
+                console.log('111 ', calendar);
+
+                //시작시간, 종료시간, 정상근무, 초과근무시간 셋팅해야함
+/*                $('#tmpPopStrtTm').text($('#'+trId.id).children().eq(1).text());*/
+/*                $('#tmpPopEndTm').text($('#'+trId.id).children().eq(2).text());*/
+
+            });
+
+            setLabel(calendar);
+            getCalendarSessionDate();
+        }
+
+
+
+        /*********************************************************************
+        *   Draw  calendar Event - 데이터 받아오기
+        *********************************************************************/
+        function getCalendarSessionDate() {
+
+           var email = "";
+
+
+
+            if ($('#empEmailHidden').val() == null || $('#empEmailHidden').val() == "") {
+                email = sessionStorage.getItem("email");
+            } else {
+                email = $('#empEmailHidden').val();
+            }
+
+            var param = {
+                "email"     : email
+            }
+
+            $.ajaxCall( param, {
+                 'method' : 'GET',
+                 'url' : "{% url 'dili_api:getCalendarData' %}",
+                 'dataType' : 'json',
+                 'data' : JSON.stringify(param),
+                 'async' : false,
+                 'callbackFn' : function(data, status, xhr){
+                    console.log("data111 : ",JSON.parse(data))
+
+                    var dataParam = JSON.parse(data)
+
+                    if(dataParam.length > 0) {
+                        setCalendar(data);
+                    }
+                 }
+            });
+        }
+
+        /*********************************************************************
+        *   Draw  calendar Event - 받아온 데이터 캘린더에 입력
+        *********************************************************************/
+        function setCalendar(data){
+            console.log("calendarData1 : ",data);
+
+            var calendarData = JSON.parse(data);
+
+            var dataCustomArray = new Array();
+            for(var i=0; i < calendarData.length; i++) {
+                var wrkDt  = calendarData[i].WRK_DT;
+                var statTm  = calendarData[i].JOB_STRT_TM;
+                var endTm  = calendarData[i].JOB_END_TM;
+                var startTimeAdd = wrkDt + "T" + statTm;
+                var endTimeAdd = wrkDt + "T" + endTm;
+                var normTm  = calendarData[i].NORM_WRK_TM;
+                var overTm  = calendarData[i].OVER_WRK_TM;
+
+                var dataCustom = {
+                    calendarId: i,
+                    id: String(Math.random() * 100000000000000000),
+                    title : "시작시간: " + statTm,
+                    isAllDay: false,
+                    start: startTimeAdd,
+                    end: startTimeAdd,
+                    category: "time",
+                    normTm: normTm,
+                    overTm: overTm
+                };
+                dataCustomArray.push(dataCustom);
+
+                dataCustom = {
+                    calendarId: i + 1,
+                    id: String(Math.random() * 100000000000000000),
+                    title : "종료시간: " + endTm,
+                    isAllDay: false,
+                    start: endTimeAdd,
+                    end: endTimeAdd,
+                    category: "time",
+                    normTm: normTm,
+                    overTm: overTm
+                };
+                dataCustomArray.push(dataCustom);
+
+
+            }
+
+            console.log("dataCustomArray : ",dataCustomArray);
+
+            calendar.createSchedules(dataCustomArray);
+        }
+
+        function setLabel(calendar){
+          $("#calendarLabel").text(calendar.getDate().getFullYear() + "." + (calendar.getDate().getMonth()+1));
+        }
+
+
+
 
     </script>
 

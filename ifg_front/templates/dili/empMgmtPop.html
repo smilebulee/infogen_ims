@@ -29,8 +29,12 @@
                         if(data.length >= 1) {
                             if (data.length == 1) {
                                 console.log(' Debug [Data.EMP_EMAIL] : '+ data[0].EMP_EMAIL);
+
                                 email    = data[0].EMP_EMAIL;
                                 weekDate = setWeek(getCurrentDate());                           // 현재일이 포함된 주의 Start,End Date 조회
+
+                                $('#baseEndDate').text("");                                      // Span Object EndDate 값이 달라질 경우에만, Chart를 다시 그리므로, 초기화작업.
+
                                 getWrkTimeByIml(email, weekDate.strtDate, weekDate.endDate);     // Session Email 을 기준으로 시작~종료일에 대한 근무시간 조회.
 
                                 $('#empEmailHidden').val(email);
@@ -47,7 +51,7 @@
 
                                     setMonthGridData();                                                                              // Month Grid 생성
                                     crteTodayShow(year, month, date, day);                                                        // Grid UI(주) 날짜 세팅
-                                   // getCalendarSessionDate();
+                                    getCalendarSessionDate2();
 
                                 $('#exitEmpModalBtn').click();
                             } else {
@@ -80,6 +84,9 @@
             if( $("#empEmailHidden").val() != null && $("#empEmailHidden").val() != "" ){
                 $(".modal_close_btn").click();
                 weekDate = setWeek(getCurrentDate());                                                       // 현재일이 포함된 주의 Start,End Date 조회
+
+                $('#baseEndDate').text("");                                                                  // Span Object EndDate 값이 달라질 경우에만, Chart를 다시 그리므로, 초기화작업.
+
                 getWrkTimeByIml(null, weekDate.strtDate, weekDate.endDate);
                 //현재 날짜 가져오기
                 var today = new Date();
@@ -91,9 +98,9 @@
                 $('#txt_mmYy').text(year); //그리드 월tab 년도 초기값 입력
                 $('#txt_mmMm').text(month + 1); //그리드 월tab 월 초기값 입력
 
-                setMonthGridData();                                                                              // Month Grid 생성
-                crteTodayShow(year, month, date, day);                                                        // Grid UI(주) 날짜 세팅
-                //getCalendarSessionDate();
+                setMonthGridData();                                                                         // Month Grid 생성
+                crteTodayShow(year, month, date, day);                                                      // Grid UI(주) 날짜 세팅
+                getCalendarSessionDate2();
             }
         };
 
