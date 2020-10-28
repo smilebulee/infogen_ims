@@ -50,6 +50,7 @@ urlpatterns = [
     url(r'^saveEndTm/', views.saveEndTm, name='saveEndTm'),
 
     url(r'^getApvlInfo/', views.getApvlInfo, name='getApvlInfo'),
+    url(r'^getYryUseDays/', views.getYryUseDays, name='getYryUseDays'),
 
 
     # 공지사항 파일업로드 추가

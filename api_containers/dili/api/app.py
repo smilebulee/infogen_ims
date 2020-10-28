@@ -1202,6 +1202,13 @@ class saveYryApvlReq(Resource):  # Mariadb 연결 진행
                     logger.info(sql2)
                     cursor.execute(sql2, (email, wrkDt))
 
+                    sql3 = "UPDATE TB_YRY_MGMT_M" \
+                           "   SET USE_YRY_DAYS = USE_YRY_DAYS+1" \
+                           " WHERE EMP_EMAL_ADDR = %s" \
+
+                    logger.info(sql3)
+                    cursor.execute(sql3, (email))
+
                     mysql_con.commit()
 
             finally:
@@ -1293,6 +1300,37 @@ class updateEndTm(Resource):  # Mariadb 연결 진행
         }
 
         return jsonify(retJson)
+    
+class yryUseDays(Resource): # Mariadb 연결 진행
+    def get(self):
+
+        # get data
+        data = request.get_json()
+
+        #requirements pymysql import 후 커넥트 사용
+        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
+                                        charset='utf8')
+        try:
+            with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+                # 쿼리문 실행
+                sql = "SELECT CASE WHEN ALL_YRY_DAYS = USE_YRY_DAYS THEN 'N'" \
+                      "            ELSE 'Y' END USE_YRY_YN  " \
+                      "  FROM TB_YRY_MGMT_M" \
+                      " WHERE EMP_EMAL_ADDR = '" + data["email"] + "'"
+                logging.debug("apvlReqHist SQL문" + sql)
+                cursor.execute(sql)
+
+        finally:
+            mysql_con.close()
+
+        result2 = cursor.fetchall()
+        for row in result2:
+            logging.debug('====== row====')
+            logging.debug(row)
+            logging.debug('===============')
+        array = list(result2)  # 결과를 리스트로
+
+        return json.dumps(result2, indent=4, cls=DateTimeEncoder)
 
 api.add_resource(Hello, '/hello')
 api.add_resource(Register, '/register')
@@ -1321,5 +1359,6 @@ api.add_resource(apvlInfo,'/apvlInfo') #api 선언
 api.add_resource(monthGridData,'/monthGridData') #api 선언
 api.add_resource(insertStrtTm,'/insertStrtTm') #api 선언
 api.add_resource(updateEndTm,'/updateEndTm') #api 선언
+api.add_resource(yryUseDays,'/yryUseDays') #api 선언
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5006, debug=True)
