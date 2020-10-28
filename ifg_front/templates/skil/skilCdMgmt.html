@@ -87,7 +87,7 @@
                         {
                             key: "RMKS",
                             label: "비고",
-                            width: 360,
+                            width: 415,
                             align: "center",
                             editor : {type : 'text'}
                         }
@@ -108,7 +108,8 @@
             /* 코드 Row 추가 */
             $('#grpAddBtn').click(function(){
                 console.log('코드 Row 추가');
-                firstGrid.addRow({"SKIL_SNO":"", "SKIL_DIVS_CD":"", "SKIL_NAME":"", "REG_DATE":"", "REG_EMP_NO":"", "RMK":""}, 'last');
+                firstGrid.addRow({"SKIL_SNO":"", "SKIL_DIVS_CD":"", "SKIL_NAME":"", "REG_DATE":"", "REG_EMP_NO":"", "RMK":""}, 'first');
+                firstGrid.select(0);
             });
 
             /* 코드 저장 */
@@ -118,9 +119,21 @@
                     return false;
                 }
 
+                var modifiedList = firstGrid.getList("modified");
+                for(var i = 0; i < modifiedList.length; i++){
+                    if(modifiedList[i].SKIL_DIVS_CD == ""){
+                        alertMsg('스킬구분을 선택하세요.');
+                        return false;
+                    }
+
+                    if(modifiedList[i].SKIL_NAME == ""){
+                        alertMsg('스킬상세를 선택하세요.');
+                        return false;
+                    }
+                }
+
                 confirmMsg('저장 하시겠습니까?', function(){
                     var updateList = firstGrid.getList('modified');
-
                     $.ajaxCall(updateList, {
                         url : '{% url 'skil_api:saveSkilCd' %}',
                         method : 'post',
@@ -214,7 +227,7 @@
                     <hr>
 
                     <div style="position: relative;height:500px;" id="grid-parent">
-                        <div data-ax5grid="first-grid" style="height: 90%;"></div>
+                        <div data-ax5grid="first-grid" style="height: 90%;" id="test"></div>
                         <div id="paging_navi"></div>
                     </div>
 
