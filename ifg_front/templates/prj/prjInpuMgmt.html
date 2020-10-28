@@ -39,11 +39,6 @@ history
             retrievePrjInfo()
             getPrjGridList(1);
 
-            /* 행 추가 버튼 */
-            $('#grpAddBtn').click(function(){
-                prjGrid.addRow({PRJ_CD : '' ,EMP_NO: '',EMP_NAME: '',DEPT_NM: '', SKIL_GRD: '',CNTC_DIVS_NM: '',SLIN_GRD: '',INPU_STRT_DAY: '',INPU_END_DAY: '',CNTC_STRT_DAY: '',CNTC_END_DAY: '',CRGE_JOB: '',RMKS :'',STUS :'insert'});
-            });
-
             /* 행 삭제 버튼 */
             $('#grpDelBtn').click(function(){
 
@@ -68,17 +63,6 @@ history
 
             /* 개발자 추가 버튼 */
            $('#devpAddBtn').click(function(){
-
-                /* 행 선택됐는지 체크 */
-                if(prjGrid.getList("selected").length == 0){
-                    alertMsg("선택된 행이 없습니다.");
-                    return;
-                }
-                /* 해당 row에 이미 값이 존재 하는 지 체크 */
-                if(prjGrid.getList("selected")[0].EMP_NO  != ""){
-                    alertMsg("해당 Row는 이미 개발자가 존재합니다.");
-                    return;
-                }
 
                 /* devMgmtPopup(); */
                 modal('devMgmtModal');
@@ -214,13 +198,12 @@ history
             <div>
                 <h4>투입 인력 조회<a class="badge badge-info"></a>
                 <div style="float: right;">
-                    <button class="btn btn-primary btn-sm" id="grpAddBtn"> + </button>
-                    <button class="btn btn-primary btn-sm" id="grpDelBtn"> - </button>
+                    <button class="btn btn-primary btn-sm" id="grpDelBtn"> 삭제 </button>
                 </div>
                 </h4>
 
-                <div style="position: relative;height:510px;">
-                    <div id="projectGrid" data-ax5grid="prj-grid" style="height: 90%;"/>
+                <div style="position: relative;height:420px;">
+                    <div id="projectGrid" data-ax5grid="prj-grid" style="height: 100%;"/>
                 </div>
                 <div style="float: right; float: right; padding-top :5px;" id="btn">
                     <button class="btn btn-primary" id="devpAddBtn">개발자 추가</button>
