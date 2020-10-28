@@ -6,7 +6,7 @@
        <title>IFG-IMS</title>
 </head>
 <body>
- <style>
+<style>
 #modal {
 }
 
@@ -29,10 +29,10 @@
 }
 
 #modal tbody>tr {
-  counter-increment: aaa;
+  counter-increment: a;
 }
 #modal tbody>tr>td:first-child:before {
-  content: counter(aaa) " ";
+  content: counter(a) " ";
 }
 </style>
 
@@ -111,6 +111,7 @@
                                 <option value = "00">선택</option>
                             </select></td>
                             <td><select class="form-control" id = "req_skil_name1" name = "req_skil_name1"></select></td>
+                            <td><input type="button" style="float:right;" id="delSkil" name="delSkil" value="삭제" class = "btn btn-primary"/></td>
                         </tr>
                     </tbody>
                 </table>
@@ -241,10 +242,9 @@
 
     <!--  요구스킬 추가 버튼  -->
     var count = 1;
-    $(document).on("click","button[name=addSkil]",function(){
-        console.log('add');
+    var elms = req_skil_divs1.options;
+    $('#addSkil').click(function(){
         count += 1;
-        var rowCount = $('#reqSkil tbody tr').length+1;
 
         var addSkilText =
             '<tr name="trSkil">'+
@@ -255,11 +255,8 @@
             '        <td><input type="button" style="float:right;" id="delSkil" name="delSkil" value="삭제" class = "btn btn-primary"/></td>'+
             '</tr>';
 
-        var trHtml = $( "tr[name=trSkil]:last" );
+            $('#reqSkilBody').append(addSkilText);
 
-        trHtml.after(addSkilText);
-
-        var elms = req_skil_divs1.options;
         for(var i=0; i<elms.length; i++){
             $('#req_skil_divs'+count).append("<option value = "+elms[i].value+">"+elms[i].text+"</option>");
         }
