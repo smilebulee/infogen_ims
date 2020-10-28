@@ -182,7 +182,7 @@
             var currentWeek = setWeek(currentDate);
 
             getWrkTimeByIml(null, currentWeek.strtDate, currentWeek.endDate);     // Session Email 을 기준으로 시작~종료일에 대한 근무시간 조회.
-            getCalendarSessionDate2();     // Session Email
+            createCalendar();     // Session Email
 
 
             /*********************************************************************
@@ -368,15 +368,21 @@
             *   calendar 버튼제어 - today,이전날 다음달
             *********************************************************************/
             $("#today").click(function(){
+              calendar.clear();
               calendar.today();
+              getCalendarSessionDate();
               setLabel(calendar);
             });
             $("#prev").click(function(){
+              calendar.clear();
               calendar.prev();
+              getCalendarSessionDate();
               setLabel(calendar);
             });
             $("#next").click(function(){
+              calendar.clear();
               calendar.next();
+              getCalendarSessionDate();
               setLabel(calendar);
             });
 
@@ -395,14 +401,8 @@
             *   calendar dblClick Event - calender 더블클릭시
             *********************************************************************/
             $('#calendar').dblclick(function(event){
-                console.log('calendarDbClick: ', event);
-
-                //메서드만들어서 파라미터 보내기
-
                 modal('my_modal');  /*근무시간 Detail*/
                 $('#my_modal2').load("{% url 'dili_api:scheduleMgmtPop' %}");
-
-
             });
 
 
@@ -847,7 +847,6 @@
             console.log(' Debug [StrtDate] : '+strtDate );
             console.log(' Debug [EndDate] : '+endDate );
 
-
             var baseEndDate = $('#baseEndDate').text();
 
             if (baseEndDate == endDate) {
@@ -1016,7 +1015,7 @@
         /*********************************************************************
         *   Draw  calendar Event - 캘린더 API 그리기
         *********************************************************************/
-        function getCalendarSessionDate2(){
+        function createCalendar(){
             if (calendar != "undefined" && calendar != null && calendar != "") {
                 calendar.destroy();
             }
@@ -1034,7 +1033,27 @@
             calendar.on('clickSchedule', function(event) {
                 console.log(event.schedule.end.getFullYear()+"-"+(event.schedule.end.getMonth()+1)+"-"+event.schedule.end.getDate());
 
-                var tmp = event.schedule.end.getFullYear()+"-"+(event.schedule.end.getMonth()+1)+"-"+event.schedule.end.getDate();
+                var tmp = event.schedule.calendarId.split("/")[0];
+                /*var strtTime = event.schedule.calendarId.split("/")[1];
+                var endTime = event.schedule.calendarId.split("/")[2];*/
+                if (dataCustomArray != "undefined" && dataCustomArray != null && dataCustomArray != "") {
+                    for(var i = 0; i < dataCustomArray.length; i++){
+                        if(dataCustomArray[i].calendarId == tmp+"/start"){
+                            $('#tmpPopStrtTm').text(dataCustomArray[i].title.replace("시작시간:","").trim());
+                        }
+                        if(dataCustomArray[i].calendarId == tmp+"/end"){
+                            $('#tmpPopEndTm').text(dataCustomArray[i].title.replace("종료시간:","").trim());
+                        }
+                    }
+                }
+
+                $('#tmpPopDt').text(setWeek(tmp).baseDate);
+               /*$('#tmpPopStrtTm').text(strtTime);
+                $('#tmpPopEndTm').text(endTime);*/
+
+
+
+
                 weekDate = setWeek(tmp);                                   // 선택된 일이 포함된 주의 Start,End Date 조회
                 getWrkTimeByIml(null, weekDate.strtDate, weekDate.endDate);     // Session Email 을 기준으로 시작~종료일에 대한 근무시간 조회.
             });
@@ -1074,17 +1093,68 @@
                     $('.tui-full-calendar-month-guide-block').addClass("notFocused")
                 }
 
+
                 console.log(schedule.end.getFullYear()+"-"+(schedule.end.getMonth()+1)+"-"+schedule.end.getDate());
                 var tmp = schedule.end.getFullYear()+"-"+(schedule.end.getMonth()+1)+"-"+schedule.end.getDate();
                 weekDate = setWeek(tmp);                                   // 선택된 일이 포함된 주의 Start,End Date 조회
                 getWrkTimeByIml(null, weekDate.strtDate, weekDate.endDate);     // Session Email 을 기준으로 시작~종료일에 대한 근무시간 조회.
+                var tmpDtbase = setWeek(tmp).baseDate;
+                $('#tmpPopDt').text(tmpDtbase);
 
-                $('#tmpPopDt').text(schedule.end.getFullYear()+"-"+(schedule.end.getMonth()+1)+"-"+schedule.end.getDate());
-                console.log('111 ', calendar);
+                if (dataCustomArray != "undefined" && dataCustomArray != null && dataCustomArray != "") {
+                    for(var i = 0; i < dataCustomArray.length; i++){
+                        if(dataCustomArray[i].calendarId == tmpDtbase + "/start"){
+                            $('#tmpPopStrtTm').text(dataCustomArray[i].title.replace("시작시간:","").trim());
+                        }
+                        if(dataCustomArray[i].calendarId == tmpDtbase + "/end"){
+                            if(dataCustomArray[i].title.replace("종료시간:","").trim() == "-"){
+                                $('#tmpPopEndTm').text("-");
+                                $('#tmpNormWrkTm').text("-");
+                                $('#tmpOverWrkTm').text("-");
+                                $('#tmpHoli').text("-");
+                                $('#tmpPopAllTm').text("-");
+                                $('#tmpPopApvlStus').text("-");
 
-                //시작시간, 종료시간, 정상근무, 초과근무시간 셋팅해야함
-/*                $('#tmpPopStrtTm').text($('#'+trId.id).children().eq(1).text());*/
-/*                $('#tmpPopEndTm').text($('#'+trId.id).children().eq(2).text());*/
+                            }else {
+
+                                $('#tmpPopEndTm').text(dataCustomArray[i].title.replace("종료시간:","").trim());
+                            }
+
+                        }
+                    }
+                }
+                if($('#tmpPopStrtTm').text() == "" && $('#tmpPopEndTm').text() == ""){
+                    $('#tmpPopStrtTm').text("-");
+                    $('#tmpPopEndTm').text("-");
+                    $('#tmpNormWrkTm').text("-");
+                    $('#tmpOverWrkTm').text("-");
+                    $('#tmpHoli').text("-");
+                    $('#tmpPopAllTm').text("-");
+                    $('#tmpPopApvlStus').text("-");
+                }
+                if($('#tmpPopStrtTm').text() != "-" && $('#tmpPopEndTm').text() != "-"){
+                    var paramStrtTm = $('#tmpPopStrtTm').text();
+                    var paramEndTm = $('#tmpPopEndTm').text();
+                    var paramAllWrkTm = allWrkTmCall(tmpDtbase, paramStrtTm, paramEndTm);
+                    var paramOverWrkTm = overWrkTmCall(tmpDtbase, paramAllWrkTm);
+                    var paramNormWrkTm = "";
+                    if(paramOverWrkTm == "00:00:00"){
+
+                        paramNormWrkTm = paramAllWrkTm;
+                    }else {
+                        paramNormWrkTm = "08:00:00";
+                    }
+                    $('#tmpNormWrkTm').text(paramNormWrkTm);
+                    $('#tmpOverWrkTm').text(paramOverWrkTm);
+                    $('#tmpHoli').text("-");
+                    $('#tmpPopAllTm').text(paramAllWrkTm);
+                    $('#tmpPopApvlStus').text("-");
+
+
+                }
+
+
+
 
             });
 
@@ -1098,10 +1168,9 @@
         *   Draw  calendar Event - 데이터 받아오기
         *********************************************************************/
         function getCalendarSessionDate() {
-
-           var email = "";
-
-
+            var email = "";
+            console.log("캘런더 현재날짜 가져오기 : ",calendar.getDate().getFullYear() + "-" + (calendar.getDate().getMonth()+1));
+            var dt = calendar.getDate().getFullYear() + "-" + (calendar.getDate().getMonth()+1);
 
             if ($('#empEmailHidden').val() == null || $('#empEmailHidden').val() == "") {
                 email = sessionStorage.getItem("email");
@@ -1110,7 +1179,8 @@
             }
 
             var param = {
-                "email"     : email
+                "email"     : email,
+                "dt"        : dt
             }
 
             $.ajaxCall( param, {
@@ -1121,7 +1191,6 @@
                  'async' : false,
                  'callbackFn' : function(data, status, xhr){
                     console.log("data111 : ",JSON.parse(data))
-
                     var dataParam = JSON.parse(data)
 
                     if(dataParam.length > 0) {
@@ -1130,7 +1199,7 @@
                  }
             });
         }
-
+        var dataCustomArray;
         /*********************************************************************
         *   Draw  calendar Event - 받아온 데이터 캘린더에 입력
         *********************************************************************/
@@ -1139,7 +1208,7 @@
 
             var calendarData = JSON.parse(data);
 
-            var dataCustomArray = new Array();
+            dataCustomArray = new Array();
             for(var i=0; i < calendarData.length; i++) {
                 var wrkDt  = calendarData[i].WRK_DT;
                 var statTm  = calendarData[i].JOB_STRT_TM;
@@ -1150,7 +1219,7 @@
                 var overTm  = calendarData[i].OVER_WRK_TM;
 
                 var dataCustom = {
-                    calendarId: i,
+                    calendarId: wrkDt+"/"+"start",
                     id: String(Math.random() * 100000000000000000),
                     title : "시작시간: " + statTm,
                     isAllDay: false,
@@ -1163,7 +1232,7 @@
                 dataCustomArray.push(dataCustom);
 
                 dataCustom = {
-                    calendarId: i + 1,
+                    calendarId: wrkDt+"/"+"end",
                     id: String(Math.random() * 100000000000000000),
                     title : "종료시간: " + endTm,
                     isAllDay: false,
@@ -1405,6 +1474,7 @@
                         </div>
                         <div id="calendar"></div>
                     </div>
+                    <span id="trgtDateHidden" style="display:none;"></span>
                 </div>
 
 

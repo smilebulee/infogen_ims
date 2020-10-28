@@ -774,7 +774,8 @@ class calendarData(Resource): # Mariadb 연결 진행
                       + "     ON A.WRK_DT = B.WRK_DT " \
                       + "    AND A.EMP_EMAL_ADDR = B.EMP_EMAL_ADDR " \
                       + "  WHERE 1 = 1 " \
-                      + "    AND A.EMP_EMAL_ADDR = '" + data["email"] + "'"
+                      + "    AND A.EMP_EMAL_ADDR = '" + data["email"] + "'"\
+                      + "    AND A.WRK_DT LIKE '" + data["dt"] + "%'"
 
                 logging.debug(sql)
                 cursor.execute(sql)
