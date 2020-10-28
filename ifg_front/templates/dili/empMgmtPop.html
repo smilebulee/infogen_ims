@@ -5,6 +5,7 @@
 
             name = $('#ipt_searchNamePop').val();
 
+
             console.log(' Debug [Name] : '+name );
 
 
@@ -80,27 +81,31 @@
 
         /* 선택버튼 클릭 이벤트 */
         function onClickselectBtn() {
+            if($("#apvlReqHidden").val() == "apvlReq" ) {
 
-            if( $("#empEmailHidden").val() != null && $("#empEmailHidden").val() != "" ){
-                $(".modal_close_btn").click();
-                weekDate = setWeek(getCurrentDate());                                                       // 현재일이 포함된 주의 Start,End Date 조회
 
-                $('#baseEndDate').text("");                                                                  // Span Object EndDate 값이 달라질 경우에만, Chart를 다시 그리므로, 초기화작업.
+            } else {
+                if( $("#empEmailHidden").val() != null && $("#empEmailHidden").val() != "" ){
+                    $(".modal_close_btn").click();
+                    weekDate = setWeek(getCurrentDate());                                                       // 현재일이 포함된 주의 Start,End Date 조회
 
-                getWrkTimeByIml(null, weekDate.strtDate, weekDate.endDate);
-                //현재 날짜 가져오기
-                var today = new Date();
-                var year = today.getFullYear(); // 년도
-                var month = today.getMonth();  // 월 (today.getMonth()는 0~11로 출력)
-                var date = today.getDate();  // 날짜
-                var day = today.getDay();  // 요일 (0~6으로 출력, 0:일요일, 1:월요일, 6:토요일)
+                    $('#baseEndDate').text("");                                                                  // Span Object EndDate 값이 달라질 경우에만, Chart를 다시 그리므로, 초기화작업.
 
-                $('#txt_mmYy').text(year); //그리드 월tab 년도 초기값 입력
-                $('#txt_mmMm').text(month + 1); //그리드 월tab 월 초기값 입력
+                    getWrkTimeByIml(null, weekDate.strtDate, weekDate.endDate);
+                    //현재 날짜 가져오기
+                    var today = new Date();
+                    var year = today.getFullYear(); // 년도
+                    var month = today.getMonth();  // 월 (today.getMonth()는 0~11로 출력)
+                    var date = today.getDate();  // 날짜
+                    var day = today.getDay();  // 요일 (0~6으로 출력, 0:일요일, 1:월요일, 6:토요일)
 
-                setMonthGridData();                                                                         // Month Grid 생성
-                crteTodayShow(year, month, date, day);                                                      // Grid UI(주) 날짜 세팅
-                createCalendar();
+                    $('#txt_mmYy').text(year); //그리드 월tab 년도 초기값 입력
+                    $('#txt_mmMm').text(month + 1); //그리드 월tab 월 초기값 입력
+
+                    setMonthGridData();                                                                         // Month Grid 생성
+                    crteTodayShow(year, month, date, day);                                                      // Grid UI(주) 날짜 세팅
+                    createCalendar();
+                }
             }
         };
 
