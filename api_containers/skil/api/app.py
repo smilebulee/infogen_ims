@@ -603,7 +603,7 @@ class skilRegPopupSearch(Resource):
                             "B.SKIL_DIVS_CD," \
                             "B.SKIL_NM_CD," \
                             "B.SKIL_LVL_CD," \
-                            "B.RMKS," \
+                            "A.REMARK," \
                             "'01' AS CNTC_DIVS_CD," \
                             "'정규직' AS CNTN_DIVE_NM," \
                             "(SELECT CMM_CD_NAME FROM TB_CMM_CD_DETL A1 " \
@@ -631,7 +631,7 @@ class skilRegPopupSearch(Resource):
                             "B.SKIL_DIVS_CD," \
                             "B.SKIL_NM_CD," \
                             "B.SKIL_LVL_CD," \
-                            "B.RMKS," \
+                            "A.RMKS," \
                             "(SELECT CMM_CD_NAME FROM TB_CMM_CD_DETL A1 " \
                             "WHERE A1.CMM_CD_GRP_ID ='EMP_RANK_CD' " \
                             "AND A1.CMM_CD = A.EMP_RANK_CD " \

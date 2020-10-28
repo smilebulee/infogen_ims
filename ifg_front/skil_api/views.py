@@ -168,7 +168,7 @@ def skilRegPopupSearch(request):
     }
 
     logger.info(datas)
-    r = requests.get('http://skil_api:5003/skilRegPopup.html', params=datas)
+    r = requests.get('http://skil_api:5003/skilRegPopupSearch', params=datas)
     logger.info(r)
     logger.info(r.text)
     logger.info("----------------")
