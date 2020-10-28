@@ -361,6 +361,11 @@
                 setMonthGridData();
                 $('#my_modal2').empty();
                 $('.model_layout').empty();
+                /*여기추가*/
+                calendar.clear();
+                calendar.setDate(new Date($('#calendarLabel').text()));
+                getCalendarSessionDate();
+                setLabel(calendar);
             });
 
 
@@ -391,9 +396,9 @@
             *********************************************************************/
             $('#calendar').click(function(event){
 
-                if ( $('.tui-full-calendar-month-guide-block.notFocused').length >= 1) {
-                    $('.tui-full-calendar-month-guide-block.notFocused').remove();
-                }
+
+                $('.tui-full-calendar-month-guide-block').remove();
+
 
             });
 
@@ -1110,7 +1115,7 @@
             /*********************************************************************
             *   Draw  calendar Event - 캘린더 색입히기
             *********************************************************************/
-            calendar.setCalendarColor('1', {
+            /*calendar.setCalendarColor('1', {
                 color: '#e8e8e8',
                 bgColor: '#585858',
                 borderColor: '#a1b56c',
@@ -1121,7 +1126,7 @@
                 bgColor: '#dc9656',
                 borderColor: '#a1b56c',
                 dragBgColor: '#dc9656',
-            });
+            });*/
 
             /*********************************************************************
             *  저장, 수정, 삭제 이벤트
@@ -1138,9 +1143,6 @@
                   location: scheduleData.location             // 장소 정보
                 };
 
-                if ($('.tui-full-calendar-month-guide-block').length >= 1) {
-                    $('.tui-full-calendar-month-guide-block').addClass("notFocused")
-                }
 
 
                 console.log(schedule.end.getFullYear()+"-"+(schedule.end.getMonth()+1)+"-"+schedule.end.getDate());
@@ -1216,6 +1218,7 @@
 
             setLabel(calendar);
             getCalendarSessionDate();
+
         }
 
 
@@ -1295,39 +1298,39 @@
                 if(calendarData[i].APVL_REQ_DT != "N/A" && calendarData[i].APVL_LAST_APRV_DT != "N/A"){
                     apvlStus = "완료"
                 }
-
-
-                var dataCustom = {
-                    calendarId: wrkDt+"/"+"start",
-                    id: String(Math.random() * 100000000000000000),
-                    title : statTmTitle,
-                    isAllDay: false,
-                    start: startTimeAdd,
-                    end: startTimeAdd,
-                    category: "time",
-                    normTm: normTm,
-                    overTm: overTm,
-                    apvlStus: apvlStus,
-                    apvlReqDivs : apvlReqDivs
-                };
-                dataCustomArray.push(dataCustom);
-
-                dataCustom = {
-                    calendarId: wrkDt+"/"+"end",
-                    id: String(Math.random() * 100000000000000000),
-                    title : endTmTitle,
-                    isAllDay: false,
-                    start: endTimeAdd,
-                    end: endTimeAdd,
-                    category: "time",
-                    normTm: normTm,
-                    overTm: overTm,
-                    apvlStus: apvlStus,
-                    apvlReqDivs : apvlReqDivs
-                };
-                dataCustomArray.push(dataCustom);
-
-
+                var dataCustom;
+                if(statTm != "-"){
+                    dataCustom = {
+                        calendarId: wrkDt+"/"+"start",
+                        id: String(Math.random() * 100000000000000000),
+                        title : statTmTitle,
+                        isAllDay: false,
+                        start: startTimeAdd,
+                        end: startTimeAdd,
+                        category: "time",
+                        normTm: normTm,
+                        overTm: overTm,
+                        apvlStus: apvlStus,
+                        apvlReqDivs : apvlReqDivs
+                    };
+                    dataCustomArray.push(dataCustom);
+                }
+                if(endTm != "-"){
+                    dataCustom = {
+                        calendarId: wrkDt+"/"+"end",
+                        id: String(Math.random() * 100000000000000000),
+                        title : endTmTitle,
+                        isAllDay: false,
+                        start: endTimeAdd,
+                        end: endTimeAdd,
+                        category: "time",
+                        normTm: normTm,
+                        overTm: overTm,
+                        apvlStus: apvlStus,
+                        apvlReqDivs : apvlReqDivs
+                    };
+                    dataCustomArray.push(dataCustom);
+                }
             }
 
             console.log("dataCustomArray : ",dataCustomArray);
