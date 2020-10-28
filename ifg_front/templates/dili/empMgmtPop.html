@@ -58,6 +58,8 @@
                             } else {
                                 empListGrd(data);
                             }
+                        } else {
+                            empListGrd("조회 결과가 없습니다.");
                         }
 
                      }
@@ -65,7 +67,11 @@
             }
 
             $('#searchBtn').click(function(){
-                onClickSearchBtn(ipt_searchName);
+                if($('#ipt_searchName').val() ){
+
+                }else{
+                    onClickSearchBtn(ipt_searchName);
+                }
             });
 
             $('#selectBtn').click(function(){
@@ -82,30 +88,37 @@
         /* 선택버튼 클릭 이벤트 */
         function onClickselectBtn() {
             console.log($("#apvlReqHidden").text());
-
             if($("#apvlReqHidden").text() == "apvlReq" ) {
-                $('#exitEmpModalBtn').click();
+                if($("#apvlEmpEmailHidden").val() == null || $("#apvlEmpEmailHidden").val() == ""){
+                    alert("직원을 선택해 주세요.");
+                }else{
+                    $('#exitEmpModalBtn').click();
+                }
             } else {
-                if( $("#empEmailHidden").val() != null && $("#empEmailHidden").val() != "" ){
-                    $(".modal_close_btn").click();
-                    weekDate = setWeek(getCurrentDate());                                                       // 현재일이 포함된 주의 Start,End Date 조회
+                if($("#empEmailHidden").val() == null || $("#empEmailHidden").val() == ""){
+                    alert("직원을 선택해 주세요.");
+                }else{
+                    if( $("#empEmailHidden").val() != null && $("#empEmailHidden").val() != "" ){
+                        $(".modal_close_btn").click();
+                        weekDate = setWeek(getCurrentDate());                                                       // 현재일이 포함된 주의 Start,End Date 조회
 
-                    $('#baseEndDate').text("");                                                                  // Span Object EndDate 값이 달라질 경우에만, Chart를 다시 그리므로, 초기화작업.
+                        $('#baseEndDate').text("");                                                                  // Span Object EndDate 값이 달라질 경우에만, Chart를 다시 그리므로, 초기화작업.
 
-                    getWrkTimeByIml(null, weekDate.strtDate, weekDate.endDate);
-                    //현재 날짜 가져오기
-                    var today = new Date();
-                    var year = today.getFullYear(); // 년도
-                    var month = today.getMonth();  // 월 (today.getMonth()는 0~11로 출력)
-                    var date = today.getDate();  // 날짜
-                    var day = today.getDay();  // 요일 (0~6으로 출력, 0:일요일, 1:월요일, 6:토요일)
+                        getWrkTimeByIml(null, weekDate.strtDate, weekDate.endDate);
+                        //현재 날짜 가져오기
+                        var today = new Date();
+                        var year = today.getFullYear(); // 년도
+                        var month = today.getMonth();  // 월 (today.getMonth()는 0~11로 출력)
+                        var date = today.getDate();  // 날짜
+                        var day = today.getDay();  // 요일 (0~6으로 출력, 0:일요일, 1:월요일, 6:토요일)
 
-                    $('#txt_mmYy').text(year); //그리드 월tab 년도 초기값 입력
-                    $('#txt_mmMm').text(month + 1); //그리드 월tab 월 초기값 입력
+                        $('#txt_mmYy').text(year); //그리드 월tab 년도 초기값 입력
+                        $('#txt_mmMm').text(month + 1); //그리드 월tab 월 초기값 입력
 
-                    setMonthGridData();                                                                         // Month Grid 생성
-                    crteTodayShow(year, month, date, day);                                                      // Grid UI(주) 날짜 세팅
-                    createCalendar();
+                        setMonthGridData();                                                                         // Month Grid 생성
+                        crteTodayShow(year, month, date, day);                                                      // Grid UI(주) 날짜 세팅
+                        createCalendar();
+                    }
                 }
             }
         };
@@ -117,8 +130,8 @@
             console.log(' onClickEvt :  ', $('#'+i.id).children().eq(1).text());
 
             /* 하이라이트 */
-            for (var j = 1; j < $('#grd_empListTable tr').length; j++ ) {
-                $('#'+$('#grd_empListTable tr')[1].id).css("background","white");
+            for (var j = 1; j < $('#grd_empListTable').length; j++ ) {
+                $('#'+$('#grd_empListTable')[1].id).css("background","white");
             }
 
             $('#'+i.id).css("background","lightgray");
@@ -204,7 +217,6 @@
         /* 직원목록 엔터 조회 */
 
         $('#ipt_searchName').keydown(function(e){
-
                 //엔터키 입력 + 이름컬럼에 값이 있는 경우.
                 if ( e.keyCode == 13 && $('#ipt_searchName').val() != 'undefined' && $('#ipt_searchName').val() != "" ) {
                     var param = {
@@ -272,6 +284,7 @@
                          }
                     });
                 }
+
             });
 
 
