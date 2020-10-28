@@ -227,7 +227,8 @@
             callbackFn : function(data){
                 var length = data.length;
                 for(var i=0; i<length; i++){
-                    if(i != length-1){
+                    if(i != length-1 && $('#reqSkil tbody tr').length != length){
+                        console.log('trigger');
                         $("#addSkil").trigger("click");
                     }
                     $('#req_skil_divs'+(i+1)).val(data[i].SKIL_DIVS_CD).trigger('change');
