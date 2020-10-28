@@ -765,6 +765,7 @@ class calendarData(Resource): # Mariadb 연결 진행
                       + "       ,NVL(DATE_FORMAT(A.JOB_END_TM, '%H:%i:%s'),'-') AS JOB_END_TM " \
                       + "       ,A.NORM_WRK_TM " \
                       + "       ,A.ALL_WRK_TM " \
+                      + "       ,NVL(B.APVL_REQ_DIVS, 'N/A') AS APVL_REQ_DIVS " \
                       + "       ,NVL(B.APVL_REQ_DT, 'N/A') AS APVL_REQ_DT " \
                       + "       ,NVL(B.APVL_LAST_APRV_DT, 'N/A') AS APVL_LAST_APRV_DT " \
                       + "       ,DATE_FORMAT(SEC_TO_TIME(TIME_TO_SEC(STR_TO_DATE( CONCAT(SUBSTRING(A.ALL_WRK_TM,1,2),':',SUBSTRING(A.ALL_WRK_TM,3,2),':',SUBSTRING(A.ALL_WRK_TM,5,2)) ,'%H:%i:%S')) " \
