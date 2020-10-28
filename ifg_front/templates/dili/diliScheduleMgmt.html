@@ -1033,23 +1033,72 @@
             calendar.on('clickSchedule', function(event) {
                 console.log(event.schedule.end.getFullYear()+"-"+(event.schedule.end.getMonth()+1)+"-"+event.schedule.end.getDate());
 
-                var tmp = event.schedule.calendarId.split("/")[0];
-                /*var strtTime = event.schedule.calendarId.split("/")[1];
-                var endTime = event.schedule.calendarId.split("/")[2];*/
+                var tmp = event.schedule.end.getFullYear()+"-"+(event.schedule.end.getMonth()+1)+"-"+event.schedule.end.getDate();
+                var tmpDtbase = setWeek(tmp).baseDate;
+                $('#tmpPopDt').text(tmpDtbase);
+
+                if($('#tmpPopStrtTm').text() == "" && $('#tmpPopEndTm').text() == ""){
+                    $('#tmpPopStrtTm').text("-");
+                    $('#tmpPopEndTm').text("-");
+                    $('#tmpNormWrkTm').text("-");
+                    $('#tmpOverWrkTm').text("-");
+                    $('#tmpHoli').text("-");
+                    $('#tmpPopAllTm').text("-");
+                    $('#tmpPopApvlStus').text("-");
+                }
+
+                var apvlReqDivs = "";
+
                 if (dataCustomArray != "undefined" && dataCustomArray != null && dataCustomArray != "") {
                     for(var i = 0; i < dataCustomArray.length; i++){
-                        if(dataCustomArray[i].calendarId == tmp+"/start"){
+                        /*시작시간 찾기*/
+                        if(dataCustomArray[i].calendarId == tmpDtbase + "/start"){
                             $('#tmpPopStrtTm').text(dataCustomArray[i].title.replace("시작시간:","").trim());
+                            if($('#tmpPopStrtTm').text() == "휴가"){
+                                $('#tmpPopStrtTm').text("-");
+                                $('#tmpHoli').text("휴가");
+                                $('#tmpPopApvlStus').text(dataCustomArray[i].apvlStus);
+                            }
                         }
-                        if(dataCustomArray[i].calendarId == tmp+"/end"){
-                            $('#tmpPopEndTm').text(dataCustomArray[i].title.replace("종료시간:","").trim());
+
+                        /*종료시간 찾기*/
+                        if(dataCustomArray[i].calendarId == tmpDtbase + "/end"){
+                            if(dataCustomArray[i].title.replace("종료시간:","").trim() == "-"){
+                                $('#tmpPopEndTm').text("-");
+                                $('#tmpNormWrkTm').text("-");
+                                $('#tmpOverWrkTm').text("-");
+                                $('#tmpPopAllTm').text("-");
+                                apvlReqDivs = dataCustomArray[i].APVL_REQ_DIVS;
+
+                            }else {
+
+                                $('#tmpPopEndTm').text(dataCustomArray[i].title.replace("종료시간:","").trim());
+                                $('#tmpPopApvlStus').text(dataCustomArray[i].apvlStus);
+                            }
+                        }
+                        if($('#tmpPopStrtTm').text() != "-" && $('#tmpPopEndTm').text() != "-"){
+                            /*휴가가아니면*/
+                            if(apvlReqDivs != "03"){
+                                var paramStrtTm = $('#tmpPopStrtTm').text();
+                                var paramEndTm = $('#tmpPopEndTm').text();
+                                var paramAllWrkTm = allWrkTmCall(tmpDtbase, paramStrtTm, paramEndTm);
+                                var paramOverWrkTm = overWrkTmCall(tmpDtbase, paramAllWrkTm);
+                                var paramNormWrkTm = "";
+                                if(paramOverWrkTm == "00:00:00"){
+
+                                    paramNormWrkTm = paramAllWrkTm;
+                                    paramOverWrkTm = "-"
+                                    $('#tmpPopApvlStus').text("-");
+                                }else {
+                                    paramNormWrkTm = "08:00:00";
+                                }
+                                $('#tmpNormWrkTm').text(paramNormWrkTm);
+                                $('#tmpOverWrkTm').text(paramOverWrkTm);
+                                $('#tmpPopAllTm').text(paramAllWrkTm);
+                            }
                         }
                     }
                 }
-
-                $('#tmpPopDt').text(setWeek(tmp).baseDate);
-               /*$('#tmpPopStrtTm').text(strtTime);
-                $('#tmpPopEndTm').text(endTime);*/
 
 
 
@@ -1101,28 +1150,6 @@
                 var tmpDtbase = setWeek(tmp).baseDate;
                 $('#tmpPopDt').text(tmpDtbase);
 
-                if (dataCustomArray != "undefined" && dataCustomArray != null && dataCustomArray != "") {
-                    for(var i = 0; i < dataCustomArray.length; i++){
-                        if(dataCustomArray[i].calendarId == tmpDtbase + "/start"){
-                            $('#tmpPopStrtTm').text(dataCustomArray[i].title.replace("시작시간:","").trim());
-                        }
-                        if(dataCustomArray[i].calendarId == tmpDtbase + "/end"){
-                            if(dataCustomArray[i].title.replace("종료시간:","").trim() == "-"){
-                                $('#tmpPopEndTm').text("-");
-                                $('#tmpNormWrkTm').text("-");
-                                $('#tmpOverWrkTm').text("-");
-                                $('#tmpHoli').text("-");
-                                $('#tmpPopAllTm').text("-");
-                                $('#tmpPopApvlStus').text("-");
-
-                            }else {
-
-                                $('#tmpPopEndTm').text(dataCustomArray[i].title.replace("종료시간:","").trim());
-                            }
-
-                        }
-                    }
-                }
                 if($('#tmpPopStrtTm').text() == "" && $('#tmpPopEndTm').text() == ""){
                     $('#tmpPopStrtTm').text("-");
                     $('#tmpPopEndTm').text("-");
@@ -1132,30 +1159,59 @@
                     $('#tmpPopAllTm').text("-");
                     $('#tmpPopApvlStus').text("-");
                 }
-                if($('#tmpPopStrtTm').text() != "-" && $('#tmpPopEndTm').text() != "-"){
-                    var paramStrtTm = $('#tmpPopStrtTm').text();
-                    var paramEndTm = $('#tmpPopEndTm').text();
-                    var paramAllWrkTm = allWrkTmCall(tmpDtbase, paramStrtTm, paramEndTm);
-                    var paramOverWrkTm = overWrkTmCall(tmpDtbase, paramAllWrkTm);
-                    var paramNormWrkTm = "";
-                    if(paramOverWrkTm == "00:00:00"){
 
-                        paramNormWrkTm = paramAllWrkTm;
-                    }else {
-                        paramNormWrkTm = "08:00:00";
+                var apvlReqDivs = "";
+
+                if (dataCustomArray != "undefined" && dataCustomArray != null && dataCustomArray != "") {
+                    for(var i = 0; i < dataCustomArray.length; i++){
+                        /*시작시간 찾기*/
+                        if(dataCustomArray[i].calendarId == tmpDtbase + "/start"){
+                            $('#tmpPopStrtTm').text(dataCustomArray[i].title.replace("시작시간:","").trim());
+                            if($('#tmpPopStrtTm').text() == "휴가"){
+                                $('#tmpPopStrtTm').text("-");
+                                $('#tmpHoli').text("휴가");
+                                $('#tmpPopApvlStus').text(dataCustomArray[i].apvlStus);
+                            }
+                        }
+
+                        /*종료시간 찾기*/
+                        if(dataCustomArray[i].calendarId == tmpDtbase + "/end"){
+                            if(dataCustomArray[i].title.replace("종료시간:","").trim() == "-"){
+                                $('#tmpPopEndTm').text("-");
+                                $('#tmpNormWrkTm').text("-");
+                                $('#tmpOverWrkTm').text("-");
+                                $('#tmpPopAllTm').text("-");
+                                apvlReqDivs = dataCustomArray[i].APVL_REQ_DIVS;
+
+                            }else {
+
+                                $('#tmpPopEndTm').text(dataCustomArray[i].title.replace("종료시간:","").trim());
+                                $('#tmpPopApvlStus').text(dataCustomArray[i].apvlStus);
+                            }
+                        }
+                        if($('#tmpPopStrtTm').text() != "-" && $('#tmpPopEndTm').text() != "-"){
+                            /*휴가가아니면*/
+                            if(apvlReqDivs != "03"){
+                                var paramStrtTm = $('#tmpPopStrtTm').text();
+                                var paramEndTm = $('#tmpPopEndTm').text();
+                                var paramAllWrkTm = allWrkTmCall(tmpDtbase, paramStrtTm, paramEndTm);
+                                var paramOverWrkTm = overWrkTmCall(tmpDtbase, paramAllWrkTm);
+                                var paramNormWrkTm = "";
+                                if(paramOverWrkTm == "00:00:00"){
+
+                                    paramNormWrkTm = paramAllWrkTm;
+                                    paramOverWrkTm = "-"
+                                    $('#tmpPopApvlStus').text("-");
+                                }else {
+                                    paramNormWrkTm = "08:00:00";
+                                }
+                                $('#tmpNormWrkTm').text(paramNormWrkTm);
+                                $('#tmpOverWrkTm').text(paramOverWrkTm);
+                                $('#tmpPopAllTm').text(paramAllWrkTm);
+                            }
+                        }
                     }
-                    $('#tmpNormWrkTm').text(paramNormWrkTm);
-                    $('#tmpOverWrkTm').text(paramOverWrkTm);
-                    $('#tmpHoli').text("-");
-                    $('#tmpPopAllTm').text(paramAllWrkTm);
-                    $('#tmpPopApvlStus').text("-");
-
-
                 }
-
-
-
-
             });
 
             setLabel(calendar);
@@ -1213,34 +1269,61 @@
                 var wrkDt  = calendarData[i].WRK_DT;
                 var statTm  = calendarData[i].JOB_STRT_TM;
                 var endTm  = calendarData[i].JOB_END_TM;
-                var startTimeAdd = wrkDt + "T" + statTm;
-                var endTimeAdd = wrkDt + "T" + endTm;
+
                 var normTm  = calendarData[i].NORM_WRK_TM;
                 var overTm  = calendarData[i].OVER_WRK_TM;
+                var apvlReqDivs = calendarData[i].APVL_REQ_DIVS
+                var statTmTitle = "시작시간: " + statTm;
+                var endTmTitle = "종료시간: " + endTm;
+
+                if(statTm == "-" && endTm == "-" && apvlReqDivs == "03"){
+                    statTmTitle = "휴가";
+                    statTm = "00:00:00"
+                }
+
+                var startTimeAdd = wrkDt + "T" + statTm;
+                var endTimeAdd = wrkDt + "T" + endTm;
+
+
+                var apvlStus = "";
+                if(calendarData[i].APVL_REQ_DT == "N/A" && calendarData[i].APVL_LAST_APRV_DT == "N/A" && calendarData[i].OVER_WRK_TM != "00:00:00"){
+                    apvlStus = "미등록"
+                }
+                if(calendarData[i].APVL_REQ_DT != "N/A" && calendarData[i].APVL_LAST_APRV_DT == "N/A"){
+                    apvlStus = "진행중"
+                }
+                if(calendarData[i].APVL_REQ_DT != "N/A" && calendarData[i].APVL_LAST_APRV_DT != "N/A"){
+                    apvlStus = "완료"
+                }
+
 
                 var dataCustom = {
                     calendarId: wrkDt+"/"+"start",
                     id: String(Math.random() * 100000000000000000),
-                    title : "시작시간: " + statTm,
+                    title : statTmTitle,
                     isAllDay: false,
                     start: startTimeAdd,
                     end: startTimeAdd,
                     category: "time",
                     normTm: normTm,
-                    overTm: overTm
+                    overTm: overTm,
+                    apvlStus: apvlStus,
+                    apvlReqDivs : apvlReqDivs
                 };
                 dataCustomArray.push(dataCustom);
 
                 dataCustom = {
                     calendarId: wrkDt+"/"+"end",
                     id: String(Math.random() * 100000000000000000),
-                    title : "종료시간: " + endTm,
+                    title : endTmTitle,
                     isAllDay: false,
                     start: endTimeAdd,
                     end: endTimeAdd,
                     category: "time",
                     normTm: normTm,
-                    overTm: overTm
+                    overTm: overTm,
+                    apvlStus: apvlStus,
+                    apvlReqDivs : apvlReqDivs
                 };
                 dataCustomArray.push(dataCustom);
 

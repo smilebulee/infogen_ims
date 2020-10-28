@@ -77,7 +77,10 @@
                     <input type = "text" name = "emp_rank_nm" id="emp_rank_nm"></p>
 
                 <p>비고<br>
-                    <input type = "text" name = "rmks" id="rmks"></p>
+                    <input type = "text" name = "rmks" id="rmks">
+                    <input type="hidden" name = "empNo" id="empNo">
+
+                </p>
 
             </span>
 
@@ -112,18 +115,7 @@
                 </thead>
 
                 <tbody id="hldSkilBody" name = "hldSkilBody">
-                    <tr name="trSkil">
-                        <td id="skilNo"></td>
-                        <td><select size="1" class="form-control" id="skil_hight1" name="skil_hight1" onchange="skil_chg(1)">
-                            <option value = "">선택</option>
-                        </select></td>
-                        <td><select size="1" class="form-control" id="skil_middle1" name="skil_middle1">
-                            <option value = "">선택</option>
-                        </select></td>
-                        <td><select size="1" class="form-control" id="skil_lvl1" name="skil_lvl1">
-                            <option value = "">선택</option>
-                        </select></td>
-                    </tr>
+
                 </tbody>
             </table>
 
@@ -176,17 +168,20 @@
          });
 
 
-
+    var skilDivsCd;
+    var skilLvlCd;
     $(document).ready(function(){
 
         console.log('화면진입시작');
         <!-- 화면 진입시 정보 조회 -->
 
-        retrieveCmmCd('skil_hight1', 'SKIL_DIVS_CD');
-        retrieveCmmCd('skil_lvl1', 'SKIL_LVL_CD');
 
         empNo = firstGrid.getList("selected")[0].EMP_NO;
+        $('#empNo').val(empNo);
         cntcDivsCd = firstGrid.getList("selected")[0].CNTC_DIVS_CD;
+
+        retrieveCmmCd('SKIL_DIVS_CD');
+        retrieveCmmCd('SKIL_LVL_CD');
 
 
         console.log('empNo' + empNo);
@@ -204,7 +199,7 @@
                 "empNo" : empNo,
                 "cntcDivsCd" : cntcDivsCd
             }
-
+            debugger;
             $.ajaxCall( param, {
                 method : 'get',
                 'url' : "{% url 'skil_api:skilRegPopupSearch' %}",
@@ -219,22 +214,44 @@
                         $('#emp_rank_nm').val(data[0].EMP_RANK_NM);
                         $('#rmks').val(data[0].RMKS);
 
-                        for(var i=0; i<length; i++){
-                            if(i != length-1){
-                                $("#addSkil").trigger("click");
+
+                        if(data.length == 0){
+                            $("#addSkil").trigger("click");
+
+                        }else{
+                            for(var i=0; i<data.length; i++){
+
+
+                               var addSkilText =
+                                '<tr name="trSkil">'+
+                                '        <td id="skil_no"></td>'+
+                                '        <td><select size ="1" class="form-control" id = "skil_hight'+i+'" name = "skil_hight'+i+'" onchange="skil_chg('+i+')">'+
+                                '            </select></td>'+
+                                '        <td><select class="form-control" id = "skil_middle'+i+'" name = "skil_middle'+i+'"></select></td>'+
+                                '         <td><select class="form-control" id = "skil_lvl'+i+'" name = "skil_lvl'+i+'"></select></td>'+
+                                '        <td><input type="button" style="float:right;" id="delSkil" name="delSkil" value="삭제" class = "btn btn-primary"/></td>'+
+                                '</tr>';
+                                $("#hldSkilBody").append(addSkilText);
+
+
+                                $("#skil_hight"+i+"").append(skilDivsCd);
+                                $("#skil_lvl"+i+"").append(skilLvlCd);
+
+
+                                $("#skil_hight"+i+"").val(data[i].SKIL_DIVS_CD);
+                                $("#skil_middle"+i+"").val(data[i].SKIL_NM_CD);
+                                $("#skil_lvl"+i+"").val(data[i].SKIL_LVL_CD);
                             }
-                            $('#skil_hight'+(i+1)).val(data[i].SKIL_DIVS_CD).trigger('change');
-                            $('#skil_middle'+(i+1)).val(data[i].SKIL_NM_CD);
-                            $('#skil_lvl'+(i+1)).val(data[i].SKIL_LVL_CD);
                         }
+
 
                      }
             });
     };
 
-    function retrieveCmmCd(sbx_id, grp_id){
+    function retrieveCmmCd(grp_id){
+
         var param = {
-            "sbx_id" : sbx_id,
             "grp_id" : grp_id
         }
         return new Promise(function(resolve, reject){
@@ -245,14 +262,28 @@
                      'data' : JSON.stringify(param),
                      'async' : false,
                      'callbackFn' : function(data){
+
+
                         for(var i = 0; i < data.length; i++){
-                            var option = $("<option value = "+data[i].CMM_CD+">"+data[i].CMM_CD_NAME+"</option>");
-                            $('#'+sbx_id).append(option);
+                            var option = $();
+                            if(grp_id == "SKIL_DIVS_CD"){
+                                skilDivsCd += "<option value = "+data[i].CMM_CD+">"+data[i].CMM_CD_NAME+"</option>";
+
+                             }else if(grp_id =="SKIL_LVL_CD"){
+                                skilLvlCd += "<option value = "+data[i].CMM_CD+">"+data[i].CMM_CD_NAME+"</option>";
+                             }
                             resolve(data);
                         }
+
+
+
                      }
+
             });
         });
+
+
+
      };
 
 
@@ -281,37 +312,29 @@
         console.log(changeSkill);
         $("#skil_middle"+a).empty();
 
-            for(var i = 0; i < changeSkill.length; i++){
-                            var option = $("<option>"+changeSkill[i]+"</option>");
-                            $('#skil_middle'+a).append(option);
-            }
+
     };
 
 
-    var count = 1;
+
     $(document).on("click","button[name=addSkil]",function(){
         console.log('add');
-        count += 1;
-        var rowCount = $('#reqSkil tbody tr').length+1;
+
+        var rowCount = $('#hldSkilBody tr').length;
+        console.log(rowCount);
+
 
         var addSkilText =
             '<tr name="trSkil">'+
             '        <td id="skil_no"></td>'+
-            '        <td><select size ="1" class="form-control" id = "skil_hight'+count+'" name = "skil_hight'+count+'" onchange="skil_chg('+count+')">'+
+            '        <td><select size ="1" class="form-control" id = "skil_hight'+rowCount+'" name = "skil_hight'+rowCount+'" onchange="skil_chg('+rowCount+')">'+
             '            </select></td>'+
-            '        <td><select class="form-control" id = "skil_middle'+count+'" name = "skil_middle'+count+'"></select></td>'+
-            '         <td><select class="form-control" id = "skil_lvl'+count+'" name = "skil_lvl'+count+'"></select></td>'+
+            '        <td><select class="form-control" id = "skil_middle'+rowCount+'" name = "skil_middle'+rowCount+'"></select></td>'+
+            '         <td><select class="form-control" id = "skil_lvl'+rowCount+'" name = "skil_lvl'+rowCount+'"></select></td>'+
             '        <td><input type="button" style="float:right;" id="delSkil" name="delSkil" value="삭제" class = "btn btn-primary"/></td>'+
             '</tr>';
+            $("#hldSkilBody").append(addSkilText);
 
-        var trHtml = $( "tr[name=trSkil]:last" );
-
-        trHtml.after(addSkilText);
-
-        var elms = req_skil_divs1.options;
-        for(var i=0; i<elms.length; i++){
-            $('#req_skil_divs'+count).append("<option value = "+elms[i].value+">"+elms[i].text+"</option>");
-        }
     });
 
     $(document).on("click","input[name=delSkil]",function(){
