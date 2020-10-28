@@ -549,3 +549,18 @@ def saveEndTm(request):
     logger.info(r.text)
     logger.info(r.json())
     return JsonResponse(r.json())
+
+def getYryUseDays(request):
+    param = json.loads(request.GET['param'])
+
+    logger.info("Parameters Logging Start")
+    logger.info(param)
+    logger.info("Parameters Logging End")
+
+    # api 호출
+    r = requests.get('http://dili_api:5006/yryUseDays', json=param)
+    logger.info(r)
+    logger.info(r.text)
+    logger.info(r.json())
+    logger.info(json.loads(r.text))
+    return JsonResponse(r.json(), safe=False)
