@@ -22,6 +22,20 @@
     <script type="text/javascript" xmlns:max-width="http://www.w3.org/1999/xhtml">
 
         /*********************************************************************
+        *   Dialog Setting
+        *********************************************************************/
+        var n_dialog = new ax5.ui.dialog();
+        var n_title =  '<span style="color:#fd7e14;font-size:20px;"><i class="fa fa-check-circle"></i></span> CHECK';
+
+        n_dialog.setConfig({
+            title: n_title,
+            theme : 'info',
+            lang:{
+                "ok": "확인", "cancel": "취소"
+            }
+        });
+
+        /*********************************************************************
         *   Session Email
         *********************************************************************/
         var params = {
@@ -403,6 +417,42 @@
         **************************************************************/
         function btnDelete(){
             console.log("삭제 버튼 클릭 이벤트");
+
+            n_dialog.confirm({
+                msg : '삭제하시겠습니까?'
+            }, function() {
+                debugger;
+                if(this.key == 'ok') {
+                    var param = {
+                        "postId": postId,
+                    }
+
+                    $.ajaxCall( param, {
+                        method:'POST',
+                        url:'/dili/noticeDelete/post',
+                        dataType:'json',
+                        data:JSON.stringify(param),
+                        callbackFn:function(data){
+                            if(data){
+                                // 리턴
+                                 location.href = '/dili/noticeLst';
+                                 g_toast.push("성공적으로 삭제되었습니다.");
+                                 console.log("삭제되었습니다.");
+
+                                //sFlag = true;
+                                //fileSave();
+                            } else{
+                                g_toast.push("삭제에 실패하였습니다.");
+                                console.log("삭제에 실패하였습니다.");
+                                location.reload();
+                            }
+                        }
+                   });
+                }else if(this.key == 'cancel') {
+                    return;
+                }
+            });
+
         }
 
         /***************************************************************

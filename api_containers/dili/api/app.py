@@ -1144,6 +1144,49 @@ class noticeSave(Resource):
         return jsonify(retJson)
 
 
+class noticeDelete(Resource):
+    def post(self):
+        logger.info('========app.py noticeDelete=========')
+        params = request.get_json()
+        logger.info(params)
+
+        for row in request.form:
+            logger.info(row + ':' + request.form[row])
+            globals()[row] = request.form[row]
+
+        postId = request.form['postId']
+
+        #
+        logging.debug("====Param data====")
+        logging.debug("postId = " + postId)
+        logging.debug("=====================")
+
+
+        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
+                                    charset='utf8', autocommit=False)
+
+        logging.debug("delete Start")
+
+        try:
+            with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+                    sql = "DELETE FROM    TB_STTS_POST_MGMT_M WHERE POST_ID = " + postId
+
+                    logger.info(sql)
+                    cursor.execute(sql)
+
+                    mysql_con.commit()
+
+        finally:
+            mysql_con.close()
+
+        retJson = {
+            "status": 200,
+            "msg": "Data has been deleted successfully"
+        }
+
+        return jsonify(retJson)
+
+
 class saveYryApvlReq(Resource):  # Mariadb 연결 진행
     def post(self):
 
@@ -1351,6 +1394,7 @@ api.add_resource(noticeOne,'/noticeOne') #api 선언
 api.add_resource(noticePopUp,'/noticePopUp') #api 선언
 api.add_resource(noticeMjrCnt,'/noticeMjrCnt') #api 선언
 api.add_resource(noticeSave,'/noticeSave') #api 선언
+api.add_resource(noticeDelete,'/noticeDelete') #api 선언
 api.add_resource(empList,'/empList') #api 선언
 api.add_resource(empInfo,'/empInfo') #api 선언
 api.add_resource(saveYryApvlReq,'/saveYryApvlReq') #api 선언
