@@ -100,7 +100,7 @@ def retrieveSkilName(request):
     param = json.loads(request.GET['param'])
 
     params = {
-        'prj_cd': param['prj_cd'],
+
     }
 
     r = requests.get('http://prj_api:5002/retrieveSkilName', params=params)
