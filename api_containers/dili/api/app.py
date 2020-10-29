@@ -1037,7 +1037,7 @@ class noticeMjrCnt(Resource):  # Mariadb 연결 진행
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 # 쿼리문 실행
-                sql = "SELECT COUNT(MJR_YN) " \
+                sql = "SELECT COUNT(MJR_YN) AS CNT " \
                       "FROM TB_STTS_POST_MGMT_M " \
                       "WHERE MJR_YN = 'Y' "
                 logging.debug(sql)
