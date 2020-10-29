@@ -325,50 +325,48 @@
             /**************************************
             * 저장 실행
             **************************************/
-            var flag = window.confirm('저장하시겠습니까?');
-            console.log("##### " + flag);
-
-            if(flag){      //확인
-                console.log("저장 type: " + type);
-                console.log("params.email: " + params.email);
-                var param = {
-                    "type" : type,
-                    "postId" : postId,
-                    "tit" : $("#ipt_title").val(),
-                    "kdDivsCd" : $("#sbx_kdDivsCd").val(),
-                    "mjrYn" : mjrYn,
-                    "popOpenYn" : popOpenYn,
-                    "popOpenDttmFrom" : $("#ipt_holiTerm1").val(),
-                    "popOpenDttmTo" : $("#ipt_holiTerm2").val(),
-                    "cntn" : $("#ipt_cntn").val(),
-                    "dataInptId" : params.email,
-                    "dataInptPgmId" : "noticeDtl",
-                    "dataUpdId" : params.email,
-                    "dataUpdPgmId" : "noticeDtl"
-                }
-
-               $.ajaxCall( param, {
-                    method:'POST',
-                    url:'/dili/noticeSave/post',
-                    dataType:'json',
-                    data:JSON.stringify(param),
-                    callbackFn:function(data){
-                        if(data){
-                            // 리턴
-                             location.href = '/dili/noticeLst';
-                             g_toast.push("저장되었습니다.");
-                             console.log("저장되었습니다.");
-
-                            sFlag = true;
-
-                        }
+            n_dialog.confirm('저장하시겠습니까?',function(){
+                if(this.key == 'ok'){
+                    console.log("저장 type: " + type);
+                    console.log("params.email: " + params.email);
+                    var param = {
+                        "type" : type,
+                        "postId" : postId,
+                        "tit" : $("#ipt_title").val(),
+                        "kdDivsCd" : $("#sbx_kdDivsCd").val(),
+                        "mjrYn" : mjrYn,
+                        "popOpenYn" : popOpenYn,
+                        "popOpenDttmFrom" : $("#ipt_holiTerm1").val(),
+                        "popOpenDttmTo" : $("#ipt_holiTerm2").val(),
+                        "cntn" : $("#ipt_cntn").val(),
+                        "dataInptId" : params.email,
+                        "dataInptPgmId" : "noticeDtl",
+                        "dataUpdId" : params.email,
+                        "dataUpdPgmId" : "noticeDtl"
                     }
-               });
-            }else{      //취소
-                g_toast.push("취소하였습니다.");
-                console.log("취소하였습니다.");
-               // location.reload();
-            }
+
+                   $.ajaxCall( param, {
+                        method:'POST',
+                        url:'/dili/noticeSave/post',
+                        dataType:'json',
+                        data:JSON.stringify(param),
+                        callbackFn:function(data){
+                            if(data){
+                                // 리턴
+                                 location.href = '/dili/noticeLst';
+                                 g_toast.push("저장되었습니다.");
+                                 console.log("저장되었습니다.");
+
+                                sFlag = true;
+
+                            }
+                        }
+                   });
+                }else{
+                    g_toast.push("취소하였습니다.");
+                    console.log("취소하였습니다.");
+                }
+            });
         }
 
         /*************************************************************
@@ -395,15 +393,14 @@
             var kdDivsCd = $('#sbx_kdDivsCd option:selected').val();
 
             if(( title != '' && title != null) || (contents != '' && contents != null) || (kdDivsCd != "00")){
-                var flag = window.confirm('작성중인 내용이 있습니다. 취소하시겠습니까?');
-                console.log("%%%% 취소" + flag);
-                if(flag){       //확인 클릭
-                    location.href = '/dili/noticeLst';
-                    g_toast.push("취소되었습니다.");
-                }else{          //취소
-                    console.log("그대로");
-                }
-
+                n_dialog.confirm('작성중인 내용이 있습니다. 취소하시겠습니까?', function(){
+                    if(this.key == 'ok'){       //확인 클릭
+                        location.href = '/dili/noticeLst';
+                        g_toast.push("취소되었습니다.");
+                    }else{          //취소
+                        console.log("그대로");
+                    }
+                });
             } else {
                 location.href = '/dili/noticeLst';
                 g_toast.push("목록으로 이동");
@@ -426,15 +423,15 @@
 
             if(type == 'u'){
                 if(( title != '' && title != null) || (contents != '' && contents != null) || (kdDivsCd != "00")){
-                    var flag = window.confirm('작성중인 내용이 있습니다. 취소하시겠습니까?');
-                    console.log("%%%% 취소" + a);
-                    if(flag){       //확인 클릭
-                        location.href = '/dili/noticeLst';
-                        g_toast.push("취소되었습니다.");
-                    }else{          //취소
-                        console.log("그대로");
-                    }
+                    n_dialog.confirm('작성중인 내용이 있습니다. 취소하시겠습니까?',function(){
+                        if(this.key == 'ok'){       //확인 클릭
+                            location.href = '/dili/noticeLst';
+                            g_toast.push("취소되었습니다.");
+                        }else{          //취소
+                            console.log("그대로");
+                        }
 
+                    });
                 } else {
                     location.href = '/dili/noticeLst';
                     g_toast.push("목록으로 이동");
@@ -529,56 +526,66 @@
             // 저장 클릭시 공지팝업표출 값 지정 (default: 'N')
             if($('#cb_popOpenYn').is(":checked") == true){
                 popOpenYn = "Y";
+
+                /********************************************
+                * 공지표출 체크 했을때 날짜 입력했는지 체크
+                ********************************************/
+                if( ($('#ipt_holiTerm1').val() == '' || $('#ipt_holiTerm1').val() == null ) || ( $('#ipt_holiTerm2').val() == '' || $('#ipt_holiTerm2').val() == null )) {
+                    alertMsg('공지표출 기간을(를) 입력해주세요.');
+                    return false;
+                 }
             }
+
 
             /**************************************
             * 업데이트 실행
             **************************************/
             console.log("저장 type: " + type);
             console.log("업데이트 postId: " + postId);
-            var flag = confirm('저장하시겠습니까?');
-            console.log("flag: " + flag);
-            if(flag){       //확인클릭시
-                var param = {
-                    "postId": postId,
-                    "type" : type,
-                    "tit" : $("#ipt_title").val(),
-                    "kdDivsCd" : $("#sbx_kdDivsCd").val(),
-                    "mjrYn" : mjrYn,
-                    "popOpenYn" : popOpenYn,
-                    "popOpenDttmFrom" : $("#ipt_holiTerm1").val(),
-                    "popOpenDttmTo" : $("#ipt_holiTerm2").val(),
-                    "cntn" : $("#ipt_cntn").val(),
-                    "dataUpdId" : params.email,
-                    "dataUpdPgmId" : "noticeDtl"
+            n_dialog.confirm('저장하시겠습니까?',function(){
+                if(this.key == 'ok'){       //확인클릭시
+                    var param = {
+                        "postId": postId,
+                        "type" : type,
+                        "tit" : $("#ipt_title").val(),
+                        "kdDivsCd" : $("#sbx_kdDivsCd").val(),
+                        "mjrYn" : mjrYn,
+                        "popOpenYn" : popOpenYn,
+                        "popOpenDttmFrom" : $("#ipt_holiTerm1").val(),
+                        "popOpenDttmTo" : $("#ipt_holiTerm2").val(),
+                        "cntn" : $("#ipt_cntn").val(),
+                        "dataUpdId" : params.email,
+                        "dataUpdPgmId" : "noticeDtl"
+                    }
+
+                    $.ajaxCall( param, {
+                        method:'POST',
+                        url:'/dili/noticeSave/post',
+                        dataType:'json',
+                        data:JSON.stringify(param),
+                        callbackFn:function(data){
+                            if(data){
+                                // 리턴
+                                 location.href = '/dili/noticeLst';
+                                 g_toast.push("성공적으로 수정되었습니다.");
+                                 console.log("수정되었습니다.");
+
+                                //sFlag = true;
+                                //fileSave();
+                            } else{
+                                g_toast.push("저장에 실패하였습니다.");
+                                console.log("저장에 실패하였습니다.");
+                                location.reload();
+                            }
+                        }
+                   });
+                }else{     //취소클릭시
+                    g_toast.push("취소하였습니다.");
+                    console.log("취소하였습니다.");
+                    //location.reload();
                 }
 
-                $.ajaxCall( param, {
-                    method:'POST',
-                    url:'/dili/noticeSave/post',
-                    dataType:'json',
-                    data:JSON.stringify(param),
-                    callbackFn:function(data){
-                        if(data){
-                            // 리턴
-                             location.href = '/dili/noticeLst';
-                             g_toast.push("성공적으로 수정되었습니다.");
-                             console.log("수정되었습니다.");
-
-                            //sFlag = true;
-                            //fileSave();
-                        } else{
-                            g_toast.push("저장에 실패하였습니다.");
-                            console.log("저장에 실패하였습니다.");
-                            location.reload();
-                        }
-                    }
-               });
-            } else{     //취소클릭시
-                g_toast.push("취소하였습니다.");
-                console.log("취소하였습니다.");
-                //location.reload();
-            }
+            });
 
         }
 
