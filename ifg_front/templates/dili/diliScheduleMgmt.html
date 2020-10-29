@@ -1033,7 +1033,7 @@
                 calendar.destroy();
             }
 
-                calendar = new tui.Calendar(document.getElementById('calendar'), {
+            calendar = new tui.Calendar(document.getElementById('calendar'), {
                 defaultView: 'month',
                 taskView: true,
                  /*
@@ -1120,7 +1120,13 @@
                 getWrkTimeByIml(null, weekDate.strtDate, weekDate.endDate);     // Session Email 을 기준으로 시작~종료일에 대한 근무시간 조회.
             });
 
+            calendar.on('afterRenderSchedule', function(event) {
 
+                //현재 스케쥴ID와 스케쥴전체List  dataCustomArray의 마지막 항목과 ID값이 같다면, CalendarColor 호출.
+                if(event.schedule.id == dataCustomArray[dataCustomArray.length-1].id) {
+                    setCalendarColor();
+                }
+            });
 
 
             /*********************************************************************
@@ -1214,6 +1220,7 @@
             setLabel(calendar);
             getCalendarSessionDate();
 
+
         }
 
 
@@ -1258,6 +1265,7 @@
         *   Draw  calendar Event - 받아온 데이터 캘린더에 입력
         *********************************************************************/
         function setCalendar(data){
+            console.log("setCalendar Start");
             console.log("calendarData1 : ",data);
 
             var calendarData = JSON.parse(data);
@@ -1340,20 +1348,16 @@
         *   Draw  calendar Event - 캘린더 색입히기
         *********************************************************************/
         function setCalendarColor(){
-            console.log("setCalendarColor_TEST");
-            /*
             for(var i=0; i < dataCustomArray.length; i++) {
                 if(dataCustomArray[i].apvlStus == "완료"){
                     $('div[data-calendar-id="'+dataCustomArray[i].calendarId+'"]').css("background-color","rgba( 249,247,232, 1 )");
                 }
             }
-
             for(var i=0; i < dataCustomArray.length; i++) {
                 if(dataCustomArray[i].apvlStus == "미등록"){
                    $('div[data-calendar-id="'+dataCustomArray[i].calendarId+'"]').css("background-color","rgba( 255,139,139, 0.5 )");
                 }
             }
-            */
         }
 
 
