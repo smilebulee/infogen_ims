@@ -994,20 +994,20 @@
                     datasets: [{
                         label: "정상근무 : " + nmlWrkTime + "H",
                         data: [nmlWrkTime],
-                        backgroundColor: "rgba(63,103,126,1)",
-                        hoverBackgroundColor: "rgba(50,90,100,1)",
+                        backgroundColor: "rgba(97,191,173,1)",
+                        hoverBackgroundColor: "rgba(97,191,173,1)",
                         barPercentage: 0.4
                     },{
                         label: "초과근무(승인) : " + aprvWrkTime + "H",
                         data: [aprvWrkTime],
-                        backgroundColor: "rgba(163,103,126,1)",
-                        hoverBackgroundColor: "rgba(140,85,100,1)",
+                        backgroundColor: "rgba(249,247,232,1)",
+                        hoverBackgroundColor: "rgba(249,247,232,1)",
                         barPercentage: 0.4
                     },{
                         label: "초과근무(미승인) : " + notAprvWrkTime + "H",
                         data: [notAprvWrkTime],
-                        backgroundColor: "rgba(63,203,226,1)",
-                        hoverBackgroundColor: "rgba(46,185,235,1)",
+                        backgroundColor: "rgba(255,139,139,1)",
+                        hoverBackgroundColor: "rgba(255,139,139,1)",
                         barPercentage: 0.4
                     }]
                 },
@@ -1112,21 +1112,8 @@
                 getWrkTimeByIml(null, weekDate.strtDate, weekDate.endDate);     // Session Email 을 기준으로 시작~종료일에 대한 근무시간 조회.
             });
 
-            /*********************************************************************
-            *   Draw  calendar Event - 캘린더 색입히기
-            *********************************************************************/
-            /*calendar.setCalendarColor('1', {
-                color: '#e8e8e8',
-                bgColor: '#585858',
-                borderColor: '#a1b56c',
-                dragBgColor: '#585858',
-            });
-            calendar.setCalendarColor('2', {
-                color: '#282828',
-                bgColor: '#dc9656',
-                borderColor: '#a1b56c',
-                dragBgColor: '#dc9656',
-            });*/
+
+
 
             /*********************************************************************
             *  저장, 수정, 삭제 이벤트
@@ -1341,7 +1328,25 @@
         function setLabel(calendar){
           $("#calendarLabel").text(calendar.getDate().getFullYear() + "." + (calendar.getDate().getMonth()+1));
         }
+        /*********************************************************************
+        *   Draw  calendar Event - 캘린더 색입히기
+        *********************************************************************/
+        function setCalendarColor(){
+            console.log("setCalendarColor_TEST");
+            /*
+            for(var i=0; i < dataCustomArray.length; i++) {
+                if(dataCustomArray[i].apvlStus == "완료"){
+                    $('div[data-calendar-id="'+dataCustomArray[i].calendarId+'"]').css("background-color","rgba( 249,247,232, 1 )");
+                }
+            }
 
+            for(var i=0; i < dataCustomArray.length; i++) {
+                if(dataCustomArray[i].apvlStus == "미등록"){
+                   $('div[data-calendar-id="'+dataCustomArray[i].calendarId+'"]').css("background-color","rgba( 255,139,139, 0.5 )");
+                }
+            }
+            */
+        }
 
 
 
@@ -1424,7 +1429,7 @@
                                     <input type="text" class="form-control" id="ipt_searchNamePop" name="ipt_searchNamePop" placeholder="이름을 입력해주세요." maxlength="10"/>
                                 </div>
                                 <div class="align-self-end align-self-center">
-                                    <button class="btn btn-primary" id="searchBtn">Search</button>
+                                    <button class="btn" id="searchBtn" style="background-color: #81DAF5; color : white;">Search</button>
                                 </div>
                             </div>
                         </div>
@@ -1551,20 +1556,17 @@
                 </div>
                 <!-- 4. 사원 Schedule Calendar 영역 -->
                 <div id="grp_calendar">
-                    <div class="bg-light p-5">
+                    <div>
                         <div id="menu">
-                            <span id="menu-navi" class="d-flex justify-content-center">
-                              <span id="calendarLabel"></span>
+                            <span id="menu-navi" class="d-flex justify-content-center mb-2">
+                              <span id="calendarLabel" style="font-size: 120%"></span>
                             </span>
                             <span id="renderRange" class="render-range"></span>
                         </div>
-                        <div id="calendar"></div>
+                        <div id="calendar" style=" border:1px solid #cccecf;"></div>
                     </div>
                     <span id="trgtDateHidden" style="display:none;"></span>
                 </div>
-
-
-
             </div>
         </div>
     </div>
