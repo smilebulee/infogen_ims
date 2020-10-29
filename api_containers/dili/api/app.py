@@ -219,7 +219,7 @@ class mariatestDB(Resource): # Mariadb 연결 진행
 
         #requirements pymysql import 후 커넥트 사용
         mysql_con = pymysql.connect(getSystemInfo() , port=3306, db='IFG_IMS', user='ims2', password='1234',
-                                        charset='utf8')
+                                        charset='utf8', autocommit=False)
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 #쿼리문 실행
@@ -245,7 +245,7 @@ class yryMgmt(Resource): # Mariadb 연결 진행
 
         #requirements pymysql import 후 커넥트 사용
         mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
-                                        charset='utf8')
+                                        charset='utf8', autocommit=False)
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 #쿼리문 실행
@@ -276,7 +276,7 @@ class weekGridData(Resource): # Mariadb 연결 진행
 
         #requirements pymysql import 후 커넥트 사용
         mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
-                                        charset='utf8')
+                                        charset='utf8', autocommit=False)
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 #쿼리문 실행
@@ -325,7 +325,7 @@ class apvlInfo(Resource): # Mariadb 연결 진행
 
         #requirements pymysql import 후 커넥트 사용
         mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
-                                        charset='utf8')
+                                        charset='utf8', autocommit=False)
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 #쿼리문 실행
@@ -359,7 +359,7 @@ class monthGridData(Resource): # Mariadb 연결 진행
 
         #requirements pymysql import 후 커넥트 사용
         mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
-                                        charset='utf8')
+                                        charset='utf8', autocommit=False)
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 #쿼리문 실행
@@ -407,7 +407,7 @@ class wrkTimeInfoByEml(Resource): # Mariadb 연결 진행
 
         #requirements pymysql import 후 커넥트 사용
         mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
-                                        charset='utf8')
+                                        charset='utf8', autocommit=False)
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 #쿼리문 실행
@@ -442,7 +442,7 @@ class wrkApvlReq(Resource): # Mariadb 연결 진행
 
         #requirements pymysql import 후 커넥트 사용
         mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
-                                        charset='utf8')
+                                        charset='utf8', autocommit=False)
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 #쿼리문 실행
@@ -501,7 +501,7 @@ class saveApvlReq(Resource): # Mariadb 연결 진행
 
         #requirements pymysql import 후 커넥트 사용
         mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
-                                        charset='utf8')
+                                        charset='utf8', autocommit=False)
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 #쿼리문 실행
@@ -552,7 +552,7 @@ class apvlReqHist(Resource): # Mariadb 연결 진행
 
         #requirements pymysql import 후 커넥트 사용
         mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
-                                        charset='utf8')
+                                        charset='utf8', autocommit=False)
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 # 쿼리문 실행
@@ -644,7 +644,7 @@ class empList(Resource): # Mariadb 연결 진행
 
         #requirements pymysql import 후 커넥트 사용
         mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
-                                        charset='utf8')
+                                        charset='utf8', autocommit=False)
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 #쿼리문 실행
@@ -685,7 +685,7 @@ class empInfo(Resource): # Mariadb 연결 진행
 
         #requirements pymysql import 후 커넥트 사용
         mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
-                                        charset='utf8')
+                                        charset='utf8', autocommit=False)
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 #쿼리문 실행
@@ -714,7 +714,7 @@ class apvlReqHistDetl(Resource): # Mariadb 연결 진행
 
         #requirements pymysql import 후 커넥트 사용
         mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
-                                        charset='utf8')
+                                        charset='utf8', autocommit=False)
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 # 쿼리문 실행
@@ -755,7 +755,7 @@ class calendarData(Resource): # Mariadb 연결 진행
 
         #requirements pymysql import 후 커넥트 사용
         mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
-                                        charset='utf8')
+                                        charset='utf8', autocommit=False)
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 #쿼리문 실행
@@ -765,6 +765,7 @@ class calendarData(Resource): # Mariadb 연결 진행
                       + "       ,NVL(DATE_FORMAT(A.JOB_END_TM, '%H:%i:%s'),'-') AS JOB_END_TM " \
                       + "       ,A.NORM_WRK_TM " \
                       + "       ,A.ALL_WRK_TM " \
+                      + "       ,NVL(B.APVL_REQ_DIVS, 'N/A') AS APVL_REQ_DIVS " \
                       + "       ,NVL(B.APVL_REQ_DT, 'N/A') AS APVL_REQ_DT " \
                       + "       ,NVL(B.APVL_LAST_APRV_DT, 'N/A') AS APVL_LAST_APRV_DT " \
                       + "       ,DATE_FORMAT(SEC_TO_TIME(TIME_TO_SEC(STR_TO_DATE( CONCAT(SUBSTRING(A.ALL_WRK_TM,1,2),':',SUBSTRING(A.ALL_WRK_TM,3,2),':',SUBSTRING(A.ALL_WRK_TM,5,2)) ,'%H:%i:%S')) " \
@@ -809,7 +810,7 @@ class noticeLst(Resource):  # Mariadb 연결 진행
 
         # requirements pymysql import 후 커넥트 사용
         mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
-                                    charset='utf8')
+                                    charset='utf8', autocommit=False)
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 # 쿼리문 실행
@@ -905,7 +906,7 @@ class noticeOne(Resource):  # Mariadb 연결 진행
 
         # requirements pymysql import 후 커넥트 사용
         mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
-                                    charset='utf8')
+                                    charset='utf8', autocommit=False)
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 # 쿼리문 실행
@@ -952,7 +953,7 @@ class noticePopCnt(Resource):  # Mariadb 연결 진행
 
         # requirements pymysql import 후 커넥트 사용
         mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
-                                    charset='utf8')
+                                    charset='utf8', autocommit=False)
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 # 쿼리문 실행
@@ -983,7 +984,7 @@ class noticePopUp(Resource):  # Mariadb 연결 진행
 
         # requirements pymysql import 후 커넥트 사용
         mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
-                                    charset='utf8')
+                                    charset='utf8', autocommit=False)
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 # 쿼리문 실행
@@ -1032,11 +1033,11 @@ class noticeMjrCnt(Resource):  # Mariadb 연결 진행
 
         # requirements pymysql import 후 커넥트 사용
         mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
-                                    charset='utf8')
+                                    charset='utf8', autocommit=False)
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 # 쿼리문 실행
-                sql = "SELECT COUNT(MJR_YN) " \
+                sql = "SELECT COUNT(MJR_YN) AS CNT " \
                       "FROM TB_STTS_POST_MGMT_M " \
                       "WHERE MJR_YN = 'Y' "
                 logging.debug(sql)
@@ -1095,7 +1096,7 @@ class noticeSave(Resource):
 
 
         mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
-                                    charset='utf8')
+                                    charset='utf8', autocommit=False)
 
 
         logging.debug("save Start")
@@ -1143,6 +1144,49 @@ class noticeSave(Resource):
         return jsonify(retJson)
 
 
+class noticeDelete(Resource):
+    def post(self):
+        logger.info('========app.py noticeDelete=========')
+        params = request.get_json()
+        logger.info(params)
+
+        for row in request.form:
+            logger.info(row + ':' + request.form[row])
+            globals()[row] = request.form[row]
+
+        postId = request.form['postId']
+
+        #
+        logging.debug("====Param data====")
+        logging.debug("postId = " + postId)
+        logging.debug("=====================")
+
+
+        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
+                                    charset='utf8', autocommit=False)
+
+        logging.debug("delete Start")
+
+        try:
+            with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+                    sql = "DELETE FROM    TB_STTS_POST_MGMT_M WHERE POST_ID = " + postId
+
+                    logger.info(sql)
+                    cursor.execute(sql)
+
+                    mysql_con.commit()
+
+        finally:
+            mysql_con.close()
+
+        retJson = {
+            "status": 200,
+            "msg": "Data has been deleted successfully"
+        }
+
+        return jsonify(retJson)
+
+
 class saveYryApvlReq(Resource):  # Mariadb 연결 진행
     def post(self):
 
@@ -1171,7 +1215,7 @@ class saveYryApvlReq(Resource):  # Mariadb 연결 진행
 
             # requirements pymysql import 후 커넥트 사용
             mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
-                                        charset='utf8')
+                                        charset='utf8', autocommit=False)
             try:
                 with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                     # 쿼리문 실행
@@ -1201,6 +1245,13 @@ class saveYryApvlReq(Resource):  # Mariadb 연결 진행
                     logger.info(sql2)
                     cursor.execute(sql2, (email, wrkDt))
 
+                    sql3 = "UPDATE TB_YRY_MGMT_M" \
+                           "   SET USE_YRY_DAYS = USE_YRY_DAYS+1" \
+                           " WHERE EMP_EMAL_ADDR = %s" \
+
+                    logger.info(sql3)
+                    cursor.execute(sql3, (email))
+
                     mysql_con.commit()
 
             finally:
@@ -1227,7 +1278,7 @@ class insertStrtTm(Resource):  # Mariadb 연결 진행
 
         # requirements pymysql import 후 커넥트 사용
         mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
-                                    charset='utf8')
+                                    charset='utf8', autocommit=False)
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 # 쿼리문 실행
@@ -1268,7 +1319,7 @@ class updateEndTm(Resource):  # Mariadb 연결 진행
 
         # requirements pymysql import 후 커넥트 사용
         mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
-                                    charset='utf8')
+                                    charset='utf8', autocommit=False)
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 # 쿼리문 실행
@@ -1292,6 +1343,37 @@ class updateEndTm(Resource):  # Mariadb 연결 진행
         }
 
         return jsonify(retJson)
+    
+class yryUseDays(Resource): # Mariadb 연결 진행
+    def get(self):
+
+        # get data
+        data = request.get_json()
+
+        #requirements pymysql import 후 커넥트 사용
+        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
+                                        charset='utf8', autocommit=False)
+        try:
+            with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+                # 쿼리문 실행
+                sql = "SELECT CASE WHEN ALL_YRY_DAYS = USE_YRY_DAYS THEN 'N'" \
+                      "            ELSE 'Y' END USE_YRY_YN  " \
+                      "  FROM TB_YRY_MGMT_M" \
+                      " WHERE EMP_EMAL_ADDR = '" + data["email"] + "'"
+                logging.debug("apvlReqHist SQL문" + sql)
+                cursor.execute(sql)
+
+        finally:
+            mysql_con.close()
+
+        result2 = cursor.fetchall()
+        for row in result2:
+            logging.debug('====== row====')
+            logging.debug(row)
+            logging.debug('===============')
+        array = list(result2)  # 결과를 리스트로
+
+        return json.dumps(result2, indent=4, cls=DateTimeEncoder)
 
 api.add_resource(Hello, '/hello')
 api.add_resource(Register, '/register')
@@ -1312,6 +1394,7 @@ api.add_resource(noticeOne,'/noticeOne') #api 선언
 api.add_resource(noticePopUp,'/noticePopUp') #api 선언
 api.add_resource(noticeMjrCnt,'/noticeMjrCnt') #api 선언
 api.add_resource(noticeSave,'/noticeSave') #api 선언
+api.add_resource(noticeDelete,'/noticeDelete') #api 선언
 api.add_resource(empList,'/empList') #api 선언
 api.add_resource(empInfo,'/empInfo') #api 선언
 api.add_resource(saveYryApvlReq,'/saveYryApvlReq') #api 선언
@@ -1320,5 +1403,6 @@ api.add_resource(apvlInfo,'/apvlInfo') #api 선언
 api.add_resource(monthGridData,'/monthGridData') #api 선언
 api.add_resource(insertStrtTm,'/insertStrtTm') #api 선언
 api.add_resource(updateEndTm,'/updateEndTm') #api 선언
+api.add_resource(yryUseDays,'/yryUseDays') #api 선언
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5006, debug=True)

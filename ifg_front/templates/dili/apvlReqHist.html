@@ -5,6 +5,9 @@
 {% block content %}
 {% load static %}
     <div class="container">
+        <!--Dili Common JavaScript import -->
+        <script type="text/javascript" src="{% static 'diliCommon/diliCommon.js' %}"></script>
+
         <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
         <!--modal js/css import -->
         <script type="text/javascript" src="{% static 'js/modal.js' %}"></script>
@@ -99,9 +102,9 @@
                 document.getElementById('grd_apvlReqHist').innerHTML = apvlReqHistTable;
             }
 
-            $("#ipt_searchNamePop").click(function(){
+            $("#ipt_apvlSearchNamePop").click(function(){
                 var url = "{% url 'dili_api:empMgmtPop' %}" ;
-                var name = $('#ipt_searchNamePop').val();
+
 
                 $('#empModalDiv').css("width","50%");
 
@@ -159,10 +162,12 @@
                 </div>
                 <a class="modal_close_btn" id="exitEmpModalBtn">
                     <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-x-circle" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                       <path fill-rule="evenodd" d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                       <path fill-rule="evenodd" d="
+                       M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
                        <path fill-rule="evenodd" d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
                     </svg>
-                    <span id="empEmailHidden" style="display:none;" ></span>
+                    <span id="apvlEmpEmailHidden" style="display:none;" ></span>
+                    <span id="apvlReqHidden" style="display:none;" >apvlReq</span>
                 </a>
             </div>
         </div>
@@ -192,7 +197,7 @@
                             <div class="card-body flex-height d-flex m-0 p-2">
                                 <div class="align-self-start align-self-center mr-3">성명</div>
                                 <div class="align-self-center mr-3">
-                                    <input type="text" class="form-control" id="ipt_searchNamePop" name="ipt_searchNamePop" placeholder="이름을 입력해주세요." maxlength="10" readonly/>
+                                    <input type="text" class="form-control" id="ipt_apvlSearchNamePop" name="ipt_apvlSearchNamePop" placeholder="이름을 입력해주세요." maxlength="10" readonly/>
                                 </div>
                                 <div class="align-self-start align-self-center mr-3">구분</div>
                                 <div class="align-self-center mr-5">
