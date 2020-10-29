@@ -78,9 +78,10 @@
 
                 <p>비고<br>
                     <input type = "text" name = "rmks" id="rmks">
-                    <input type="hidden" name = "empNo" id="empNo">
+                    <input type="hidden" name = "emp_no" id="emp_no">
 
                 </p>
+
 
             </span>
 
@@ -91,7 +92,7 @@
         <button name="delStaff" class = "btn btn-primary" style="float:right color:red">삭제</button>-->
          <!--<td><input type="button" style="float:right" id="addStaff" name="addStaff" value="추가" class = "btn btn-danger"/></td>
         <td><input type="button" style="float:right" id="delStaff" name="delStaff" value="삭제" class = "btn btn-primary"/></td>-->
-            <button id = "addSkil" name="addSkil" class = "btn btn-primary" style="width:33%; float:right;">추가</button>
+            <button id = "addSkil" name="addSkil" onclick="fn_addSkill()" class = "btn btn-primary" style="width:33%; float:right;">추가</button>
 
         <br>
             <table id="hldSkil" class="table" style="margin-top: 20px;">
@@ -135,53 +136,51 @@
 
  <script>
 
-    var DB = [];
-    var Language = [];
-    var WEB = [];
-    var MIDWARE = [];
-    var Framework = [];
+    $('hldSkilBody').empty();
 
-    var param = null;
+    var skilmidCd01 = null;
+    var skilmidCd02 = null;
+    var skilmidCd03 = null;
+    var skilmidCd04 = null;
+    var skilmidCd05 = null;
 
-       $.ajaxCall( param, {
-             method : 'GET',
-             'url' : '/skil/retrieveEmpSkilCd/',
-             'dataType' : 'json',
-             'data' : JSON.stringify(param),
-             'async' : false,
-             'callbackFn' : function(data){
+    var skilDivsCd = null;
+    var skilLvlCd = null;
+
+    $('#skilMgmtInfo').ajaxCall({
+            method : 'GET',
+            url : "{% url 'prj_api:retrieveSkilName' %}",
+            callbackFn : function(data){
                 console.log(data);
+                debugger;
                 for(var i = 0; i < data.length; i++){
                    if(data[i].SKIL_DIVS_CD == '01'){
-                        DB.push(data[i].SKIL_NAME);
+                        skilmidCd01 += "<option value = "+data[i].SKIL_NAME+">"+data[i].SKIL_NAME+"</option>";
                     } else if(data[i].SKIL_DIVS_CD == '02'){
-                        Language.push(data[i].SKIL_NAME);
+                        skilmidCd02 += "<option value = "+data[i].SKIL_NAME+">"+data[i].SKIL_NAME+"</option>";
                     } else if(data[i].SKIL_DIVS_CD == '03'){
-                        WEB.push(data[i].SKIL_NAME);
+                        skilmidCd03 += "<option value = "+data[i].SKIL_NAME+">"+data[i].SKIL_NAME+"</option>";
                     } else if(data[i].SKIL_DIVS_CD == '04'){
-                        MIDWARE.push(data[i].SKIL_NAME);
+                        skilmidCd04 += "<option value = "+data[i].SKIL_NAME+">"+data[i].SKIL_NAME+"</option>";
                     } else if(data[i].SKIL_DIVS_CD == '05'){
-                        Framework.push(data[i].SKIL_NAME);
+                        skilmidCd05 += "<option value = "+data[i].SKIL_NAME+">"+data[i].SKIL_NAME+"</option>";
                     }
                 }
-             }
-         });
+            }
+    });
 
-
-    var skilDivsCd;
-    var skilLvlCd;
-    $(document).ready(function(){
+    $(document).ready(async function(){
 
         console.log('화면진입시작');
         <!-- 화면 진입시 정보 조회 -->
 
 
         empNo = firstGrid.getList("selected")[0].EMP_NO;
-        $('#empNo').val(empNo);
+        $('#emp_no').val(empNo);
         cntcDivsCd = firstGrid.getList("selected")[0].CNTC_DIVS_CD;
 
-        retrieveCmmCd('SKIL_DIVS_CD');
-        retrieveCmmCd('SKIL_LVL_CD');
+        await retrieveCmmCd('SKIL_DIVS_CD');
+        await retrieveCmmCd('SKIL_LVL_CD');
 
 
         console.log('empNo' + empNo);
@@ -214,34 +213,40 @@
                         $('#emp_rank_nm').val(data[0].EMP_RANK_NM);
                         $('#rmks').val(data[0].RMKS);
 
+                        for(var i=0; i<data.length; i++){
 
-                        if(data.length == 0){
-                            $("#addSkil").trigger("click");
-
-                        }else{
-                            for(var i=0; i<data.length; i++){
-
-
-                               var addSkilText =
+                                 var addSkilText =
                                 '<tr name="trSkil">'+
                                 '        <td id="skil_no"></td>'+
                                 '        <td><select size ="1" class="form-control" id = "skil_hight'+i+'" name = "skil_hight'+i+'" onchange="skil_chg('+i+')">'+
-                                '            </select></td>'+
-                                '        <td><select class="form-control" id = "skil_middle'+i+'" name = "skil_middle'+i+'"></select></td>'+
-                                '         <td><select class="form-control" id = "skil_lvl'+i+'" name = "skil_lvl'+i+'"></select></td>'+
+                                '            <option value = "00">선택</option>'+
+                                '        </select></td>'+
+                                '        <td><select class="form-control" id = "skil_middle'+i+'" name = "skil_middle'+i+'"><option value = "00">선택</option></select></td>'+
+                                '         <td><select class="form-control" id = "skil_lvl'+i+'" name = "skil_lvl'+i+'"><option value = "00">선택</option></select></td>'+
                                 '        <td><input type="button" style="float:right;" id="delSkil" name="delSkil" value="삭제" class = "btn btn-primary"/></td>'+
                                 '</tr>';
                                 $("#hldSkilBody").append(addSkilText);
 
 
-                                $("#skil_hight"+i+"").append(skilDivsCd);
-                                $("#skil_lvl"+i+"").append(skilLvlCd);
+                                 $("#skil_hight"+i+"").append(skilDivsCd);
 
+                                 if(data[i].SKIL_DIVS_CD == '01') {
+                                     $("#skil_middle"+i+"").append(skilmidCd01);
+                                 }else if (data[i].SKIL_DIVS_CD == '02'){
+                                     $("#skil_middle"+i+"").append(skilmidCd02);
+                                 }else if (data[i].SKIL_DIVS_CD == '03'){
+                                     $("#skil_middle"+i+"").append(skilmidCd03);
+                                 }else if (data[i].SKIL_DIVS_CD == '04'){
+                                     $("#skil_middle"+i+"").append(skilmidCd04);
+                                 }else if (data[i].SKIL_DIVS_CD == '05'){
+                                     $("#skil_middle"+i+"").append(skilmidCd05);
+                                 }
+                                $("#skil_lvl"+i+"").append(skilLvlCd);
 
                                 $("#skil_hight"+i+"").val(data[i].SKIL_DIVS_CD);
                                 $("#skil_middle"+i+"").val(data[i].SKIL_NM_CD);
                                 $("#skil_lvl"+i+"").val(data[i].SKIL_LVL_CD);
-                            }
+
                         }
 
 
@@ -265,7 +270,7 @@
 
 
                         for(var i = 0; i < data.length; i++){
-                            var option = $();
+
                             if(grp_id == "SKIL_DIVS_CD"){
                                 skilDivsCd += "<option value = "+data[i].CMM_CD+">"+data[i].CMM_CD_NAME+"</option>";
 
@@ -291,33 +296,41 @@
 
 
     function skil_chg(a){
+        debugger;
         var selectSkill = $("#skil_hight"+a).val();
         var changeSkill;
 
+        if(selectSkill == "00"){
+          $("#skil_middle"+a+"").empty();
+        }
         if(selectSkill == "01"){
-          changeSkill = DB;
+          $("#skil_middle"+a+"").empty();
+          $("#skil_middle"+a+"").append(skilmidCd01);
         }
         else if(selectSkill == "02"){
-          changeSkill = Language;
+          $("#skil_middle"+a+"").empty();
+          $("#skil_middle"+a+"").append(skilmidCd02);
         }
         else if(selectSkill == "03"){
-          changeSkill =  WEB;
+          $("#skil_middle"+a+"").empty();
+          $("#skil_middle"+a+"").append(skilmidCd03);
         }
         else if(selectSkill == "04"){
-          changeSkill =  MIDWARE;
+           $("#skil_middle"+a+"").empty();
+           $("#skil_middle"+a+"").append(skilmidCd04);
         }
         else if(selectSkill == "05"){
-          changeSkill =  Framework;
+           $("#skil_middle"+a+"").empty();
+           $("#skil_middle"+a+"").append(skilmidCd05);
         }
-        console.log(changeSkill);
-        $("#skil_middle"+a).empty();
-
 
     };
 
 
 
-    $(document).on("click","button[name=addSkil]",function(){
+
+    function fn_addSkill(){
+        debugger;
         console.log('add');
 
         var rowCount = $('#hldSkilBody tr').length;
@@ -328,14 +341,21 @@
             '<tr name="trSkil">'+
             '        <td id="skil_no"></td>'+
             '        <td><select size ="1" class="form-control" id = "skil_hight'+rowCount+'" name = "skil_hight'+rowCount+'" onchange="skil_chg('+rowCount+')">'+
-            '            </select></td>'+
-            '        <td><select class="form-control" id = "skil_middle'+rowCount+'" name = "skil_middle'+rowCount+'"></select></td>'+
-            '         <td><select class="form-control" id = "skil_lvl'+rowCount+'" name = "skil_lvl'+rowCount+'"></select></td>'+
+            '            <option value = "00">선택</option></select></td>'+
+            '        <td><select class="form-control" id = "skil_middle'+rowCount+'" name = "skil_middle'+rowCount+'"><option value = "00">선택</option></select></td>'+
+            '         <td><select class="form-control" id = "skil_lvl'+rowCount+'" name = "skil_lvl'+rowCount+'"><option value = "00">선택</option></select></td>'+
             '        <td><input type="button" style="float:right;" id="delSkil" name="delSkil" value="삭제" class = "btn btn-primary"/></td>'+
             '</tr>';
             $("#hldSkilBody").append(addSkilText);
 
-    });
+            $("#skil_hight"+rowCount+"").append(skilDivsCd);
+
+            $("#skil_middle"+rowCount+"").append(skilmidCd01);
+
+            $("#skil_lvl"+rowCount+"").append(skilLvlCd);
+
+    };
+
 
     $(document).on("click","input[name=delSkil]",function(){
         console.log('del')
@@ -369,27 +389,26 @@
 
     $('#modal_save_btn').click(function(){
 
-            var param = {
-                "empNo" : skil_hight1.val()
-            }
-
             console.log('저장');
             confirmMsg('저장 하시겠습니까?', function(){
 
-
-                    $.ajaxCall( param, {
-                     method : 'POST',
-                     'url' : '/skil/saveSkilDetl/post',
-                     'dataType' : 'json',
-                     'data' : JSON.stringify(param),
-                     'async' : false,
-                     'callbackFn' : function(data){
-                         g_toast.push('저장 되었습니다.');
-                     }
-                  });
+                 confirmMsg('저장 하시겠습니까?', function(){
+                        $('#projectInfo').ajaxCall({
+                        method : 'POST',
+                        url : '/skil/saveSkilDetl/post',
+                        callbackFn : function(data){
+                            $('#prj_cd').val(data);
+                            retrievePrjInfo();
+                            retrieveReqSkil()
+                            g_toast.push('저장 되었습니다.');
+                        }
+                    });
+                });
             });
 
     });
+
+
 
 
 
