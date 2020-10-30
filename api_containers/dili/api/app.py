@@ -833,7 +833,7 @@ class noticeLst(Resource):  # Mariadb 연결 진행
                       "WHEN A.KD_DIVS_CD = '03' THEN '발령'  " \
                       "WHEN A.KD_DIVS_CD = '04' THEN '그룹웨어'  " \
                       "ELSE '' END KD_DIVS_NM  " \
-                      "FROM  TB_STTS_POST_MGMT_M A LEFT OUTER JOIN TB_EMP_MGMT B ON A.DATA_INPT_ID = B.EMP_ID " \
+                      "FROM  TB_STTS_POST_MGMT_M A LEFT OUTER JOIN TB_EMP_MGMT B ON A.DATA_INPT_ID = B.EMP_EMAIL " \
                       "WHERE 1=1 " \
                       "AND  post_id IN ( " \
                       "		              SELECT AA.POST_ID FROM  " \
@@ -864,7 +864,7 @@ class noticeLst(Resource):  # Mariadb 연결 진행
                       "WHEN A.KD_DIVS_CD = '03' THEN '발령'  " \
                       "WHEN A.KD_DIVS_CD = '04' THEN '그룹웨어'  " \
                       "ELSE '' END KD_DIVS_NM  " \
-                      "FROM  TB_STTS_POST_MGMT_M A LEFT OUTER JOIN TB_EMP_MGMT B ON A.DATA_INPT_ID = B.EMP_ID " \
+                      "FROM  TB_STTS_POST_MGMT_M A LEFT OUTER JOIN TB_EMP_MGMT B ON A.DATA_INPT_ID = B.EMP_EMAIL " \
                       "WHERE 1=1 "
                 if searchStr != "":
                     if category == "00":
