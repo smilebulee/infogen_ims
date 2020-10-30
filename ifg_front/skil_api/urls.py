@@ -37,7 +37,7 @@ urlpatterns = [
     url(r'^skilRegPopupSearch/get', views.skilRegPopupSearch, name='skilRegPopupSearch'),
     url(r'^retrieveEmpSkilCd/', views.retrieveEmpSkilCd, name='retrieveEmpSkilCd'),
     url(r'^deleteSkilDetl/post', views.deleteSkilDetl, name='deleteSkilDetl'),
-    url(r'^saveSkilDetl/post', views.deleteSkilDetl, name='saveSkilDetl'),
+    url(r'^saveSkilDetl/post', views.saveSkilDetl, name='saveSkilDetl'),
 
     # 공통 코드 조회
     url(r'^retrieveCmmCd/', views.retrieveCmmCd, name='retrieveCmmCd'),
