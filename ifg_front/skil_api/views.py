@@ -356,15 +356,12 @@ def retrieveEmpSkilCd(request):
     return JsonResponse(r.json(), safe=False)
 
 def deleteSkilDetl(request):
-    param = json.loads(request.GET['param'])
+
+    param = json.loads(request.POST['param'])
     logger.info('param')
     logger.info(param)
 
-    params = {
-        'empNo': param['empNo'],
-     }
-
-    r = requests.get('http://skil_api:5003/deleteSkilDetl', params=params)
+    r = requests.post('http://skil_api:5003/deleteSkilDetl', data=param)
     logger.info(r)
     logger.info(r.text)
     logger.info(r.json())
@@ -389,7 +386,7 @@ def saveSkilDetl(request):
 
     logger.info(datas)
 
-    r = requests.post('http://skil_api:5003/saveSkilDetl', params=datas)
+    r = requests.post('http://skil_api:5003/saveSkilDetl', data=datas)
     logger.info(r)
     logger.info(r.text)
     logger.info(r.json())

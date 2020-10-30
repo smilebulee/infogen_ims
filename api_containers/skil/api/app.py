@@ -686,12 +686,14 @@ class retrieveEmpSkilCd(Resource):
         return result
 
 class deleteSkilDetl(Resource):
-    def get(self):
+    def post(self):
         params = request.get_json()
 
         logging.debug('deleteSkilDetl Start')
 
-        empNo = request.args.get('empNo')
+        empNo = request.form['emp_no']
+
+        logging.debug(empNo)
 
         mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
                                     charset='utf8')
@@ -700,6 +702,7 @@ class deleteSkilDetl(Resource):
                 sql = "DELETE FROM TB_SKIL_MGNT_M WHERE EMP_NO = %s " \
 
                 cursor.execute(sql, empNo)
+                mysql_con.commit()
                 logging.debug('deleteSkilDetl SUCCESS')
         finally:
             mysql_con.close()
@@ -713,6 +716,7 @@ class deleteSkilDetl(Resource):
 
 class saveSkilDetl(Resource):
     def post(self):
+
         params = request.get_json()
 
         logging.debug("saveSkilDetl start_01")
@@ -725,9 +729,9 @@ class saveSkilDetl(Resource):
             logging.debug(row + ':' + request.form[row])
             globals()[row] = request.form[row]
 
-        emp_no = request.form['emp_no']
+        empNo = request.form['emp_no']
 
-        logging.debug(emp_no)
+        logging.debug(empNo)
 
         mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
                                     charset='utf8')
@@ -736,22 +740,29 @@ class saveSkilDetl(Resource):
 
                 sql = "DELETE FROM TB_SKIL_MGNT_M WHERE EMP_NO = %s "
 
-                cursor.execute(sql, emp_no)
+                cursor.execute(sql, empNo)
                 mysql_con.commit()
                 logging.debug('delete SkilDetl SUCCESS')
 
 
                 logging.debug('save SkilDetl START')
 
-                for i in range(1, int(table_count) + 1):
+                for i in range(0, int(table_count)):
                     skil_hight = request.form['skil_hight' + str(i)]
-                    logging.debug('req_skil_divs : ' + req_skil_divs)
-                    if req_skil_divs != '00':
+                    logging.debug(skil_hight)
+                    if skil_hight != '00':
+                        logging.debug('CHECK01')
                         skil_middle = request.form['skil_middle' + str(i)]
                         skil_lvl = request.form['skil_lvl' + str(i)]
 
+                        sql1 = "SELECT IFNULL(MAX(SKIL_SNO) + 1, 1) AS SKIL_SNO FROM TB_SKIL_MGNT_M WHERE EMP_NO = %s"
+                        cursor.execute(sql1, empNo)
+                        snoResult = cursor.fetchone()
+                        skil_sno = snoResult['SKIL_SNO']
+
                         logging.debug('insert start')
                         sql2 = "INSERT INTO TB_SKIL_MGNT_M(`EMP_NO`, " \
+                              "`SKIL_SNO`, "    \
                               "`SKIL_DIVS_CD`, " \
                               "`SKIL_NM_CD`, " \
                               "`SKIL_LVL_CD`, " \
@@ -760,8 +771,8 @@ class saveSkilDetl(Resource):
                               " `CHG_EMP_NO`, " \
                               "`CHG_DATE`) " \
                               "VALUES (%s, " \
-                              "%s, %s, %s, %s, NOW(), %s, NOW())"
-                        cursor.execute(sql2, (emp_no, skil_hight, skil_middle, skil_lvl, userId, userId))
+                              "%s, %s, %s, %s, %s, NOW(), %s, NOW())"
+                        cursor.execute(sql2, (empNo, skil_sno, skil_hight, skil_middle, skil_lvl, userId, userId))
                         mysql_con.commit()
                         logging.debug('REQ_SKIL' + str(i) + ' SUCCESS')
 

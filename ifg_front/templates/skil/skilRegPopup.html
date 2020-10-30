@@ -368,22 +368,19 @@
 
     $('#modal_delete_btn').click(function(){
 
-            var param = {
-                "empNo" : empNo,
-            }
+
             console.log('삭제');
             confirmMsg('삭제 하시겠습니까?', function(){
 
-                    $.ajaxCall( param, {
-                     method : 'POST',
-                     'url' : '/skil/deleteSkilDetl/post',
-                     'dataType' : 'json',
-                     'data' : JSON.stringify(param),
-                     'async' : false,
-                     'callbackFn' : function(data){
-                         g_toast.push('삭제 되었습니다.');
-                      }
-                  });
+                    $('#skilMgmtInfo').ajaxCall({
+                        method : 'POST',
+                        url : '/skil/deleteSkilDetl/post',
+                        callbackFn : function(data){
+                            $('#hldSkilBody').empty();
+                            retrieveSkilDetl();
+                            g_toast.push('삭제 되었습니다.');
+                        }
+                    });
             });
 
      });
@@ -393,12 +390,16 @@
         $('#table_count').val($('#hldSkilBody tr').length);
 
         console.log('저장');
+        console.log($('#hldSkilBody tr').length);
+
              confirmMsg('저장 하시겠습니까?', function(){
                     $('#skilMgmtInfo').ajaxCall({
                     method : 'POST',
                     url : '/skil/saveSkilDetl/post',
                     callbackFn : function(data){
-                        retrieveSkilDetl()
+                        $('#hldSkilBody').empty();
+
+                        retrieveSkilDetl();
                         g_toast.push('저장 되었습니다.');
                     }
                 });
