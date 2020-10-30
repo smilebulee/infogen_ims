@@ -5,13 +5,13 @@
         $(document).ready(function(){
             /* 메인 화면에서 받는 이메일 파라미터 */
             var param = {
-                "email" : 'List'
+                "name" : ''
             }
 
             /* 목록조회 */
             $.ajaxCall( param, {
                  'method' : 'GET',
-                 'url' : "{% url 'dili_api:getEmpList' %}",
+                 'url' : "{% url 'dili_api:getEmpInfo' %}",
                  'dataType' : 'json',
                  'data' : JSON.stringify(param),
                  'async' : false,
@@ -24,32 +24,69 @@
             });
 
             $('#searchBtn').click(function(){
-                onClickSearchBtn(ipt_searchEmail);
+                onClickSearchBtn(ipt_searchName);
             });
 
         });
 
-        function onClickSearchBtn(ipt_searchEmail) {
+        /* 직원 검색 기능 */
+        function onClickSearchBtn(ipt_searchName) {
             var param = {
-                "email" : $('[name="ipt_searchEmail"]').val()
+                "name" : $('[name="ipt_searchName"]').val()
             }
-
-            /* 목록조회 */
-            $.ajaxCall( param, {
-                 'method' : 'GET',
-                 'url' : "{% url 'dili_api:getEmpList' %}",
-                 'dataType' : 'json',
-                 'data' : JSON.stringify(param),
-                 'async' : false,
-                 'callbackFn' : function(data){
-                    // 로그
-                    console.log("data : ",data)
-                    // 리턴
-                    empListGrd(data);
-                 }
-            });
-
+            if( $('#ipt_searchName').val() == "" || $('#ipt_searchName').val() == null ){
+                alert("직원 이름을 입력해 주세요.");
+            } else if ($('#ipt_searchName').val().length < 2){
+                alert("직원 이름은 두 글자 이상 입력해 주세요.");
+            } else {
+                /* 목록조회 */
+                $.ajaxCall( param, {
+                     'method' : 'GET',
+                     'url' : "{% url 'dili_api:getEmpInfo' %}",
+                     'dataType' : 'json',
+                     'data' : JSON.stringify(param),
+                     'async' : false,
+                     'callbackFn' : function(data){
+                        // 로그
+                        console.log("data : ",data)
+                        // 리턴
+                        empListGrd(data);
+                     }
+                });
+            }
         };
+
+
+        /* 직원목록 엔터 조회 */
+        $('#ipt_searchName').keydown(function(e){
+                //엔터키 입력 + 이름컬럼에 값이 있는 경우.
+                if ( e.keyCode == 13 && $('#ipt_searchName').val() != 'undefined' ) {
+                    var param = {
+                        name : $('#ipt_searchName').val()
+                    }
+                    if( $('#ipt_searchName').val() == "" || $('#ipt_searchName').val() == null ){
+                        alert("직원 이름을 입력해 주세요.");
+                    } else if ($('#ipt_searchName').val().length < 2){
+                        alert("직원 이름은 두 글자 이상 입력해 주세요.");
+                    } else {
+                        //목록조회
+                        $.ajaxCall( param, {
+                             'method' : 'GET',
+                             'url' : "{% url 'dili_api:getEmpInfo' %}",
+                             'dataType' : 'json',
+                             'data' : JSON.stringify(param),
+                             'async' : false,
+                             'callbackFn' : function(data){
+                                // 로그
+                                console.log("data : ",data)
+                                // 리턴
+                                empListGrd(data);
+                             }
+                        });
+                    }
+                }
+        });
+
 
         /* 직원목록 생성 */
         function empListGrd(data){
@@ -112,9 +149,9 @@
 
                         <div id="col_search" class="collapse show" aria-labelledby="head_search" data-parent="#grp_search">
                             <div class="card-body flex-height d-flex m-0 p-2">
-                                <div class="align-self-start align-self-center mr-3">E-mail</div>
+                                <div class="align-self-start align-self-center mr-3">성함</div>
                                 <div class="align-self-center mr-3">
-                                    <input type="text" class="form-control" id="ipt_searchEmail" name="ipt_searchEmail" placeholder="E-mail을 입력해주세요." maxlength="10"/>
+                                    <input type="text" class="form-control" id="ipt_searchName" name="ipt_searchName" placeholder="직원 성함을 입력해주세요." maxlength="10"/>
                                 </div>
                                 <div class="align-self-end align-self-center">
                                     <button class="btn btn-primary" id="searchBtn" type="button">검색</button>
@@ -124,9 +161,8 @@
                     </div>
                 </div>
                 <center>
-                <!--week table 영역 -->
+                <!-- 페이징영역 -->
                     <div id="grd_empListTable"></div>
-                    # 페이징 구현하기
                     <a href ="" class="btn btn-link text-dark btn-arrow-left">
                         [이전]
                     </a>
