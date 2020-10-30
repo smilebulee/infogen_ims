@@ -1,6 +1,12 @@
+<!--
+    할 일 !!
+    1. 직원을 선택 된 hidden 값이 최초 조회 후 재조회 할 때 초기화가 안되어있음 초기화 하기
+    2. 데이터가 없으면 데이터가 없습니다
 
+-->
         <script type="text/javascript">
           $(document).ready(function(){
+            $('.tui-full-calendar-month-guide-block').remove();
             /* 메인 화면에서 받는 NAME 파라미터 */
 
             name = $('#ipt_searchNamePop').val();
@@ -150,141 +156,148 @@
                 "name" : $('[name="ipt_searchName"]').val()
             }
 
-            /* 목록조회 */
-            $.ajaxCall( param, {
-                 'method' : 'GET',
-                 'url' : "{% url 'dili_api:getEmpInfo' %}",
-                 'dataType' : 'json',
-                 'data' : JSON.stringify(param),
-                 'async' : false,
-                 'callbackFn' : function(data){
-                    // 로그
-                    console.log("data : ",data)
-                    // 리턴
+            if( $('#ipt_searchName').val() == "" || $('#ipt_searchName').val() == null ){
+                alert("직원 이름을 입력해 주세요.");
+            } else if ($('#ipt_searchName').val().length < 2){
+                alert("직원 이름은 두 글자 이상 입력해 주세요.");
+            } else {
+                /* 목록조회 */
+                $.ajaxCall( param, {
+                     'method' : 'GET',
+                     'url' : "{% url 'dili_api:getEmpInfo' %}",
+                     'dataType' : 'json',
+                     'data' : JSON.stringify(param),
+                     'async' : false,
+                     'callbackFn' : function(data){
+                        // 로그
+                        console.log("data : ",data)
+                        // 리턴
 
-                    var scrDivs = $('#apvlReqHidden').text();
-                    console.log(scrDivs);
-                    //결재요청 이력화면
-                    if ( scrDivs == "apvlReq" ) {
+                        var scrDivs = $('#apvlReqHidden').text();
+                        console.log(scrDivs);
+                        //결재요청 이력화면
+                        if ( scrDivs == "apvlReq" ) {
 
-                        if (data.length == 1) {
-                            $('#ipt_apvlSearchNamePop').val(data[0].EMP_NAME);
-                            $('#apvlEmpEmailHidden').text(data[0].EMP_EMAIL);
-                            $('#exitEmpModalBtn').click();
+                            if (data.length == 1) {
+                                $('#ipt_apvlSearchNamePop').val(data[0].EMP_NAME);
+                                $('#apvlEmpEmailHidden').text(data[0].EMP_EMAIL);
+                                $('#exitEmpModalBtn').click();
+                            } else {
+                                empListGrd(data);
+                            }
+                        //스케쥴 관리                            --신규 화면 추가의 경우. $('#apvlReqHidden') 객체 선언 후 분기처리.
                         } else {
-                            empListGrd(data);
-                        }
-                    //스케쥴 관리                            --신규 화면 추가의 경우. $('#apvlReqHidden') 객체 선언 후 분기처리.
-                    } else {
-                        if (data.length == 1) {
-                            console.log(' Debug [Data.EMP_EMAIL] : '+ data[0].EMP_EMAIL);
-                            email    = data[0].EMP_EMAIL;
-                            weekDate = setWeek(getCurrentDate());                           // 현재일이 포함된 주의 Start,End Date 조회
+                            if (data.length == 1) {
+                                console.log(' Debug [Data.EMP_EMAIL] : '+ data[0].EMP_EMAIL);
+                                email    = data[0].EMP_EMAIL;
+                                weekDate = setWeek(getCurrentDate());                           // 현재일이 포함된 주의 Start,End Date 조회
 
-                            $('#baseEndDate').text("");                                      // Span Object EndDate 값이 달라질 경우에만, Chart를 다시 그리므로, 초기화작업.
+                                $('#baseEndDate').text("");                                      // Span Object EndDate 값이 달라질 경우에만, Chart를 다시 그리므로, 초기화작업.
 
-                            getWrkTimeByIml(email, weekDate.strtDate, weekDate.endDate);     // Session Email 을 기준으로 시작~종료일에 대한 근무시간 조회.
+                                getWrkTimeByIml(email, weekDate.strtDate, weekDate.endDate);     // Session Email 을 기준으로 시작~종료일에 대한 근무시간 조회.
 
-                            $('#empEmailHidden').val(email);
+                                $('#empEmailHidden').val(email);
 
-                                //현재 날짜 가져오기
-                                var today = new Date();
-                                var year = today.getFullYear(); // 년도
-                                var month = today.getMonth();  // 월 (today.getMonth()는 0~11로 출력)
-                                var date = today.getDate();  // 날짜
-                                var day = today.getDay();  // 요일 (0~6으로 출력, 0:일요일, 1:월요일, 6:토요일)
+                                    //현재 날짜 가져오기
+                                    var today = new Date();
+                                    var year = today.getFullYear(); // 년도
+                                    var month = today.getMonth();  // 월 (today.getMonth()는 0~11로 출력)
+                                    var date = today.getDate();  // 날짜
+                                    var day = today.getDay();  // 요일 (0~6으로 출력, 0:일요일, 1:월요일, 6:토요일)
 
-                                $('#txt_mmYy').text(year); //그리드 월tab 년도 초기값 입력
-                                $('#txt_mmMm').text(month + 1); //그리드 월tab 월 초기값 입력
+                                    $('#txt_mmYy').text(year); //그리드 월tab 년도 초기값 입력
+                                    $('#txt_mmMm').text(month + 1); //그리드 월tab 월 초기값 입력
 
-                                setMonthGridData();                                                                              // Month Grid 생성
-                                crteTodayShow(year, month, date, day);                                                        // Grid UI(주) 날짜 세팅
-                                createCalendar();
+                                    setMonthGridData();                                                                              // Month Grid 생성
+                                    crteTodayShow(year, month, date, day);                                                        // Grid UI(주) 날짜 세팅
+                                    createCalendar();
 
-                            $('#exitEmpModalBtn').click();
-                        } else {
-                            empListGrd(data);
+                                $('#exitEmpModalBtn').click();
+                            } else {
+                                empListGrd(data);
+                            }
+
                         }
 
-                    }
-
-
-                 }
-            });
-
+                     }
+                });
+            }
         };
 
         /* 직원목록 엔터 조회 */
-
         $('#ipt_searchName').keydown(function(e){
                 //엔터키 입력 + 이름컬럼에 값이 있는 경우.
-                if ( e.keyCode == 13 && $('#ipt_searchName').val() != 'undefined' && $('#ipt_searchName').val() != "" ) {
+                if ( e.keyCode == 13 && $('#ipt_searchName').val() != 'undefined' ) {
                     var param = {
                         name : $('#ipt_searchName').val()
                     }
+                    if( $('#ipt_searchName').val() == "" || $('#ipt_searchName').val() == null ){
+                        alert("직원 이름을 입력해 주세요.");
+                    } else if ($('#ipt_searchName').val().length < 2){
+                        alert("직원 이름은 두 글자 이상 입력해 주세요.");
+                    } else {
+                        //목록조회
+                        $.ajaxCall( param, {
+                             'method' : 'GET',
+                             'url' : "{% url 'dili_api:getEmpInfo' %}",
+                             'dataType' : 'json',
+                             'data' : JSON.stringify(param),
+                             'async' : false,
+                             'callbackFn' : function(data){
+                                    // 로그
+                                    console.log("data : ",data)
+                                    // 리턴
 
-                    //목록조회
-                    $.ajaxCall( param, {
-                         'method' : 'GET',
-                         'url' : "{% url 'dili_api:getEmpInfo' %}",
-                         'dataType' : 'json',
-                         'data' : JSON.stringify(param),
-                         'async' : false,
-                         'callbackFn' : function(data){
-                                // 로그
-                                console.log("data : ",data)
-                                // 리턴
+                                    var scrDivs = $('#apvlReqHidden').text();
+                                    console.log(scrDivs);
+                                    //결재요청 이력화면
+                                    if ( scrDivs == "apvlReq" ) {
 
-                                var scrDivs = $('#apvlReqHidden').text();
-                                console.log(scrDivs);
-                                //결재요청 이력화면
-                                if ( scrDivs == "apvlReq" ) {
-
-                                    if (data.length == 1) {
-                                        $('#ipt_apvlSearchNamePop').val(data[0].EMP_NAME);
-                                        $('#apvlEmpEmailHidden').text(data[0].EMP_EMAIL);
-                                        $('#exitEmpModalBtn').click();
+                                        if (data.length == 1) {
+                                            $('#ipt_apvlSearchNamePop').val(data[0].EMP_NAME);
+                                            $('#apvlEmpEmailHidden').text(data[0].EMP_EMAIL);
+                                            $('#exitEmpModalBtn').click();
+                                        } else {
+                                            empListGrd(data);
+                                        }
+                                    //스케쥴 관리                            --신규 화면 추가의 경우. $('#apvlReqHidden') 객체 선언 후 분기처리.
                                     } else {
-                                        empListGrd(data);
-                                    }
-                                //스케쥴 관리                            --신규 화면 추가의 경우. $('#apvlReqHidden') 객체 선언 후 분기처리.
-                                } else {
-                                    if (data.length == 1) {
-                                        console.log(' Debug [Data.EMP_EMAIL] : '+ data[0].EMP_EMAIL);
-                                        email    = data[0].EMP_EMAIL;
-                                        weekDate = setWeek(getCurrentDate());                           // 현재일이 포함된 주의 Start,End Date 조회
+                                        if (data.length == 1) {
+                                            console.log(' Debug [Data.EMP_EMAIL] : '+ data[0].EMP_EMAIL);
+                                            email    = data[0].EMP_EMAIL;
+                                            weekDate = setWeek(getCurrentDate());                           // 현재일이 포함된 주의 Start,End Date 조회
 
-                                        $('#baseEndDate').text("");                                      // Span Object EndDate 값이 달라질 경우에만, Chart를 다시 그리므로, 초기화작업.
+                                            $('#baseEndDate').text("");                                      // Span Object EndDate 값이 달라질 경우에만, Chart를 다시 그리므로, 초기화작업.
 
-                                        getWrkTimeByIml(email, weekDate.strtDate, weekDate.endDate);     // Session Email 을 기준으로 시작~종료일에 대한 근무시간 조회.
+                                            getWrkTimeByIml(email, weekDate.strtDate, weekDate.endDate);     // Session Email 을 기준으로 시작~종료일에 대한 근무시간 조회.
 
-                                        $('#empEmailHidden').val(email);
+                                            $('#empEmailHidden').val(email);
 
-                                            //현재 날짜 가져오기
-                                            var today = new Date();
-                                            var year = today.getFullYear(); // 년도
-                                            var month = today.getMonth();  // 월 (today.getMonth()는 0~11로 출력)
-                                            var date = today.getDate();  // 날짜
-                                            var day = today.getDay();  // 요일 (0~6으로 출력, 0:일요일, 1:월요일, 6:토요일)
+                                                //현재 날짜 가져오기
+                                                var today = new Date();
+                                                var year = today.getFullYear(); // 년도
+                                                var month = today.getMonth();  // 월 (today.getMonth()는 0~11로 출력)
+                                                var date = today.getDate();  // 날짜
+                                                var day = today.getDay();  // 요일 (0~6으로 출력, 0:일요일, 1:월요일, 6:토요일)
 
-                                            $('#txt_mmYy').text(year); //그리드 월tab 년도 초기값 입력
-                                            $('#txt_mmMm').text(month + 1); //그리드 월tab 월 초기값 입력
+                                                $('#txt_mmYy').text(year); //그리드 월tab 년도 초기값 입력
+                                                $('#txt_mmMm').text(month + 1); //그리드 월tab 월 초기값 입력
 
-                                            setMonthGridData();                                                                              // Month Grid 생성
-                                            crteTodayShow(year, month, date, day);                                                        // Grid UI(주) 날짜 세팅
-                                            createCalendar();
+                                                setMonthGridData();                                                                              // Month Grid 생성
+                                                crteTodayShow(year, month, date, day);                                                        // Grid UI(주) 날짜 세팅
+                                                createCalendar();
 
-                                        $('#exitEmpModalBtn').click();
-                                    } else {
-                                        empListGrd(data);
+                                            $('#exitEmpModalBtn').click();
+                                        } else {
+                                            empListGrd(data);
+                                        }
+
                                     }
 
-                                }
-
-                         }
-                    });
+                             }
+                        });
+                    }
                 }
-
             });
 
 
@@ -316,6 +329,10 @@
                     empListTable += '</tr>';
 
                 }
+            } else {
+                empListTable += '<tr>';
+                '+"해당하는 직원이 없습니다."+'
+                empListTable += '</tr>';
             }
 
             empListTable += '</tbody>';
