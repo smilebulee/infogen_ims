@@ -715,10 +715,15 @@ class saveSkilDetl(Resource):
     def get(self):
         params = request.get_json()
 
-        logging.debug('saveSkilDetl Start')
+        params = request.get_json()
 
-        empNo = request.args.get('empNo')
+        logging.debug("saveSkilDetl start")
 
+        for row in request.form:
+            logging.debug(row + ':' + request.form[row])
+            globals()[row] = request.form[row]
+
+        emp_no = request.args.get('emp_no')
 
 
         mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
@@ -728,12 +733,37 @@ class saveSkilDetl(Resource):
 
                 sql = "DELETE FROM TB_SKIL_MGNT_M WHERE EMP_NO = %s "
 
-                cursor.execute(sql, empNo)
+                cursor.execute(sql, emp_no)
                 mysql_con.commit()
                 logging.debug('delete SkilDetl SUCCESS')
 
+
+                logging.debug('save SkilDetl SUCCESS')
+
+
                 sql = "INSERT INTO TB_SKIL_MGNT_M ('EMP_NO','' )"
 
+                for i in range(1, int(table_count) + 1):
+                    skil_hight = request.form['skil_hight' + str(i)]
+                    logging.debug('req_skil_divs : ' + req_skil_divs)
+                    if req_skil_divs != '00':
+                        skil_middle = request.form['skil_middle' + str(i)]
+                        skil_lvl = request.form['skil_lvl' + str(i)]
+
+                        logging.debug('insert start')
+                        sql = "INSERT INTO TB_SKIL_MGNT_M(`EMP_NO`, " \
+                              "`SKIL_DIVS_CD`, " \
+                              "`SKIL_NM_CD`, " \
+                              "`SKIL_LVL_CD`, " \
+                              "`REG_EMP_NO`, " \
+                              "`REG_DATE`," \
+                              " `CHG_EMP_NO`, " \
+                              "`CHG_DATE`) " \
+                              "VALUES (%s, " \
+                              "%s, %s, %s, %s, NOW(), %s, NOW())"
+                        cursor.execute(sql, (emp_no, skil_hight, skil_middle, skil_lvl, userId, userId))
+                        mysql_con.commit()
+                        logging.debug('REQ_SKIL' + str(i) + ' SUCCESS')
 
         finally:
             mysql_con.close()

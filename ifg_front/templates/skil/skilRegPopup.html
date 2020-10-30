@@ -79,6 +79,7 @@
                 <p>비고<br>
                     <input type = "text" name = "rmks" id="rmks">
                     <input type="hidden" name = "emp_no" id="emp_no">
+                    <input type="hidden" name = "table_count" id="table_count">
 
                 </p>
 
@@ -389,11 +390,13 @@
 
     $('#modal_save_btn').click(function(){
 
+            $('#table_count').val($('#hldSkilBody tr').length);
+
             console.log('저장');
             confirmMsg('저장 하시겠습니까?', function(){
 
                  confirmMsg('저장 하시겠습니까?', function(){
-                        $('#projectInfo').ajaxCall({
+                        $('#hldSkilBody').ajaxCall({
                         method : 'POST',
                         url : '/skil/saveSkilDetl/post',
                         callbackFn : function(data){
