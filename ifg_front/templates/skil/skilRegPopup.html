@@ -390,24 +390,20 @@
 
     $('#modal_save_btn').click(function(){
 
-            $('#table_count').val($('#hldSkilBody tr').length);
+        $('#table_count').val($('#hldSkilBody tr').length);
 
-            console.log('저장');
-            confirmMsg('저장 하시겠습니까?', function(){
-
-                 confirmMsg('저장 하시겠습니까?', function(){
-                        $('#hldSkilBody').ajaxCall({
-                        method : 'POST',
-                        url : '/skil/saveSkilDetl/post',
-                        callbackFn : function(data){
-                            $('#prj_cd').val(data);
-                            retrievePrjInfo();
-                            retrieveReqSkil()
-                            g_toast.push('저장 되었습니다.');
-                        }
-                    });
+        console.log('저장');
+             confirmMsg('저장 하시겠습니까?', function(){
+                    $('#skilMgmtInfo').ajaxCall({
+                    method : 'POST',
+                    url : '/skil/saveSkilDetl/post',
+                    callbackFn : function(data){
+                        retrieveSkilDetl()
+                        g_toast.push('저장 되었습니다.');
+                    }
                 });
             });
+
 
     });
 
