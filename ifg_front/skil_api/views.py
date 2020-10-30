@@ -387,7 +387,9 @@ def saveSkilDetl(request):
     for row in param:
         datas.setdefault(row, param[row])
 
-    r = requests.get('http://skil_api:5003/saveSkilDetl', params=datas)
+    logger.info(datas)
+
+    r = requests.post('http://skil_api:5003/saveSkilDetl', params=datas)
     logger.info(r)
     logger.info(r.text)
     logger.info(r.json())
