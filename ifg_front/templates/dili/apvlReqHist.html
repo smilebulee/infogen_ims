@@ -22,7 +22,7 @@
                 *   Session Email 값 기준 근무 결재요청 리스트 조회
                 *********************************************************************/
                 var param = {
-                    "email" : 'ishwang@infogen.co.kr',                                   // 추후 Session Value 연동.
+                    "email" : $("#apvlEmpEmailHidden").text(),                                   // 추후 Session Value 연동.
                     "apvlStusDivs" : $("#sbx_type option:selected").val(),    //TB_APVL_REQ_MGMT_M APVL_STUS 값 => 01,02: 승인, 승인반려 NULL: 미승인
                 }
 
@@ -120,7 +120,7 @@
 
         function onclickEvt(trId) {
             var param = {
-                "email" : 'ishwang@infogen.co.kr',                                  // 추후 Session Value 연동.
+                "email" : $("#apvlEmpEmailHidden").text(),                                  // 추후 Session Value 연동.
                 "wrkDt" : $(trId).children().eq(2).text().substring(0,10)
             }
 

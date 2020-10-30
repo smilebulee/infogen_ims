@@ -168,6 +168,10 @@
                             sessionStorage.setItem("email",loginInfo.email);
                         }
 
+                        if (loginInfo.authId != null && loginInfo.authId != "") {
+                            sessionStorage.setItem("authId",loginInfo.authId);
+                        }
+
                         reData = {'next': $form.serializeObject().next}
                         window.location.href = $form.serializeObject().next;
                     }
