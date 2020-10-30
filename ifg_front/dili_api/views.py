@@ -359,6 +359,28 @@ def noticeSave(request):
 
     return JsonResponse(r.json(), safe=False)
 
+def noticeDelete(request):
+    param = json.loads(request.POST['param'])
+
+    logger.info("Parameters Start")
+    logger.info(param)
+    logger.info("Parameters End")
+
+    datas = {
+    }
+
+    for row in param:
+        logger.info("------views.py------")
+        #logger.info(row + ':' + param[row])
+        datas.setdefault(row, param[row])
+
+    r = requests.post('http://dili_api:5006/noticeDelete', data=datas)
+    logger.info(r)
+    logger.info(r.text)
+    logger.info(r.json())
+
+    return JsonResponse(r.json(), safe=False)
+
 class empMgmt(generic.TemplateView):
     def get(self, request, *args, **kwargs):
         template_name = 'dili/empMgmt.html'
@@ -549,3 +571,18 @@ def saveEndTm(request):
     logger.info(r.text)
     logger.info(r.json())
     return JsonResponse(r.json())
+
+def getYryUseDays(request):
+    param = json.loads(request.GET['param'])
+
+    logger.info("Parameters Logging Start")
+    logger.info(param)
+    logger.info("Parameters Logging End")
+
+    # api 호출
+    r = requests.get('http://dili_api:5006/yryUseDays', json=param)
+    logger.info(r)
+    logger.info(r.text)
+    logger.info(r.json())
+    logger.info(json.loads(r.text))
+    return JsonResponse(r.json(), safe=False)

@@ -32,6 +32,7 @@ urlpatterns = [
     url(r'^noticeDtl/', views.noticeDtl.as_view(), name='noticeDtl'),
     url(r'^getNoticeOne/', views.getNoticeOne, name='getNoticeOne'),
     url(r'^noticeSave/post', views.noticeSave, name='noticeSave'),
+    url(r'^noticeDelete/post', views.noticeDelete, name='noticeDelete'),
     url(r'^getWrkApvlReq/', views.getWrkApvlReq, name='getWrkApvlReq'),
     url(r'^saveApvlReq/post', views.saveApvlReq, name='saveApvlReq'),
     url(r'^apvlReqHist/', views.apvlReqHist.as_view(), name='apvlReqHist'),
@@ -50,6 +51,7 @@ urlpatterns = [
     url(r'^saveEndTm/', views.saveEndTm, name='saveEndTm'),
 
     url(r'^getApvlInfo/', views.getApvlInfo, name='getApvlInfo'),
+    url(r'^getYryUseDays/', views.getYryUseDays, name='getYryUseDays'),
 
 
     # 공지사항 파일업로드 추가

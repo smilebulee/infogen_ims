@@ -26,10 +26,18 @@
             /*********************************************************************
             *   Session Email
             *********************************************************************/
-            var param = {
-                "email" : 'sangeuny@infogen.co.kr',
-                "authId" : "ADMIN"
+            if(sessionStorage.getItem("email") == null){
+
+                location.href = "{% url 'main:login_form' %}";
             }
+
+            console.log(sessionStorage.getItem("email"));
+
+            var param = {
+                "email" : sessionStorage.getItem("email"),
+                "authId" : sessionStorage.getItem("authId")
+            }
+
 
             if(param.authId != "ADMIN") {
                 $('#writeBtn').css("display", "none");

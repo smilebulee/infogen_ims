@@ -3,6 +3,33 @@
     $(document).ready(function(){
 
         /*********************************************************************
+        *   남은 연차 조회
+        *********************************************************************/
+
+        var param = {
+            "email" : 'ishwang@infogen.co.kr'
+        }
+
+        $.ajaxCall( param, {
+             'method' : 'GET',
+             'url' : "{% url 'dili_api:getYryUseDays' %}",
+             'dataType' : 'json',
+             'data' : JSON.stringify(param),
+             'async' : false,
+             'callbackFn' : function(data){
+
+                // 리턴
+                useYryYn(data);
+             }
+        });
+
+        function useYryYn(data) {
+            if(data[0].USE_YRY_YN == 'N') {
+                $('#exitSchdModal').click();
+            }
+        }
+
+        /*********************************************************************
         *   btn_datepicker1 Btn Click Event - 일달력호출
         *********************************************************************/
         $("#btn_datepicker1").click(function(){
@@ -220,7 +247,7 @@
                         <div class="card-body flex-height d-flex">
                             <div class="align-self-start align-self-center mr-2">비상연락망</div>
                            <div class="align-self-center mr-5">
-                                <input type="text" class="form-control" id="ipt_emerCtpl" name="ipt_emerCtpl" placeholder="010-1234-5678" maxlength="11"/>
+                                <input type="text" class="form-control" id="ipt_emerCtpl" name="ipt_emerCtpl" placeholder="01012345678" maxlength="11"/>
                             </div>
                         </div>
 

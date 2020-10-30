@@ -100,7 +100,7 @@ function allWrkTmCall(date, strtTm, endTm){
 
     var tmpSubtractTm = endDate - strtDate;
     var hour = Math.floor((tmpSubtractTm % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-    if(hour > 8){
+    if(hour > 4){
         hour -= 1
     }
     var minute = Math.floor((tmpSubtractTm % (1000 * 60 * 60)) / (1000 * 60));
@@ -117,21 +117,16 @@ function allWrkTmCall(date, strtTm, endTm){
 *********************************************************************/
 function overWrkTmCall(date, allTmData){
     var overTmChk = "";
-    var tmpOverTmChk = allTmData.split(':');
+    var tmpStrtDate = date+" 08:00:00";
+    var tmpEndDate = date+" "+allTmData;
+    var strtDate = new Date(tmpStrtDate);
+    var endDate = new Date(tmpEndDate);
 
-    if(Number(tmpOverTmChk[0]) > 8){
-        var tmpStrtDate = date+" 08:00:00";
-        var tmpEndDate = date+" "+allTmData;
-
-        var strtDate = new Date(tmpStrtDate);
-        var endDate = new Date(tmpEndDate);
-
+    if(endDate > strtDate){
         var tmpSubtractTm = endDate - strtDate;
         var hour = Math.floor((tmpSubtractTm % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
         var minute = Math.floor((tmpSubtractTm % (1000 * 60 * 60)) / (1000 * 60));
         var second = Math.floor((tmpSubtractTm % (1000 * 60)) / 1000);
-
-
         var subtractTm = lpad((hour).toString(),2,"0")+":"+lpad((minute).toString(),2,"0")+":"+lpad((second).toString(),2,"0");
         overTmChk = subtractTm;
     }else {

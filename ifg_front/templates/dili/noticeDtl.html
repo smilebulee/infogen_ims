@@ -16,18 +16,42 @@
     <script src="https://uicdn.toast.com/tui.date-picker/latest/tui-date-picker.min.js"></script>
     <script src="https://uicdn.toast.com/tui-calendar/latest/tui-calendar.js"></script>
 
-    <link rel="stylesheet" type="text/css" href="https://uicdn.toast.com/tui-calendar/latest/tui-calendar.css" />
+    <link rel="stylesheet" type="text/css" href="https://uicdn.toast.com/tui-calendar/latest/tui-calendar.css"/>
     <!-- 달력 표출 End -->
 
     <script type="text/javascript" xmlns:max-width="http://www.w3.org/1999/xhtml">
 
         /*********************************************************************
+        *   Dialog Setting
+        *********************************************************************/
+        var n_dialog = new ax5.ui.dialog();
+        var n_title =  '<span style="color:#fd7e14;font-size:20px;"><i class="fa fa-check-circle"></i></span> CHECK';
+
+        n_dialog.setConfig({
+            title: n_title,
+            theme : 'info',
+            lang:{
+                "ok": "확인", "cancel": "취소"
+            }
+        });
+
+        /*********************************************************************
         *   Session Email
         *********************************************************************/
-        var params = {
-            "email" : 'sangeuny@infogen.co.kr',
-            "authId" : "ADMIN"
+        if(sessionStorage.getItem("email") == null){
+
+            location.href = "{% url 'main:login_form' %}";
         }
+
+        console.log(sessionStorage.getItem("email"));
+
+        var params = {
+            "email" : sessionStorage.getItem("email"),
+            "authId" : sessionStorage.getItem("authId")
+        }
+
+        var tempStrtDt = "";
+        var tempEndDt = "";
 
         /*********************************************************************
         *   urlParam
@@ -212,6 +236,38 @@
             $.ajaxCall(param, options );
         }
 
+        /*********************************************************************
+         *  공지사항 중요 체크한 게시물 수 체크(3개까지로 제한)
+        *********************************************************************/
+        function mjrCheck(){
+            console.log("공지사항 중요 체크한 게시물 수 체크(3개까지로 제한)");
+            var cnt;
+
+            if($('#cb_mjrYn').is(":checked") == true){
+                var param = { };
+                var option = {
+                    method: 'GET',
+                    url:'/dili/getNoticeMjrCnt/',
+                    dataType:'json',
+                    data:JSON.stringify(param),
+                    async:false,
+                    callbackFn:function(data){
+                        cnt = data[0].CNT;
+                        console.log("data[0]: " + cnt);
+                        if(cnt >= 3){
+                            console.log("중요 게시물은 3개 이하만 가능합니다.");
+                            alertMsg("중요 게시물은 3개 이하만 가능합니다.");
+                            $('#cb_mjrYn').prop("checked", false);
+                            return false;
+                        }
+                    }
+                };
+
+                $.ajaxCall(param, option);
+
+            }
+
+        }
 
         /*************************************************************
         *  btnSave onClick() : 저장 버튼 클릭 이벤트
@@ -232,9 +288,9 @@
                 console.log(mjrYn);
             }
 
-            /**************************************
+            /************************************************
             * 저장 클릭시 공지팝업표출 값 지정 (default: 'N')
-            **************************************/
+            ************************************************/
             if($('#cb_popOpenYn').is(":checked") == true){
                 console.log("공지표출 체크됨");
                 popOpenYn = "Y";
@@ -279,62 +335,47 @@
             /**************************************
             * 저장 실행
             **************************************/
-            confirmMsg('저장하시겠습니까?', function(){
-                console.log("저장 type: " + type);
-                console.log("params.email: " + params.email);
-                var param = {
-                    "type" : type,
-                    "postId" : postId,
-                    "tit" : $("#ipt_title").val(),
-                    "kdDivsCd" : $("#sbx_kdDivsCd").val(),
-                    "mjrYn" : mjrYn,
-                    "popOpenYn" : popOpenYn,
-                    "popOpenDttmFrom" : $("#ipt_holiTerm1").val(),
-                    "popOpenDttmTo" : $("#ipt_holiTerm2").val(),
-                    "cntn" : $("#ipt_cntn").val(),
-                    "dataInptId" : params.email,
-                    "dataInptPgmId" : "noticeDtl",
-                    "dataUpdId" : params.email,
-                    "dataUpdPgmId" : "noticeDtl"
-                }
-
-               $.ajaxCall( param, {
-                    method:'POST',
-                    url:'/dili/noticeSave/post',
-                    dataType:'json',
-                    data:JSON.stringify(param),
-                    callbackFn:function(data){
-                        if(data){
-                            // 리턴
-                             location.href = '/dili/noticeLst';
-                             g_toast.push("저장되었습니다.");
-                             console.log("저장되었습니다.");
-
-                            sFlag = true;
-                            fileSave();
-                        } else{
-                            g_toast.push("저장에 실패하였습니다.");
-                            console.log("저장에 실패하였습니다.");
-                            location.reload();
-                        }
-                    },
-                    success:function(data){
-                        // 리턴
-                         location.href = '/dili/noticeLst';
-                         g_toast.push("저장되었습니다.");
-                         console.log(param);
-                         console.log("저장되었습니다.");
-
-                        sFlag = true;
-                        fileSave();
-                    },
-                    error:function(err){
-                        console.log(err);
-                        g_toast.push("저장에 실패하였습니다.");
-                        console.log("저장에 실패하였습니다.");
-                        location.reload();
+            n_dialog.confirm('저장하시겠습니까?',function(){
+                if(this.key == 'ok'){
+                    console.log("저장 type: " + type);
+                    console.log("params.email: " + params.email);
+                    var param = {
+                        "type" : type,
+                        "postId" : postId,
+                        "tit" : $("#ipt_title").val(),
+                        "kdDivsCd" : $("#sbx_kdDivsCd").val(),
+                        "mjrYn" : mjrYn,
+                        "popOpenYn" : popOpenYn,
+                        "popOpenDttmFrom" : $("#ipt_holiTerm1").val(),
+                        "popOpenDttmTo" : $("#ipt_holiTerm2").val(),
+                        "cntn" : $("#ipt_cntn").val(),
+                        "dataInptId" : params.email,
+                        "dataInptPgmId" : "noticeDtl",
+                        "dataUpdId" : params.email,
+                        "dataUpdPgmId" : "noticeDtl"
                     }
-               });
+
+                   $.ajaxCall( param, {
+                        method:'POST',
+                        url:'/dili/noticeSave/post',
+                        dataType:'json',
+                        data:JSON.stringify(param),
+                        callbackFn:function(data){
+                            if(data){
+                                // 리턴
+                                 location.href = '/dili/noticeLst';
+                                 g_toast.push("저장되었습니다.");
+                                 console.log("저장되었습니다.");
+
+                                sFlag = true;
+
+                            }
+                        }
+                   });
+                }else{
+                    g_toast.push("취소하였습니다.");
+                    console.log("취소하였습니다.");
+                }
             });
         }
 
@@ -362,15 +403,19 @@
             var kdDivsCd = $('#sbx_kdDivsCd option:selected').val();
 
             if(( title != '' && title != null) || (contents != '' && contents != null) || (kdDivsCd != "00")){
-                confirmMsg('작성중인 내용이 있습니다. 취소하시겠습니까?',function(){
-                    location.href = '/dili/noticeLst';
-                    g_toast.push("취소되었습니다.");
+                n_dialog.confirm('작성중인 내용이 있습니다. 취소하시겠습니까?', function(){
+                    if(this.key == 'ok'){       //확인 클릭
+                        location.href = '/dili/noticeLst';
+                        g_toast.push("취소되었습니다.");
+                    }else{          //취소
+                        console.log("그대로");
+                    }
                 });
-                return false;
             } else {
                 location.href = '/dili/noticeLst';
-                g_toast.push("취소되었습니다.");
+                g_toast.push("목록으로 이동");
             }
+
         }
 
         /*************************************************************
@@ -386,14 +431,24 @@
             console.log("분류: " + kdDivsCd);
 
 
-            if(( title != null && title != '') || (contents != null && contents != '') || (kdDivsCd != "00")){
-                confirmMsg('작성중인 내용이 있습니다. 목록으로 이동하시겠습니까?',function(){
+            if(type == 'u'){
+                if(( title != '' && title != null) || (contents != '' && contents != null) || (kdDivsCd != "00")){
+                    n_dialog.confirm('작성중인 내용이 있습니다. 취소하시겠습니까?',function(){
+                        if(this.key == 'ok'){       //확인 클릭
+                            location.href = '/dili/noticeLst';
+                            g_toast.push("취소되었습니다.");
+                        }else{          //취소
+                            console.log("그대로");
+                        }
+
+                    });
+                } else {
                     location.href = '/dili/noticeLst';
-                    g_toast.push("목록으로 가기");
-                });
+                    g_toast.push("목록으로 이동");
+                }
             } else {
                 location.href = '/dili/noticeLst';
-                g_toast.push("목록으로 가기");
+                g_toast.push("목록으로 이동");
             }
 
         }
@@ -403,6 +458,42 @@
         **************************************************************/
         function btnDelete(){
             console.log("삭제 버튼 클릭 이벤트");
+
+            n_dialog.confirm({
+                msg : '삭제하시겠습니까?'
+            }, function() {
+                debugger;
+                if(this.key == 'ok') {
+                    var param = {
+                        "postId": postId,
+                    }
+
+                    $.ajaxCall( param, {
+                        method:'POST',
+                        url:'/dili/noticeDelete/post',
+                        dataType:'json',
+                        data:JSON.stringify(param),
+                        callbackFn:function(data){
+                            if(data){
+                                // 리턴
+                                 location.href = '/dili/noticeLst';
+                                 g_toast.push("성공적으로 삭제되었습니다.");
+                                 console.log("삭제되었습니다.");
+
+                                //sFlag = true;
+                                //fileSave();
+                            } else{
+                                g_toast.push("삭제에 실패하였습니다.");
+                                console.log("삭제에 실패하였습니다.");
+                                location.reload();
+                            }
+                        }
+                   });
+                }else if(this.key == 'cancel') {
+                    return;
+                }
+            });
+
         }
 
         /***************************************************************
@@ -445,53 +536,69 @@
             // 저장 클릭시 공지팝업표출 값 지정 (default: 'N')
             if($('#cb_popOpenYn').is(":checked") == true){
                 popOpenYn = "Y";
+
+                /********************************************
+                * 공지표출 체크 했을때 날짜 입력했는지 체크
+                ********************************************/
+                if( ($('#ipt_holiTerm1').val() == '' || $('#ipt_holiTerm1').val() == null ) || ( $('#ipt_holiTerm2').val() == '' || $('#ipt_holiTerm2').val() == null )) {
+                    alertMsg('공지표출 기간을(를) 입력해주세요.');
+                    return false;
+                 }
             }
+
 
             /**************************************
             * 업데이트 실행
             **************************************/
             console.log("저장 type: " + type);
             console.log("업데이트 postId: " + postId);
-            confirmMsg('저장하시겠습니까?', function(){
-                var param = {
-                    "postId": postId,
-                    "type" : type,
-                    "tit" : $("#ipt_title").val(),
-                    "kdDivsCd" : $("#sbx_kdDivsCd").val(),
-                    "mjrYn" : mjrYn,
-                    "popOpenYn" : popOpenYn,
-                    "popOpenDttmFrom" : $("#ipt_holiTerm1").val(),
-                    "popOpenDttmTo" : $("#ipt_holiTerm2").val(),
-                    "cntn" : $("#ipt_cntn").val(),
-                    "dataUpdId" : params.email,
-                    "dataUpdPgmId" : "noticeDtl"
-                }
-
-                $.ajaxCall( param, {
-                    method:'POST',
-                    url:'/dili/noticeSave/post',
-                    dataType:'json',
-                    data:JSON.stringify(param),
-                    callbackFn:function(data){
-                        if(data){
-                            // 리턴
-                             location.href = '/dili/noticeLst';
-                             g_toast.push("성공적으로 수정되었습니다.");
-                             console.log("수정되었습니다.");
-
-                            //sFlag = true;
-                            //fileSave();
-                        } else{
-                            g_toast.push("저장에 실패하였습니다.");
-                            console.log("저장에 실패하였습니다.");
-                            location.reload();
-                        }
+            n_dialog.confirm('저장하시겠습니까?',function(){
+                if(this.key == 'ok'){       //확인클릭시
+                    var param = {
+                        "postId": postId,
+                        "type" : type,
+                        "tit" : $("#ipt_title").val(),
+                        "kdDivsCd" : $("#sbx_kdDivsCd").val(),
+                        "mjrYn" : mjrYn,
+                        "popOpenYn" : popOpenYn,
+                        "popOpenDttmFrom" : $("#ipt_holiTerm1").val(),
+                        "popOpenDttmTo" : $("#ipt_holiTerm2").val(),
+                        "cntn" : $("#ipt_cntn").val(),
+                        "dataUpdId" : params.email,
+                        "dataUpdPgmId" : "noticeDtl"
                     }
-               });
+
+                    $.ajaxCall( param, {
+                        method:'POST',
+                        url:'/dili/noticeSave/post',
+                        dataType:'json',
+                        data:JSON.stringify(param),
+                        callbackFn:function(data){
+                            if(data){
+                                // 리턴
+                                 location.href = '/dili/noticeLst';
+                                 g_toast.push("성공적으로 수정되었습니다.");
+                                 console.log("수정되었습니다.");
+
+                                //sFlag = true;
+                                //fileSave();
+                            } else{
+                                g_toast.push("저장에 실패하였습니다.");
+                                console.log("저장에 실패하였습니다.");
+                                location.reload();
+                            }
+                        }
+                   });
+                }else{     //취소클릭시
+                    g_toast.push("취소하였습니다.");
+                    console.log("취소하였습니다.");
+                    //location.reload();
+                }
 
             });
 
         }
+
 
     </script>
 
@@ -502,119 +609,87 @@
 <body>
 
 
-    <div class="container">
-        <h4>공지사항</h4>
-        <hr><br/>
-
-        <div class="container">
-            <button type="button" class="btn btn-sm btn-primary float-left" id="btn_goList" onclick="goList()">목록</button>
-        </div>
-        <br/><hr>
-
-        <div id="noticeEnrollment">
-             <input type="hidden" name="postId" id="postId"  maxlength="70" readonly/>
-
-            <form class="form-inline" >
-                <h6><label for="ipt_title" class="mr-4">*제목</label></h6>
-                <input type="text" class="form-control" id="ipt_title" placeholder="제목을 입력해주세요." name="tit" size="150">
-            </form>
-
-            <div class="form-inline">
-               <h6><label>구분</label></h6>
-               <label class="col-sm-2"><input type="checkbox" class="form-control mr-2" id="cb_mjrYn" value="">중요</label>
-               <label class="col-sm-2"><input type="checkbox" class="form-control mr-2" id="cb_popOpenYn" value="">공지표출(팝업)</label>
-
-
-                <input type="hidden" name="date" id="datepickerData1"/>
-                <div id="btn_datepicker1" class="align-self-center mr-5" >
-                    <input type="text" class="form-control" id="ipt_holiTerm1" name="ipt_holiTerm" placeholder="" maxlength="24"/> ~
-                </div>
-
-                <input type="hidden" name="date" id="datepickerData2"/>
-                <div id="btn_datepicker2" class="align-self-center mr-5" >
-                    <input type="text" class="form-control" id="ipt_holiTerm2" name="ipt_holiTerm" placeholder="" maxlength="24"/>
-                </div>
-            </div>
-
-            <div class="form-inline">
-                <h6><label class="mr-4">*분류</label></h6>
-                <select id="sbx_kdDivsCd" class="form-control mr-4" name="kdDivsCd">
-                    <option value="00" selected>선택</option>
-                    <option value="01">공지</option>
-                    <option value="02">복리</option>
-                    <option value="03">발령</option>
-                    <option value="04">그룹웨어</option>
-                </select>
-            </div>
-
-            <div class="mb-3">
-               <h6><label for="ipt_cntn">*내용</label></h6>
-               <textarea class="form-control" rows="15" id="ipt_cntn" name="ipt_cntn" placeholder="내용을 입력해주세요."></textarea>
-
-            </div>
-            <hr>
-
-            <!-- 파일업로드 -->
-            <form action="{% url 'dili_api:my-view' %}" name="uploadForm" id="uploadForm" enctype="multipart/form-data" method="post">
-                {% csrf_token %}
-                 {{ message }}
-                <p>{{ form.non_field_errors }}</p>
-
-                <p>{{ form.docfile.label_tag }} {{ form.docfile.help_text }}</p>
-
-                <p>
-                    {{ form.docfile.errors }}
-                    {{ form.docfile }}
-                </p>
-
-                <p><input class="btn btn-success" type="submit" value="Upload" /></p>
-            </form>  <!--파일업로드 -->
-            <!-- List of uploaded documents -->
-            {% if documents %}
-                <ul>
-                {% for document in documents %}
-                    <li><a href="{{ document.docfile.url }}">{{ document.docfile.name }}</a></li>
-                    <li><input type="hidden" id="filePath" value="{{ document.docfile.url }}" /></li>
-                {% endfor %}
-                </ul>
-            {% else %}
-                <p>No documents.</p>
-            {% endif %}
-
-            <!-- <form name="uploadForm" id="uploadForm" enctype="multipart/form-data" method="post">
-                <table class="table" width="100%" border="1px">
-                    <tbody id="fileTableTbody">
-                        <tr>
-                            <td id="dropZone">
-                                파일을 드래그 하세요
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </form>  파일업로드 -->
-
-            <a href="#" onclick="uploadFile(); return false;" class="btn btn-success">파일 업로드</a>
-
-        </div> <!-- noticeEnrollment -->
-      </div> <!-- /container -->
-
-
+<div class="container">
+    <h4>공지사항</h4>
     <hr>
-    <div class="container" id="btn_C">
-        <button type="button" class="btn btn-sm btn-primary float-right mr-2" id="btn_cncl" onclick="btnCncl()">취소</button>
-        <button type="button" class="btn btn-sm btn-primary float-right mr-2" id="btn_save" onclick="btnSave()">등록</button>
-    </div>
+    <br/>
 
-    <div class="container" id="btn_R" type="hidden">
-        <!--   (수정) 상세보기 화면에서 수정 화면으로 이동하는 버튼     -->
-        <button type="button" class="btn btn-sm btn-primary float-right mr-2" id="btn_goUpt" onclick="btnGoUpdt()">수정</button>
-        <button type="button" class="btn btn-sm btn-primary float-right mr-2" id="btn_delt" onclick="btnDelete()">삭제</button>
+    <div class="container">
+        <button type="button" class="btn btn-sm btn-primary float-left" id="btn_goList" onclick="goList()">목록</button>
     </div>
+    <br/>
+    <hr>
 
-    <!--   (수정)수정 화면에서 수정완료시 누르는 버튼(업데이트)   -->
-    <div class="container" id="btn_U" type="hidden">
-        <button type="button" class="btn btn-sm btn-primary float-right mr-2" id="btn_updt" onclick="btnUpdt()">수정</button>
-    </div>
+    <div id="noticeEnrollment">
+        <input type="hidden" name="postId" id="postId" maxlength="70" readonly/>
+
+        <form class="form-inline">
+            <h6><label for="ipt_title" class="mr-4">*제목</label></h6>
+            <input type="text" class="form-control" id="ipt_title" placeholder="제목을 입력해주세요." name="tit" size="150">
+        </form>
+
+        <div class="form-inline">
+            <h6><label>구분</label></h6>
+            <label class="col-sm-2"><input type="checkbox" class="form-control mr-2" id="cb_mjrYn" value=""
+                                           onclick="mjrCheck()">중요</label>
+            <label class="col-sm-2"><input type="checkbox" class="form-control mr-2" id="cb_popOpenYn" value="">공지표출(팝업)</label>
+
+
+            <input type="hidden" name="date" id="datepickerData1"/>
+            <div id="btn_datepicker1" class="align-self-center mr-5">
+                <input type="text" class="form-control" id="ipt_holiTerm1" name="ipt_holiTerm" placeholder=""
+                       maxlength="24"/> ~
+            </div>
+
+            <input type="hidden" name="date" id="datepickerData2"/>
+            <div id="btn_datepicker2" class="align-self-center mr-5">
+                <input type="text" class="form-control" id="ipt_holiTerm2" name="ipt_holiTerm" placeholder=""
+                       maxlength="24"/>
+            </div>
+        </div>
+
+        <div class="form-inline">
+            <h6><label class="mr-4">*분류</label></h6>
+            <select id="sbx_kdDivsCd" class="form-control mr-4" name="kdDivsCd">
+                <option value="00" selected>선택</option>
+                <option value="01">공지</option>
+                <option value="02">복리</option>
+                <option value="03">발령</option>
+                <option value="04">그룹웨어</option>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <h6><label for="ipt_cntn">*내용</label></h6>
+            <textarea class="form-control" rows="15" id="ipt_cntn" name="ipt_cntn" placeholder="내용을 입력해주세요."></textarea>
+
+        </div>
+        <hr>
+
+
+        <hr>
+        <div class="container" id="btn_C">
+            <button type="button" class="btn btn-sm btn-primary float-right mr-2" id="btn_cncl" onclick="btnCncl()">취소
+            </button>
+            <button type="button" class="btn btn-sm btn-primary float-right mr-2" id="btn_save" onclick="btnSave()">등록
+            </button>
+        </div>
+
+        <div class="container" id="btn_R" type="hidden">
+            <!--   (수정) 상세보기 화면에서 수정 화면으로 이동하는 버튼     -->
+            <button type="button" class="btn btn-sm btn-primary float-right mr-2" id="btn_goUpt" onclick="btnGoUpdt()">
+                수정
+            </button>
+            <button type="button" class="btn btn-sm btn-primary float-right mr-2" id="btn_delt" onclick="btnDelete()">
+                삭제
+            </button>
+        </div>
+
+        <!--   (수정)수정 화면에서 수정완료시 누르는 버튼(업데이트)   -->
+        <div class="container" id="btn_U" type="hidden">
+            <button type="button" class="btn btn-sm btn-primary float-right mr-2" id="btn_updt" onclick="btnUpdt()">수정
+            </button>
+        </div>
 
 
 </body>
