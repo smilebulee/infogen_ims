@@ -128,6 +128,17 @@
 </div>
 
 <script>
+    var l_dialog = new ax5.ui.dialog();
+    var l_title =  '<span style="color:#fd7e14;font-size:20px;"><i class="fa fa-check-circle"></i></span> CHECK';
+
+    l_dialog.setConfig({
+        title: l_title,
+        theme : 'info',
+        lang:{
+            "ok": "확인", "cancel": "취소"
+        }
+    });
+
     var DB = [];
     var Language = [];
     var WEB = [];
@@ -312,32 +323,36 @@
             }
 
             console.log('저장');
-                confirmMsg('저장 하시겠습니까?', function(){
+                l_dialog.confirm('저장 하시겠습니까?', function(){
+                    if(this.key == 'ok'){
                         $('#projectInfo').ajaxCall({
-                        method : 'POST',
-                        url : '/prj/prjSave/post',
-                        callbackFn : function(data){
-                            $('#prj_cd').val(data);
-                            retrievePrjInfo();
-                            retrieveReqSkil()
-                            g_toast.push('저장 되었습니다.');
-                        }
+                            method : 'POST',
+                            url : '/prj/prjSave/post',
+                            callbackFn : function(data){
+                                $('#prj_cd').val(data);
+                                retrievePrjInfo();
+                                retrieveReqSkil()
+                                g_toast.push('저장 되었습니다.');
+                            }
+                        });
+                    }
                 });
-            });
     });
 
     <!--  프로젝트 삭제  -->
     $('#deleteBtn').click(function(){
             console.log('삭제');
-            confirmMsg('삭제 하시겠습니까?', function(){
+            l_dialog.confirm('삭제 하시겠습니까?', function(){
+                if(this.key == 'ok'){
                     $('#projectInfo').ajaxCall({
-                    method : 'POST',
-                    url : '/prj/prjDelete/post',
-                    callbackFn : function(data){
-                       g_toast.push('삭제 되었습니다.');
-                    }
-                });
-
+                        method : 'POST',
+                        url : '/prj/prjDelete/post',
+                        callbackFn : function(data){
+                           $("#modal_close_btn").trigger("click");
+                           g_toast.push('삭제 되었습니다.');
+                        }
+                    });
+                }
             });
      });
 

@@ -31,6 +31,12 @@ def prjListSrch(request):
 
     return render(request, template_name)
 
+# 개발자 등록 화면
+def devReg(request):
+    template_name = 'prj/devReg.html'
+
+    return render(request, template_name)
+
 
 @login_required
 def retrieve(request):
@@ -291,3 +297,55 @@ def getDeptCd(request):
     logger.info(json.loads(r.text))
 
     return JsonResponse(r.json(), safe=False)
+
+# 개발자 정보 조회
+def retrieveDevInfo(request):
+    param = json.loads(request.GET['param'])
+    logger.info(param)
+
+    params = {
+        'emp_no': param['emp_no'],
+    }
+
+    r = requests.get('http://prj_api:5002/retrieveDevInfo', params=params)
+    logger.info(r)
+    logger.info(r.text)
+    logger.info(r.json())
+
+    return JsonResponse(r.json(), safe=False)
+
+# 개발자 정보 저장
+def devSave(request):
+    userId = str(request.user)
+    param = json.loads(request.POST['param'])
+
+    datas = {
+        'userId': userId
+    }
+
+    for row in param:
+        datas.setdefault(row, param[row])
+    logger.info(datas)
+    r = requests.post('http://prj_api:5002/devSave', data=datas)
+    logger.info(r)
+    logger.info(r.text)
+    logger.info(r.json())
+
+    return JsonResponse(r.json(), safe=False)
+
+# 개발자 정보 삭제
+def devDelete(request):
+    param = json.loads(request.POST['param'])
+
+    datas = {
+    }
+
+    for row in param:
+        datas.setdefault(row, param[row])
+
+    r = requests.post('http://prj_api:5002/devDelete', data=datas)
+    logger.info(r)
+    logger.info(r.text)
+    logger.info(r.json())
+
+    return JsonResponse(r.json())

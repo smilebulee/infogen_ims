@@ -11,7 +11,6 @@ app_name = 'skil_api'
 urlpatterns = [
     path('', login_required(views.Skil_api_index.as_view()), name='skil_api'),
     url(r'^$', views.Skil_api_index.as_view(), name='skil_api'),
-    url(r'^devReg/', views.devReg, name='devReg'),
     url(r'^prjMgmt/', views.prjMgmt, name='prjMgmt'),
 
     # mariadb test
@@ -21,11 +20,6 @@ urlpatterns = [
     # 개발자 조회
     url(r'^devMgmt/', views.devMgmt, name='devMgmt'),
     url(r'^devMgmtSearch/get', views.devMgmtSearch, name='devMgmtSearch'),
-
-    # 프리 개발자 등록
-    url(r'^retrieveDevInfo/get', views.retrieveDevInfo, name='retrieveDevInfo'),
-    url(r'^devSave/post', views.devSave, name='devSave'),
-    url(r'^devDelete/post', views.devDelete, name='devDelete'),
 
     # 스킬관리
     url(r'^skilMgmt/', views.skilMgmt, name='skilMgmt'),

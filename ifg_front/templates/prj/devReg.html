@@ -88,6 +88,17 @@
     </div>
 </div>
 <script>
+    var l_dialog = new ax5.ui.dialog();
+    var l_title =  '<span style="color:#fd7e14;font-size:20px;"><i class="fa fa-check-circle"></i></span> CHECK';
+
+    l_dialog.setConfig({
+         title: l_title,
+         theme : 'info',
+         lang:{
+                "ok": "확인", "cancel": "취소"
+         }
+    });
+
     $(document).ready(async function() {
         <!--  공통코드 조회  -->
         await retrieveCmmCd('emp_dept', 'SLIN_BZDP');
@@ -109,7 +120,7 @@
     function retrieveDevInfo(){
             $('#developerEnrollment').ajaxCall({
                  method : 'GET',
-                 url : "{% url 'skil_api:retrieveDevInfo' %}",
+                 url : "{% url 'prj_api:retrieveDevInfo' %}",
                  callbackFn : function(data){
                     $('#emp_name').val(data[0].EMP_NAME);
                     $('#emp_dept').val(data[0].EMP_DEPT_CD);
@@ -188,38 +199,41 @@
         }
 
         console.log('저장');
-        confirmMsg('저장 하시겠습니까?', function(){
-
-            $('#developerEnrollment').ajaxCall({
-                method : 'POST',
-                url : '/skil/devSave/post',
-                callbackFn : function(data){
-                    $('#emp_no').val(data);
-                    retrieveDevInfo();
-                    g_toast.push('저장 되었습니다.');
-                }
-            });
+        l_dialog.confirm('저장 하시겠습니까?', function(){
+            if(this.key == 'ok'){
+                $('#developerEnrollment').ajaxCall({
+                    method : 'POST',
+                    url : '/prj/devSave/post',
+                    callbackFn : function(data){
+                        $('#emp_no').val(data);
+                        retrieveDevInfo();
+                        g_toast.push('저장 되었습니다.');
+                    }
+                });
+            }
         });
     });
 
     <!--  개발자 정보 삭제  -->
     $('#deleteBtn').click(function(){
         console.log('삭제');
-        confirmMsg('삭제 하시겠습니까?', function(){
-            var emp_no = $('#emp_no').val();
-            if(emp_no == '' || emp_no == null){
-                alertMsg('등록된 개발자 정보가 없습니다.');
-                return false;
-            }
-
-            $('#developerEnrollment').ajaxCall({
-                method : 'POST',
-                url : '/skil/devDelete/post',
-                callbackFn : function(data){
-                    $("#modal_close_btn").trigger("click");
-                    g_toast.push('삭제 되었습니다.');
+        l_dialog.confirm('삭제 하시겠습니까?', function(){
+            if(this.key == 'ok'){
+                var emp_no = $('#emp_no').val();
+                if(emp_no == '' || emp_no == null){
+                    alertMsg('등록된 개발자 정보가 없습니다.');
+                    return false;
                 }
-            });
+
+                $('#developerEnrollment').ajaxCall({
+                    method : 'POST',
+                    url : '/prj/devDelete/post',
+                    callbackFn : function(data){
+                        $("#modal_close_btn").trigger("click");
+                        g_toast.push('삭제 되었습니다.');
+                    }
+                });
+            }
         });
     });
 </script>

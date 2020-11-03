@@ -28,11 +28,6 @@ class Skil_api_index(generic.TemplateView):
 
         return render(request, template_name, rr)
 
-def devReg(request):
-    template_name = 'skil/devReg.html'
-
-    return render(request, template_name)
-
 def prjMgmt(request):
     template_name = 'skil/prjMgmt.html'
 
@@ -90,57 +85,6 @@ def devMgmtSearch(request):
     logger.info(json.loads(r.text))
     # return JsonResponse(r.json())
     return JsonResponse(r.json(), safe=False)
-
-def retrieveDevInfo(request):
-    param = json.loads(request.GET['param'])
-    logger.info(param)
-
-    params = {
-        'emp_no': param['emp_no'],
-    }
-
-    r = requests.get('http://skil_api:5003/retrieveDevInfo', params=params)
-    logger.info(r)
-    logger.info(r.text)
-    logger.info(r.json())
-
-    return JsonResponse(r.json(), safe=False)
-
-@ajax_login_required
-def devSave(request):
-    userId = str(request.user)
-    param = json.loads(request.POST['param'])
-
-    datas = {
-        'userId': userId
-    }
-
-    for row in param:
-        datas.setdefault(row, param[row])
-    logger.info(datas)
-    r = requests.post('http://skil_api:5003/devSave', data=datas)
-    logger.info(r)
-    logger.info(r.text)
-    logger.info(r.json())
-
-    return JsonResponse(r.json(), safe=False)
-
-@ajax_login_required
-def devDelete(request):
-    param = json.loads(request.POST['param'])
-
-    datas = {
-    }
-
-    for row in param:
-        datas.setdefault(row, param[row])
-
-    r = requests.post('http://skil_api:5003/devDelete', data=datas)
-    logger.info(r)
-    logger.info(r.text)
-    logger.info(r.json())
-
-    return JsonResponse(r.json())
 
 def skilMgmt(request):
     template_name = 'skil/skilMgmt.html'

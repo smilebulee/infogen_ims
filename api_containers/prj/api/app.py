@@ -680,6 +680,149 @@ class getDeptCd(Resource):
 
         return result2
 
+#프리 개발자 정보 수정 시 해당 개발자 정보 조회
+class retrieveDevInfo(Resource):
+    def get(self):
+        params = request.get_json()
+
+        logging.debug('retrieveDevInfo Start')
+        emp_no = request.args.get('emp_no')
+
+        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
+                                    charset='utf8')
+
+        try:
+            with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+                sql = "SELECT EMP_NAME, " \
+                             "EMP_DEPT_CD, " \
+                             "EMP_RANK_CD, " \
+                             "DEVP_GRD_CD, " \
+                             "DEVP_TEL_NO, " \
+                             "CNTC_DIVS_CD, " \
+                             "DEVP_BLCO, " \
+                             "DEVP_BDAY, " \
+                             "RMKS " \
+                      "FROM TB_FRLC_DEVP_INFO " \
+                      "WHERE EMP_NO = %s"
+                cursor.execute(sql, emp_no)
+                logging.debug('retrieveDevInfo SUCCESS')
+        finally:
+            mysql_con.close()
+
+        result1 = cursor.fetchall()
+        logging.debug(result1)
+
+        return result1
+
+#프리 개발자 정보 저장
+class devSave(Resource):
+    def post(self):
+        params = request.get_json()
+
+        logging.debug("save Start")
+
+        for row in request.form:
+            logging.debug(row + ':' + request.form[row])
+            globals()[row] = request.form[row]
+
+        emp_no = request.form['emp_no']
+        tel_no = request.form['tel_no1'] + '-' + request.form['tel_no2'] + '-' + request.form['tel_no3']
+        use_yn = 'Y'
+
+        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
+                                    charset='utf8')
+
+        try:
+            with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+                if emp_no: #개발자 정보 수정
+                    logging.debug('emp_no exist')
+                    logging.debug(emp_no)
+                else: #개발자 정보 최초 등록
+                    logging.debug('emp_no is null')
+                    #개발자 사번 채번
+                    sql = "SELECT CONCAT('F','_',( SELECT LPAD((SELECT NVL(SUBSTR(MAX(EMP_NO), 3)+1, 1) " \
+                          "FROM TB_FRLC_DEVP_INFO),6,'0'))) AS EMP_NO"
+                    cursor.execute(sql)
+                    empResult = cursor.fetchone()
+                    emp_no = empResult['EMP_NO']
+                    logging.debug(emp_no)
+
+                sql = "INSERT INTO TB_FRLC_DEVP_INFO (`EMP_NO`, " \
+                                                     "`EMP_NAME`, " \
+                                                     "`EMP_DEPT_CD`, " \
+                                                     "`EMP_RANK_CD`, " \
+                                                     "`DEVP_GRD_CD`, " \
+                                                     "`DEVP_TEL_NO`, " \
+                                                     "`CNTC_DIVS_CD`, " \
+                                                     "`DEVP_BLCO`, " \
+                                                     "`DEVP_BDAY`, " \
+                                                     "`REG_EMP_NO`, " \
+                                                     "`REG_DATE`, " \
+                                                     "`CHG_EMP_NO`, " \
+                                                     "`CHG_DATE`, " \
+                                                     "`RMKS`, " \
+                                                     "`DEVP_USE_YN`)  " \
+                      "VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, NOW(), %s, NOW(), %s, %s)" \
+                      "ON DUPLICATE KEY UPDATE " \
+                                      "EMP_NAME = %s, " \
+                                      "EMP_DEPT_CD = %s, " \
+                                      "EMP_RANK_CD = %s, " \
+                                      "DEVP_GRD_CD = %s, " \
+                                      "DEVP_TEL_NO = %s, " \
+                                      "CNTC_DIVS_CD = %s, " \
+                                      "DEVP_BLCO = %s, " \
+                                      "DEVP_BDAY = %s, " \
+                                      "CHG_EMP_NO = %s, " \
+                                      "CHG_DATE = NOW(), " \
+                                      "RMKS = %s"
+
+                cursor.execute(sql, (emp_no, emp_name, emp_dept, emp_rank, devp_grd, tel_no, cntc_divs, devp_blco, devp_bday, userId, userId, rmks, use_yn
+                                     , emp_name, emp_dept, emp_rank, devp_grd, tel_no, cntc_divs, devp_blco, devp_bday, userId, rmks))
+                mysql_con.commit()
+
+        finally:
+            mysql_con.close()
+
+        # retJson = {
+        #     "status": 200,
+        #     "msg": "Data has been saved successfully"
+        # }
+        #
+        # return jsonify(retJson)
+
+        return emp_no
+
+#프리 개발자 정보 삭제
+class devDelete(Resource):
+    def post(self):
+        params = request.get_json()
+
+        logging.debug("delete Start")
+
+        emp_name = request.form['emp_name']
+        devp_bday = request.form['devp_bday']
+
+        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
+                                    charset='utf8')
+
+        try:
+            with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+                sql = "UPDATE TB_FRLC_DEVP_INFO SET DEVP_USE_YN = 'N' " \
+                      "WHERE 1=1 " \
+                      "AND EMP_NAME = %s " \
+                      "AND DEVP_BDAY = %s"
+                cursor.execute(sql, (emp_name, devp_bday))
+                mysql_con.commit()
+        finally:
+            mysql_con.close()
+
+        retJson = {
+            "status": 200,
+            "msg": "Data has been saved successfully"
+        }
+
+        return jsonify(retJson)
+
 api.add_resource(Hello, '/hello')
 api.add_resource(Register, '/register')
 api.add_resource(Retrieve, '/retrieve')
@@ -702,6 +845,11 @@ api.add_resource(prjInpuSave, '/prjInpuSave')
 # 프로젝트 목록 조회
 api.add_resource(prjListSearch, '/prjListSearch')
 api.add_resource(getDeptCd, '/getDeptCd')
+
+# 프리 개발자 등록
+api.add_resource(retrieveDevInfo, '/retrieveDevInfo')
+api.add_resource(devSave, '/devSave')
+api.add_resource(devDelete, '/devDelete')
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5002, debug=True)

@@ -168,7 +168,7 @@ history
                    $('#devSaveBtn').click(function(){
                         empNo = null;
                         modal('devRegModal');
-                        $("#devRegModal2").load("{% url 'skil_api:devReg' %}");
+                        $("#devRegModal2").load("{% url 'prj_api:devReg' %}");
 
                     });
 
@@ -180,7 +180,7 @@ history
                               return false;
                         }
                         modal('devRegModal');
-                        $("#devRegModal2").load("{% url 'skil_api:devReg' %}");
+                        $("#devRegModal2").load("{% url 'prj_api:devReg' %}");
                    });
                 });
 
