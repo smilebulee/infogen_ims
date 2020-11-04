@@ -38,7 +38,16 @@ urlpatterns = [
     url(r'^devReg/', views.devReg, name='devReg'),
     url(r'^retrieveDevInfo/get', views.retrieveDevInfo, name='retrieveDevInfo'),
     url(r'^devSave/post', views.devSave, name='devSave'),
-    url(r'^devDelete/post', views.devDelete, name='devDelete')
+    url(r'^devDelete/post', views.devDelete, name='devDelete'),
+
+    # 공통 코드 조회
+    url(r'^retrieveCmmCd/', views.retrieveCmmCd, name='retrieveCmmCd'),
+
+    # 개발자 조회
+    url(r'^devMgmt/', views.devMgmt, name='devMgmt'),
+    url(r'^devMgmtSearch/get', views.devMgmtSearch, name='devMgmtSearch')
+
+
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

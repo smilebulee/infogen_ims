@@ -243,76 +243,6 @@ class mariaClass(Resource):
 
         return result2
 
-
-class devMgmtSearch(Resource):
-    def get(self):
-        # Get posted data from request
-        logging.debug("search start")
-
-        # get data
-        devpBlco = request.args.get('devpBlco')
-        empName = request.args.get('empName')
-        devpDivsCd = request.args.get('devpDivsCd')
-
-        logging.debug('---------------SEARCH---------------')
-        logging.debug('devpBlco : ' + devpBlco)
-        logging.debug('empName : ' + empName)
-        logging.debug('devpDivsCd : ' + devpDivsCd)
-        logging.debug('------------------------------------')
-
-        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
-                                    charset='utf8')
-        try:
-            with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
-                sql = "SELECT  A.EMP_NO, " \
-                      "        A.EMP_NAME, " \
-                      "        A.DEPT_CD AS DEVP_BLCO_CD, " \
-                      "        DEPT.CMM_CD_NAME AS DEVP_BLCO, " \
-                      "        A.CNTC_DIVS_CD, " \
-                      "        CNTC.CMM_CD_NAME AS CNTC_DIVS_NAME, " \
-                      "        A.DEVP_GRD_CD, " \
-                      "        DEVP.CMM_CD_NAME AS DEVP_GRD_NAME " \
-                      "FROM (       SELECT FRLC.EMP_NO AS EMP_NO, " \
-                      "                    FRLC.EMP_NAME AS EMP_NAME, " \
-                      "                    FRLC.EMP_DEPT_CD AS DEPT_CD, " \
-                      "                    FRLC.CNTC_DIVS_CD AS CNTC_DIVS_CD, " \
-                      "                    FRLC.DEVP_GRD_CD AS DEVP_GRD_CD " \
-                      "              FROM TB_FRLC_DEVP_INFO  FRLC " \
-                      "              WHERE FRLC.DEVP_USE_YN ='Y' " \
-                      "              GROUP BY FRLC.EMP_NO " \
-                      "              UNION ALL " \
-                      "              SELECT  EMP.EMP_ID AS EMP_NO, " \
-                      "                      EMP.EMP_NAME AS EMP_NAME, " \
-                      "                      EMP.DEPT_CD AS DEPT_CD, " \
-                      "                      '01' AS CNTC_DIVS_CD, " \
-                      "                      EMP.SKIL_GRADE AS DEVP_GRD_CD " \
-                      "              FROM TB_EMP_MGMT EMP )A, " \
-                      "              TB_CMM_CD_DETL CNTC, " \
-                      "              TB_CMM_CD_DETL DEPT, " \
-                      "              TB_CMM_CD_DETL DEVP " \
-                      "      WHERE 1=1 " \
-                      "      AND A.CNTC_DIVS_CD = CNTC.CMM_CD " \
-                      "		 AND A.DEPT_CD = DEPT.CMM_CD " \
-                      "		 AND A.DEVP_GRD_CD = DEVP.CMM_CD " \
-                      "      AND CNTC.CMM_CD_GRP_ID = 'CNTC_DIVS_CD' " \
-                      "      AND DEPT.CMM_CD_GRP_ID = 'SLIN_BZDP' " \
-                      "      AND DEVP.CMM_CD_GRP_ID = 'DEVP_GRD_CD' "
-                if devpBlco != "":
-                    sql = sql + "AND A.DEPT_CD = '" + devpBlco + "' "
-                if empName != "":
-                    sql = sql + "AND A.EMP_NAME LIKE '%" + empName + "%' "
-                if devpDivsCd != "":
-                    sql = sql + "AND A.CNTC_DIVS_CD = '" + devpDivsCd + "' "
-                logging.debug(sql)
-
-                cursor.execute(sql)
-        finally:
-            mysql_con.close()
-
-        result2 = cursor.fetchall()
-
-        return result2
-
 class skilMgmtSearch(Resource):
     def get(self):
         # Get posted data from request
@@ -805,9 +735,6 @@ api.add_resource(Register, '/register')
 api.add_resource(Retrieve, '/retrieve')
 api.add_resource(Save, '/save')
 api.add_resource(mariaClass,'/mariaClass')
-
-# 개발자 조회
-api.add_resource(devMgmtSearch, '/devMgmtSearch')
 
 # 스킬관리
 api.add_resource(skilMgmtDetl, '/skilMgmtDetl')

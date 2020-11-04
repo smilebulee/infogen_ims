@@ -349,3 +349,46 @@ def devDelete(request):
     logger.info(r.json())
 
     return JsonResponse(r.json())
+
+#공통 코드 조회
+def retrieveCmmCd(request):
+    param = json.loads(request.GET['param'])
+    logger.info('param')
+    logger.info(param)
+
+    params = {
+        'grp_id': param['grp_id'],
+    }
+
+    r = requests.get('http://prj_api:5003/retrieveCmmCd', params=params)
+    logger.info(r)
+    logger.info(r.text)
+    logger.info(r.json())
+
+    return JsonResponse(r.json(), safe=False)
+
+# 개발자 정보 조회
+def devMgmt(request):
+    template_name = 'prj/devMgmt.html'
+
+    return render(request, template_name)
+
+def devMgmtSearch(request):
+
+    param = json.loads(request.GET['param'])
+    logger.info("devMgmtSearch : prj/views.py")
+    datas = {
+        'devpBlco': param['devpBlco'],
+        'empName': param['empName'],
+        'devpDivsCd': param['devpDivsCd']
+    }
+
+    logger.info(datas)
+    r = requests.get('http://prj_api:5003/devMgmtSearch', params=datas)
+    logger.info(r)
+    logger.info(r.text)
+    logger.info("----------------")
+    logger.info(r.json())
+    logger.info(json.loads(r.text))
+    # return JsonResponse(r.json())
+    return JsonResponse(r.json(), safe=False)

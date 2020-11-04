@@ -17,10 +17,6 @@ urlpatterns = [
     url(r'^maria/', views.maria.as_view(), name='maria'),
     url(r'^getMariaDB/', views.getMariaDB, name='getMariaDB'),
 
-    # 개발자 조회
-    url(r'^devMgmt/', views.devMgmt, name='devMgmt'),
-    url(r'^devMgmtSearch/get', views.devMgmtSearch, name='devMgmtSearch'),
-
     # 스킬관리
     url(r'^skilMgmt/', views.skilMgmt, name='skilMgmt'),
     url(r'^skilMgmtSearch/get', views.skilMgmtSearch, name='skilMgmtSearch'),
