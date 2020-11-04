@@ -360,7 +360,7 @@ def retrieveCmmCd(request):
         'grp_id': param['grp_id'],
     }
 
-    r = requests.get('http://prj_api:5003/retrieveCmmCd', params=params)
+    r = requests.get('http://prj_api:5002/retrieveCmmCd', params=params)
     logger.info(r)
     logger.info(r.text)
     logger.info(r.json())
@@ -384,7 +384,7 @@ def devMgmtSearch(request):
     }
 
     logger.info(datas)
-    r = requests.get('http://prj_api:5003/devMgmtSearch', params=datas)
+    r = requests.get('http://prj_api:5002/devMgmtSearch', params=datas)
     logger.info(r)
     logger.info(r.text)
     logger.info("----------------")
