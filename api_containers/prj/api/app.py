@@ -453,18 +453,22 @@ class prjSave(Resource):
                         if req_skil_divs != '00':
                             req_skil_name = request.form['req_skil_name'+str(i)]
                             logging.debug('req_skil_name : ' + req_skil_name)
-                            sql = "INSERT INTO TB_PRJ_REQ_SKIL(`PRJ_CD`, " \
+
+                            sql1 = "SELECT IFNULL(MAX(PRJ_REQ_SKIL_NO) + 1, 1) AS PRJ_REQ_SKIL_NO FROM TB_PRJ_REQ_SKIL WHERE PRJ_CD = %s"
+                            cursor.execute(sql1, prj_cd)
+                            result = cursor.fetchone()
+                            prj_req_skil_no = result['PRJ_REQ_SKIL_NO']
+
+                            sql2 = "INSERT INTO TB_PRJ_REQ_SKIL(`PRJ_CD`," \
+                                                              "`PRJ_REQ_SKIL_NO`, " \
                                                               "`SKIL_DIVS_CD`, " \
                                                               "`SKIL_NAME`, " \
                                                               "`REG_EMP_NO`, " \
                                                               "`REG_DATE`," \
                                                               " `CHG_EMP_NO`, " \
                                                               "`CHG_DATE`) " \
-                                      "VALUES ((SELECT PRJ_CD " \
-                                              "FROM TB_PRJ_INFO A " \
-                                              "WHERE PRJ_NAME = %s)," \
-                                              " %s, %s, %s, NOW(), %s, NOW())"
-                            cursor.execute(sql, (prj_name, req_skil_divs, req_skil_name, userId, userId))
+                                      "VALUES (%s, %s, %s, %s, %s, NOW(), %s, NOW())"
+                            cursor.execute(sql2, (prj_cd, prj_req_skil_no, req_skil_divs, req_skil_name, userId, userId))
                             mysql_con.commit()
                             logging.debug('REQ_SKIL'+str(i)+' SUCCESS')
             finally:
