@@ -28,6 +28,16 @@ history
     <link rel="stylesheet" type="text/css" href="{% static 'css/modal.css' %}"/>
     <script type="text/javascript">
         var prjGrid;
+        var l_dialog = new ax5.ui.dialog();
+        var l_title =  '<span style="color:#fd7e14;font-size:20px;"><i class="fa fa-check-circle"></i></span> CHECK';
+
+        l_dialog.setConfig({
+            title: l_title,
+            theme : 'info',
+            lang:{
+                "ok": "확인", "cancel": "취소"
+            }
+        });
 
         $(document).ready(function(){
             document.getElementById("modal1").style.display="block";
@@ -46,18 +56,20 @@ history
                     alertMsg("선택된 행이 없습니다.");
                     return false;
                 }
-                confirmMsg('삭제 하시겠습니까?', function(){
-                    if(prjGrid.getList("selected")[0].STUS !="insert"){
-                        var delList = prjGrid.getList('selected')[0];
-                        $.ajaxCall(delList, {
-                            url : '{% url 'prj_api:prjInpuDelete' %}',
-                            method : 'post',
-                            callbackFn : function(data){
-                                g_toast.push('삭제 되었습니다.');
-                            }
-                        });
+                l_dialog.confirm('삭제 하시겠습니까?', function(){
+                    if(this.key == 'ok'){
+                        if(prjGrid.getList("selected")[0].STUS !="insert"){
+                            var delList = prjGrid.getList('selected')[0];
+                            $.ajaxCall(delList, {
+                                url : '{% url 'prj_api:prjInpuDelete' %}',
+                                method : 'post',
+                                callbackFn : function(data){
+                                    g_toast.push('삭제 되었습니다.');
+                                }
+                            });
+                        }
+                        prjGrid.deleteRow(prjGrid.selectedDataIndexs[0]); //선택한 행 삭제
                     }
-                    prjGrid.deleteRow(prjGrid.selectedDataIndexs[0]); //선택한 행 삭제
                 });
             });
 
@@ -74,31 +86,33 @@ history
 
             /* 저장 버튼 */
            $('#savaBtn').click(function(){
-                confirmMsg('저장 하시겠습니까?', function(){
-                    var updateList = prjGrid.getList('modified');
-                    var updateYN = prjGrid.getList('modified').length;
-                    if( updateYN == 0 ){
-                        alertMsg("수정 후 저장하세요.");
-                        return;
-                    }
+                l_dialog.confirm('저장 하시겠습니까?', function(){
+                    if(this.key == 'ok'){
+                        var updateList = prjGrid.getList('modified');
+                        var updateYN = prjGrid.getList('modified').length;
+                        if( updateYN == 0 ){
+                            alertMsg("수정 후 저장하세요.");
+                            return;
+                        }
 
-                    /* 개발자 추가 여부 Validation 확인 */
-                    var gridList = prjGrid.getList()
-                    for(var i = 0; i < gridList.length; i++){
-                        if(gridList[i].EMP_NO == ""){
-                           alertMsg("["+(i+1)+"행] 개발자를 추가하세요.");
-                           prjGrid.select(i);
-                           return;
+                        /* 개발자 추가 여부 Validation 확인 */
+                        var gridList = prjGrid.getList()
+                        for(var i = 0; i < gridList.length; i++){
+                            if(gridList[i].EMP_NO == ""){
+                               alertMsg("["+(i+1)+"행] 개발자를 추가하세요.");
+                               prjGrid.select(i);
+                               return;
+                            }
                         }
+                        $.ajaxCall(updateList, {
+                            url : '{% url 'prj_api:prjInpuSave' %}',
+                            method : 'post',
+                            callbackFn : function(data){
+                                g_toast.push('저장 되었습니다.');
+                                getPrjGridList(1);
+                            }
+                        });
                     }
-                    $.ajaxCall(updateList, {
-                        url : '{% url 'prj_api:prjInpuSave' %}',
-                        method : 'post',
-                        callbackFn : function(data){
-                            g_toast.push('저장 되었습니다.');
-                            getPrjGridList(1);
-                        }
-                    });
                 });
            });
 

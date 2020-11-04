@@ -659,6 +659,7 @@ class prjInpuSave(Resource):
         crgeJob = request.form['crgeJob']
         rmks = request.form['rmks']
         state = request.form['state']
+        userId = request.form['userId']
 
         logging.debug('================== App Start ==================')
         logging.debug(params)
@@ -674,14 +675,14 @@ class prjInpuSave(Resource):
                     logging.debug('[skil_app] app.py : created')
                     sql = "INSERT INTO TB_PRJ_INPU_STAT_MGMT(EMP_NO, PRJ_CD, SLIN_GRD, INPU_STRT_DAY, INPU_END_DAY, CNTC_STRT_DAY, CNTC_END_DAY, CRGE_JOB, RMKS, REG_EMP_NO, REG_DATE) " \
                           "VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s,NOW())"
-                    cursor.execute(sql, (empNo, prjCd, slinGrd, inpuStrtDay, inpuEndDay, cntcStrtDay, cntcEndDay, crgeJob, rmks,'admin'))
+                    cursor.execute(sql, (empNo, prjCd, slinGrd, inpuStrtDay, inpuEndDay, cntcStrtDay, cntcEndDay, crgeJob, rmks, userId))
                     mysql_con.commit()
                 else:
                     logging.debug('[skil_app] app.py : modified')
                     sql = "UPDATE TB_PRJ_INPU_STAT_MGMT " \
                           "SET SLIN_GRD=%s, INPU_STRT_DAY=%s, INPU_END_DAY=%s,  CNTC_STRT_DAY=%s, CNTC_END_DAY=%s, CRGE_JOB=%s, RMKS=%s, CHG_EMP_NO=%s, CHG_DATE= NOW()" \
                           "WHERE EMP_NO = %s AND PRJ_CD = %s "
-                    cursor.execute(sql, (slinGrd, inpuStrtDay, inpuEndDay, cntcStrtDay, cntcEndDay, crgeJob, rmks,'admin', empNo, prjCd))
+                    cursor.execute(sql, (slinGrd, inpuStrtDay, inpuEndDay, cntcStrtDay, cntcEndDay, crgeJob, rmks, userId , empNo, prjCd))
                     mysql_con.commit()
         finally:
             mysql_con.close()

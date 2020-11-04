@@ -209,6 +209,7 @@ def prjInpuDelete(request):
 # 프로젝트별투입현황관리 저장
 def prjInpuSave(request):
     param = json.loads(request.POST['param'])
+    userId = str(request.user)
     logger.info(param)
     for data in param:
         if '__created__' in data and data['__created__']:
@@ -223,7 +224,8 @@ def prjInpuSave(request):
                 'cntcEndDay': data['CNTC_END_DAY'],
                 'crgeJob': data['CRGE_JOB'],
                 'rmks': data['RMKS'],
-                'state': 'created'
+                'state': 'created',
+                'userId' : userId
             }
         else:
             logger.info("modified")
@@ -237,7 +239,8 @@ def prjInpuSave(request):
                 'cntcEndDay': data['CNTC_END_DAY'],
                 'crgeJob': data['CRGE_JOB'],
                 'rmks': data['RMKS'],
-                'state': 'modified'
+                'state': 'modified',
+                'userId': userId
             }
         r = requests.post('http://prj_api:5002/prjInpuSave', data=datas)
     return JsonResponse(r.json())
