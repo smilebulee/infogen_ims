@@ -726,7 +726,8 @@ class prjListSearch(Resource):
                         "FROM TB_PRJ_INFO A " \
                         "LEFT JOIN TB_PRJ_REQ_SKIL B " \
                         "ON A.PRJ_CD = B.PRJ_CD " \
-                        "WHERE 1=1 "
+                        "WHERE 1=1 " \
+                        "AND USE_YN = 'Y'"
                 sql2 = ") C GROUP BY PRJ_CD"
                 if deptDiv == "" and skilDiv == "":
                     logging.debug('##### sql : ' + sql + sql2)

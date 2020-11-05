@@ -19,7 +19,7 @@
 
             /* 스킬구분코드 공통코드 조회 */
             var gridList = [        /* 그리드에 세팅할 데이터는 JSON 배열 형태 */
-                {"SKIL_SNO":"", "SKIL_DIVS_CD":"", "SKIL_NAME":"", "REG_DATE":"", "REG_EMP_NO":"", "RMK":""},
+                {"SKIL_SNO":"", "SKIL_DIVS_CD":"", "SKIL_NAME":"", "REG_DATE":"", "REG_EMP_NO":"", "RMKS":""},
             ];
 
             /* 스킬 구분 코드 조회 */
@@ -119,7 +119,7 @@
             /* 코드 Row 추가 */
             $('#grpAddBtn').click(function(){
                 console.log('코드 Row 추가');
-                firstGrid.addRow({"SKIL_SNO":"", "SKIL_DIVS_CD":"", "SKIL_NAME":"", "REG_DATE":"", "REG_EMP_NO":"", "RMK":""}, 'first');
+                firstGrid.addRow({"SKIL_SNO":"", "SKIL_DIVS_CD":"", "SKIL_NAME":"", "REG_DATE":"", "REG_EMP_NO":"", "RMKS":""}, 'first');
                 firstGrid.select(0);
             });
 
