@@ -73,11 +73,7 @@
             }
 
             $('#searchBtn').click(function(){
-                if($('#ipt_searchName').val() ){
-
-                }else{
-                    onClickSearchBtn(ipt_searchName);
-                }
+                onClickSearchBtn(ipt_searchName);
             });
 
             $('#selectBtn').click(function(){
@@ -136,10 +132,7 @@
             console.log(' onClickEvt :  ', $('#'+i.id).children().eq(1).text());
 
             /* 하이라이트 */
-            for (var j = 1; j < $('#grd_empListTable').length; j++ ) {
-                $('#'+$('#grd_empListTable')[1].id).css("background","white");
-            }
-
+            $('#grd_empListTable tr').css("background","white");
             $('#'+i.id).css("background","lightgray");
 
             var email = $('#'+i.id).children().eq(1).text(); // 그리드에서 선택한 email 값
