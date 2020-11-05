@@ -694,7 +694,7 @@ class insertSkilCd(Resource):
                       "`RMKS`) " \
                       "VALUES(%s, %s, %s, %s, NOW(), %s, NOW(), %s)"
 
-                cursor.execute(sql2, (skil_sno, SKIL_DIVS_CD, SKIL_NAME, userId, REG_DATE, RMK))
+                cursor.execute(sql2, (skil_sno, SKIL_DIVS_CD, SKIL_NAME, userId, REG_DATE, RMKS))
                 mysql_con.commit()
 
         finally:
