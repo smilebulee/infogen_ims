@@ -62,7 +62,6 @@ def retrieve(request):
     return JsonResponse(retVal)
 
 
-@login_required
 def prjReg(request):
     template_name = 'prj/prjReg.html'
 
