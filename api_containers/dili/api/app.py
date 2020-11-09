@@ -1253,7 +1253,8 @@ class saveYryApvlReq(Resource):  # Mariadb 연결 진행
                     cursor.execute(sql3, (email))
 
                     mysql_con.commit()
-
+            except Exception as e:
+                logger.info("에러!!!!!!!!!!!!!!!!!!!!!!!"+e)
             finally:
                 mysql_con.close()
 
