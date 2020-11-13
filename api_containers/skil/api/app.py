@@ -53,17 +53,12 @@ def getSystemInfo():
     logging.debug('skil Server')
     logging.debug(socket.gethostbyname(socket.gethostname()))
     try:
-
-        logging.debug('Skii IP Address Start')
-        logging.debug(socket.gethostbyname(socket.gethostname()))
-        logging.debug('Skii IP Address End')
-
-        if (socket.gethostbyname(socket.gethostname()) == "172.20.0.7" ) :
+        if (socket.gethostbyname(socket.gethostname()) == "172.20.0.13" ) :
             logging.debug('Prod Server')
             return "mariadb"
         else :
             logging.debug('Local Server')
-            return "mariadb"
+            return "218.151.225.142"
 
     except Exception as e:
         logging.exception(e)
