@@ -60,7 +60,7 @@ def getMariaDB(request):
     logger.info(json.loads(r.text))
     return JsonResponse(r.json(), safe=False)
 
-@ajax_login_required
+@login_required
 def skilMgmt(request):
     template_name = 'skil/skilMgmt.html'
 
@@ -72,6 +72,7 @@ def skilRegPopup(request):
     return render(request, template_name)
 
 #스킬 코드 관리 화면 호출
+@login_required
 def skilCdMgmt(request):
     template_name = 'skil/skilCdMgmt.html'
 

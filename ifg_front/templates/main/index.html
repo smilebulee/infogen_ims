@@ -39,7 +39,7 @@
                     location.href = '{% url 'emp_api:emp_api' %}'
                     break;
                   case 'PRJ':
-                    location.href = '{% url 'prj_api:prj_api' %}'
+                    location.href = '{% url 'prj_api:prjListSrch' %}'
                     break;
                   case 'CMM':
                     location.href = '{% url 'cmm_api:cmm_api' %}'
@@ -48,7 +48,7 @@
                     location.href = '{% url 'cnc_api:cnc_api' %}'
                     break;
                   case 'SKIL':
-                    location.href = '{% url 'skil_api:skil_api' %}'
+                    location.href = '{% url 'skil_api:skilMgmt' %}'
                     break;
                   case 'DILI':
                     location.href = '{% url 'dili_api:scheduleMgmt' %}'
@@ -112,11 +112,11 @@
               <div class="card-body">
                 <!--<h1 class="card-title pricing-card-title">$15 <small class="text-muted">/ mo</small></h1>-->
                 <ul class="list-unstyled mt-3 mb-4">
-                  <li>진행프로젝트</li>
-                  <li>예상프로젝트</li>
-                  <li>투입가능정보</li>
+                  <li><a href="{% url 'prj_api:prjListSrch' %}" style="text-decoration: none;">프로젝트관리</a></li>
+                  <li>&nbsp;</li>
+                  <li>&nbsp;</li>
                 </ul>
-                <button type="button" class="btn btn-lg btn-block btn-primary gotoIndexBtn" value="PRJ Main">PRJ Main</button>
+                <button type="button" class="btn btn-lg btn-block btn-primary gotoIndexBtn" value="PRJ Main">프로젝트 메인</button>
               </div>
             </div>
             </div>
@@ -130,7 +130,7 @@
                 <!--<h1 class="card-title pricing-card-title">$29 <small class="text-muted">/ mo</small></h1>-->
                 <ul class="list-unstyled mt-3 mb-4">
                   <li><a href="{% url 'skil_api:skilMgmt' %}" style="text-decoration: none;">스킬관리</a></li>
-                  <li>&nbsp;</li>
+                  <li><a href="{% url 'skil_api:skilCdMgmt' %}" style="text-decoration: none;">스킬코드관리</a></li>
                   <li>&nbsp;</li>
                 </ul>
                 <button type="button" class="btn btn-lg btn-block btn-primary gotoIndexBtn" value="SKIL Main">스킬관리 메인</button>
@@ -190,7 +190,7 @@
                   <li><a href="{% url 'dili_api:noticeLst' %}"  style="text-decoration: none;">공지사항</a></li>
                   <li><a href="{% url 'dili_api:apvlReqHist' %}"  style="text-decoration: none;">결재현황</a></li>
                 </ul>
-                <button type="button" class="btn btn-lg btn-block btn-primary gotoIndexBtn"value="DILI Main">DILI Main</button>
+                <button type="button" class="btn btn-lg btn-block btn-primary gotoIndexBtn"value="DILI Main">근태관리 메인</button>
               </div>
             </div>
             </div>

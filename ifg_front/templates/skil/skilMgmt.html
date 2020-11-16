@@ -136,17 +136,19 @@ history
     </div>
     <div class="row">
                 <div class="col-sm-12">
+
                     <div id="formSearchDiv">
-                        <h3>스킬 관리 <a href="http://ax5.io/ax5ui-grid/api/index.html" class="badge badge-info"></a></h3>
+                        <h5><b>개발자 스킬 관리</b> <a href="http://ax5.io/ax5ui-grid/api/index.html" class="badge badge-info"></a></h5>
+                        <div class="col-sm-1" style="padding-left:980px;">
+                            <button class="btn btn-primary" id="searchBtn" style="width:100px">조회</button>
+                        </div>
                         <div id="formDiv">
                             <div class="form-row" style="padding-bottom:9px">
                                 <label class="col-sm-1" style="max-width:50px;">부서</label>
                                 <select class="col-sm-2" name="dept" id="dept">
                                     <option value = "">선택</option>
                                 </select>
-                                <div class="col-sm-1" style="padding-left:760px;">
-                                <button class="btn btn-primary" id="searchBtn" style="width:120px">조회</button>
-                                </div>
+
                             </div>
                             <div class="form-row">
                                 <label class="col-sm-2" style="max-width:50px;">성명</label>
@@ -169,7 +171,7 @@ history
                         </div>
                         <hr>
                         <div>
-                            <h3>목록조회<a class="badge badge-info"></a></h3>
+                            <h5>개발자스킬 목록조회<a class="badge badge-info"></a></h5>
                         </div>
                         <div style="position: relative;height:400px;" id="grid-parent">
                             <div data-ax5grid="first-grid" style="height: 100%;"></div>
