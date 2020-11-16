@@ -421,11 +421,14 @@
         function setAnhoMgmt(){
             var email = "";
 
+            /*
             if ($('#empEmailHidden').val() == null || $('#empEmailHidden').val() == "") {
                 email = sessionStorage.getItem("email");
             } else {
                 email = $('#empEmailHidden').val();
             }
+            */
+            email = sessionStorage.getItem("email");
 
             var param = {
                 "email" : email
