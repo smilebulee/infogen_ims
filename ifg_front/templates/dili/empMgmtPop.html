@@ -66,7 +66,7 @@
                                 empListGrd(data);
                             }
                         } else {
-                            empListGrd("조회 결과가 없습니다.");
+                            empListGrd("");
                         }
 
                      }
@@ -302,21 +302,23 @@
         function empListGrd(data){
             var size = data.length;
             var empListTable = '<table id="empInfoRow" class="table table-bordered table-hover table-responsive-md text-center">';
-            empListTable += '<thead>';
-            empListTable += '<tr>';
-            empListTable += '<th class="text-center">이름</th>';
-            empListTable += '<th class="text-center">E-Mail</th>';
-            empListTable += '<th class="text-center">연락처</th>';
-            empListTable += '<th class="text-center" style="display:none;">체크박스</th>';
-            empListTable += '</tr>';
-            empListTable += '</thead>';
-            empListTable += '<tbody>';
+                empListTable += '<thead>';
 
-            console.log("Start");
-            console.log(data);
-            console.log(typeof(data));
+            if(size > 0) {
+                empListTable += '<tr>';
+                empListTable += '<th class="text-center">이름</th>';
+                empListTable += '<th class="text-center">E-Mail</th>';
+                empListTable += '<th class="text-center">연락처</th>';
+                empListTable += '<th class="text-center" style="display:none;">체크박스</th>';
+                empListTable += '</tr>';
+                empListTable += '</thead>';
+                empListTable += '<tbody>';
 
-            if(data.length > 0) {
+                console.log("Start");
+                console.log(data);
+                console.log(typeof(data));
+
+
                 for(var i = 0; i < size; i++){
                     empListTable += '<tr id ="grd_empList'+i+'" onclick="onClickEvt(this)">';
                     empListTable += '<td class="pt-3-half">'+data[i].EMP_NAME+'</td>';
@@ -328,7 +330,7 @@
                 }
             } else {
                 empListTable += '<tr>';
-                '+"해당하는 직원이 없습니다."+'
+                empListTable += '해당하는 직원이 없습니다.';
                 empListTable += '</tr>';
             }
 
