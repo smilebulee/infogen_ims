@@ -92,7 +92,7 @@
         function onClickselectBtn() {
             console.log($("#apvlReqHidden").text());
             if($("#apvlReqHidden").text() == "apvlReq" ) {
-                if($("#apvlEmpEmailHidden").val() == null || $("#apvlEmpEmailHidden").val() == ""){
+                if($("#apvlEmpEmailHidden").text() == null || $("#apvlEmpEmailHidden").text() == ""){
                     alert("직원을 선택해 주세요.");
                 }else{
                     $('#exitEmpModalBtn').click();
