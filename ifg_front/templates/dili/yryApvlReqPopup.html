@@ -139,8 +139,7 @@
 
             param.push(tmpParam);
 
-
-            if($("#ipt_holiDays").val()-1 > 1) {
+            if($("#ipt_holiDays").val()-1 > 0) {
                 var date = new Date($("#ipt_holiTerm1").val().substring(0,4), $("#ipt_holiTerm1").val().substring(5,7)-1,$("#ipt_holiTerm1").val().substring(8,10));
                 for(var i=0; i<$("#ipt_holiDays").val()-1; i++) {
 
