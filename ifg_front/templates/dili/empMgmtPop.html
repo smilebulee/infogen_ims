@@ -29,6 +29,7 @@
                      'method' : 'GET',
                      'url' : "{% url 'dili_api:getEmpInfo' %}",
                      'callbackFn' : function(data){
+                        dataCustomArray = new Array();
                         // 로그
                         console.log("data : ",data);
                         // 리턴
@@ -101,6 +102,7 @@
                     alert("직원을 선택해 주세요.");
                 }else{
                     if( $("#empEmailHidden").val() != null && $("#empEmailHidden").val() != "" ){
+                        dataCustomArray = new Array();
                         $(".modal_close_btn").click();
                         weekDate = setWeek(getCurrentDate());                                                       // 현재일이 포함된 주의 Start,End Date 조회
 
@@ -181,6 +183,7 @@
                         //스케쥴 관리                            --신규 화면 추가의 경우. $('#apvlReqHidden') 객체 선언 후 분기처리.
                         } else {
                             if (data.length == 1) {
+                                dataCustomArray = new Array();
                                 console.log(' Debug [Data.EMP_EMAIL] : '+ data[0].EMP_EMAIL);
                                 email    = data[0].EMP_EMAIL;
                                 weekDate = setWeek(getCurrentDate());                           // 현재일이 포함된 주의 Start,End Date 조회
@@ -256,6 +259,7 @@
                                     //스케쥴 관리                            --신규 화면 추가의 경우. $('#apvlReqHidden') 객체 선언 후 분기처리.
                                     } else {
                                         if (data.length == 1) {
+                                            dataCustomArray = new Array();
                                             console.log(' Debug [Data.EMP_EMAIL] : '+ data[0].EMP_EMAIL);
                                             email    = data[0].EMP_EMAIL;
                                             weekDate = setWeek(getCurrentDate());                           // 현재일이 포함된 주의 Start,End Date 조회
