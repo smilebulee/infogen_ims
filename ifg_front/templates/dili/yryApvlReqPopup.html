@@ -133,6 +133,10 @@
 
         n_dialog.confirm('저장하시겠습니까?',function(){
             if(this.key == 'ok'){
+                if(Number($('#txt_rmnAnhoDays').text()) == 0){
+                    alertMsg("남은연차가 없습니다.");
+                    return;
+                }
                 if(Number($('#txt_rmnAnhoDays').text()) < Number($('#ipt_holiDays').val())){
                     alertMsg("남은연차일수 보다 등록하실 연차일수가 더 큽니다.");
                     return;
