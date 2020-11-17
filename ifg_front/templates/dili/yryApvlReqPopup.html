@@ -1,5 +1,18 @@
 
     <script type="text/javascript">
+    /*********************************************************************
+    *   Dialog Setting
+    *********************************************************************/
+    var n_dialog = new ax5.ui.dialog();
+    var n_title =  '<span style="color:#fd7e14;font-size:20px;"><i class="fa fa-check-circle"></i></span> CHECK';
+
+    n_dialog.setConfig({
+        title: n_title,
+        theme : 'info',
+        lang:{
+            "ok": "확인", "cancel": "취소"
+        }
+    });
     $(document).ready(function(){
 
         /*********************************************************************
@@ -118,67 +131,71 @@
             return;
         }
 
-        confirmMsg('저장하시겠습니까?', function(){
-
-            var param = [];
-
-            var tmpParam = {
-                "email" : sessionStorage.getItem("email"),                                   // 추후 Session Value 연동.
-                "apvlReqDivs" : $('input[name="yryType"]:checked').val(),    //01: 야근, 02:휴일, 03: 연차
-                "wrkDt" : $("#ipt_holiTerm1").val(),
-                "wrkTme" : "000000",
-                "wrkReqRsn": $("#txa_holiRsn").val(),
-                "th1AprvStus": "01",
-                "th1AprvNm": "hykim@infogen.co.kr",
-                "th2AprvStus": "01",
-                "th2AprvNm": "yblee1987@infogen.co.kr",
-                "holiDays" : $("#ipt_holiDays").val(),
-                "emerCtpl" : $("#ipt_emerCtpl").val()
-
-            }
-
-            param.push(tmpParam);
-
-            if($("#ipt_holiDays").val()-1 > 0) {
-                var date = new Date($("#ipt_holiTerm1").val().substring(0,4), $("#ipt_holiTerm1").val().substring(5,7)-1,$("#ipt_holiTerm1").val().substring(8,10));
-                for(var i=0; i<$("#ipt_holiDays").val()-1; i++) {
-
-                    date.setDate(date.getDate() + 1)
-
-                    var tmpParam = {
-                        "email" : sessionStorage.getItem("email"),                                   // 추후 Session Value 연동.
-                        "apvlReqDivs" : $('input[name="yryType"]:checked').val(),    //01: 야근, 02:휴일, 03: 연차
-                        "wrkDt" : setWeek(date).baseDate,
-                        "wrkTme" : "000000",
-                        "wrkReqRsn": $("#txa_holiRsn").val(),
-                        "th1AprvStus": "01",
-                        "th1AprvNm": "hykim@infogen.co.kr",
-                        "th2AprvStus": "01",
-                        "th2AprvNm": "yblee1987@infogen.co.kr",
-                        "holiDays" : $("#ipt_holiDays").val(),
-                        "emerCtpl" : $("#ipt_emerCtpl").val()
-
-                    }
-                    param.push(tmpParam);
+        n_dialog.confirm('저장하시겠습니까?',function(){
+            if(this.key == 'ok'){
+                if(Number($('#txt_rmnAnhoDays').text()) < Number($('#ipt_holiDays').val())){
+                    alertMsg("남은연차일수 보다 등록하실 연차일수가 더 큽니다.");
+                    return;
                 }
+                var param = [];
+
+                var tmpParam = {
+                    "email" : sessionStorage.getItem("email"),                                   // 추후 Session Value 연동.
+                    "apvlReqDivs" : $('input[name="yryType"]:checked').val(),    //01: 야근, 02:휴일, 03: 연차
+                    "wrkDt" : $("#ipt_holiTerm1").val(),
+                    "wrkTme" : "000000",
+                    "wrkReqRsn": $("#txa_holiRsn").val(),
+                    "th1AprvStus": "01",
+                    "th1AprvNm": "hykim@infogen.co.kr",
+                    "th2AprvStus": "01",
+                    "th2AprvNm": "yblee1987@infogen.co.kr",
+                    "holiDays" : $("#ipt_holiDays").val(),
+                    "emerCtpl" : $("#ipt_emerCtpl").val()
+
+                }
+
+                param.push(tmpParam);
+
+                if($("#ipt_holiDays").val()-1 > 0) {
+                    var date = new Date($("#ipt_holiTerm1").val().substring(0,4), $("#ipt_holiTerm1").val().substring(5,7)-1,$("#ipt_holiTerm1").val().substring(8,10));
+                    for(var i=0; i<$("#ipt_holiDays").val()-1; i++) {
+
+                        date.setDate(date.getDate() + 1)
+
+                        var tmpParam = {
+                            "email" : sessionStorage.getItem("email"),                                   // 추후 Session Value 연동.
+                            "apvlReqDivs" : $('input[name="yryType"]:checked').val(),    //01: 야근, 02:휴일, 03: 연차
+                            "wrkDt" : setWeek(date).baseDate,
+                            "wrkTme" : "000000",
+                            "wrkReqRsn": $("#txa_holiRsn").val(),
+                            "th1AprvStus": "01",
+                            "th1AprvNm": "hykim@infogen.co.kr",
+                            "th2AprvStus": "01",
+                            "th2AprvNm": "yblee1987@infogen.co.kr",
+                            "holiDays" : $("#ipt_holiDays").val(),
+                            "emerCtpl" : $("#ipt_emerCtpl").val()
+
+                        }
+                        param.push(tmpParam);
+                    }
+                }
+                $.ajaxCall( param, {
+                     method : 'POST',
+                     'url' : '/dili/saveYryApvlReq/post',
+                     'dataType' : 'json',
+                     'data' : JSON.stringify(param),
+                     'async' : false,
+                     'callbackFn' : function(data){
+
+                        // 리턴
+                        g_toast.push('저장 되었습니다.');
+                        $('#exitSchdModal').click();
+                     }
+                });
             }
-
-
-            $.ajaxCall( param, {
-                 method : 'POST',
-                 'url' : '/dili/saveYryApvlReq/post',
-                 'dataType' : 'json',
-                 'data' : JSON.stringify(param),
-                 'async' : false,
-                 'callbackFn' : function(data){
-
-                    // 리턴
-                    g_toast.push('저장 되었습니다.');
-                    $('#exitSchdModal').click();
-                 }
-            });
         });
     }
+
     </script>
     <div class="row">
         <div class="col-sm-12">
