@@ -585,6 +585,7 @@ def getYryUseDays(request):
     logger.info(r.text)
     logger.info(r.json())
     logger.info(json.loads(r.text))
+
     return JsonResponse(r.json(), safe=False)
 
 
@@ -595,3 +596,6 @@ class diliWebUiSamp(generic.TemplateView):
 
 
         return render(request, template_name)
+
+
+
