@@ -56,6 +56,8 @@ urlpatterns = [
 
     # 공지사항 파일업로드 추가
     url(r'^my_view/', views.my_view, name='my-view'),
+    # web UI 샘플
+    url(r'^diliWebUiSamp/', views.diliWebUiSamp.as_view(), name='diliWebUiSamp')
 
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

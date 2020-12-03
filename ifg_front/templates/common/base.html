@@ -33,41 +33,50 @@
 
         <script type="text/javascript">
             $(document).ready(function(){
-                
+
             });
 
         </script>
         <title>IFG-IMS</title>
     </head>
     <body>
-        <div class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-dark border-bottom shadow-sm fixed-top">
-            <h5 class="my-0 mr-md-auto font-weight-bold">INF<font color="red">O</font><font color="gray">GEN</font></h5>
+        <div class="d-flex align-items-center p-3 px-md-4 mb-3  border-bottom shadow-sm fixed-top" style="position: relative; width : 100%; min-width : 1920px; white-space : nowrap; border-bottom:1px solid #D8D8D8;">
 
-            {% if 'localhost:8000' in request.build_absolute_uri and '/main/sample/' not in request.build_absolute_uri %}
-                <a class="p-2 text-white" href="{% url 'main:sample' sample='date' %}">Component Sample</a>
-            {% endif %}
-            {#{% if 'localhost:8000' in request.build_absolute_uri and '/main/sample/' in request.build_absolute_uri %}#}
-                <nav class="my-2 my-md-0 mr-md-3">
-                    <a class="p-2 text-white" href="{% url 'main:sample' sample='date' %}">Calendar & Datepicker</a>
-                    <a class="p-2 text-white" href="{% url 'main:sample' sample='select' %}">Select & Combobox</a>
-                    <a class="p-2 text-white" href="{% url 'main:sample' sample='popup' %}">Diallog & Modal & Toast</a>
-                    <a class="p-2 text-white" href="{% url 'main:sample' sample='format' %}">Mask & Formatter</a>
-                    <a class="p-2 text-white" href="{% url 'main:sample' sample='grid' %}">Grid</a>
-                      <a class="p-2 text-white" href="{% url 'main:sample' sample='ajax' %}">Ajax</a>
-                    <a class="p-2 text-white" href="https://getbootstrap.com/docs/4.4/getting-started/introduction/">Bootstrap</a>
-                  </nav>
-            {#{% endif %}#}
-            {% if '/main/index' not in request.build_absolute_uri %}
-                <a class="btn btn-outline-primary" href="/" style="margin-left:5px;">Home <i class="fa fa-home"></i></a>
-            {% endif %}
-            {% if user.is_authenticated %}
-                <a class="btn btn-outline-primary" href="{% url 'main:signout' %}" style="margin-left:5px;">Sign Out</a>
-            {% else %}
-                <a class="btn btn-outline-primary" href="{% url 'main:login_form' %}" style="margin-left:5px;">Sign In</a>
-            {% endif %}
+            <div style="margin : 0 auto; width : 1450px;">
+                <div style="float: left;">
+                    <img width="200px" height="50px"  src="{% static 'image/infogen_logo.jpg' %}">
+                </div>
+
+<!--
+                {% if 'localhost:8000' in request.build_absolute_uri and '/main/sample/' not in request.build_absolute_uri %}
+                    <a class="p-2 text-white" style="float: left;" href="{% url 'main:sample' sample='date' %}">Component Sample</a>
+                {% endif %}
+                {#{% if 'localhost:8000' in request.build_absolute_uri and '/main/sample/' in request.build_absolute_uri %}#}
+                    <nav class="my-2 my-md-0 mr-md-3" style="float: left;">
+                        <a class="p-2 text-dark" href="{% url 'main:sample' sample='date' %}">Calendar & Datepicker</a>
+                        <a class="p-2 text-dark" href="{% url 'main:sample' sample='select' %}">Select & Combobox</a>
+                        <a class="p-2 text-dark" href="{% url 'main:sample' sample='popup' %}">Diallog & Modal & Toast</a>
+                        <a class="p-2 text-dark" href="{% url 'main:sample' sample='format' %}">Mask & Formatter</a>
+                        <a class="p-2 text-dark" href="{% url 'main:sample' sample='grid' %}">Grid</a>
+                          <a class="p-2 text-dark" href="{% url 'main:sample' sample='ajax' %}">Ajax</a>
+                        <a class="p-2 text-dark" href="https://getbootstrap.com/docs/4.4/getting-started/introduction/">Bootstrap</a>
+                      </nav>
+                {#{% endif %}#}-->
+                <div class="d-flex flex-row-reverse">
+                    {% if user.is_authenticated %}
+                        <a class="btn btn-outline-secondary btn-lg" style="float: left;"  href="{% url 'main:signout' %}" style="margin-left:5px;">Sign Out</a>
+                    {% else %}
+                        <a class="btn btn-outline-secondary btn-lg" style="float: left;"  href="{% url 'main:login_form' %}" style="margin-left:5px;">Sign In</a>
+                    {% endif %}
+                    {% if '/main/index' not in request.build_absolute_uri %}
+                        <a class="btn btn-outline-secondary btn-lg" style="float: left; margin-right: 20px;"  href="/" style="margin-left:5px;">Home <i class="fa fa-home"></i></a>
+                    {% endif %}
+                </div>
+
+            </div>
         </div>
         <div style="width:100%;height:90px;"></div>
-        <div class="container pt-3">
+        <div class="pt-3" style="margin : 0 auto; width : 1450px;">
             {% block content %}
 
 
