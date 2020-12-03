@@ -586,7 +586,7 @@ def getYryUseDays(request):
     logger.info(r.json())
     logger.info(json.loads(r.text))
 
-    return JsonResponse(r.json(), safe=False)
+    return JsonResponse(ast.literal_eval(r.json()), safe=False)
 
 
 class diliWebUiSamp(generic.TemplateView):
