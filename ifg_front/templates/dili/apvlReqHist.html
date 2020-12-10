@@ -25,8 +25,8 @@
                     "email" : $("#apvlEmpEmailHidden").text(),                                   // 추후 Session Value 연동.
                     "apvlStusDivs" : $("#sbx_type option:selected").val(),    //TB_APVL_REQ_MGMT_M APVL_STUS 값 => 01,02: 승인, 승인반려 NULL: 미승인
                 }
-
-                submissionCallMap(param,'GET','dili_api:getApvlReqHist',apvlReqHistGrd);
+                var url = "{% url 'dili_api:getApvlReqHist' %}";
+                submissionCallMapTest(param,'GET',url,apvlReqHistGrd);
             });
 
 
@@ -43,11 +43,25 @@
 
         });
 
+        function submissionCallMapTest(paramMap, method, url, callBackFunc) {
+            $.ajaxCall( paramMap, {
+                 method : method,
+                 'url' : url,
+                 'dataType' : 'json',
+                 'data' : JSON.stringify(paramMap),
+                 'async' : false,
+                 'callbackFn' : function(data){
+                    callBackFunc(data);
+
+                 }
+            });
+        }
+
         /*********************************************************************
         *   근무결재요청 Grid 생성
         *********************************************************************/
         function apvlReqHistGrd(data){
-            alert(data);
+            console.log(data);
 
         }
 
