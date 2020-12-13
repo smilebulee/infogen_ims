@@ -6,13 +6,14 @@ function submissionCallMap(paramMap, method, url, callBackFunc) {
          'data' : JSON.stringify(paramMap),
          'async' : false,
          'callbackFn' : function(data){
+            // 리턴
             callBackFunc(data);
 
          }
     });
 }
 
-function submissionCallList(paramList, method, url) {
+function submissionCallList(paramList, method, url, callBackFunc) {
     $.ajaxCall( paramList, {
          method : method,
          'url' : url,
@@ -20,10 +21,9 @@ function submissionCallList(paramList, method, url) {
          'data' : JSON.stringify(paramList),
          'async' : false,
          'callbackFn' : function(data){
-
             // 리턴
-            g_toast.push('저장 되었습니다.');
-            $('#exitSchdModal').click();
+            callBackFunc(data);
+
          }
     });
 }
