@@ -1,17 +1,23 @@
 .button {
-    width:80px;
-    background-color: #8A8C8F;
-    border: none;
-    color:#fff;
-    padding: 15px 0;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 15px;
-    margin: 4px;
-    border-radius:10px;
+   color : #fff;
+   font-weight : 600;
+   background-color : #676767;
+   height : 35px;
+   padding : 0px 10px;
 }
 
 .button:hover {
-    background-color: #EC1F27;
+    background-color: #545454;
+}
+
+.cnclButton {
+   color : #fff;
+   font-weight : 600;
+   background-color : #cacaca;
+   height : 35px;
+   padding : 0px 10px;
+}
+
+.cnclButton:hover {
+    background-color: #545454;
 }

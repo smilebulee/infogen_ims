@@ -15,6 +15,8 @@
         <link href="{% static 'css/ax5picker.css' %}" rel="stylesheet"/>
         <link href="{% static 'css/ax5select.css' %}" rel="stylesheet"/>
         <link href="{% static 'css/ax5toast.css' %}" rel="stylesheet"/>
+        <link rel="stylesheet" type="text/css" href="{% static 'css/common.css' %}"/>
+
 
         <script type="text/javascript" src="{% static 'js/jquery-3.4.1.min.js' %}"></script>
         <script type="text/javascript" src="{% static 'js/bootstrap-4.4.1.min.js' %}"></script>
@@ -30,7 +32,6 @@
         <script type="text/javascript" src="{% static 'js/ax5select.js' %}"></script>
         <script type="text/javascript" src="{% static 'js/ax5toast.js' %}"></script>
         <script type="text/javascript" src="{% static 'js/jquery-util.js' %}?{% now 'YmdHis' %}"></script>
-
 
         <script type="text/javascript">
           $(document).ready(function(){
@@ -230,7 +231,7 @@
                         </label>
                       </div>
                       <input type="hidden" name="next" value="{{ next }}">
-                      <button type="submit" class="btn btn-lg btn-primary btn-bloc">로그인</button>
+                      <button type="submit" class="button">로그인</button>
                       <p class="mt-5 mb-3 text-muted">INFOGEN &copy; 2003-2020</p>
                   </form>
                 </div>
