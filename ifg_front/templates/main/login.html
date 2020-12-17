@@ -171,24 +171,27 @@
         <title>IFG-IMS Skill Login</title>
     </head>
     <body>
+
         <div style="width : 100%; min-width : 1920px; margin-top : 300px">
             <div style="margin : 0 auto; width : 1800px; display: flex;">
                 <div class="text-center" style="margin : 0 auto;">
-                    <form id = "loginForm" method="POST" class="form-signin needs-validation" action="{% url 'main:signin' %}" novalidate>
-                        <div style="margin-bottom : 20px;">
-                            <img width="200px" height="50px"  src="{% static 'image/infogen_logo.jpg' %}">
-                        </div>
-                        {% csrf_token %}
-                        {% for field in form %}
+                    <div style="margin : 0 auto; width : 200px;">
+                        <form id = "loginForm" method="POST" class="form-signin needs-validation" action="{% url 'main:signin' %}" novalidate>
+                            <div style="margin-bottom : 20px;">
+                                <img width="200px" height="50px"  src="{% static 'image/infogen_logo.jpg' %}">
+                            </div>
+                            {% csrf_token %}
+                            {% for field in form %}
 
-                        <label for="{{ field.name }}" class="sr-only">{{ field.label }}</label>
-                          {{field}}
+                            <label for="{{ field.name }}" class="sr-only">{{ field.label }}</label>
+                              {{field}}
 
-                        {% endfor %}
-                        <div class="checkbox mb-3"></div>
-                        <input type="hidden" name="next" value="{{ next }}">
-                        <button type="submit" class="button">로그인</button>
-                    </form>
+                            {% endfor %}
+                            <div class="checkbox mb-3"></div>
+                            <input type="hidden" name="next" value="{{ next }}">
+                            <button type="submit" class="button">로그인</button>
+                        </form>
+                    </div>
                     <p class="mt-5 mb-3 text-muted">로그인 관련 문의는 경영지원실로 해주시기 바랍니다. (02-2655-9595)</p>
                 </div>
             </div>
