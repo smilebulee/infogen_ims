@@ -20,6 +20,27 @@ class Main_index(generic.TemplateView):
     def get(self, request, *args, **kwargs):
 
         return HttpResponseRedirect(reverse('main:index'))
+
+def mainImsPage(request):
+    template_name = 'main/mainIncl.html'
+
+    return render(request, template_name)
+
+def getMainMenu(request):
+    param = json.loads(request.GET['param'])
+
+    logger.info("Start")
+    logger.info(param)
+    logger.info("End")
+
+    # api 호출
+    r = requests.get('http://emp_api:5001/getMainMenu', json=param)
+    logger.info(r)
+    logger.info(r.text)
+    logger.info(r.json())
+    logger.info(json.loads(r.text))
+    return JsonResponse(r.json(), safe=False)
+
 def index(request):
     userInfo = str(request.user)
     logger.info('index user')

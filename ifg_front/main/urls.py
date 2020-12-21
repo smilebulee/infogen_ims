@@ -19,6 +19,8 @@ urlpatterns = [
     path('signin/', views.signin, name='signin'),
     path('signin2/', views.signin2, name='signin2'),
     path('signout/', views.signout, name='signout'),
+    path('mainImsPage/', views.mainImsPage, name='mainImsPage'),
+
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
