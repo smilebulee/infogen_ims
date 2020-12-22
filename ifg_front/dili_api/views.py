@@ -442,6 +442,52 @@ def saveApvlReq(request):
     logger.info(r.json())
     return JsonResponse(r.json())
 
+#공통 코드 조회
+def retrieveCmmCd(request):
+    param = json.loads(request.GET['param'])
+    logger.info('param')
+    logger.info(param)
+
+    params = {
+        'grp_id': param['grp_id'],
+    }
+
+    r = requests.get('http://dili_api:5006/retrieveCmmCd', params=params)
+    logger.info(r)
+    logger.info(r.text)
+    logger.info(r.json())
+
+    return JsonResponse(r.json(), safe=False)
+
+class scheduleStatLst(generic.TemplateView):
+    def get(self, request, *args, **kwargs):
+        template_name = 'dili/scheduleStatLst.html'
+
+        # r = requests.get('http://dili_api:5006/hello')
+        # rr = {
+        #     "result": r.text
+        # }
+
+        return render(request, template_name)
+        # return render(request, template_name, rr)
+
+def getScheduleStatLst(request):
+    param = json.loads(request.GET['param'])
+
+    logger.info("Parameters Start")
+    logger.info(param)
+    logger.info("Parameters End")
+
+    # api 호출
+    r = requests.get('http://dili_api:5006/scheduleStatLst', json=param)
+    logger.info(r)
+    logger.info(r.text)
+    logger.info(logger.info(ast.literal_eval(r.json())))
+    logger.info(json.loads(r.text))
+    return JsonResponse(ast.literal_eval(r.json()), safe=False)
+
+
+
 class apvlReqHist(generic.TemplateView):
     def get(self, request, *args, **kwargs):
         template_name = 'dili/apvlReqHist.html'
@@ -585,4 +631,17 @@ def getYryUseDays(request):
     logger.info(r.text)
     logger.info(r.json())
     logger.info(json.loads(r.text))
-    return JsonResponse(r.json(), safe=False)
+
+    return JsonResponse(ast.literal_eval(r.json()), safe=False)
+
+
+class diliWebUiSamp(generic.TemplateView):
+    def get(self, request, *args, **kwargs):
+        template_name = 'dili/diliWebUiSamp.html'
+
+
+
+        return render(request, template_name)
+
+
+
