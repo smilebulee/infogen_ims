@@ -1,0 +1,23 @@
+.button {
+   color : #fff;
+   font-weight : 600;
+   background-color : #676767;
+   height : 35px;
+   padding : 0px 10px;
+}
+
+.button:hover {
+    background-color: #545454;
+}
+
+.cnclButton {
+   color : #fff;
+   font-weight : 600;
+   background-color : #cacaca;
+   height : 35px;
+   padding : 0px 10px;
+}
+
+.cnclButton:hover {
+    background-color: #545454;
+}

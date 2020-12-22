@@ -53,7 +53,7 @@ def getSystemInfo():
     logging.debug('skil Server')
     logging.debug(socket.gethostbyname(socket.gethostname()))
     try:
-        if (socket.gethostbyname(socket.gethostname()) == "172.20.0.7" ) :
+        if (socket.gethostbyname(socket.gethostname()) == "172.20.0.13" ) :
             logging.debug('Prod Server')
             return "mariadb"
         else :
@@ -73,7 +73,7 @@ class Hello(Resource):
     def get(self):
         mysql_con = pymysql.connect(host='218.151.225.142', port=9876, db='testdb', user='ims2', password='1234',
                                     charset='utf8')
-
+        mysql_con.cursor(pymysql.cursors.DictCursor)
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 sql = "SELECT * FROM SKIL_TEST "

@@ -1,0 +1,54 @@
+{% extends 'common/base.html' %}
+{% block content %}
+{% load static %}
+
+    <div class="container">
+        <!--Dili Common JavaScript import -->
+        <script type="text/javascript" src="{% static 'diliCommon/diliCommon.js' %}"></script>
+
+        <!--graph import -->
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+
+        <!--Grid UI : datepicker & monthpicker import -->
+        <link rel="stylesheet" href="https://code.jquery.com/ui/1.11.4/themes/ui-lightness/jquery-ui.css" type="text/css"/>
+        <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+        <script type="text/javascript" src="{% static 'js/jquery.mtz.monthpicker.js' %}"></script>
+
+        <!--modal js/css import -->
+        <script type="text/javascript" src="{% static 'js/modal.js' %}"></script>
+        <link rel="stylesheet" type="text/css" href="{% static 'css/modal.css' %}"/>
+
+
+
+        <script type="text/javascript">
+
+        </script>
+        <div class="row">
+                <!--화면 제목 영역-->
+                <div class="mb-4" role="alert">
+                    <h5>
+                        <b>샘플화면</b>
+                    </h5>
+                </div>
+
+                <!--조회 조건 영역-->
+                <div class="accordion mb-4" id="grp_search" style="background-color : #FA5858;width : 100%; height:100px;">
+
+
+                </div> <!--/조회 조건 영역-->
+
+
+
+
+                <!--조회된 영역-->
+                <div id="grp_grid" style="background-color : #FFFF00; width : 100%; height:200px;">
+
+
+                </div><!--/조회된 영역-->
+
+
+        </div>
+
+    </div>
+
+{% endblock %}

@@ -275,7 +275,10 @@
     <div class="row">
         <div class="col-sm-12">
             <div id="formSearchDiv">
-                <h3 style="padding-bottom:20px;">프로젝트 관리<a href="http://ax5.io/ax5ui-grid/api/index.html" class="badge badge-info"></a></h3>
+                <h5 style="padding-bottom:20px;"><b>프로젝트 관리</b><a href="http://ax5.io/ax5ui-grid/api/index.html" class="badge badge-info"></a></h5>
+                <div class="col-sm-1" style="padding-left:980px;">
+                    <button class="btn btn-primary" id="searchBtn" style="width:100px">조회</button>
+                </div>
                 <div id="formDiv">
                     <div class="form-row" style="padding-bottom:5px;">
                         <label class="col-sm-1" style="max-width:120px; text-align:center; line-height: 32px;">부서구분</label>
@@ -286,9 +289,7 @@
                                 <option value="2">전자</option>-->
                             </select>
                         </div>
-                        <div class="col-sm-1" style="padding-left:720px;">
-                        <button class="btn btn-primary" id="searchBtn" style="width:120px">조회</button>
-                        </div>
+
                     </div>
 
                     <div class="form-row" style="padding-top:5px;">
@@ -313,6 +314,7 @@
                 <div>
                     <h3><a class="badge badge-info"></a></h3>
                 </div>
+                <h5>프로젝트목록<a class="badge badge-info"></a></h5>
                 <div style="position:relative; height:500px;" id="grid-parent">
                     <div data-ax5grid="prjMgmt-grid" style="height: 100%;"></div>
                 </div>

@@ -29,6 +29,7 @@
                      'method' : 'GET',
                      'url' : "{% url 'dili_api:getEmpInfo' %}",
                      'callbackFn' : function(data){
+                        dataCustomArray = new Array();
                         // 로그
                         console.log("data : ",data);
                         // 리턴
@@ -59,13 +60,14 @@
                                     setMonthGridData();                                                                              // Month Grid 생성
                                     crteTodayShow(year, month, date, day);                                                        // Grid UI(주) 날짜 세팅
                                     createCalendar();
+                                    setAnhoMgmt();
 
                                 $('#exitEmpModalBtn').click();
                             } else {
                                 empListGrd(data);
                             }
                         } else {
-                            empListGrd("조회 결과가 없습니다.");
+                            empListGrd("");
                         }
 
                      }
@@ -91,7 +93,7 @@
         function onClickselectBtn() {
             console.log($("#apvlReqHidden").text());
             if($("#apvlReqHidden").text() == "apvlReq" ) {
-                if($("#apvlEmpEmailHidden").val() == null || $("#apvlEmpEmailHidden").val() == ""){
+                if($("#apvlEmpEmailHidden").text() == null || $("#apvlEmpEmailHidden").text() == ""){
                     alert("직원을 선택해 주세요.");
                 }else{
                     $('#exitEmpModalBtn').click();
@@ -101,6 +103,7 @@
                     alert("직원을 선택해 주세요.");
                 }else{
                     if( $("#empEmailHidden").val() != null && $("#empEmailHidden").val() != "" ){
+                        dataCustomArray = new Array();
                         $(".modal_close_btn").click();
                         weekDate = setWeek(getCurrentDate());                                                       // 현재일이 포함된 주의 Start,End Date 조회
 
@@ -120,6 +123,7 @@
                         setMonthGridData();                                                                         // Month Grid 생성
                         crteTodayShow(year, month, date, day);                                                      // Grid UI(주) 날짜 세팅
                         createCalendar();
+                        setAnhoMgmt();
                     }
                 }
             }
@@ -181,6 +185,7 @@
                         //스케쥴 관리                            --신규 화면 추가의 경우. $('#apvlReqHidden') 객체 선언 후 분기처리.
                         } else {
                             if (data.length == 1) {
+                                dataCustomArray = new Array();
                                 console.log(' Debug [Data.EMP_EMAIL] : '+ data[0].EMP_EMAIL);
                                 email    = data[0].EMP_EMAIL;
                                 weekDate = setWeek(getCurrentDate());                           // 현재일이 포함된 주의 Start,End Date 조회
@@ -204,6 +209,7 @@
                                     setMonthGridData();                                                                              // Month Grid 생성
                                     crteTodayShow(year, month, date, day);                                                        // Grid UI(주) 날짜 세팅
                                     createCalendar();
+                                    setAnhoMgmt();
 
                                 $('#exitEmpModalBtn').click();
                             } else {
@@ -256,6 +262,7 @@
                                     //스케쥴 관리                            --신규 화면 추가의 경우. $('#apvlReqHidden') 객체 선언 후 분기처리.
                                     } else {
                                         if (data.length == 1) {
+                                            dataCustomArray = new Array();
                                             console.log(' Debug [Data.EMP_EMAIL] : '+ data[0].EMP_EMAIL);
                                             email    = data[0].EMP_EMAIL;
                                             weekDate = setWeek(getCurrentDate());                           // 현재일이 포함된 주의 Start,End Date 조회
@@ -279,6 +286,7 @@
                                                 setMonthGridData();                                                                              // Month Grid 생성
                                                 crteTodayShow(year, month, date, day);                                                        // Grid UI(주) 날짜 세팅
                                                 createCalendar();
+                                                setAnhoMgmt();
 
                                             $('#exitEmpModalBtn').click();
                                         } else {
@@ -298,21 +306,23 @@
         function empListGrd(data){
             var size = data.length;
             var empListTable = '<table id="empInfoRow" class="table table-bordered table-hover table-responsive-md text-center">';
-            empListTable += '<thead>';
-            empListTable += '<tr>';
-            empListTable += '<th class="text-center">이름</th>';
-            empListTable += '<th class="text-center">E-Mail</th>';
-            empListTable += '<th class="text-center">연락처</th>';
-            empListTable += '<th class="text-center" style="display:none;">체크박스</th>';
-            empListTable += '</tr>';
-            empListTable += '</thead>';
-            empListTable += '<tbody>';
+                empListTable += '<thead>';
 
-            console.log("Start");
-            console.log(data);
-            console.log(typeof(data));
+            if(size > 0) {
+                empListTable += '<tr>';
+                empListTable += '<th class="text-center">이름</th>';
+                empListTable += '<th class="text-center">E-Mail</th>';
+                empListTable += '<th class="text-center">연락처</th>';
+                empListTable += '<th class="text-center" style="display:none;">체크박스</th>';
+                empListTable += '</tr>';
+                empListTable += '</thead>';
+                empListTable += '<tbody>';
 
-            if(data.length > 0) {
+                console.log("Start");
+                console.log(data);
+                console.log(typeof(data));
+
+
                 for(var i = 0; i < size; i++){
                     empListTable += '<tr id ="grd_empList'+i+'" onclick="onClickEvt(this)">';
                     empListTable += '<td class="pt-3-half">'+data[i].EMP_NAME+'</td>';
@@ -324,7 +334,7 @@
                 }
             } else {
                 empListTable += '<tr>';
-                '+"해당하는 직원이 없습니다."+'
+                empListTable += '해당하는 직원이 없습니다.';
                 empListTable += '</tr>';
             }
 
