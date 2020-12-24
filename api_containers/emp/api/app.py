@@ -516,6 +516,38 @@ class authSearch(Resource):  # 사용자 권한 조회
         logging.debug(retJson)
 
         return jsonify(retJson)
+
+class getMainMenu(Resource):  # Mariadb 연결 진행
+    def get(self):
+
+        logger.info('getMainMenu_app_start')
+        # requirements pymysql import 후 커넥트 사용
+        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
+                                    charset='utf8', autocommit=False)
+        params = request.get_json()
+        try:
+            with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+                # 쿼리문 실행
+                sql = sql = "SELECT MENU_ID" \
+                            "    FROM TB_MENU_M" \
+                            "   WHERE 1=1" \
+                            "   AND MENU_LVL_NO = '1'"\
+                            "   AND HPOS_MENU_ID = 'MAIN_MENU'"\
+                            "   ORDER BY SORT_ORD"
+                cursor.execute(sql)
+
+        finally:
+            mysql_con.close()
+
+
+        result2 = cursor.fetchall()
+        for row in result2:
+            logging.debug('====== row====')
+            logging.debug(row)
+            logging.debug('===============')
+        array = list(result2)  # 결과를 리스트로
+
+        return result2
 #
 api.add_resource(Hello, '/hello')
 api.add_resource(Save, '/save')
@@ -531,6 +563,7 @@ api.add_resource(testDB,'/testDB')
 api.add_resource(mariatestDB,'/mariatestDB') #api 선언
 api.add_resource(SingIn,'/SingIn')
 api.add_resource(authSearch,'/authSearch')
+api.add_resource(getMainMenu,'/getMainMenu')
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5001, debug=True)

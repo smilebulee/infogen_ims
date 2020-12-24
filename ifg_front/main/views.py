@@ -27,18 +27,18 @@ def mainImsPage(request):
     return render(request, template_name)
 
 def getMainMenu(request):
+    logger.info('getMainMenu_test1---------------------start')
     param = json.loads(request.GET['param'])
-
-    logger.info("Start")
-    logger.info(param)
-    logger.info("End")
+    logger.info('getMainMenu_test1---------------------end')
 
     # api 호출
     r = requests.get('http://emp_api:5001/getMainMenu', json=param)
+    logger.info('getMainMenu_test2---------------------start')
     logger.info(r)
     logger.info(r.text)
     logger.info(r.json())
     logger.info(json.loads(r.text))
+    logger.info('getMainMenu_test2---------------------end')
     return JsonResponse(r.json(), safe=False)
 
 def index(request):

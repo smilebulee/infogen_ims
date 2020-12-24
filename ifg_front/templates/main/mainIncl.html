@@ -3,7 +3,7 @@
 {% load static %}
         <!--Dili Common JavaScript import -->
         <script type="text/javascript" src="{% static 'diliCommon/diliCommon.js' %}"></script>
-
+        <script type="text/javascript" src="{% static 'common/common.js' %}"></script>
         <!--graph import -->
         <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
 
@@ -32,8 +32,18 @@
 
     <script type="text/javascript">
         $(document).ready(function(){
-                $("#testDiv").load("{% url 'dili_api:scheduleMgmt' %}");
+                var param = {
+                }
+                var url = "{% url 'main:getMainMenu' %}";
+                submissionCallMap(param,'GET',url,apvlReqHistGrd);
+
+               // $("#testDiv").load("{% url 'dili_api:scheduleMgmt' %}");
         });
+        function apvlReqHistGrd(data){
+                for(var i=0; i < data.length; i++){
+                        //testData[0].MENU_ID
+                }
+        }
     </script>
 
     <div id="testDiv"></div>

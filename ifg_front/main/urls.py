@@ -20,6 +20,7 @@ urlpatterns = [
     path('signin2/', views.signin2, name='signin2'),
     path('signout/', views.signout, name='signout'),
     path('mainImsPage/', views.mainImsPage, name='mainImsPage'),
+    path('getMainMenu/', views.getMainMenu, name='getMainMenu'),
 
 ]
 
