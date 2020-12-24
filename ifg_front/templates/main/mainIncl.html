@@ -32,25 +32,24 @@
 
     <script type="text/javascript">
         $(document).ready(function(){
-                var param = {}
-                var url = "{% url 'main:getMainMenu' %}";
-                submissionCallMap(param,'GET',url,apvlReqHistGrd);
+             var param = {}
+             var url = "{% url 'main:getMainMenu' %}";
+             submissionCallMap(param,'GET',url,apvlReqHistGrd);
 
-               // $("#testDiv").load("{% url 'dili_api:scheduleMgmt' %}");
+             // $("#testDiv").load("{% url 'dili_api:scheduleMgmt' %}");
         });
         function apvlReqHistGrd(data){
-        //<th style="font-size:25px; color:red; border-bottom : 1px solid red;">근태관리</th>
-                console.log(data);
-                var mainMenuTh = '';
-                for(var i=0; i < data.length; i++){
-                        mainMenuTh += '<th id="'+data[i].MENU_ID+'"style="font-size:25px; color:black;" onclick="mainMenuClickEvt(this)">'+data[i].MENU_NM+'</th>'
-                }
-                document.getElementById('mainMenuTrId').innerHTML = mainMenuTh;
+            var mainMenuTh = '';
+            for(var i=0; i < data.length; i++){
+                 mainMenuTh += '<th id="'+data[i].MENU_ID+'"style="font-size:25px; color:black;" onclick="mainMenuClickEvt(this)">'+data[i].MENU_NM+'</th>'
+            }
+            document.getElementById('mainMenuTrId').innerHTML = mainMenuTh;
         }
         function mainMenuClickEvt(mainMenuId) {
-                $('#'+mainMenuId.id).prevAll().css("color","black").css("border-bottom","");
-                $('#'+mainMenuId.id).nextAll().css("color","black").css("border-bottom","");
-                $('#'+mainMenuId.id).css("color","red").css("border-bottom","1px solid red");
+            $('#'+mainMenuId.id).prevAll().css("color","black").css("border-bottom","");
+            $('#'+mainMenuId.id).nextAll().css("color","black").css("border-bottom","");
+            $('#'+mainMenuId.id).css("color","red").css("border-bottom","1px solid red");
+        
         }
     </script>
 
