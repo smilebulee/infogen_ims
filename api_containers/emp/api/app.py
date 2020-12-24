@@ -528,7 +528,7 @@ class getMainMenu(Resource):  # Mariadb 연결 진행
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 # 쿼리문 실행
-                sql = sql = "SELECT MENU_ID" \
+                sql = sql = "SELECT MENU_ID, MENU_NM" \
                             "    FROM TB_MENU_M" \
                             "   WHERE 1=1" \
                             "   AND MENU_LVL_NO = '1'"\
