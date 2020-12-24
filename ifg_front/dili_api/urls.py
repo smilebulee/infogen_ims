@@ -53,6 +53,12 @@ urlpatterns = [
     url(r'^getApvlInfo/', views.getApvlInfo, name='getApvlInfo'),
     url(r'^getYryUseDays/', views.getYryUseDays, name='getYryUseDays'),
 
+    # 공통 코드 조회
+    url(r'^retrieveCmmCd/', views.retrieveCmmCd, name='retrieveCmmCd'),
+
+    # 스케줄현황조회
+    url(r'^scheduleStatLst/', views.scheduleStatLst.as_view(), name='scheduleStatLst'),
+    url(r'^getScheduleStatLst/', views.getScheduleStatLst, name='getScheduleStatLst'),
 
     # 공지사항 파일업로드 추가
     url(r'^my_view/', views.my_view, name='my-view'),
