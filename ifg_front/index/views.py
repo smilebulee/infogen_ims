@@ -10,4 +10,4 @@ import requests
 class Index(generic.TemplateView):
     def get(self, request, *args, **kwargs):
 
-        return HttpResponseRedirect(reverse('main:index'))
+        return HttpResponseRedirect(reverse('main:mainImsPage'))

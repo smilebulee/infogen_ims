@@ -21,6 +21,7 @@ urlpatterns = [
     path('signout/', views.signout, name='signout'),
     path('mainImsPage/', views.mainImsPage, name='mainImsPage'),
     path('getMainMenu/', views.getMainMenu, name='getMainMenu'),
+    path('getSubMenu/', views.getSubMenu, name='getSubMenu'),
 
 ]
 

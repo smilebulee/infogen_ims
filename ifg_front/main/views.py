@@ -14,31 +14,38 @@ import requests
 import logging
 import json
 
+
 logger = logging.getLogger(__name__)
 
 class Main_index(generic.TemplateView):
     def get(self, request, *args, **kwargs):
 
-        return HttpResponseRedirect(reverse('main:index'))
-
+        return HttpResponseRedirect(reverse('main:mainImsPage'))
+@login_required
 def mainImsPage(request):
     template_name = 'main/mainIncl.html'
 
     return render(request, template_name)
 
 def getMainMenu(request):
-    logger.info('getMainMenu_test1---------------------start')
     param = json.loads(request.GET['param'])
-    logger.info('getMainMenu_test1---------------------end')
 
     # api 호출
     r = requests.get('http://emp_api:5001/getMainMenu', json=param)
-    logger.info('getMainMenu_test2---------------------start')
     logger.info(r)
     logger.info(r.text)
     logger.info(r.json())
     logger.info(json.loads(r.text))
-    logger.info('getMainMenu_test2---------------------end')
+    return JsonResponse(r.json(), safe=False)
+
+def getSubMenu(request):
+    param = json.loads(request.GET['param'])
+    # api 호출
+    r = requests.get('http://emp_api:5001/getSubMenu', json=param)
+    logger.info(r)
+    logger.info(r.text)
+    logger.info(r.json())
+    logger.info(json.loads(r.text))
     return JsonResponse(r.json(), safe=False)
 
 def index(request):
@@ -205,7 +212,7 @@ def signin2(request):
 @login_required
 def signout(request):
     logout(request)
-    return HttpResponseRedirect(reverse('main:index'))
+    return HttpResponseRedirect(reverse('main:mainImsPage'))
 
 # def ajax_login_required(function):
 #     def wrap(request, *args, **kwargs):

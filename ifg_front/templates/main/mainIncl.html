@@ -32,24 +32,69 @@
 
     <script type="text/javascript">
         $(document).ready(function(){
+             debugger;
+             if(sessionStorage.getItem("email") == null){
+
+                location.href = "{% url 'main:login_form' %}";
+             }
+
              var param = {}
              var url = "{% url 'main:getMainMenu' %}";
-             submissionCallMap(param,'GET',url,apvlReqHistGrd);
 
-             // $("#testDiv").load("{% url 'dili_api:scheduleMgmt' %}");
+             submissionCallMap(param,'GET',url,mainMenuDataSubMitDone);
         });
-        function apvlReqHistGrd(data){
+
+        function mainMenuDataSubMitDone(data){
+
             var mainMenuTh = '';
+
             for(var i=0; i < data.length; i++){
-                 mainMenuTh += '<th id="'+data[i].MENU_ID+'"style="font-size:25px; color:black;" onclick="mainMenuClickEvt(this)">'+data[i].MENU_NM+'</th>'
+
+                 mainMenuTh += '<th id="'+data[i].MENU_ID+'" style="font-size:25px; color:black;" onclick="mainMenuClickEvt(this)">'+data[i].MENU_NM+'</th>'
             }
+
             document.getElementById('mainMenuTrId').innerHTML = mainMenuTh;
         }
+
         function mainMenuClickEvt(mainMenuId) {
+
             $('#'+mainMenuId.id).prevAll().css("color","black").css("border-bottom","");
             $('#'+mainMenuId.id).nextAll().css("color","black").css("border-bottom","");
             $('#'+mainMenuId.id).css("color","red").css("border-bottom","1px solid red");
-        
+
+            var param = {
+
+                "menuId"     : mainMenuId.id
+            }
+
+            var url = "{% url 'main:getSubMenu' %}";
+            submissionCallMap(param,'GET',url,subMenuDataSubMitDone);
+
+        }
+        function subMenuDataSubMitDone(data){
+
+            var subMenuTr = '';
+
+            for(var i=0; i < data.length; i++){
+
+                 subMenuTr += '<tr id="'+data[i].MENU_ID+'" name="'+data[i].MENU_URL_ADDR+'" style="height : 80px" onclick="subMenuClickEvt(this)">'
+                 subMenuTr += '<td id="'+data[i].MENU_ID+'TD" style="font-size:18px;  font-weight: 600;">'+data[i].MENU_NM+'</td>'
+                 subMenuTr += '</tr>'
+            }
+
+            document.getElementById('subMenuTbl').innerHTML = subMenuTr;
+        }
+
+        function subMenuClickEvt(subMenuId) {
+
+            $('#'+subMenuId.id).prevAll().css("background-color","").css("border-bottom","");
+            $('#'+subMenuId.id).nextAll().css("background-color","").css("border-bottom","");
+            $('#'+subMenuId.id).css("background-color","#ffffff").css("border-bottom","1px solid red");
+            $('#'+subMenuId.id+'TD').prevAll().css("color","");
+            $('#'+subMenuId.id+'TD').nextAll().css("color","");
+            $('#'+subMenuId.id+'TD').css("color","red");
+
+            $("#testDiv").load($('#'+subMenuId.id).attr('name'));
         }
     </script>
 

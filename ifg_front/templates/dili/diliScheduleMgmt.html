@@ -6,11 +6,6 @@
 
         $(document).ready(function(){
 
-            if(sessionStorage.getItem("email") == null){
-
-                location.href = "{% url 'main:login_form' %}";
-            }
-
             console.log(sessionStorage.getItem("email"));
 
             var tempStrtDt = "";
