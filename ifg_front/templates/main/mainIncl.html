@@ -57,7 +57,8 @@
         }
 
         function mainMenuClickEvt(mainMenuId) {
-
+            $('#subMenuTbl').empty();
+            $('#testDiv').empty();
             $('#'+mainMenuId.id).prevAll().css("color","black").css("border-bottom","");
             $('#'+mainMenuId.id).nextAll().css("color","black").css("border-bottom","");
             $('#'+mainMenuId.id).css("color","red").css("border-bottom","1px solid red");
@@ -87,13 +88,13 @@
 
         function subMenuClickEvt(subMenuId) {
 
+            $('#testDiv').empty();
             $('#'+subMenuId.id).prevAll().css("background-color","").css("border-bottom","");
             $('#'+subMenuId.id).nextAll().css("background-color","").css("border-bottom","");
             $('#'+subMenuId.id).css("background-color","#ffffff").css("border-bottom","1px solid red");
             $('#'+subMenuId.id+'TD').prevAll().css("color","");
             $('#'+subMenuId.id+'TD').nextAll().css("color","");
             $('#'+subMenuId.id+'TD').css("color","red");
-
             $("#testDiv").load($('#'+subMenuId.id).attr('name'));
         }
     </script>
