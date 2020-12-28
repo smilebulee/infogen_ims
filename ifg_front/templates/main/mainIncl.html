@@ -32,12 +32,12 @@
 
     <script type="text/javascript">
         $(document).ready(function(){
-             debugger;
+
              if(sessionStorage.getItem("email") == null){
 
                 location.href = "{% url 'main:login_form' %}";
              }
-
+             $('#subMenuDiv').hide();
              var param = {}
              var url = "{% url 'main:getMainMenu' %}";
 
@@ -57,6 +57,8 @@
         }
 
         function mainMenuClickEvt(mainMenuId) {
+            $('#mainImgDiv').hide();
+            $('#subMenuDiv').show('');
             $('#subMenuTbl').empty();
             $('#testDiv').empty();
             $('#'+mainMenuId.id).prevAll().css("color","black").css("border-bottom","");
