@@ -32,7 +32,7 @@ class Dili_api_index(generic.TemplateView):
 
         return render(request, template_name)
 
-@login_required
+
 def scheduleMgmt(request):
     template_name = 'dili/diliScheduleMgmt.html'
 
