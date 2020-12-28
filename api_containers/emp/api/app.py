@@ -559,7 +559,7 @@ class getSubMenu(Resource):  # Mariadb 연결 진행
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 # 쿼리문 실행
-                sql = sql = "SELECT MENU_ID, MENU_NM, MENU_URL_ADDR" \
+                sql = sql = "SELECT MENU_ID, MENU_NM, NVL(MENU_URL_ADDR,'N/A') AS MENU_URL_ADDR" \
                             "    FROM TB_MENU_M" \
                             "   WHERE 1=1" \
                             "   AND MENU_LVL_NO = '2'"\
