@@ -84,14 +84,14 @@
                  if(i == 0 && data[i].MENU_URL_ADDR != "N/A"){
 
                         subMenuTr += '<tr id="'+data[i].MENU_ID+'" name="'+data[i].MENU_URL_ADDR+'" style="height : 80px; background-color : #ffffff; border-bottom : 1px solid red;" onclick="subMenuClickEvt(this)">'
-                        subMenuTr += '<td id="'+data[i].MENU_ID+'TD" style="font-size:18px; font-weight: 600; color : red;">'+data[i].MENU_NM+'</td>'
+                        subMenuTr += '<td id="'+data[i].MENU_ID+'TD" style="font-size:18px; font-weight: 600; color : red; padding-left:10px;">'+data[i].MENU_NM+'</td>'
                         subMenuTr += '</tr>'
 
                         $("#testDiv").load(data[i].MENU_URL_ADDR);
                  }else{
 
                         subMenuTr += '<tr id="'+data[i].MENU_ID+'" name="'+data[i].MENU_URL_ADDR+'" style="height : 80px" onclick="subMenuClickEvt(this)">'
-                        subMenuTr += '<td id="'+data[i].MENU_ID+'TD" style="font-size:18px;  font-weight: 600;">'+data[i].MENU_NM+'</td>'
+                        subMenuTr += '<td id="'+data[i].MENU_ID+'TD" style="font-size:18px;  font-weight: 600; padding-left:10px;">'+data[i].MENU_NM+'</td>'
                         subMenuTr += '</tr>'
                  }
 
