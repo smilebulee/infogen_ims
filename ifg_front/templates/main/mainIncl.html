@@ -106,8 +106,8 @@
             $('#'+subMenuId.id).prevAll().css("background-color","").css("border-bottom","");
             $('#'+subMenuId.id).nextAll().css("background-color","").css("border-bottom","");
             $('#'+subMenuId.id).css("background-color","#ffffff").css("border-bottom","1px solid red");
-            $('#'+subMenuId.id+'TD').prevAll().css("color","");
-            $('#'+subMenuId.id+'TD').nextAll().css("color","");
+            $('#'+subMenuId.id).prevAll().children().css("color","black");
+            $('#'+subMenuId.id).nextAll().children().css("color","black");
             $('#'+subMenuId.id+'TD').css("color","red");
             $("#testDiv").load($('#'+subMenuId.id).attr('name'));
         }

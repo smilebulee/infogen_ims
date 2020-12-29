@@ -1,17 +1,4 @@
-
-
-{% extends 'common/base.html' %}
-
-{% block content %}
-{% load static %}
-    <div class="container">
-        <!--Dili Common JavaScript import -->
-        <script type="text/javascript" src="{% static 'diliCommon/diliCommon.js' %}"></script>
-        <script type="text/javascript" src="{% static 'common/common.js' %}"></script>
-        <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
-        <!--modal js/css import -->
-        <script type="text/javascript" src="{% static 'js/modal.js' %}"></script>
-        <link rel="stylesheet" type="text/css" href="{% static 'css/modal.css' %}"/>
+ <div class="container">
 
         <script type="text/javascript">
         $(document).ready(function(){
@@ -250,5 +237,3 @@
             </div>
         </div>
     </div>
-
-{% endblock %}
