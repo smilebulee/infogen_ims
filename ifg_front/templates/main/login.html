@@ -45,7 +45,6 @@
                     event.preventDefault();
                     var $form = $(this);
                     console.log("ajaxcall")
-                    debugger;
                     var loginstate;
                     var loginInfo;
                     if(isNullChk("username")){
@@ -83,7 +82,6 @@
                          data: $form.serializeObject(),
                          async: false,
                          success: function(result) {
-                              debugger;
                               console.log(result);
                               console.log('확인');
                               if(result.status=='400'){
