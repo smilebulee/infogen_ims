@@ -1442,14 +1442,26 @@ class scheduleStatLst(Resource):
                       "				        WHERE F.CMM_CD_GRP_ID = 'APVL_REQ_DIVS_CD'" \
                       "   				      AND F.CMM_CD = B.APVL_REQ_DIVS), '정상근무')" \
                       "          FROM DUAL) WRK_DIVS" \
+                      "		 ,NVL(B.TH1_APRV_STUS,' ') APVL_STUS" \
                       "  FROM TB_WRK_TM_MGMT_M A" \
                       "  LEFT OUTER JOIN" \
                       "       TB_APVL_REQ_MGMT_M B" \
                       "    ON A.EMP_EMAL_ADDR = B.EMP_EMAL_ADDR" \
-                      "   AND A.WRK_DT = B.WRK_DT"
+                      "   AND A.WRK_DT = B.WRK_DT" \
+                      " WHERE SUBSTRING(A.WRK_DT, 1, 7) = '" + data["wrkDt"] + "'"
                 if data["email"] != "":
-                      slq += "    AND B.EMP_EMAL_ADDR = '" + data["email"] + "'" \
-                             "   AND SUBSTRING(A.WRK_DT, 1, 7) = '" + data["wrkDt"] + "'" \
+                      sql += "    AND A.EMP_EMAL_ADDR = '" + data["email"] + "'" \
+
+                if data["apvlStus"] != "":
+                      sql += "    AND B.TH1_APRV_STUS = '" + data["apvlStus"] + "'" \
+
+                if data["wrkDivs"] != "":
+                      sql += "    AND B.APVL_REQ_DIVS = '" + data["wrkDivs"] + "'" \
+
+                if data["dept"] != "":
+                      sql += "    AND A.EMP_EMAL_ADDR IN (SELECT H.EMP_EMAIL" \
+                             "                              FROM TB_EMP_MGMT H" \
+                             "                             WHERE H.DEPT_CD = '" + data["dept"] + "')" \
 
                 sql +=" UNION" \
                       " SELECT CASE WHEN NVL(A.EMP_EMAL_ADDR, '') = '' THEN B.EMP_EMAL_ADDR" \
@@ -1474,16 +1486,26 @@ class scheduleStatLst(Resource):
                       "				        WHERE F.CMM_CD_GRP_ID = 'APVL_REQ_DIVS_CD'" \
                       "   				      AND F.CMM_CD = B.APVL_REQ_DIVS), '정상근무')" \
                       "          FROM DUAL) WRK_DIVS" \
+                      "		 ,NVL(B.TH1_APRV_STUS,' ') APVL_STUS" \
                       "   FROM TB_WRK_TM_MGMT_M A" \
                       "  RIGHT OUTER JOIN" \
                       "        TB_APVL_REQ_MGMT_M B" \
                       "     ON A.EMP_EMAL_ADDR = B.EMP_EMAL_ADDR" \
                       "    AND A.WRK_DT = B.WRK_DT" \
-                      "  WHERE 1=1"
-
+                      "  WHERE SUBSTRING(B.WRK_DT, 1, 7) = '" + data["wrkDt"] + "'"
                 if data["email"] != "":
-                      slq += "    AND B.EMP_EMAL_ADDR = '" + data["email"] + "'" \
-                             "    AND SUBSTRING(B.WRK_DT, 1, 7) = '" + data["wrkDt"] + "'"
+                      sql += "    AND B.EMP_EMAL_ADDR = '" + data["email"] + "'" \
+
+                if data["apvlStus"] != "":
+                      sql += "    AND B.TH1_APRV_STUS = '" + data["apvlStus"] + "'" \
+
+                if data["wrkDivs"] != "":
+                      sql += "    AND B.APVL_REQ_DIVS = '" + data["wrkDivs"] + "'" \
+                
+                if data["dept"] != "":
+                      sql += "    AND A.EMP_EMAL_ADDR IN (SELECT H.EMP_EMAIL" \
+                             "                              FROM TB_EMP_MGMT H" \
+                             "                             WHERE H.DEPT_CD = '" + data["dept"] + "')"
                 logging.debug(sql)
                 cursor.execute(sql)
                 logging.debug('scheduleStatLst SUCCESS')
