@@ -6,7 +6,7 @@
 
         $(document).ready(function(){
 
-            console.log(sessionStorage.getItem("email"));
+            $('#ipt_searchNamePop').val(sessionStorage.getItem("email"))
 
             var tempStrtDt = "";
             var tempEndDt = "";
@@ -268,40 +268,7 @@
                 setMonthGridData();
             });
 
-            /*********************************************************************
-            *   search Btn Click Event - 검색 버튼 클릭
-            *********************************************************************/
-            $('#searchBtn').click(function(){
 
-                var url = "{% url 'dili_api:empMgmtPop' %}" ;
-                var name = $('#ipt_searchNamePop').val();
-
-                $('#empModalDiv').css("width","50%");
-
-                modal('empModalDiv');
-
-                $('#empModal').load(url);
-
-            });
-
-            /*********************************************************************
-            *   ipt_searchName EnterKey Event - 직원 조회 엔터키 이벤트
-            *********************************************************************/
-            $('#ipt_searchNamePop').keydown(function(e){
-
-                //엔터키 입력 + 이름컬럼에 값이 있는 경우.
-                if ( e.keyCode == 13 && $('#ipt_searchNamePop').val() != 'undefined' && $('#ipt_searchNamePop').val() != "" ) {
-
-                    var url = "{% url 'dili_api:empMgmtPop' %}" ;
-                    var name = $('#ipt_searchNamePop').val();
-
-                    $('#empModalDiv').css("width","50%");
-
-                    modal('empModalDiv');
-
-                    $('#empModal').load(url);
-                }
-            });
 
 
 
@@ -1402,12 +1369,9 @@
                         </div>
                         <div id="col_search" class="collapse show" aria-labelledby="head_search" data-parent="#grp_search">
                             <div class="card-body flex-height d-flex m-0 p-2">
-                                <div class="align-self-start align-self-center mr-3">성명</div>
+                                <div class="align-self-start align-self-center mr-3">사원ID</div>
                                 <div class="align-self-center mr-3">
-                                    <input type="text" class="form-control" id="ipt_searchNamePop" name="ipt_searchNamePop" placeholder="이름을 입력해주세요." maxlength="10"/>
-                                </div>
-                                <div class="align-self-end align-self-center">
-                                    <button class="btn" id="searchBtn" style="background-color: #81DAF5; color : white;">Search</button>
+                                    <input type="text" class="form-control" id="ipt_searchNamePop" name="ipt_searchNamePop"  maxlength="10" disabled/>
                                 </div>
                             </div>
                         </div>
