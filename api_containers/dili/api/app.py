@@ -1448,9 +1448,10 @@ class scheduleStatLst(Resource):
                       "    ON A.EMP_EMAL_ADDR = B.EMP_EMAL_ADDR" \
                       "   AND A.WRK_DT = B.WRK_DT"
                 if data["email"] != "":
-                      "    AND B.EMP_EMAL_ADDR = '" + data["email"] + "'" \
-                      "   AND SUBSTRING(A.WRK_DT, 1, 7) = '" + data["wrkDt"] + "'" \
-                      " UNION" \
+                      slq += "    AND B.EMP_EMAL_ADDR = '" + data["email"] + "'" \
+                             "   AND SUBSTRING(A.WRK_DT, 1, 7) = '" + data["wrkDt"] + "'" \
+
+                sql +=" UNION" \
                       " SELECT CASE WHEN NVL(A.EMP_EMAL_ADDR, '') = '' THEN B.EMP_EMAL_ADDR" \
                       "             WHEN NVL(B.EMP_EMAL_ADDR, '') = '' THEN A.EMP_EMAL_ADDR" \
                       "				                                   ELSE B.EMP_EMAL_ADDR" \
@@ -1479,9 +1480,10 @@ class scheduleStatLst(Resource):
                       "     ON A.EMP_EMAL_ADDR = B.EMP_EMAL_ADDR" \
                       "    AND A.WRK_DT = B.WRK_DT" \
                       "  WHERE 1=1"
+
                 if data["email"] != "":
-                      "    AND B.EMP_EMAL_ADDR = '" + data["email"] + "'" \
-                      "    AND SUBSTRING(B.WRK_DT, 1, 7) = '" + data["wrkDt"] + "'"
+                      slq += "    AND B.EMP_EMAL_ADDR = '" + data["email"] + "'" \
+                             "    AND SUBSTRING(B.WRK_DT, 1, 7) = '" + data["wrkDt"] + "'"
                 logging.debug(sql)
                 cursor.execute(sql)
                 logging.debug('scheduleStatLst SUCCESS')
