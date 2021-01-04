@@ -445,19 +445,18 @@ def saveApvlReq(request):
 #공통 코드 조회
 def retrieveCmmCd(request):
     param = json.loads(request.GET['param'])
-    logger.info('param')
+
+    logger.info("retrieveCmmCd Start")
     logger.info(param)
+    logger.info("retrieveCmmCd End")
 
-    params = {
-        'grp_id': param['grp_id'],
-    }
-
-    r = requests.get('http://dili_api:5006/retrieveCmmCd', params=params)
+    # api 호출
+    r = requests.get('http://dili_api:5006/retrieveCmmCd', json=param)
     logger.info(r)
     logger.info(r.text)
-    logger.info(r.json())
-
-    return JsonResponse(r.json(), safe=False)
+    logger.info(logger.info(ast.literal_eval(r.json())))
+    logger.info(json.loads(r.text))
+    return JsonResponse(ast.literal_eval(r.json()), safe=False)
 
 class scheduleStatLst(generic.TemplateView):
     def get(self, request, *args, **kwargs):

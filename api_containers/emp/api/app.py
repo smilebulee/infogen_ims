@@ -460,7 +460,8 @@ class SingIn(Resource): # 사용자 정보 조회
                 "status": 200,
                 "msg": "Data has been saved successfully",
                 "email": result2['EMP_EMAIL'],
-                "authId": result2['AUTH_ID']
+                "authId": result2['AUTH_ID'],
+                "deptCd": result2['DEPT_CD']
             }
         else :
             retJson = {

@@ -6,7 +6,11 @@
 
             <!--    공통코드 조회    -->
             <!--    1. 부서    -->
-            retrieveCmmCd('sbx_dept', 'SLIN_BZDP');
+            retrieveCmmCd('SLIN_BZDP',settingSlinBzdp);
+
+            if(sessionStorage.getItem("authId") != "ADMIN") {
+                $("#ipt_searchNamePop").val(sessionStorage.getItem("email"));
+            }
 
              //현재 날짜 가져오기
             var today = new Date();
@@ -18,457 +22,46 @@
             $('#txt_mmYy').text(year); //그리드 월tab 년도 초기값 입력
             $('#txt_mmMm').text(month + 1); //그리드 월tab 월 초기값 입력
 
-            $('#grp_showMonth').hide();
-
-            crteTodayShow(year, month, date, day);                                                        // Grid UI(주) 날짜 세팅
-
-            <!-- 전체근무 -->
-            allWorkGrd("");
-
-            $("#searchBtn").click(function(){
-
-                /*********************************************************************
-                *   Session Email 값 기준 근무 결재요청 리스트 조회
-                *********************************************************************/
-                var param = {
-                    "email" : $("#apvlEmpEmailHidden").text(),                                   // 추후 Session Value 연동.
-                    "apvlStusDivs" : $("#sbx_type option:selected").val(),    //TB_APVL_REQ_MGMT_M APVL_STUS 값 => 01,02: 승인, 승인반려 NULL: 미승인
-                }
-
-                $.ajaxCall( param, {
-                     'method' : 'GET',
-                     'url' : "{% url 'dili_api:getScheduleStatLst' %}",
-                     'dataType' : 'json',
-                     'data' : JSON.stringify(param),
-                     'async' : false,
-                     'callbackFn' : function(data){
-
-                        // 리턴
-<!--                        apvlReqHistGrd(data);-->
-                     }
-                });
-            });
-
             <!--    공통코드 함수    -->
-            function retrieveCmmCd(sbx_id, grp_id){
+            function retrieveCmmCd(grp_id,settingSlinBzdp){
                 var param = {
-                    "sbx_id" : sbx_id,
                     "grp_id" : grp_id
                 }
 
-                 $.ajaxCall( param, {
-                         method : 'GET',
-                         'url' : '/dili/retrieveCmmCd/',
-                         'dataType' : 'json',
-                         'data' : JSON.stringify(param),
-                         'async' : false,
-                         'callbackFn' : function(data){
-                            for(var i = 0; i < data.length; i++){
-                                var option = $("<option value = "+data[i].CMM_CD+">"+data[i].CMM_CD_NAME+"</option>");
-                                $('#'+sbx_id).append(option);
-                            }
-                         }
-                 });
-             };
+                var url = "{% url 'dili_api:retrieveCmmCd' %}";
+                submissionCallMap(param,'GET',url,settingSlinBzdp);
 
-	        /*********************************************************************
-            *   휴가근무 Grid 생성
-            *********************************************************************/
-            function vacationGrd(data){
 
-                var apvlReqHistTable = '<table class="table table-bordered table-responsive-md text-center">';
-                apvlReqHistTable += '<thead>';
-                apvlReqHistTable += '<tr>';
-                apvlReqHistTable += '<th class="text-center">일자</th>';
-                apvlReqHistTable += '<th class="text-center">부서</th>';
-                apvlReqHistTable += '<th class="text-center">성명</th>';
-                apvlReqHistTable += '<th class="text-center">총휴가일수</th>';
-                apvlReqHistTable += '<th class="text-center">총결제완료휴가일수</th>';
-                apvlReqHistTable += '<th class="text-center">총결제미완료휴가일수</th>';
-                apvlReqHistTable += '</tr>';
-                apvlReqHistTable += '</thead>';
-                apvlReqHistTable += '<tbody>';
+            };
+
+            function settingSlinBzdp(data){
+                var deptList = '';
+                deptList += '<option value="00">전체</option>'
 
                 if(data.length > 0) {
-                    for(var i = 0; i < data.length; i++){
-
-                        var wrkDtm = "";
-                        if(data[i].WRK_DT != "") {
-                            if(data[i].WRK_TME != "") {
-                                wrkDtm = data[i].WRK_DT + " " + data[i].WRK_TME.substring(0,2) +":"+ data[i].WRK_TME.substring(2,4) +":"+ data[i].WRK_TME.substring(4,6)
-                            } else {
-                                wrkDtm = data[i].WRK_DT
-                            }
-                        }
-
-                        apvlReqHistTable += '<tr onclick="onclickEvt(this)">';
-                        apvlReqHistTable += '<td id="no'+i+'" class="pt-3-half">'+(i+1)+'</td>';
-                        apvlReqHistTable += '<td id="empName" class="pt-3-half">'+data[i].EMP_NAME+'</td>';
-                        apvlReqHistTable += '<td id="wrkDt" class="pt-3-half">'+wrkDtm+'</td>';
-                        apvlReqHistTable += '<td id="apvlReqNm" class="pt-3-half">'+data[i].APVL_REQ_NM+'</td>';
-                        apvlReqHistTable += '<td id="aprvStusNm" class="pt-3-half">'+data[i].APRV_STUS_NM+'</td>';
-                        apvlReqHistTable += '</tr>';
-
+                    for(var i=0; i < data.length; i++){
+                        deptList += '<option value="'+data[i].CMM_CD+'">'+ data[i].CMM_CD_NAME +'</option>'
                     }
+                }
+
+                document.getElementById('sbx_dept').innerHTML = deptList;
+
+                if (sessionStorage.getItem("deptCd") == "01") {
+                    $("#sbx_dept option:eq(01)").attr("selected", "selected");
+                } else if (sessionStorage.getItem("deptCd") == "02") {
+                    $("#sbx_dept option:eq(02)").attr("selected", "selected");
+                } else if (sessionStorage.getItem("deptCd") == "03") {
+                    $("#sbx_dept option:eq(03)").attr("selected", "selected");
+                } else if (sessionStorage.getItem("deptCd") == "04") {
+                    $("#sbx_dept option:eq(04)").attr("selected", "selected");
+                } else if (sessionStorage.getItem("deptCd") == "05") {
+                    $("#sbx_dept option:eq(05)").attr("selected", "selected");
+                } else if (sessionStorage.getItem("deptCd") == "06") {
+                    $("#sbx_dept option:eq(06)").attr("selected", "selected");
                 } else {
-                    apvlReqHistTable += '<tr">';
-                    apvlReqHistTable += '<td id="test1" class="pt-3-half"></td>';
-                    apvlReqHistTable += '<td id="test2" class="pt-3-half"></td>';
-                    apvlReqHistTable += '<td id="test3" class="pt-3-half"></td>';
-                    apvlReqHistTable += '<td id="test4" class="pt-3-half"></td>';
-                    apvlReqHistTable += '<td id="test5" class="pt-3-half"></td>';
-                    apvlReqHistTable += '<td id="test6" class="pt-3-half"></td>';
-                    apvlReqHistTable += '</tr>';
-
-<!--                    $("#thAprvNm1").text("");-->
-<!--                    $("#thAprvNm2").text("");-->
-<!--                    $("#thAprvStus1").text("");-->
-<!--                    $("#thAprvStus2").text("");-->
-
-                }
-
-                apvlReqHistTable += '</tbody>';
-                apvlReqHistTable += '</table>';
-
-                document.getElementById('grd_apvlReqHist').innerHTML = apvlReqHistTable;
-            }
-
-            /*********************************************************************
-            *   정상상근무 Grid 생성
-           *********************************************************************/
-            function normalcyGrd(data){
-
-                var apvlReqHistTable = '<table class="table table-bordered table-responsive-md text-center">';
-                apvlReqHistTable += '<thead>';
-                apvlReqHistTable += '<tr>';
-                apvlReqHistTable += '<th class="text-center">일자</th>';
-                apvlReqHistTable += '<th class="text-center">부서</th>';
-                apvlReqHistTable += '<th class="text-center">성명</th>';
-                apvlReqHistTable += '<th class="text-center">총정상근무시간</th>';
-                apvlReqHistTable += '<th class="text-center">총근무시간</th>';
-                apvlReqHistTable += '<th class="text-center">총초과근무시간</th>';
-                apvlReqHistTable += '<th class="text-center">결제완료시간</th>';
-                apvlReqHistTable += '<th class="text-center">결제미완료시간</th>';
-                apvlReqHistTable += '</tr>';
-                apvlReqHistTable += '</thead>';
-                apvlReqHistTable += '<tbody>';
-
-                if(data.length > 0) {
-                    for(var i = 0; i < data.length; i++){
-
-                        var wrkDtm = "";
-                        if(data[i].WRK_DT != "") {
-                            if(data[i].WRK_TME != "") {
-                                wrkDtm = data[i].WRK_DT + " " + data[i].WRK_TME.substring(0,2) +":"+ data[i].WRK_TME.substring(2,4) +":"+ data[i].WRK_TME.substring(4,6)
-                            } else {
-                                wrkDtm = data[i].WRK_DT
-                            }
-                        }
-
-                        apvlReqHistTable += '<tr onclick="onclickEvt(this)">';
-                        apvlReqHistTable += '<td id="no'+i+'" class="pt-3-half">'+(i+1)+'</td>';
-                        apvlReqHistTable += '<td id="empName" class="pt-3-half">'+data[i].EMP_NAME+'</td>';
-                        apvlReqHistTable += '<td id="wrkDt" class="pt-3-half">'+wrkDtm+'</td>';
-                        apvlReqHistTable += '<td id="apvlReqNm" class="pt-3-half">'+data[i].APVL_REQ_NM+'</td>';
-                        apvlReqHistTable += '<td id="aprvStusNm" class="pt-3-half">'+data[i].APRV_STUS_NM+'</td>';
-                        apvlReqHistTable += '</tr>';
-
-                    }
-                } else {
-                    apvlReqHistTable += '<tr">';
-                    apvlReqHistTable += '<td id="test1" class="pt-3-half"></td>';
-                    apvlReqHistTable += '<td id="test2" class="pt-3-half"></td>';
-                    apvlReqHistTable += '<td id="test3" class="pt-3-half"></td>';
-                    apvlReqHistTable += '<td id="test4" class="pt-3-half"></td>';
-                    apvlReqHistTable += '<td id="test5" class="pt-3-half"></td>';
-                    apvlReqHistTable += '<td id="test6" class="pt-3-half"></td>';
-                    apvlReqHistTable += '<td id="test7" class="pt-3-half"></td>';
-                    apvlReqHistTable += '<td id="test8" class="pt-3-half"></td>';
-                    apvlReqHistTable += '</tr>';
-
-<!--                    $("#thAprvNm1").text("");-->
-<!--                    $("#thAprvNm2").text("");-->
-<!--                    $("#thAprvStus1").text("");-->
-<!--                    $("#thAprvStus2").text("");-->
-
-                }
-
-                apvlReqHistTable += '</tbody>';
-                apvlReqHistTable += '</table>';
-
-                document.getElementById('grd_apvlReqHist').innerHTML = apvlReqHistTable;
-            }
-
-            /*********************************************************************
-            *   전체근무 Grid(정상+휴가) 생성
-            *********************************************************************/
-            function allWorkGrd(data){
-
-                var apvlReqHistTable = '<table class="table table-bordered table-responsive-md text-center" style="text-align: center;">';
-                apvlReqHistTable += '<thead>';
-                apvlReqHistTable += '<tr>';
-                apvlReqHistTable += '<th class="text-center">일자</th>';
-                apvlReqHistTable += '<th class="text-center">부서</th>';
-                apvlReqHistTable += '<th class="text-center">성명</th>';
-                apvlReqHistTable += '<th class="text-center">총정상근무시간</th>';
-                apvlReqHistTable += '<th class="text-center">총근무시간</th>';
-                apvlReqHistTable += '<th class="text-center">총초과근무시간</th>';
-                apvlReqHistTable += '<th class="text-center">결제완료시간</th>';
-                apvlReqHistTable += '<th class="text-center">결제미완료시간</th>';
-                apvlReqHistTable += '<th class="text-center">총휴가일수</th>';
-                apvlReqHistTable += '<th class="text-center">총결제완료휴가일수</th>';
-                apvlReqHistTable += '<th class="text-center">총결제미완료휴가일수</th>';
-                apvlReqHistTable += '</tr>';
-                apvlReqHistTable += '</thead>';
-                apvlReqHistTable += '<tbody>';
-
-                if(data.length > 0) {
-                    for(var i = 0; i < data.length; i++){
-
-                        var wrkDtm = "";
-                        if(data[i].WRK_DT != "") {
-                            if(data[i].WRK_TME != "") {
-                                wrkDtm = data[i].WRK_DT + " " + data[i].WRK_TME.substring(0,2) +":"+ data[i].WRK_TME.substring(2,4) +":"+ data[i].WRK_TME.substring(4,6)
-                            } else {
-                                wrkDtm = data[i].WRK_DT
-                            }
-                        }
-
-                        apvlReqHistTable += '<tr onclick="onclickEvt(this)">';
-                        apvlReqHistTable += '<td id="no'+i+'" class="pt-3-half">'+(i+1)+'</td>';
-                        apvlReqHistTable += '<td id="empName" class="pt-3-half">'+data[i].EMP_NAME+'</td>';
-                        apvlReqHistTable += '<td id="wrkDt" class="pt-3-half">'+wrkDtm+'</td>';
-                        apvlReqHistTable += '<td id="apvlReqNm" class="pt-3-half">'+data[i].APVL_REQ_NM+'</td>';
-                        apvlReqHistTable += '<td id="aprvStusNm" class="pt-3-half">'+data[i].APRV_STUS_NM+'</td>';
-                        apvlReqHistTable += '</tr>';
-
-                    }
-                } else {
-                    apvlReqHistTable += '<tr">';
-                    apvlReqHistTable += '<td id="test1" class="pt-3-half"></td>';
-                    apvlReqHistTable += '<td id="test2" class="pt-3-half"></td>';
-                    apvlReqHistTable += '<td id="test3" class="pt-3-half"></td>';
-                    apvlReqHistTable += '<td id="test4" class="pt-3-half"></td>';
-                    apvlReqHistTable += '<td id="test5" class="pt-3-half"></td>';
-                    apvlReqHistTable += '<td id="test6" class="pt-3-half"></td>';
-                    apvlReqHistTable += '<td id="test7" class="pt-3-half"></td>';
-                    apvlReqHistTable += '<td id="test8" class="pt-3-half"></td>';
-                    apvlReqHistTable += '<td id="test9" class="pt-3-half"></td>';
-                    apvlReqHistTable += '<td id="test10" class="pt-3-half"></td>';
-                    apvlReqHistTable += '<td id="test11" class="pt-3-half"></td>';
-                    apvlReqHistTable += '</tr>';
-
-<!--                    $("#thAprvNm1").text("");-->
-<!--                    $("#thAprvNm2").text("");-->
-<!--                    $("#thAprvStus1").text("");-->
-<!--                    $("#thAprvStus2").text("");-->
-
-                }
-
-                apvlReqHistTable += '</tbody>';
-                apvlReqHistTable += '</table>';
-
-                document.getElementById('grd_apvlReqHist').innerHTML = apvlReqHistTable;
-            }
-
-            /*********************************************************************
-            *   btn_datepicker2 Btn Click Event - SelectBox change 이벤트
-            *********************************************************************/
-            $("#sbx_wrkKind").change(function(){
-                debugger;
-
-                if($("#sbx_wrkKind").val() == "00") {
-
-                    <!-- 전체근무그리드셋팅 -->
-                    allWorkGrd('');
-
-                    $("#sbx_apvlStatus").val("00");
-                    $("#sbx_apvlStatus").removeAttr('disabled');
-                }
-
-                if($("#sbx_wrkKind").val() == "01") {
-
-                    <!-- 정상근무그리드셋팅 -->
-                    normalcyGrd('');
-
-                    $("#sbx_apvlStatus").val("00");
-                    $("#sbx_apvlStatus").attr('disabled','disabled');
-                }
-
-                if($("#sbx_wrkKind").val() == "02") {
-
-                    <!-- 정상근무그리드셋팅 -->
-                    normalcyGrd('');
-
-                    $("#sbx_apvlStatus").val("00");
-                    $("#sbx_apvlStatus").attr('disabled','disabled');
-                }
-                <!-- 휴가근무일때 -->
-                if($("#sbx_wrkKind").val() == "03") {
-
-                    <!-- 휴가근무그리드셋팅 -->
-                    vacationGrd('');
-
-                    $("#sbx_apvlStatus").val("00");
-                    $("#sbx_apvlStatus").removeAttr('disabled');
-                }
-
-            });
-
-            /*********************************************************************
-            *   datepicker 밸리데이션 체크
-            *********************************************************************/
-            function dateCalcu() {
-                var tempData1 = $("#ipt_holiTerm1").val().split('-');
-                var tempData2 = $("#ipt_holiTerm2").val().split('-');
-
-                var arrDate1 = new Date(tempData1[0], tempData1[1], tempData1[2]);
-                var arrDate2 = new Date(tempData2[0], tempData2[1], tempData2[2]);
-
-                var diffDate = arrDate2 - arrDate1;
-                var currDate = 24 * 60 * 60 * 1000;
-
-                if(parseInt(diffDate/currDate)+1 < 0) {
-                    alert("시작일자와 종료일자를 다시 확인해주세요.");
-                    $("#ipt_holiTerm2").val("");
-                    return;
-                } else {
-                    $("#ipt_holiDays").val(parseInt(diffDate/currDate)+1);
+                    $("#sbx_dept option:eq(00)").attr("selected", "selected");
                 }
             }
-
-            /**************************************************************************************************/
-
-            /*********************************************************************
-            *   weekGridDtDfr Btn Click Event - 주 그리드 날짜 이전 버튼 클릭
-            *********************************************************************/
-            $('#btn_weekGridDtDfr').click(function(){
-
-                console.log("weekGridDtDfr Btn Click Event");
-
-                var dfrWeekEndYy = $('#txt_weekEndYy').text(); //현재 종료 년도
-                var dfrWeekEndMm = $('#txt_weekEndMm').text()-1; //현재 종료 월
-                var dfrWeekEndDd = $('#txt_weekEndDd').text(); //현재 종료 일
-
-                var dfrWeekStrtYy = $('#txt_weekStrtYy').text(); // 현재 시작 년도
-                var dfrWeekStrtMm = $('#txt_weekStrtMm').text()-1; //현재 시작 월
-                var dfrWeekStrtDd = $('#txt_weekStrtDd').text(); // 현재 시작 일
-
-                var dfrEndDate = new Date(dfrWeekEndYy, dfrWeekEndMm, dfrWeekEndDd); //현재 종료 날짜 등록
-
-                var dfrStrtDate = new Date(dfrWeekStrtYy, dfrWeekStrtMm, dfrWeekStrtDd); //현재 시작 날짜 등록
-
-                dfrEndDate.setDate(dfrEndDate.getDate()-7); //종료 날짜 이전 주
-                dfrStrtDate.setDate(dfrStrtDate.getDate()-7); //시작 날짜 이전 주
-
-                $('#txt_weekEndYy').text(dfrEndDate.getFullYear());
-                $('#txt_weekEndMm').text(dfrEndDate.getMonth()+1);
-                $('#txt_weekEndDd').text(dfrEndDate.getDate());
-
-                $('#txt_weekStrtYy').text(dfrStrtDate.getFullYear());
-                $('#txt_weekStrtMm').text(dfrStrtDate.getMonth()+1);
-                $('#txt_weekStrtDd').text(dfrStrtDate.getDate());
-
-                tempStrtDt = setWeek(dfrStrtDate).baseDate;
-                tempEndDt = setWeek(dfrEndDate).baseDate;
-<!--                setWeekGridData(tempStrtDt, tempEndDt);-->
-            });
-
-            /*********************************************************************
-            *   weekGridDtNxt Btn Click Event - 주 그리드 날짜 이후 버튼 클릭
-            *********************************************************************/
-            $('#btn_weekGridDtNxt').click(function(){
-
-                console.log("weekGridDtNxt Btn Click Event");
-
-                var nxtWeekEndYy = $('#txt_weekEndYy').text(); //현재 종료 년도
-                var nxtWeekEndMm = $('#txt_weekEndMm').text()-1; //현재 종료 월
-                var nxtWeekEndDd = $('#txt_weekEndDd').text(); //현재 종료 일
-
-                var nxtWeekStrtYy = $('#txt_weekStrtYy').text(); //현재 시작 년도
-                var nxtWeekStrtMm = $('#txt_weekStrtMm').text()-1; //현재 시작 월
-                var nxtWeekStrtDd = $('#txt_weekStrtDd').text(); //현재 시작 일
-
-                nxtEndDate = new Date(nxtWeekEndYy, nxtWeekEndMm, nxtWeekEndDd); //종료 날짜 다음 주
-                nxtStrtDate = new Date(nxtWeekStrtYy, nxtWeekStrtMm, nxtWeekStrtDd); //시작 날짜 다음 주
-
-                nxtEndDate.setDate(nxtEndDate.getDate()+7);
-                nxtStrtDate.setDate(nxtStrtDate.getDate()+7);
-
-                $('#txt_weekEndYy').text(nxtEndDate.getFullYear());
-                $('#txt_weekEndMm').text(nxtEndDate.getMonth()+1);
-                $('#txt_weekEndDd').text(nxtEndDate.getDate());
-
-                $('#txt_weekStrtYy').text(nxtStrtDate.getFullYear());
-                $('#txt_weekStrtMm').text(nxtStrtDate.getMonth()+1);
-                $('#txt_weekStrtDd').text(nxtStrtDate.getDate());
-
-                tempStrtDt = setWeek(nxtStrtDate).baseDate;
-                tempEndDt = setWeek(nxtEndDate).baseDate;
-<!--                setWeekGridData(tempStrtDt, tempEndDt);-->
-            });
-
-            /*********************************************************************
-            *   mmGridDtDfr Btn Click Event - 월 그리드 날짜 이전 버튼 클릭
-            *********************************************************************/
-            $('#btn_mmGridDtDfr').click(function(){
-
-                console.log("mmGridDtDfr Btn Click Event");
-
-                var txt_mmYyDfr = $('#txt_mmYy').text();
-                var txt_mmMmDfr = $('#txt_mmMm').text()-2;
-                var showMmGridDtDfr = new Date(txt_mmYyDfr, txt_mmMmDfr, 1); //날짜 이전 값 등록
-
-                $('#txt_mmYy').text(showMmGridDtDfr.getFullYear()); //그리드 월tab 년도 이전 값 입력
-                $('#txt_mmMm').text(showMmGridDtDfr.getMonth() + 1); //그리드 월tab 월 이전 값 입력
-
-<!--                setMonthGridData();-->
-
-            });
-
-            /*********************************************************************
-            *   mmGridDtNxt Btn Click Event - 월 그리드 날짜 이후 버튼 클릭
-            *********************************************************************/
-            $('#btn_mmGridDtNxt').click(function(){
-
-                console.log("mmGridDtNxt Btn Click Event");
-
-                var txt_mmYyDfr = $('#txt_mmYy').text();
-                var txt_mmMmDfr = $('#txt_mmMm').text();
-                var showMmGridDtDfr = new Date(txt_mmYyDfr, txt_mmMmDfr, 1); //날짜 이후 값 등록
-
-                $('#txt_mmYy').text(showMmGridDtDfr.getFullYear()); //그리드 월tab 년도 이후 값 입력
-                $('#txt_mmMm').text(showMmGridDtDfr.getMonth() + 1); //그리드 월tab 월 이후 값 입력
-
-<!--                setMonthGridData();-->
-            });
-
-            /*********************************************************************
-            *   btn_datepicker Btn Click Event - 일달력호출
-            *********************************************************************/
-            $("#btn_datepicker").click(function(){
-                 $("#datepickerData").datepicker("show");
-            });
-
-            /*********************************************************************
-            *   클릭한 달력 datepickerData에 value 값 담기
-            *********************************************************************/
-            $("#datepickerData").datepicker({
-
-                onSelect:function(dateText, inst) {
-
-                    var tempData = $('#datepickerData').val().split('-');
-                    var selectDatepickerDate = new Date(tempData[0], Number(tempData[1])-1, tempData[2]);
-
-                    //날짜 세팅
-                    year = selectDatepickerDate.getFullYear(); // 년도
-                    month = selectDatepickerDate.getMonth();  // 월 (today.getMonth()는 0~11로 출력)
-                    date = selectDatepickerDate.getDate();  // 날짜
-                    day = selectDatepickerDate.getDay();  // 요일 (0~6으로 출력, 0:일요일, 1:월요일, 6:토요일)
-                    crteTodayShow(year, month, date, day);
-                }
-	        });
-
 
             /*********************************************************************
             *   btn_monthpicker Btn Click Event - 월달력호출
@@ -483,112 +76,97 @@
             *********************************************************************/
             $('#monthpickerData').monthpicker().bind('monthpicker-click-month', function (e, month) {
 
-                    var tempMonthpickerData = $('#monthpickerData').val().split('-');
-                    var selectMonthpickerData = new Date(tempMonthpickerData[0], Number(tempMonthpickerData[1])-1, 1);
+                var tempMonthpickerData = $('#monthpickerData').val().split('-');
+                var selectMonthpickerData = new Date(tempMonthpickerData[0], Number(tempMonthpickerData[1])-1, 1);
 
-                    $('#txt_mmYy').text(selectMonthpickerData.getFullYear()); //그리드 월tab 년도 값 입력
-                    $('#txt_mmMm').text(selectMonthpickerData.getMonth() + 1); //그리드 월tab 월 값 입력
-<!--                    setMonthGridData();-->
+                $('#txt_mmYy').text(selectMonthpickerData.getFullYear()); //그리드 월tab 년도 값 입력
+                $('#txt_mmMm').text(selectMonthpickerData.getMonth() + 1); //그리드 월tab 월 값 입력
             });
+        });
+
+        $("#searchBtn").click(function(){
 
             /*********************************************************************
-            *   Week Btn Click Event - 주 버튼 클릭
+            *   Session Email 값 기준 근무 결재요청 리스트 조회
             *********************************************************************/
-            $('#btn_showWeek').click(function(){
+            var setMDt = $('#txt_mmYy').text() + "-" + $('#txt_mmMm').text()
 
-                console.log("Week Btn Click Event");
-                document.getElementById("btn_showWeek").style.backgroundColor = "#81DAF5";
-                document.getElementById("btn_showWeek").style.color = "white";
-                document.getElementById("btn_showMonth").style.backgroundColor = "white";
-                document.getElementById("btn_showMonth").style.color = "#81DAF5";
+            var param = {
+                "dept" : $("#sbx_dept").val(),
+                "email" : $("#ipt_searchNamePop").val(),
+                "wrkDivs" : $("#sbx_wrkKind").val(),
+                "apvlStus" : $("#sbx_apvlStatus").val(),
+                "wrkDt" : setMDt
+            }
 
+            var url = "{% url 'dili_api:getScheduleStatLst' %}";
+            submissionCallMap(param,'GET',url,scheduleStatLst);
+        });
 
-                $('#grp_showWeek').show('');
-                $('#grp_showMonth').hide();
-            });
+        function scheduleStatLst(data) {
 
-            /*********************************************************************
-            *   Month Btn Click Event - 월 버튼 클릭
-            *********************************************************************/
-            $('#btn_showMonth').click(function(){
+            var scheduleStatLstTable = '<table class="table table-bordered table-responsive-md text-center">';
+            scheduleStatLstTable += '<thead>';
+            scheduleStatLstTable += '<tr>';
+            scheduleStatLstTable += '<th class="text-center">순번</th>';
+            scheduleStatLstTable += '<th class="text-center">일자</th>';
+            scheduleStatLstTable += '<th class="text-center">부서</th>';
+            scheduleStatLstTable += '<th class="text-center">성명</th>';
+            scheduleStatLstTable += '<th class="text-center">근무구분</th>';
+            scheduleStatLstTable += '<th class="text-center">근무시간</th>';
+            scheduleStatLstTable += '<th class="text-center">승인상태</th>';
+            scheduleStatLstTable += '</tr>';
+            scheduleStatLstTable += '</thead>';
+            scheduleStatLstTable += '<tbody>';
 
-                console.log("Month Btn Click Event");
-                document.getElementById("btn_showMonth").style.backgroundColor = "#81DAF5";
-                document.getElementById("btn_showMonth").style.color = "white";
-                document.getElementById("btn_showWeek").style.backgroundColor = "white";
-                document.getElementById("btn_showWeek").style.color = "#81DAF5";
+            if(data.length > 0) {
+                for(var i = 0; i < data.length; i++){
+                    scheduleStatLstTable += '<tr>';
+                    scheduleStatLstTable += '<td id="no'+i+'" class="pt-3-half">'+(i+1)+'</td>';
+                    scheduleStatLstTable += '<td id="wrkDt" class="pt-3-half">'+data[i].WRK_DT+'</td>';
+                    scheduleStatLstTable += '<td id="deptNm" class="pt-3-half">'+data[i].DEPT_NAME+'</td>';
+                    scheduleStatLstTable += '<td id="ocemName" class="pt-3-half">'+data[i].OCEM_NAME+'</td>';
+                    scheduleStatLstTable += '<td id="wrkDivs" class="pt-3-half">'+data[i].WRK_DIVS+'</td>';
+                    scheduleStatLstTable += '<td id="wrkTm" class="pt-3-half">'+data[i].WRK_TM+'</td>';
+                    scheduleStatLstTable += '<td id="apvlStus" class="pt-3-half">'+data[i].APVL_STUS+'</td>';
+                    scheduleStatLstTable += '</tr>';
+                }
+            }
+            scheduleStatLstTable += '</tbody>';
 
-                $('#grp_showWeek').hide();
-                $('#grp_showMonth').show('');
-            });
+            document.getElementById('grid_stat').innerHTML = scheduleStatLstTable;
+        }
+
+        /*********************************************************************
+        *   mmGridDtDfr Btn Click Event - 월 그리드 날짜 이전 버튼 클릭
+        *********************************************************************/
+        $('#btn_mmGridDtDfr').click(function(){
+
+            var txt_mmYyDfr = $('#txt_mmYy').text();
+            var txt_mmMmDfr = $('#txt_mmMm').text()-2;
+            var showMmGridDtDfr = new Date(txt_mmYyDfr, txt_mmMmDfr, 1); //날짜 이전 값 등록
+
+            $('#txt_mmYy').text(showMmGridDtDfr.getFullYear()); //그리드 월tab 년도 이전 값 입력
+            $('#txt_mmMm').text(showMmGridDtDfr.getMonth() + 1); //그리드 월tab 월 이전 값 입력
 
         });
 
         /*********************************************************************
-        *   Grid UI(주) 날짜 세팅
+        *   mmGridDtNxt Btn Click Event - 월 그리드 날짜 이후 버튼 클릭
         *********************************************************************/
-        function crteTodayShow(year, month, date, day){
-            var strtDate = null;
-            var endDate = null;
+        $('#btn_mmGridDtNxt').click(function(){
 
-            //주tab 시작일, 종료일 입력 날짜 계산
-            for(var i = 0; i < 7; i++ ){
+            var txt_mmYyDfr = $('#txt_mmYy').text();
+            var txt_mmMmDfr = $('#txt_mmMm').text();
+            var showMmGridDtDfr = new Date(txt_mmYyDfr, txt_mmMmDfr, 1); //날짜 이후 값 등록
 
-                if(day == i){
+            $('#txt_mmYy').text(showMmGridDtDfr.getFullYear()); //그리드 월tab 년도 이후 값 입력
+            $('#txt_mmMm').text(showMmGridDtDfr.getMonth() + 1); //그리드 월tab 월 이후 값 입력
 
-                    strtDate = new Date(year, Number(month), Number(date) - i);
-                    endDate = new Date(year, Number(month), Number(date) + 6 - i);
-                }
-            }
-
-            $('#txt_weekStrtYy').text(strtDate.getFullYear()); //그리드 주tab 시작년도 입력
-            $('#txt_weekStrtMm').text(strtDate.getMonth() + 1); //그리드 주tab 시작월 입력
-            $('#txt_weekStrtDd').text(strtDate.getDate()); //그리드 주tab 시작일 입력
-
-            $('#txt_weekEndYy').text(endDate.getFullYear()); //그리드 주tab 종료년도 입력
-            $('#txt_weekEndMm').text(endDate.getMonth() + 1); //그리드 주tab 종료월 입력
-            $('#txt_weekEndDd').text(endDate.getDate()); //그리드 주tab 종료일 입력
-
-            tempStrtDt = setWeek(strtDate).baseDate;
-            tempEndDt = setWeek(endDate).baseDate;
-<!--            setWeekGridData(tempStrtDt, tempEndDt);-->
-
-        }
+        });
 
 
-        function onclickEvt(trId) {
-            var param = {
-                "email" : $("#apvlEmpEmailHidden").text(),                   // 추후 Session Value 연동.
-                "wrkDt" : $(trId).children().eq(2).text().substring(0,10)
-            }
 
-            $.ajaxCall( param, {
-                 'method' : 'GET',
-                 'url' : "{% url 'dili_api:getApvlReqHistDetl' %}",
-                 'dataType' : 'json',
-                 'data' : JSON.stringify(param),
-                 'async' : false,
-                 'callbackFn' : function(data){
-
-                    // 리턴
-                    setApvlReqHistDetl(data);
-                 }
-            });
-        }
-
-        function setApvlReqHistDetl(data) {
-            if(data == undefined || data == null || data.length == 0) {
-                $("#thAprvNm1").text("");
-                $("#thAprvNm2").text("");
-                $("#thAprvStus1").text("");
-                $("#thAprvStus2").text("");
-            } else {
-                $("#thAprvNm1").text(data[0].TH1_APRV_NM);
-                $("#thAprvNm2").text(data[0].TH2_APRV_NM);
-                $("#thAprvStus1").text(data[0].TH1_APRV_STUS_NM);
-                $("#thAprvStus2").text(data[0].TH2_APRV_STUS_NM);
-            }
-        }
 
     </script>
 
@@ -634,15 +212,16 @@
 
                         <div id="col_search" class="collapse show" aria-labelledby="head_search" data-parent="#grp_search">
                             <div class="card-body flex-height d-flex m-0 p-2">
-
                                 <div class="align-self-start align-self-center mr-3">부서</div>
                                 <div class="align-self-center mr-5">
                                     <select id="sbx_dept" class="form-control" name="type">
-                                        <option value = "">전체</option>
                                     </select>
                                 </div>
-
-                                <div class="align-self-start align-self-center mr-3">근무종류</div>
+                                <div class="align-self-start align-self-center mr-3">성명</div>
+                                <div class="align-self-center mr-5">
+                                    <input type="text" class="form-control" id="ipt_searchNamePop" name="ipt_searchNamePop" placeholder="이름을 입력해주세요." maxlength="10"/>
+                                </div>
+                                <div class="align-self-start align-self-center mr-3">근무구분</div>
                                 <div class="align-self-center mr-5">
                                     <select id="sbx_wrkKind" class="form-control" name="type">
                                         <option value = "00" selected>전체근무</option>
@@ -651,7 +230,6 @@
                                         <option value = "03">휴가</option>
                                     </select>
                                 </div>
-
                                 <div class="align-self-start align-self-center mr-3">결재상태</div>
                                 <div class="align-self-center mr-5">
                                     <select id="sbx_apvlStatus" class="form-control" name="type">
@@ -663,114 +241,38 @@
                                 </div>
 
                                 <div class="align-self-end align-self-center">
-                                    <button class="btn btn-primary" id="searchBtn">조회</button>
+                                    <button class="button" id="searchBtn">조회</button>
                                 </div>
                             </div>
-
-                            <div class="card-body flex-height d-flex m-0 p-2">
-                                <div class="align-self-start align-self-center mr-3">성명</div>
-                                <div class="align-self-center mr-3">
-                                    <input type="text" class="form-control" id="ipt_searchNamePop" name="ipt_searchNamePop" placeholder="이름을 입력해주세요." maxlength="10"/>
-                                </div>
-
-                                <div class="align-self-start align-self-center mr-3">날짜</div>
-
-<!--                                d-flex flex-row-reverse mr-2 grid-btnAction-->
-                                <div class="align-self-center mr-3 grid-btnAction">
-                                    <button type="button" class="btn grid-btnAction" id="btn_showMonth" style="background-color: white; width : 35px; height : 30px; font-size : 12px; color : #81DAF5; font-weight:bold;">월</button>
-                                    <button type="button" class="btn grid-btnAction" id="btn_showWeek" style="background-color: #81DAF5; width : 35px; height : 30px; font-size : 12px; color : white; font-weight:bold;">주</button>
-                                </div>
-
-                                <div id="grp_grid">
-                                    <div class="align-self-center">
-                                        <div class="d-flex justify-content-center" style="height:0; visibility:hidden;">
-                                            <input type="text" name="date" id="monthpickerData" />
-                                        </div>
-                                        <!-- 3-1. 사원 Schedule Grid 영역 주단위 -->
-                                        <div id="grp_showWeek">
-                                            <div class="d-flex justify-content-center">
-
-                                                <div>
-                                                    <img id="btn_weekGridDtDfr" width="20px" height="20px"  src="{% static 'image/arrow_left.png' %}" align="center">
-                                                </div>
-                                                <input type="hidden" name="date" id="datepickerData"/>
-                                                <div id="btn_datepicker" style="margin-right: 10px;margin-left: 10px;">
-                                                    <h5>
-                                                        <span id="txt_weekStrtYy"></span>
-                                                        <span>.</span>
-                                                        <span id="txt_weekStrtMm"></span>
-                                                        <span>.</span>
-                                                        <span id="txt_weekStrtDd"></span>
-                                                        <span> - </span>
-                                                        <span id="txt_weekEndYy"></span>
-                                                        <span>.</span>
-                                                        <span id="txt_weekEndMm"></span>
-                                                        <span>.</span>
-                                                        <span id="txt_weekEndDd"></span>
-                                                    </h5>
-                                                </div>
-                                                <div>
-                                                    <img id="btn_weekGridDtNxt" width="20px" height="20px"  src="{% static 'image/arrow_right.png' %}" align="center">
-                                                </div>
-                                            </div>
-
-                                            <!--week table 영역 -->
-                                            <div id="grid_week"></div>
-                                        </div>
-                                        <!-- 3-2. 사원 Schedule Grid 영역 월단위 -->
-                                        <div id="grp_showMonth">
-
-                                            <div class="d-flex justify-content-center">
-                                                <div>
-                                                    <img id="btn_mmGridDtDfr" width="20px" height="20px"  src="{% static 'image/arrow_left.png' %}" align="center">
-                                                </div>
-                                                <div id="btn_monthpicker" style="margin-right: 10px;margin-left: 10px;">
-                                                    <h5>
-                                                        <span id="txt_mmYy"></span>
-                                                        <span>.</span>
-                                                        <span id="txt_mmMm"></span>
-                                                    </h5>
-                                                </div>
-                                                <div>
-                                                    <img id="btn_mmGridDtNxt" width="20px" height="20px"  src="{% static 'image/arrow_right.png' %}" align="center">
-                                                </div>
-                                            </div>
-                                            <!--week table 영역 -->
-                                            <div id="month_week"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-
-
                         </div>
-
                     </div>
                 </div>
 
-                <div class="accordion mb-4" id="grp_apvlReqHist">
-                    <div class="card">
-                        <div class="card-header p-0" id="head_wrkApvlReq">
-                            <h2 class="mb-0">
-                                <button class="btn btn-link btn-block text-left text-dark" type="button" data-toggle="collapse" data-target="#col_apvlReqHist" aria-expanded="true" aria-controls="collapseOne">
-                                    <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-caret-down-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z"/>
-                                    </svg>
-                                    스케줄현황
-                                </button>
-                            </h2>
+                <div id="grp_grid">
+                    <div class="p-0">
+                        <div class="d-flex justify-content-center" style="height:0; visibility:hidden;">
+                            <input type="text" name="date" id="monthpickerData" />
                         </div>
-
-                        <div id="col_apvlReqHist" class="collapse show" aria-labelledby="head_wrkApvlReq" data-parent="#grp_apvlReqHist">
-                            <div style="position: relative;" id="grid-parent">
-                                <div id="grd_apvlReqHist"></div>
+                        <!-- 3-1. 사원 Schedule Grid 영역 주단위 -->
+                        <div id="grp_showWeek">
+                            <div class="d-flex justify-content-center mb-5">
+                                <div>
+                                    <img id="btn_mmGridDtDfr" width="20px" height="20px"  src="{% static 'image/arrow_left.png' %}" align="center">
+                                </div>
+                                <div id="btn_monthpicker" style="margin-right: 10px;margin-left: 10px;">
+                                    <h5>
+                                        <span id="txt_mmYy"></span>
+                                        <span>.</span>
+                                        <span id="txt_mmMm"></span>
+                                    </h5>
+                                </div>
+                                <div>
+                                    <img id="btn_mmGridDtNxt" width="20px" height="20px"  src="{% static 'image/arrow_right.png' %}" align="center">
+                                </div>
                             </div>
 
-                            <div style="position: relative;" id="grid-parent2">
-                                <div id="grd_apvlReqHistDetl">
-
-                                </div>
+                            <!--현황 table 영역 -->
+                            <div id="grid_stat">
                             </div>
                         </div>
                     </div>
