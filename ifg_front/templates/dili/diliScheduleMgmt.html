@@ -174,6 +174,10 @@
                 $('#grp_calendar').show('');
                 $('.grid-btnAction').css("display","none");
                 $('.calendar-btnAction').css("display","");
+                calendar.clear();
+                calendar.today();
+                getCalendarSessionDate();
+                setLabel(calendar);
             });
             /*********************************************************************
             *   Week Btn Click Event - 주 버튼 클릭
@@ -470,7 +474,7 @@
         *********************************************************************/
         function crteWeekGrid(schdData){
 
-            var weekTable = '<table class="table table-bordered table-responsive-md table-striped text-center">';
+            var weekTable = '<table class="table table-bordered text-center">';
             weekTable += '<thead>';
             weekTable += '<tr>';
             weekTable += '<th class="text-center">일자</th>';
@@ -573,7 +577,7 @@
         *********************************************************************/
         function crteMonthGrid(schdData){
 
-            var monthTable = '<table class="table table-bordered table-responsive-md table-striped text-center">';
+            var monthTable = '<table class="table table-bordered text-center">';
             monthTable += '<thead>';
             monthTable += '<tr>';
             monthTable += '<th class="text-center">일자</th>';
@@ -986,6 +990,7 @@
                 crteTodayShow(srhClickYear, srhClickMonth, srhClickDate, srhClickDay);
 
                 $('#btn_showGrd').trigger('click');
+                $('#btn_showWeek').trigger('click');
 
             });
 
@@ -1033,6 +1038,7 @@
                 var srhClickDay = srhClickData.getDay();  // 요일 (0~6으로 출력, 0:일요일, 1:월요일, 6:토요일)
                 crteTodayShow(srhClickYear, srhClickMonth, srhClickDate, srhClickDay);
                 $('#btn_showGrd').trigger('click');
+                $('#btn_showWeek').trigger('click');
             });
 
             setLabel(calendar);
