@@ -452,8 +452,13 @@
             } else {
                 email = $('#empEmailHidden').val();
             }
-
-            var setMDt = $('#txt_mmYy').text() + "-" + $('#txt_mmMm').text()
+            var monthChk;
+            if($('#txt_mmMm').text().length == 1){
+                monthChk = "0"+$('#txt_mmMm').text()
+            } else {
+                monthChk = $('#txt_mmMm').text()
+            }
+            var setMDt = $('#txt_mmYy').text() + "-" + monthChk
             var gridParam = {
                 "email"     : email,
                 "mDt" : setMDt
