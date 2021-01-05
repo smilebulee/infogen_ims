@@ -1452,13 +1452,13 @@ class scheduleStatLst(Resource):
                 if data["email"] != "":
                       sql += "    AND A.EMP_EMAL_ADDR = '" + data["email"] + "'" \
 
-                if data["apvlStus"] != "":
+                if data["apvlStus"] != "" and data["apvlStus"] != "00":
                       sql += "    AND B.TH1_APRV_STUS = '" + data["apvlStus"] + "'" \
 
-                if data["wrkDivs"] != "":
+                if data["wrkDivs"] != "" and data["wrkDivs"] != "00":
                       sql += "    AND B.APVL_REQ_DIVS = '" + data["wrkDivs"] + "'" \
 
-                if data["dept"] != "":
+                if data["dept"] != "" and data["dept"] != "00":
                       sql += "    AND A.EMP_EMAL_ADDR IN (SELECT H.EMP_EMAIL" \
                              "                              FROM TB_EMP_MGMT H" \
                              "                             WHERE H.DEPT_CD = '" + data["dept"] + "')" \
@@ -1496,13 +1496,13 @@ class scheduleStatLst(Resource):
                 if data["email"] != "":
                       sql += "    AND B.EMP_EMAL_ADDR = '" + data["email"] + "'" \
 
-                if data["apvlStus"] != "":
+                if data["apvlStus"] != "" and data["apvlStus"] != "00":
                       sql += "    AND B.TH1_APRV_STUS = '" + data["apvlStus"] + "'" \
 
-                if data["wrkDivs"] != "":
+                if data["wrkDivs"] != "" and data["wrkDivs"] != "00":
                       sql += "    AND B.APVL_REQ_DIVS = '" + data["wrkDivs"] + "'" \
                 
-                if data["dept"] != "":
+                if data["dept"] != "" and data["dept"] != "00":
                       sql += "    AND A.EMP_EMAL_ADDR IN (SELECT H.EMP_EMAIL" \
                              "                              FROM TB_EMP_MGMT H" \
                              "                             WHERE H.DEPT_CD = '" + data["dept"] + "')"
