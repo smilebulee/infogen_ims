@@ -1443,6 +1443,12 @@ class scheduleStatLst(Resource):
                       "   				      AND F.CMM_CD = B.APVL_REQ_DIVS), '정상근무')" \
                       "          FROM DUAL) WRK_DIVS" \
                       "		 ,NVL(B.TH1_APRV_STUS,' ') APVL_STUS" \
+                      "		 ,CASE WHEN NVL(B.APVL_REQ_DIVS, '') = '' THEN NVL(A.JOB_STRT_TM, '')" \
+                      "		       WHEN B.APVL_REQ_DIVS = '01' OR B.APVL_REQ_DIVS = '02'" \
+                      "		       THEN NVL(B.JOB_STRT_TM, '') ELSE '' END WRK_STRT_TM" \
+                      "		 ,CASE WHEN NVL(B.APVL_REQ_DIVS, '') = '' THEN NVL(A.JOB_END_TM, '')" \
+                      "		       WHEN B.APVL_REQ_DIVS = '01' OR B.APVL_REQ_DIVS = '02'" \
+                      "		       THEN NVL(B.JOB_END_TM, '') ELSE '' END WRK_END_TM" \
                       "  FROM TB_WRK_TM_MGMT_M A" \
                       "  LEFT OUTER JOIN" \
                       "       TB_APVL_REQ_MGMT_M B" \
@@ -1487,6 +1493,12 @@ class scheduleStatLst(Resource):
                       "   				      AND F.CMM_CD = B.APVL_REQ_DIVS), '정상근무')" \
                       "          FROM DUAL) WRK_DIVS" \
                       "		 ,NVL(B.TH1_APRV_STUS,' ') APVL_STUS" \
+                      "		 ,CASE WHEN NVL(B.APVL_REQ_DIVS, '') = '' THEN NVL(A.JOB_STRT_TM, '')" \
+                      "		       WHEN B.APVL_REQ_DIVS = '01' OR B.APVL_REQ_DIVS = '02'" \
+                      "		       THEN NVL(B.JOB_STRT_TM, '') ELSE '' END WRK_STRT_TM" \
+                      "		 ,CASE WHEN NVL(B.APVL_REQ_DIVS, '') = '' THEN NVL(A.JOB_END_TM, '')" \
+                      "		       WHEN B.APVL_REQ_DIVS = '01' OR B.APVL_REQ_DIVS = '02'" \
+                      "		       THEN NVL(B.JOB_END_TM, '') ELSE '' END WRK_END_TM" \
                       "   FROM TB_WRK_TM_MGMT_M A" \
                       "  RIGHT OUTER JOIN" \
                       "        TB_APVL_REQ_MGMT_M B" \

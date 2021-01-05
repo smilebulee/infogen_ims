@@ -127,7 +127,9 @@
                     scheduleStatLstTable += '<td id="deptNm" class="pt-3-half">'+data[i].DEPT_NAME+'</td>';
                     scheduleStatLstTable += '<td id="ocemName" class="pt-3-half">'+data[i].OCEM_NAME+'</td>';
                     scheduleStatLstTable += '<td id="wrkDivs" class="pt-3-half">'+data[i].WRK_DIVS+'</td>';
-                    scheduleStatLstTable += '<td id="wrkTm" class="pt-3-half">'+data[i].WRK_TM+'</td>';
+
+                    var wrkTm = data[i].WRK_STRT_TM + " ~ " + data[i].WRK_END_TM;
+                    scheduleStatLstTable += '<td id="wrkTm" class="pt-3-half">'+wrkTm+'</td>';
                     scheduleStatLstTable += '<td id="apvlStus" class="pt-3-half">'+data[i].APVL_STUS+'</td>';
                     scheduleStatLstTable += '</tr>';
                 }
