@@ -193,6 +193,8 @@
 
                 $('#grp_showWeek').show('');
                 $('#grp_showMonth').hide();
+                $('#monthBoody').children().css("background-color","");
+
             });
 
             /*********************************************************************
@@ -208,6 +210,7 @@
 
                 $('#grp_showWeek').hide();
                 $('#grp_showMonth').show('');
+                $('#weekBoody').children().css("background-color","");
             });
 
             /*********************************************************************
@@ -485,7 +488,7 @@
             weekTable += '<th class="text-center">결재상태</th>';
             weekTable += '</tr>';
             weekTable += '</thead>';
-            weekTable += '<tbody>';
+            weekTable += '<tbody id="weekBoody">';
 
             var weekGridStrtYy = $('#txt_weekStrtYy').text(); //현재 시작 년도
             var weekGridStrtMm = $('#txt_weekStrtMm').text()-1; //현재 시작 월
@@ -547,7 +550,7 @@
                         }
                     }
                 }
-                weekTable += '<tr id ="grd_week'+tempSetWeek+'" onclick="onclickWeekEvt(this)"  ondblclick="ondblClickEvt(this)">';
+                weekTable += '<tr id ="grd_week'+tempSetWeek+'" onclick="onclickWeekEvt(this)">';
                 weekTable += '<td class="pt-3-half" contenteditable="false">'+tdDate+'</td>';
                 weekTable += '<td class="pt-3-half" contenteditable="false">'+jobStrtTm+'</td>';
                 weekTable += '<td class="pt-3-half" contenteditable="false">'+jobEndTm+'</td>';
@@ -588,7 +591,7 @@
             monthTable += '<th class="text-center">결재상태</th>';
             monthTable += '</tr>';
             monthTable += '</thead>';
-            monthTable += '<tbody>';
+            monthTable += '<tbody id="monthBoody">';
 
             var monthGridStrtYy = $('#txt_mmYy').text(); //현재 시작 년도
             var monthGridStrtMm = $('#txt_mmMm').text()-1; //현재 시작 월
@@ -656,7 +659,7 @@
                 }
 
 
-                monthTable += '<tr id ="grd_month'+tempSetMonth+'" onclick="onclickMonthEvt(this)" ondblclick="ondblClickMonthEvt(this)">';
+                monthTable += '<tr id ="grd_month'+tempSetMonth+'" onclick="onclickMonthEvt(this)">';
                 monthTable += '<td class="pt-3-half" contenteditable="false">'+mTdDate+'</td>';
                 monthTable += '<td class="pt-3-half" contenteditable="false">'+jobStrtTm+'</td>';
                 monthTable += '<td class="pt-3-half" contenteditable="false">'+jobEndTm+'</td>';
@@ -686,9 +689,38 @@
         *********************************************************************/
        function onclickWeekEvt(trId) {
             var wClickDt = trId.id.replace('grd_week','');
-
             weekDate = setWeek(wClickDt);                                   // 선택된 일이 포함된 주의 Start,End Date 조회
             getWrkTimeByIml(null, weekDate.strtDate, weekDate.endDate);     // Session Email 을 기준으로 시작~종료일에 대한 근무시간 조회.
+            $('#'+trId.id).prevAll().css("background-color","");
+            $('#'+trId.id).nextAll().css("background-color","");
+            $('#'+trId.id).css("background-color","#8A8C8F");
+            if($('#clickDate').val() == wClickDt){
+                modal('my_modal');
+                $('#my_modal2').load("{% url 'dili_api:scheduleMgmtPop' %}");
+
+                $('#tmpPopDt').text(trId.id.replace('grd_week',''));
+                $('#tmpPopStrtTm').text($('#'+trId.id).children().eq(1).text());
+                $('#tmpPopEndTm').text($('#'+trId.id).children().eq(2).text());
+                var detlSchd = $('#'+trId.id).children().eq(4).text();
+                var normWrkTm = "-";
+                var overWrkTm = "-";
+                var holi = "-";
+                if(detlSchd != "휴가"){
+
+                    normWrkTm = detlSchd.split('/')[0].replace('정상근무 : ','').trim();
+                    overWrkTm = detlSchd.split('/')[1].replace('초과근무 : ','').trim();
+                }else {
+
+                    holi = detlSchd;
+                }
+                $('#tmpNormWrkTm').text(normWrkTm);
+                $('#tmpOverWrkTm').text(overWrkTm);
+                $('#tmpHoli').text(holi);
+                $('#tmpPopAllTm').text($('#'+trId.id).children().eq(3).text());
+                $('#tmpPopApvlStus').text($('#'+trId.id).children().eq(5).text());
+            }
+            $('#clickDate').val(wClickDt);
+
 
        }
 
@@ -701,65 +733,36 @@
             weekDate = setWeek(mClickDt);                                   // 선택된 일이 포함된 주의 Start,End Date 조회
             getWrkTimeByIml(null, weekDate.strtDate, weekDate.endDate);     // Session Email 을 기준으로 시작~종료일에 대한 근무시간 조회.
 
-       }
+            $('#'+trId.id).prevAll().css("background-color","");
+            $('#'+trId.id).nextAll().css("background-color","");
+            $('#'+trId.id).css("background-color","#8A8C8F");
+            if($('#clickDate').val() == mClickDt){
+                modal('my_modal');
+                $('#my_modal2').load("{% url 'dili_api:scheduleMgmtPop' %}");
 
-       /*********************************************************************
-        *   주 그리드 더블클릭 이벤트
-        *********************************************************************/
-       function ondblClickEvt(trId) {
+                $('#tmpPopDt').text(trId.id.replace('grd_month',''));
+                $('#tmpPopStrtTm').text($('#'+trId.id).children().eq(1).text());
+                $('#tmpPopEndTm').text($('#'+trId.id).children().eq(2).text());
+                var detlSchd = $('#'+trId.id).children().eq(4).text();
+                var normWrkTm = "-";
+                var overWrkTm = "-";
+                var holi = "-";
+                if(detlSchd != "휴가"){
 
-            modal('my_modal');
-            $('#my_modal2').load("{% url 'dili_api:scheduleMgmtPop' %}");
+                    normWrkTm = detlSchd.split('/')[0].replace('정상근무 : ','').trim();
+                    overWrkTm = detlSchd.split('/')[1].replace('초과근무 : ','').trim();
+                }else {
 
-            $('#tmpPopDt').text(trId.id.replace('grd_week',''));
-            $('#tmpPopStrtTm').text($('#'+trId.id).children().eq(1).text());
-            $('#tmpPopEndTm').text($('#'+trId.id).children().eq(2).text());
-            var detlSchd = $('#'+trId.id).children().eq(4).text();
-            var normWrkTm = "-";
-            var overWrkTm = "-";
-            var holi = "-";
-            if(detlSchd != "휴가"){
-
-                normWrkTm = detlSchd.split('/')[0].replace('정상근무 : ','').trim();
-                overWrkTm = detlSchd.split('/')[1].replace('초과근무 : ','').trim();
-            }else {
-
-                holi = detlSchd;
+                    holi = detlSchd;
+                }
+                $('#tmpNormWrkTm').text(normWrkTm);
+                $('#tmpOverWrkTm').text(overWrkTm);
+                $('#tmpHoli').text(holi);
+                $('#tmpPopAllTm').text($('#'+trId.id).children().eq(3).text());
+                $('#tmpPopApvlStus').text($('#'+trId.id).children().eq(5).text());
             }
-            $('#tmpNormWrkTm').text(normWrkTm);
-            $('#tmpOverWrkTm').text(overWrkTm);
-            $('#tmpHoli').text(holi);
-            $('#tmpPopAllTm').text($('#'+trId.id).children().eq(3).text());
-            $('#tmpPopApvlStus').text($('#'+trId.id).children().eq(5).text());
-       }
-       /*********************************************************************
-        *   월 그리드 더블클릭 이벤트
-        *********************************************************************/
-       function ondblClickMonthEvt(trId) {
+            $('#clickDate').val(mClickDt);
 
-            modal('my_modal');
-            $('#my_modal2').load("{% url 'dili_api:scheduleMgmtPop' %}");
-
-            $('#tmpPopDt').text(trId.id.replace('grd_month',''));
-            $('#tmpPopStrtTm').text($('#'+trId.id).children().eq(1).text());
-            $('#tmpPopEndTm').text($('#'+trId.id).children().eq(2).text());
-            var detlSchd = $('#'+trId.id).children().eq(4).text();
-            var normWrkTm = "-";
-            var overWrkTm = "-";
-            var holi = "-";
-            if(detlSchd != "휴가"){
-
-                normWrkTm = detlSchd.split('/')[0].replace('정상근무 : ','').trim();
-                overWrkTm = detlSchd.split('/')[1].replace('초과근무 : ','').trim();
-            }else {
-
-                holi = detlSchd;
-            }
-            $('#tmpNormWrkTm').text(normWrkTm);
-            $('#tmpOverWrkTm').text(overWrkTm);
-            $('#tmpHoli').text(holi);
-            $('#tmpPopAllTm').text($('#'+trId.id).children().eq(3).text());
-            $('#tmpPopApvlStus').text($('#'+trId.id).children().eq(5).text());
        }
 
         /*********************************************************************
@@ -1187,7 +1190,7 @@
 
 
     </script>
-
+        <input type="hidden" id="clickDate"/>
         <!--근무시간관리상세 모달 영역 -->
         <div id="my_modal" class="modalUi">
             <div id="my_modal2">
