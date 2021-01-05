@@ -103,6 +103,10 @@
                             sessionStorage.setItem("authId",loginInfo.authId);
                         }
 
+                        if (loginInfo.deptCd != null && loginInfo.deptCd != "") {
+                            sessionStorage.setItem("deptCd",loginInfo.deptCd);
+                        }
+
                         reData = {'next': $form.serializeObject().next}
                         window.location.href = $form.serializeObject().next;
                     }

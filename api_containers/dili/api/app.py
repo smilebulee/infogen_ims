@@ -1375,6 +1375,151 @@ class yryUseDays(Resource): # Mariadb 연결 진행
         array = list(result2)  # 결과를 리스트로
 
         return json.dumps(result2, indent=4, cls=DateTimeEncoder)
+    
+#공통 코드 조회
+class retrieveCmmCd(Resource):
+    def get(self):
+        logging.debug('retrieveCmmCd Start')
+
+        # get data
+        data = request.get_json()
+
+        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
+                                    charset='utf8')
+
+        try:
+            with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+                sql = "SELECT " \
+                      "CMM_CD, CMM_CD_NAME " \
+                      "FROM TB_CMM_CD_DETL A " \
+                      "WHERE CMM_CD_GRP_ID = '" + data["grp_id"] + "'"
+                cursor.execute(sql)
+                logging.debug('retrieveCmmCd SUCCESS')
+        finally:
+            mysql_con.close()
+
+        result2 = cursor.fetchall()
+        for row in result2:
+            logging.debug('====== row====')
+            logging.debug(row)
+            logging.debug('===============')
+        array = list(result2)  # 결과를 리스트로
+
+        return json.dumps(result2, indent=4, cls=DateTimeEncoder)
+
+class scheduleStatLst(Resource):
+    def get(self):
+
+        logging.debug('scheduleStatLst Start')
+
+        # get data
+        data = request.get_json()
+
+        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
+                                    charset='utf8')
+
+        try:
+            with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+                sql = "SELECT CASE WHEN NVL(B.EMP_EMAL_ADDR, '') = '' THEN A.EMP_EMAL_ADDR" \
+                      "            WHEN NVL(A.EMP_EMAL_ADDR, '') = '' THEN B.EMP_EMAL_ADDR" \
+                      "                                               ELSE A.EMP_EMAL_ADDR" \
+                      "                                                END EMP_EMAL_ADDR" \
+                      "      ,CASE WHEN NVL(B.WRK_DT, '') = '' THEN A.WRK_DT" \
+                      "            WHEN NVL(A.WRK_DT, '') = '' THEN B.WRK_DT" \
+                      "                                        ELSE A.WRK_DT" \
+                      "                                         END WRK_DT" \
+                      "      ,(SELECT D.CMM_CD_NAME" \
+                      "		     FROM TB_CMM_CD_DETL D" \
+                      "		         ,TB_EMP_MGMT E" \
+                      "			WHERE D.CMM_CD_GRP_ID = 'SLIN_BZDP'" \
+                      "			  AND D.CMM_CD = E.DEPT_CD" \
+                      "			  AND E.EMP_EMAIL = NVL(A.EMP_EMAL_ADDR, B.EMP_EMAL_ADDR)) DEPT_NAME" \
+                      "	     ,(SELECT C.EMP_NAME " \
+                      "	         FROM TB_EMP_MGMT C" \
+                      "	        WHERE C.EMP_EMAIL = NVL(A.EMP_EMAL_ADDR, B.EMP_EMAL_ADDR)) OCEM_NAME" \
+                      "      ,(SELECT NVL((SELECT F.CMM_CD_NAME" \
+                      "				         FROM TB_CMM_CD_DETL F" \
+                      "				        WHERE F.CMM_CD_GRP_ID = 'APVL_REQ_DIVS_CD'" \
+                      "   				      AND F.CMM_CD = B.APVL_REQ_DIVS), '정상근무')" \
+                      "          FROM DUAL) WRK_DIVS" \
+                      "		 ,NVL(B.TH1_APRV_STUS,' ') APVL_STUS" \
+                      "  FROM TB_WRK_TM_MGMT_M A" \
+                      "  LEFT OUTER JOIN" \
+                      "       TB_APVL_REQ_MGMT_M B" \
+                      "    ON A.EMP_EMAL_ADDR = B.EMP_EMAL_ADDR" \
+                      "   AND A.WRK_DT = B.WRK_DT" \
+                      " WHERE SUBSTRING(A.WRK_DT, 1, 7) = '" + data["wrkDt"] + "'"
+                if data["email"] != "":
+                      sql += "    AND A.EMP_EMAL_ADDR = '" + data["email"] + "'" \
+
+                if data["apvlStus"] != "":
+                      sql += "    AND B.TH1_APRV_STUS = '" + data["apvlStus"] + "'" \
+
+                if data["wrkDivs"] != "":
+                      sql += "    AND B.APVL_REQ_DIVS = '" + data["wrkDivs"] + "'" \
+
+                if data["dept"] != "":
+                      sql += "    AND A.EMP_EMAL_ADDR IN (SELECT H.EMP_EMAIL" \
+                             "                              FROM TB_EMP_MGMT H" \
+                             "                             WHERE H.DEPT_CD = '" + data["dept"] + "')" \
+
+                sql +=" UNION" \
+                      " SELECT CASE WHEN NVL(A.EMP_EMAL_ADDR, '') = '' THEN B.EMP_EMAL_ADDR" \
+                      "             WHEN NVL(B.EMP_EMAL_ADDR, '') = '' THEN A.EMP_EMAL_ADDR" \
+                      "				                                   ELSE B.EMP_EMAL_ADDR" \
+                      "													END EMP_EMAL_ADDR" \
+                      "		  ,CASE WHEN NVL(A.WRK_DT, '') = '' THEN B.WRK_DT" \
+                      "             WHEN NVL(B.WRK_DT, '') = '' THEN A.WRK_DT" \
+                      "				                            ELSE B.WRK_DT" \
+                      "							  			     END WRK_DT" \
+                      "		  ,(SELECT D.CMM_CD_NAME" \
+                      "		      FROM TB_CMM_CD_DETL D" \
+                      "		          ,TB_EMP_MGMT E" \
+                      "			 WHERE D.CMM_CD_GRP_ID = 'SLIN_BZDP'" \
+                      "			   AND D.CMM_CD = E.DEPT_CD" \
+                      "			   AND E.EMP_EMAIL = NVL(A.EMP_EMAL_ADDR, B.EMP_EMAL_ADDR)) DEPT_NAME" \
+                      "		  ,(SELECT C.EMP_NAME" \
+                      "	          FROM TB_EMP_MGMT C" \
+                      "	         WHERE C.EMP_EMAIL = NVL(A.EMP_EMAL_ADDR, B.EMP_EMAL_ADDR)) OCEM_NAME" \
+                      "      ,(SELECT NVL((SELECT F.CMM_CD_NAME" \
+                      "				         FROM TB_CMM_CD_DETL F" \
+                      "				        WHERE F.CMM_CD_GRP_ID = 'APVL_REQ_DIVS_CD'" \
+                      "   				      AND F.CMM_CD = B.APVL_REQ_DIVS), '정상근무')" \
+                      "          FROM DUAL) WRK_DIVS" \
+                      "		 ,NVL(B.TH1_APRV_STUS,' ') APVL_STUS" \
+                      "   FROM TB_WRK_TM_MGMT_M A" \
+                      "  RIGHT OUTER JOIN" \
+                      "        TB_APVL_REQ_MGMT_M B" \
+                      "     ON A.EMP_EMAL_ADDR = B.EMP_EMAL_ADDR" \
+                      "    AND A.WRK_DT = B.WRK_DT" \
+                      "  WHERE SUBSTRING(B.WRK_DT, 1, 7) = '" + data["wrkDt"] + "'"
+                if data["email"] != "":
+                      sql += "    AND B.EMP_EMAL_ADDR = '" + data["email"] + "'" \
+
+                if data["apvlStus"] != "":
+                      sql += "    AND B.TH1_APRV_STUS = '" + data["apvlStus"] + "'" \
+
+                if data["wrkDivs"] != "":
+                      sql += "    AND B.APVL_REQ_DIVS = '" + data["wrkDivs"] + "'" \
+                
+                if data["dept"] != "":
+                      sql += "    AND A.EMP_EMAL_ADDR IN (SELECT H.EMP_EMAIL" \
+                             "                              FROM TB_EMP_MGMT H" \
+                             "                             WHERE H.DEPT_CD = '" + data["dept"] + "')"
+                logging.debug(sql)
+                cursor.execute(sql)
+                logging.debug('scheduleStatLst SUCCESS')
+        finally:
+            mysql_con.close()
+
+        result2 = cursor.fetchall()
+        for row in result2:
+            logging.debug('====== row====')
+            logging.debug(row)
+            logging.debug('===============')
+        array = list(result2)  # 결과를 리스트로
+
+        return json.dumps(result2, indent=4, cls=DateTimeEncoder)
 
 api.add_resource(Hello, '/hello')
 api.add_resource(Register, '/register')
@@ -1405,5 +1550,9 @@ api.add_resource(monthGridData,'/monthGridData') #api 선언
 api.add_resource(insertStrtTm,'/insertStrtTm') #api 선언
 api.add_resource(updateEndTm,'/updateEndTm') #api 선언
 api.add_resource(yryUseDays,'/yryUseDays') #api 선언
+api.add_resource(retrieveCmmCd,'/retrieveCmmCd') #api 선언
+api.add_resource(scheduleStatLst,'/scheduleStatLst') #api 선언
+
+
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5006, debug=True)
