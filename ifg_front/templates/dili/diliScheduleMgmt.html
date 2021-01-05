@@ -8,6 +8,9 @@
             var tempStrtDt = "";
             var tempEndDt = "";
 
+            var weekBtnClickChk = 1;
+            var monthBtnClickChk = 0;
+
             //sessionStorage.setItem("email","ishwang@infogen.co.kr");                // 임시
 
             $('#grp_grid').hide();                                                  // Calendar UI를 Default로 한다.
@@ -193,7 +196,23 @@
 
                 $('#grp_showWeek').show('');
                 $('#grp_showMonth').hide();
-                $('#monthBoody').children().css("background-color","");
+
+
+                if(weekBtnClickChk == 0){
+
+                    $('#monthBoody').children().css("background-color","");
+                    var weekBtnNowDay = new Date($('#txt_mmYy').text(), Number($('#txt_mmMm').text())-1, 1);
+
+                    var weekBtnYear = weekBtnNowDay.getFullYear();
+                    var weekBtnMonth = weekBtnNowDay.getMonth();
+                    var weekBtnDate = weekBtnNowDay.getDate();
+                    var weekBtnDay = weekBtnNowDay.getDay();
+
+                    crteTodayShow(weekBtnYear, weekBtnMonth, weekBtnDate, weekBtnDay);
+                }
+
+                weekBtnClickChk = 1;
+                monthBtnClickChk = 0;
 
             });
 
@@ -210,7 +229,17 @@
 
                 $('#grp_showWeek').hide();
                 $('#grp_showMonth').show('');
-                $('#weekBoody').children().css("background-color","");
+
+                if(monthBtnClickChk == 0){
+
+                    $('#weekBoody').children().css("background-color","");
+                    $('#txt_mmYy').text($('#txt_weekStrtYy').text());
+                    $('#txt_mmMm').text($('#txt_weekStrtMm').text());
+                    setMonthGridData();
+                }
+
+                weekBtnClickChk = 0;
+                monthBtnClickChk = 1;
             });
 
             /*********************************************************************
