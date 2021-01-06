@@ -1351,17 +1351,29 @@ class updateEndTm(Resource):  # Mariadb 연결 진행
                                     charset='utf8', autocommit=False)
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
-                # 쿼리문 실행
-                sql = "UPDATE TB_WRK_TM_MGMT_M " \
-                      "   SET JOB_END_TM  = %s " \
-                      "      ,NORM_WRK_TM = %s " \
-                      "      ,NGHT_WRK_TM = %s " \
-                      "      ,ALL_WRK_TM  = %s " \
-                      "   WHERE EMP_EMAL_ADDR = %s " \
-                      "   AND WRK_DT = %s "
-                logger.info(sql)
-                cursor.execute(sql, (tm, normWrkTm, overWrkTm, allWrkTm, email, dt))
-                mysql_con.commit()
+                if normWrkTm == "000000" and allWrkTm != "000000":
+                    # 쿼리문 실행
+                    sql = "UPDATE TB_WRK_TM_MGMT_M " \
+                          "   SET JOB_END_TM  = %s " \
+                          "      ,HLDY_WRK_TM = %s " \
+                          "      ,ALL_WRK_TM  = %s " \
+                          "   WHERE EMP_EMAL_ADDR = %s " \
+                          "   AND WRK_DT = %s "
+                    logger.info(sql)
+                    cursor.execute(sql, (tm, overWrkTm, allWrkTm, email, dt))
+                    mysql_con.commit()
+                else:
+                    # 쿼리문 실행
+                    sql = "UPDATE TB_WRK_TM_MGMT_M " \
+                          "   SET JOB_END_TM  = %s " \
+                          "      ,NORM_WRK_TM = %s " \
+                          "      ,NGHT_WRK_TM = %s " \
+                          "      ,ALL_WRK_TM  = %s " \
+                          "   WHERE EMP_EMAL_ADDR = %s " \
+                          "   AND WRK_DT = %s "
+                    logger.info(sql)
+                    cursor.execute(sql, (tm, normWrkTm, overWrkTm, allWrkTm, email, dt))
+                    mysql_con.commit()
 
         finally:
             mysql_con.close()

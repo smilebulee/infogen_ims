@@ -48,11 +48,9 @@
     }); /*ready.function_END*/
 
     function getHldyMgmtSubMitDone(data){
-        console.log("팝업창 : "+data[0].DT);
-        console.log("팝업창 : "+data[0].HLDY_DIVS_CD);
-        console.log("팝업창 : "+data[0].DOW_DIVS_CD);
-        $('#getHldyMgmt').val("");
 
+        $('#hldyDivsCd').val(data[0].HLDY_DIVS_CD);
+        $('#dowDivsCd').val(data[0].DOW_DIVS_CD);
     }
 
     /*********************************************************************
@@ -186,12 +184,23 @@
         var allWrkTm = allWrkTmCall(dt, strtTm, tm);
         var overWrkTm = overWrkTmCall(dt, allWrkTm);
         var normWrkTm = "";
-        if(overWrkTm == "00:00:00"){
 
-            normWrkTm = allWrkTm;
-        }else {
-            normWrkTm = "08:00:00";
+        if($('#hldyDivsCd').val() != "01" || $('#dowDivsCd').val() == "01" || $('#dowDivsCd').val() == "07"){
+
+            normWrkTm = "00:00:00";
+            overWrkTm = allWrkTm;
+
+        } else{
+
+            if(overWrkTm == "00:00:00"){
+
+                normWrkTm = allWrkTm;
+            }else {
+
+                normWrkTm = "08:00:00";
+            }
         }
+
         setEndTm(email, dt, tm, normWrkTm.replaceAll(':',''), overWrkTm.replaceAll(':',''), allWrkTm.replaceAll(':','') );
         $('#pop_endJob').text(tm);
         document.getElementById('pop_schdDetlTm').innerHTML = '정상근무 : '+normWrkTm+' / 초과근무 : '+overWrkTm;
@@ -271,7 +280,9 @@
     }
 
 </script>
-<input type="hidden" id="hldyMgmt"/>
+
+<input type="hidden" id="hldyDivsCd"/>
+<input type="hidden" id="dowDivsCd"/>
 <table class="table table-bordered text-center" style="width: 550px">
     <tr>
         <th class="text-center" style="width: 200px">일자</th>
