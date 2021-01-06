@@ -2,8 +2,15 @@
 
 <script type="text/javascript">
     $(document).ready(function(){
-        $('.tui-full-calendar-month-guide-block').remove();
         dataControl();
+
+        var param = {
+            "dt"  : $('#pop_dt').text()
+        }
+        var url = "{% url 'dili_api:getHldyMgmt' %}";
+        submissionCallMap(param,'GET',url,getHldyMgmtSubMitDone);
+
+
 
         /*********************************************************************
         *   결재요청 모달 닫기버튼 클릭 이벤트
@@ -39,6 +46,14 @@
         }
 
     }); /*ready.function_END*/
+
+    function getHldyMgmtSubMitDone(data){
+        console.log("팝업창 : "+data[0].DT);
+        console.log("팝업창 : "+data[0].HLDY_DIVS_CD);
+        console.log("팝업창 : "+data[0].DOW_DIVS_CD);
+        $('#getHldyMgmt').val("");
+
+    }
 
     /*********************************************************************
     *   Grid set Data
@@ -256,7 +271,7 @@
     }
 
 </script>
-
+<input type="hidden" id="hldyMgmt"/>
 <table class="table table-bordered text-center" style="width: 550px">
     <tr>
         <th class="text-center" style="width: 200px">일자</th>

@@ -20,6 +20,7 @@ urlpatterns = [
     url(r'^getMaria/', views.getMaria, name='getMaria'),
     url(r'^getWrkTimeInfoByEml/', views.getWrkTimeInfoByEml, name='getWrkTimeInfoByEml'),
     url(r'^getYryMgmt/', views.getYryMgmt, name='getYryMgmt'),
+    url(r'^getHldyMgmt/', views.getHldyMgmt, name='getHldyMgmt'),
     url(r'^scheduleMgmt/', views.scheduleMgmt, name='scheduleMgmt'),
     url(r'^scheduleMgmtPop/', views.scheduleMgmtPop.as_view(), name='scheduleMgmtPop'),
     url(r'^wrkApvlReq/', views.wrkApvlReq.as_view(), name='wrkApvlReq'),
