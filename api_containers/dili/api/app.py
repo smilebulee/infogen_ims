@@ -1525,7 +1525,7 @@ class scheduleStatLst(Resource):
                              "    AND A.ALL_WRK_TM != '000000'" \
                 
                 if data["dept"] != "" and data["dept"] != "00":
-                      sql += "    AND A.EMP_EMAL_ADDR IN (SELECT H.EMP_EMAIL" \
+                      sql += "    AND B.EMP_EMAL_ADDR IN (SELECT H.EMP_EMAIL" \
                              "                              FROM TB_EMP_MGMT H" \
                              "                             WHERE H.DEPT_CD = '" + data["dept"] + "')"
                 logging.debug(sql)
