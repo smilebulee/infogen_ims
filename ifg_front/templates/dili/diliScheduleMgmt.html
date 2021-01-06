@@ -1093,7 +1093,13 @@
         function getCalendarSessionDate() {
             var email = "";
             console.log("캘런더 현재날짜 가져오기 : ",calendar.getDate().getFullYear() + "-" + (calendar.getDate().getMonth()+1));
-            var dt = calendar.getDate().getFullYear() + "-" + (calendar.getDate().getMonth()+1);
+            
+            var monthChk = calendar.getDate().getMonth()+1;
+            if(monthChk.toString().length == 1){
+                monthChk = "0"+monthChk;
+            }
+
+            var dt = calendar.getDate().getFullYear() + "-" + monthChk;
 
             if ($('#empEmailHidden').val() == null || $('#empEmailHidden').val() == "") {
                 email = sessionStorage.getItem("email");
