@@ -264,6 +264,34 @@ class yryMgmt(Resource): # Mariadb 연결 진행
 
         return result2
 
+class hldyMgmt(Resource): # Mariadb 연결 진행
+    def get(self):
+
+        data = request.get_json()
+
+        #requirements pymysql import 후 커넥트 사용
+        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
+                                        charset='utf8', autocommit=False)
+        try:
+            with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+                #쿼리문 실행
+                sql = "SELECT DT, HLDY_DIVS_CD, DOW_DIVS_CD"\
+                      "    FROM TB_DT_INFO"\
+                      "   WHERE 1=1"\
+                      "   AND DT = '" + data["dt"] + "'"
+                cursor.execute(sql)
+
+        finally:
+            mysql_con.close()
+
+        result2 = cursor.fetchall()
+        for row in result2:
+            logging.debug('====== row====')
+            logging.debug(row)
+            logging.debug('===============')
+        array = list(result2)  # 결과를 리스트로
+
+        return result2
 
 class weekGridData(Resource): # Mariadb 연결 진행
     def get(self):
@@ -1323,17 +1351,29 @@ class updateEndTm(Resource):  # Mariadb 연결 진행
                                     charset='utf8', autocommit=False)
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
-                # 쿼리문 실행
-                sql = "UPDATE TB_WRK_TM_MGMT_M " \
-                      "   SET JOB_END_TM  = %s " \
-                      "      ,NORM_WRK_TM = %s " \
-                      "      ,NGHT_WRK_TM = %s " \
-                      "      ,ALL_WRK_TM  = %s " \
-                      "   WHERE EMP_EMAL_ADDR = %s " \
-                      "   AND WRK_DT = %s "
-                logger.info(sql)
-                cursor.execute(sql, (tm, normWrkTm, overWrkTm, allWrkTm, email, dt))
-                mysql_con.commit()
+                if normWrkTm == "000000" and allWrkTm != "000000":
+                    # 쿼리문 실행
+                    sql = "UPDATE TB_WRK_TM_MGMT_M " \
+                          "   SET JOB_END_TM  = %s " \
+                          "      ,HLDY_WRK_TM = %s " \
+                          "      ,ALL_WRK_TM  = %s " \
+                          "   WHERE EMP_EMAL_ADDR = %s " \
+                          "   AND WRK_DT = %s "
+                    logger.info(sql)
+                    cursor.execute(sql, (tm, overWrkTm, allWrkTm, email, dt))
+                    mysql_con.commit()
+                else:
+                    # 쿼리문 실행
+                    sql = "UPDATE TB_WRK_TM_MGMT_M " \
+                          "   SET JOB_END_TM  = %s " \
+                          "      ,NORM_WRK_TM = %s " \
+                          "      ,NGHT_WRK_TM = %s " \
+                          "      ,ALL_WRK_TM  = %s " \
+                          "   WHERE EMP_EMAL_ADDR = %s " \
+                          "   AND WRK_DT = %s "
+                    logger.info(sql)
+                    cursor.execute(sql, (tm, normWrkTm, overWrkTm, allWrkTm, email, dt))
+                    mysql_con.commit()
 
         finally:
             mysql_con.close()
@@ -1551,6 +1591,7 @@ api.add_resource(Save, '/save')
 api.add_resource(mariatestDB,'/mariatestDB') #api 선언
 api.add_resource(wrkTimeInfoByEml,'/wrkTimeInfoByEml') #api 선언
 api.add_resource(yryMgmt,'/yryMgmt') #api 선언
+api.add_resource(hldyMgmt,'/hldyMgmt') #api 선언
 api.add_resource(wrkApvlReq,'/wrkApvlReq') #api 선언
 api.add_resource(saveApvlReq,'/saveApvlReq') #api 선언
 api.add_resource(apvlReqHist,'/apvlReqHist') #api 선언
@@ -1574,7 +1615,6 @@ api.add_resource(updateEndTm,'/updateEndTm') #api 선언
 api.add_resource(yryUseDays,'/yryUseDays') #api 선언
 api.add_resource(retrieveCmmCd,'/retrieveCmmCd') #api 선언
 api.add_resource(scheduleStatLst,'/scheduleStatLst') #api 선언
-
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5006, debug=True)

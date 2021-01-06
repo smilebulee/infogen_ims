@@ -2,8 +2,15 @@
 
 <script type="text/javascript">
     $(document).ready(function(){
-        $('.tui-full-calendar-month-guide-block').remove();
         dataControl();
+
+        var param = {
+            "dt"  : $('#pop_dt').text()
+        }
+        var url = "{% url 'dili_api:getHldyMgmt' %}";
+        submissionCallMap(param,'GET',url,getHldyMgmtSubMitDone);
+
+
 
         /*********************************************************************
         *   결재요청 모달 닫기버튼 클릭 이벤트
@@ -39,6 +46,12 @@
         }
 
     }); /*ready.function_END*/
+
+    function getHldyMgmtSubMitDone(data){
+
+        $('#hldyDivsCd').val(data[0].HLDY_DIVS_CD);
+        $('#dowDivsCd').val(data[0].DOW_DIVS_CD);
+    }
 
     /*********************************************************************
     *   Grid set Data
@@ -171,12 +184,23 @@
         var allWrkTm = allWrkTmCall(dt, strtTm, tm);
         var overWrkTm = overWrkTmCall(dt, allWrkTm);
         var normWrkTm = "";
-        if(overWrkTm == "00:00:00"){
 
-            normWrkTm = allWrkTm;
-        }else {
-            normWrkTm = "08:00:00";
+        if($('#hldyDivsCd').val() != "01" || $('#dowDivsCd').val() == "01" || $('#dowDivsCd').val() == "07"){
+
+            normWrkTm = "00:00:00";
+            overWrkTm = allWrkTm;
+
+        } else{
+
+            if(overWrkTm == "00:00:00"){
+
+                normWrkTm = allWrkTm;
+            }else {
+
+                normWrkTm = "08:00:00";
+            }
         }
+
         setEndTm(email, dt, tm, normWrkTm.replaceAll(':',''), overWrkTm.replaceAll(':',''), allWrkTm.replaceAll(':','') );
         $('#pop_endJob').text(tm);
         document.getElementById('pop_schdDetlTm').innerHTML = '정상근무 : '+normWrkTm+' / 초과근무 : '+overWrkTm;
@@ -257,6 +281,8 @@
 
 </script>
 
+<input type="hidden" id="hldyDivsCd"/>
+<input type="hidden" id="dowDivsCd"/>
 <table class="table table-bordered text-center" style="width: 550px">
     <tr>
         <th class="text-center" style="width: 200px">일자</th>

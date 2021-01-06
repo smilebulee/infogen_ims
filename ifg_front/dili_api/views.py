@@ -94,6 +94,22 @@ def getYryMgmt(request):
     logger.info(json.loads(r.text))
     return JsonResponse(r.json(), safe=False)
 
+def getHldyMgmt(request):
+    logger.info("getHldyMgmt Start")
+    param = json.loads(request.GET['param'])
+
+
+    logger.info(param)
+    logger.info("getHldyMgmt End")
+
+    # api 호출
+    r = requests.get('http://dili_api:5006/hldyMgmt', json=param)
+    logger.info(r)
+    logger.info(r.text)
+    logger.info(r.json())
+    logger.info(json.loads(r.text))
+    return JsonResponse(r.json(), safe=False)
+
 def getWeekGridData(request):
     param = json.loads(request.GET['param'])
 

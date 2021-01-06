@@ -358,17 +358,6 @@
               setLabel(calendar);
             });
 
-            /*********************************************************************
-            *   calendar Click Event - calender 클릭시
-            *********************************************************************/
-
-
-            /*********************************************************************
-            *   calendar dblClick Event - calender 더블클릭시
-            *********************************************************************/
-
-
-
         });/*ready.function_END*/
 
         var myChart;
@@ -1093,7 +1082,7 @@
         function getCalendarSessionDate() {
             var email = "";
             console.log("캘런더 현재날짜 가져오기 : ",calendar.getDate().getFullYear() + "-" + (calendar.getDate().getMonth()+1));
-            
+
             var monthChk = calendar.getDate().getMonth()+1;
             if(monthChk.toString().length == 1){
                 monthChk = "0"+monthChk;
