@@ -1461,8 +1461,13 @@ class scheduleStatLst(Resource):
                 if data["apvlStus"] != "" and data["apvlStus"] != "00":
                       sql += "    AND B.TH1_APRV_STUS = '" + data["apvlStus"] + "'" \
 
-                if data["wrkDivs"] != "" and data["wrkDivs"] != "00":
+                if data["wrkDivs"] != "" and data["wrkDivs"] != "00" and data["wrkDivs"] != "04":
                       sql += "    AND B.APVL_REQ_DIVS = '" + data["wrkDivs"] + "'" \
+                    
+                if data["wrkDivs"] != "" and data["wrkDivs"] == "04":
+                      sql += "    AND A.HLDY_WRK_TM = '000000'" \
+                             "    AND A.NGHT_WRK_TM = '000000'" \
+                             "    AND A.ALL_WRK_TM != '000000'" \
 
                 if data["dept"] != "" and data["dept"] != "00":
                       sql += "    AND A.EMP_EMAL_ADDR IN (SELECT H.EMP_EMAIL" \
@@ -1511,8 +1516,13 @@ class scheduleStatLst(Resource):
                 if data["apvlStus"] != "" and data["apvlStus"] != "00":
                       sql += "    AND B.TH1_APRV_STUS = '" + data["apvlStus"] + "'" \
 
-                if data["wrkDivs"] != "" and data["wrkDivs"] != "00":
+                if data["wrkDivs"] != "" and data["wrkDivs"] != "00" and data["wrkDivs"] != "04":
                       sql += "    AND B.APVL_REQ_DIVS = '" + data["wrkDivs"] + "'" \
+                    
+                if data["wrkDivs"] != "" and data["wrkDivs"] == "04":
+                      sql += "    AND A.HLDY_WRK_TM = '000000'" \
+                             "    AND A.NGHT_WRK_TM = '000000'" \
+                             "    AND A.ALL_WRK_TM != '000000'" \
                 
                 if data["dept"] != "" and data["dept"] != "00":
                       sql += "    AND A.EMP_EMAL_ADDR IN (SELECT H.EMP_EMAIL" \
