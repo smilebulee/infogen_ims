@@ -532,7 +532,8 @@ class getMainMenu(Resource):  # Mariadb 연결 진행
                             "    FROM TB_MENU_M" \
                             "   WHERE 1=1" \
                             "   AND MENU_LVL_NO = '1'"\
-                            "   AND HPOS_MENU_ID = 'MAIN_MENU'"\
+                            "   AND HPOS_MENU_ID = 'MAIN_MENU'" \
+                            "   AND SCRN_IDC_YN	= 'Y'" \
                             "   ORDER BY SORT_ORD"
                 cursor.execute(sql)
 
@@ -564,7 +565,8 @@ class getSubMenu(Resource):  # Mariadb 연결 진행
                             "    FROM TB_MENU_M" \
                             "   WHERE 1=1" \
                             "   AND MENU_LVL_NO = '2'"\
-                            "   AND HPOS_MENU_ID = '" + data["menuId"] + "'"\
+                            "   AND HPOS_MENU_ID = '" + data["menuId"] + "'" \
+                            "   AND SCRN_IDC_YN	= 'Y'" \
                             "   ORDER BY SORT_ORD"
                 cursor.execute(sql)
 
