@@ -310,6 +310,10 @@
 
                 var dfrEndDate = new Date(dfrWeekEndYy, dfrWeekEndMm, dfrWeekEndDd); //현재 종료 날짜 등록
                 var dfrStrtDate = new Date(dfrWeekStrtYy, dfrWeekStrtMm, dfrWeekStrtDd); //현재 시작 날짜 등록
+                calendar.clear();
+                calendar.setDate(new Date($('#calendarLabel').text()));
+                getCalendarSessionDate();
+                setLabel(calendar);
 
                 tempStrtDt = setWeek(dfrStrtDate).baseDate;
                 tempEndDt = setWeek(dfrEndDate).baseDate;
@@ -317,10 +321,7 @@
                 setMonthGridData();
                 $('#my_modal2').empty();
                 $('.model_layout').empty();
-                calendar.clear();
-                calendar.setDate(new Date($('#calendarLabel').text()));
-                getCalendarSessionDate();
-                setLabel(calendar);
+
                 //setAnhoMgmt();
                 $('#clickDate').val("");
             });
