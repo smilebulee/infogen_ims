@@ -66,7 +66,7 @@ function retrieveCmmCd(cmp_id, grp_id){
             'callbackFn' : function(data){
                 for(var i = 0; i < data.length; i++){
                     if($('#' + cmp_id).attr('type') == 'radio') {
-                        var radio = $("<label><input type='radio' name='"+data[i].CMM_CD_GRP_ID+"' value='"+data[i].CMM_CD+"'>"+data[i].CMM_CD_NAME+"&nbsp;&nbsp;</label>");
+                        var radio = $("<label><input type='radio' name='"+data[i].CMM_CD_GRP_ID+"' value='"+data[i].CMM_CD+"'>&nbsp;"+data[i].CMM_CD_NAME+"&nbsp;&nbsp;&nbsp;</label>");
                         console.log(radio);
 
                         $('#' + cmp_id).parent().append(radio);

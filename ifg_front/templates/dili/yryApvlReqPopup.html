@@ -261,9 +261,9 @@
                     </div>
                     <div id="col_yryApvlReq" class="collapse show" aria-labelledby="head_yryApvlReq" data-parent="#grp_yryApvlReq">
                         <div class="card-body flex-height d-flex">
-                            <div class="align-self-start align-self-center mr-3">결재 종류</div>
+                            <div class="align-self-start align-self-center mr-3">결재 유형</div>
                             <div class="align-self-center mr-5">
-                                <label><input id="yryType" type="radio" name="APVL_REQ_DIVS_CD" value="00" checked> 테스트!!!! </label>
+                                <input id="yryType" type="radio" name="APVL_REQ_DIVS_CD" value="00" style="display : none;">
                             </div>
                             <!--
                             <div class="align-self-center mr-5">
@@ -316,10 +316,11 @@
 
                         <!-- 전체연차일수/ 남은연차일수 표기 -->
                         <div class="card-body flex-height d-flex"><!--style="margin-right: 20px;">-->
-                            <span> 남은연차일수 : </span>
+                            <span> 남은 연차 일수 : </span>
                             <span id="txt_rmnAnhoDays">0</span>
-                            <span> / 전체연차일수 : </span>
+                            <span> 일 / 총 연차 일수 : </span>
                             <span id="txt_allAnhoDays">0</span>
+                            <span> 일</span>
                         </div>
 
                         <div class="card-body flex-height d-flex">

@@ -170,9 +170,10 @@
     }
 
     function onclickEvt(trId) {
+        debugger;
         var params = {
             "email" : sessionStorage.getItem("email"),
-            "wrkDt" : $(trId).children().eq(2).text().substring(0,10)
+            "wrkDt" : $(trId).children().eq(2).text().substring(0,10)   //ex. 2020-11-03 날짜
         }
 
     /*
@@ -342,11 +343,13 @@
                                    <td id="thAprvNm1" class="pt-3-half"></td>
                                    <td id="thAprvStus1" class="pt-3-half"></td>
                                 </tr>
+                                <!--
                                 <tr>
                                    <td id="apvlTh2" class="pt-3-half">2</td>
                                    <td id="thAprvNm2" class="pt-3-half"></td>
                                    <td id="thAprvStus2" class="pt-3-half"></td>
                                 </tr>
+                                -->
                                 </tbody>
                             </table>
                         </div>
