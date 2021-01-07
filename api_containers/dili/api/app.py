@@ -446,7 +446,7 @@ class wrkTimeInfoByEml(Resource): # Mariadb 연결 진행
                     + "      ,DATE_FORMAT(SEC_TO_TIME(SUM(TIME_TO_SEC(STR_TO_DATE( CONCAT(SUBSTRING(IFNULL(B.WRK_TME,'000000'),1,2),':',SUBSTRING(IFNULL(B.WRK_TME,'000000'),3,2),':',SUBSTRING(IFNULL(B.WRK_TME,'000000'),5,2)) ,'%H:%i:%S')))),'%H.%i') APRV_OVER_WRK_TM" \
                     + "  FROM TB_WRK_TM_MGMT_M A LEFT OUTER JOIN TB_APVL_REQ_MGMT_M B ON A.EMP_EMAL_ADDR = B.EMP_EMAL_ADDR AND A.WRK_DT = B.WRK_DT AND B.APVL_REQ_DIVS IN ('01','02')" \
                     + " WHERE A.EMP_EMAL_ADDR = '" +data["email"] + "'" \
-                    + "   AND DATE(A.WRK_DT) BETWEEN DATE('" + data["strtDate"] + "') AND DATE('" + data["endDate"] + "')" \
+                    + "   AND A.WRK_DT LIKE '" + data["dt"] + "%'" \
                     + " GROUP BY A.EMP_EMAL_ADDR"
                 logging.debug(sql)
                 cursor.execute(sql)

@@ -31,6 +31,7 @@
             setMonthGridData();                                                                              // Month Grid 생성
             crteTodayShow(year, month, date, day);                                                        // Grid UI(주) 날짜 세팅
             //setAnhoMgmt(); //연차정보 입력
+            createCalendar();     // Session Email
 
 
             /*********************************************************************
@@ -66,7 +67,6 @@
                 tempStrtDt = setWeek(dfrStrtDate).baseDate;
                 tempEndDt = setWeek(dfrEndDate).baseDate;
                 setWeekGridData(tempStrtDt, tempEndDt);
-
             });
 
             /*********************************************************************
@@ -139,16 +139,6 @@
 
 
             });
-
-            /*********************************************************************
-            *   Session Email 값 기준 현재일 포함 주 근무시간 조회
-            *********************************************************************/
-
-            var currentDate = getCurrentDate();
-            var currentWeek = setWeek(currentDate);
-
-            getWrkTimeByIml(null, currentWeek.strtDate, currentWeek.endDate);     // Session Email 을 기준으로 시작~종료일에 대한 근무시간 조회.
-            createCalendar();     // Session Email
 
 
             /*********************************************************************
@@ -457,7 +447,6 @@
             tempStrtDt = setWeek(strtDate).baseDate;
             tempEndDt = setWeek(endDate).baseDate;
             setWeekGridData(tempStrtDt, tempEndDt);
-
         }
 
         /*********************************************************************
@@ -597,6 +586,7 @@
             weekTable += '</table>';
 
             document.getElementById('grid_week').innerHTML = weekTable;
+            weekClickCrteGrap();
         }
 
         /*********************************************************************
@@ -706,6 +696,7 @@
             monthTable += '</table>';
 
             document.getElementById('month_week').innerHTML = monthTable;
+            monthClickCrteGrap();
         }
 
         /*********************************************************************
@@ -714,7 +705,7 @@
        function onclickWeekEvt(trId) {
             var wClickDt = trId.id.replace('grd_week','');
             weekDate = setWeek(wClickDt);                                   // 선택된 일이 포함된 주의 Start,End Date 조회
-            getWrkTimeByIml(null, weekDate.strtDate, weekDate.endDate);     // Session Email 을 기준으로 시작~종료일에 대한 근무시간 조회.
+            //getWrkTimeByIml(null, weekDate.strtDate, weekDate.endDate);     // Session Email 을 기준으로 시작~종료일에 대한 근무시간 조회.
             $('#'+trId.id).prevAll().css("background-color","");
             $('#'+trId.id).nextAll().css("background-color","");
             $('#'+trId.id).css("background-color","#8A8C8F");
@@ -755,7 +746,7 @@
             var mClickDt = trId.id.replace('grd_month','');
 
             weekDate = setWeek(mClickDt);                                   // 선택된 일이 포함된 주의 Start,End Date 조회
-            getWrkTimeByIml(null, weekDate.strtDate, weekDate.endDate);     // Session Email 을 기준으로 시작~종료일에 대한 근무시간 조회.
+            //getWrkTimeByIml(null, weekDate.strtDate, weekDate.endDate);     // Session Email 을 기준으로 시작~종료일에 대한 근무시간 조회.
 
             $('#'+trId.id).prevAll().css("background-color","");
             $('#'+trId.id).nextAll().css("background-color","");
@@ -798,17 +789,12 @@
         *                      aprvWrkTime      : 초과근무시간(승인)
         *                      notAprvWrkTime   : 초과근무시간(미승인)
         *********************************************************************/
-       function getWrkTimeByIml(email, strtDate, endDate) {
+       function getWrkTimeByIml(email, dt) {
 
             console.log(' Debug [Email] : '+email );
-            console.log(' Debug [StrtDate] : '+strtDate );
-            console.log(' Debug [EndDate] : '+endDate );
+            console.log(' Debug [dt] : '+dt );
 
             var baseEndDate = $('#baseEndDate').text();
-
-            if (baseEndDate == endDate) {
-                return;                                 //baseEndDate 과 endDate이 동일한 경우 기존 조회된 내용과 변동사항이 없으므로 Return한다.
-            }
 
             //email 파라미터가 null / EmptyString 으로 인입된 경우 $('#empEmailHidden') 값 또는, Session 값을 기준하여 셋팅.
             if (email == null || email == "") {
@@ -822,8 +808,7 @@
 
             var param = {
                 "email"     : email,
-                "strtDate"  : strtDate,
-                "endDate"   : endDate
+                "dt"  : dt
             }
 
             $.ajaxCall( param, {
@@ -1004,7 +989,7 @@
                 var tmpDtbase = setWeek(tmp).baseDate;
 
                 weekDate = setWeek(tmp);                                   // 선택된 일이 포함된 주의 Start,End Date 조회
-                getWrkTimeByIml(null, weekDate.strtDate, weekDate.endDate);     // Session Email 을 기준으로 시작~종료일에 대한 근무시간 조회.
+                //getWrkTimeByIml(null, weekDate.strtDate, weekDate.endDate);     // Session Email 을 기준으로 시작~종료일에 대한 근무시간 조회.
 
                 var tempSrhClickData = tmpDtbase.split('-')
                 var srhClickData = new Date(tempSrhClickData[0], Number(tempSrhClickData[1])-1, tempSrhClickData[2]);
@@ -1053,7 +1038,7 @@
                 var tmp = schedule.end.getFullYear()+"-"+(schedule.end.getMonth()+1)+"-"+schedule.end.getDate();
                 var tmpDtbase = setWeek(tmp).baseDate;
                 weekDate = setWeek(tmp);                                   // 선택된 일이 포함된 주의 Start,End Date 조회
-                getWrkTimeByIml(null, weekDate.strtDate, weekDate.endDate);     // Session Email 을 기준으로 시작~종료일에 대한 근무시간 조회.
+                //getWrkTimeByIml(null, weekDate.strtDate, weekDate.endDate);     // Session Email 을 기준으로 시작~종료일에 대한 근무시간 조회.
 
                 var tempSrhClickData = tmpDtbase.split('-')
                 var srhClickData = new Date(tempSrhClickData[0], Number(tempSrhClickData[1])-1, tempSrhClickData[2]);
@@ -1199,7 +1184,15 @@
         }
 
         function setLabel(calendar){
+          var dt;
           $("#calendarLabel").text(calendar.getDate().getFullYear() + "." + (calendar.getDate().getMonth()+1));
+          if((calendar.getDate().getMonth()+1).toString().length == 1){
+              dt = calendar.getDate().getFullYear() + "-" + "0" + (calendar.getDate().getMonth()+1);
+          } else {
+              dt = calendar.getDate().getFullYear() + "-" + (calendar.getDate().getMonth()+1);
+          }
+          getWrkTimeByIml(null, dt);
+
         }
         /*********************************************************************
         *   Draw  calendar Event - 캘린더 색입히기
@@ -1215,6 +1208,31 @@
                    $('div[data-calendar-id="'+dataCustomArray[i].calendarId+'"]').css("background-color","rgba( 255,139,139, 0.5 )");
                 }
             }
+        }
+
+        /*********************************************************************
+        *   주그리드 그래프세팅
+        *********************************************************************/
+        function weekClickCrteGrap(){
+            var dt;
+            if($('#txt_weekEndMm').text().length == 1){
+                dt = $('#txt_weekEndYy').text() + "-" + "0" + $('#txt_weekEndMm').text();
+            } else {
+                dt = $('#txt_weekEndYy').text() + "-" + $('#txt_weekEndMm').text();
+            }
+            getWrkTimeByIml(null, dt);
+        }
+        /*********************************************************************
+        *   월그리드 그래프세팅
+        *********************************************************************/
+        function monthClickCrteGrap(){
+            var dt;
+            if($('#txt_mmMm').text().length == 1){
+                dt = $('#txt_mmYy').text() + "-" + "0" + $('#txt_mmMm').text();
+            } else {
+                dt = $('#txt_mmYy').text() + "-" + $('#txt_mmMm').text();
+            }
+            getWrkTimeByIml(null, dt);
         }
 
 
