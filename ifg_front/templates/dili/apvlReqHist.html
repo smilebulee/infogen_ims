@@ -8,7 +8,7 @@
             location.href = "{% url 'main:login_form' %}";
         }
 
-        // 공통 코드 조회 - 결재 승인 상태 구분
+        // 공통 코드 조회 - '결재 승인 상태 구분'
         retrieveCmmCd('sbx_type', 'APVL_STTS_CD');
 
         // SessionSetting 정보 가져오기
@@ -50,9 +50,7 @@
             *   Session Email 값 기준 근무 결재요청 리스트 조회
             *********************************************************************/
             var params = {
-    //          "email" : sessionStorage.getItem("email"),
-    //          "email" : $("#apvlEmpEmailHidden").text(),                // 추후 Session Value 연동.
-                "email" : 'ishwang@infogen.co.kr',                          // 추후 Session Value 연동.
+                "email" : sessionStorage.getItem("email"),
                 "apvlStusDivs" : $("#sbx_type option:selected").val(),      //TB_APVL_REQ_MGMT_M APVL_STUS 값 => 01,02: 승인, 승인반려 NULL: 미승인
             }
 
@@ -173,7 +171,7 @@
 
     function onclickEvt(trId) {
         var params = {
-            "email" : $("#apvlEmpEmailHidden").text(),                   // 추후 Session Value 연동.
+            "email" : sessionStorage.getItem("email"),
             "wrkDt" : $(trId).children().eq(2).text().substring(0,10)
         }
 
@@ -263,16 +261,16 @@
 
 <div class="row">
     <div class="col-sm-12">
-        <div class="mb-4" role="alert">
-            <div class="align-self-start">
+        <div class="align-self-start flex-height d-flex m-0 p-2" role="alert">
+            <div class="align-self-start align-self-center mr-3">
                 <h5>
                     <b>결재요청 이력</b>
                 </h5>
             </div>
-            <div class="align-self-center">
+            <div class="align-self-center mr-3">
                 <button class="button" id="apvlReqBtn">결재등록</button>
             </div>
-            <div class="align-self-end">
+            <div class="align-self-end align-self-center">
                 <button class="button" id="apvlAcptBtn">결재승인</button>
             </div>
         </div>
@@ -303,7 +301,7 @@
                             </select>
                         </div>
                         <div class="align-self-end align-self-center">
-                            <button class="button" id="searchBtn">Search</button>
+                            <button class="button" id="searchBtn">조회</button>
                         </div>
                     </div>
                 </div>

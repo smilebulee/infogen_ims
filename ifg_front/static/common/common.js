@@ -29,7 +29,7 @@ function submissionCallList(paramList, method, url, callBackFunc) {
 }
 
 /* 공통코드 조회 및 select 컴포넌트 option 으로 등록 */
-function retrieveCmmCd(sbx_id, grp_id){
+function retrieveCmmCdTest(sbx_id, grp_id){
     var param = {
         "sbx_id" : sbx_id,
         "grp_id" : grp_id
@@ -50,9 +50,8 @@ function retrieveCmmCd(sbx_id, grp_id){
      });
  }
 
-/* 공통코드 조회 및 radio, select 컴포넌트 등록
-테스트 중 윤상은 */
-function retrieveCmmCdTest(cmp_id, grp_id){
+/* 공통코드 조회 및 radio, select 컴포넌트 등록 */
+function retrieveCmmCd(cmp_id, grp_id){
     var param = {
         "cmp_id" : cmp_id,
         "grp_id" : grp_id
@@ -60,15 +59,17 @@ function retrieveCmmCdTest(cmp_id, grp_id){
 
     $.ajaxCall( param, {
         method : 'GET',
-            'url' : '/prj/retrieveCmmCd/',
+            'url' : '/dili/retrieveCmmCd/',
             'dataType' : 'json',
             'data' : JSON.stringify(param),
             'async' : false,
             'callbackFn' : function(data){
                 for(var i = 0; i < data.length; i++){
                     if($('#' + cmp_id).attr('type') == 'radio') {
-                        //var radio = $("<input type='radio' name='' value=''></input>");
-                        //$('#' + cmp_id).parent().append(radio);
+                        var radio = $("<label><input type='radio' name='"+data[i].CMM_CD_GRP_ID+"' value='"+data[i].CMM_CD+"'>"+data[i].CMM_CD_NAME+"&nbsp;&nbsp;</label>");
+                        console.log(radio);
+
+                        $('#' + cmp_id).parent().append(radio);
 
                         //윤상은 작업중 2020-01-07
                     } else {

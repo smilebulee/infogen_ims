@@ -19,8 +19,7 @@
     *********************************************************************/
     function setAnhoMgmt(){
         var param = {
-//            "email" : sessionStorage.getItem("email")
-            "email" : 'ishwang@infogen.co.kr'
+            "email" : sessionStorage.getItem("email")
         }
 
         $.ajaxCall( param, {
@@ -48,13 +47,18 @@
 
     $(document).ready(function(){
         setAnhoMgmt();
+
+        // 공통 코드 조회 - '결재 구분'
+        retrieveCmmCd("yryType", 'APVL_REQ_DIVS_CD');
+        // 결재 구분 기본 선택 값 지정 - '야간근무'
+        $('input[name="APVL_REQ_DIVS_CD"][value="01"]').prop("checked", true)
+
         /*********************************************************************
         *   남은 연차 조회
         *********************************************************************/
 /*
         var param = {
-//            "email" : sessionStorage.getItem("email")
-            "email" : 'ishwang@infogen.co.kr'
+            "email" : sessionStorage.getItem("email")
         }
 
         $.ajaxCall( param, {
@@ -100,7 +104,6 @@
         *   클릭한 달력 datepickerData1에 value 값 담기
         *********************************************************************/
         $("#datepickerData1").datepicker({
-
             onSelect:function(dateText, inst) {
 
                 var tempData = $('#datepickerData1').val();
@@ -179,7 +182,7 @@
                 var param = [];
 
                 var tmpParam = {
-                    "email" : sessionStorage.getItem("email"),                                   // 추후 Session Value 연동.
+                    "email" : sessionStorage.getItem("email"),
                     "apvlReqDivs" : $('input[name="yryType"]:checked').val(),    //01: 야근, 02:휴일, 03: 연차
                     "wrkDt" : $("#ipt_holiTerm1").val(),
                     "wrkTme" : "000000",
@@ -252,17 +255,22 @@
                                 <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-caret-down-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z"/>
                                 </svg>
-                                연차결재 요청
+                                결재 요청
                             </button>
                         </h2>
                     </div>
                     <div id="col_yryApvlReq" class="collapse show" aria-labelledby="head_yryApvlReq" data-parent="#grp_yryApvlReq">
                         <div class="card-body flex-height d-flex">
-                            <div class="align-self-start align-self-center mr-3">휴가종류</div>
+                            <div class="align-self-start align-self-center mr-3">결재 종류</div>
+                            <div class="align-self-center mr-5">
+                                <label><input id="yryType" type="radio" name="APVL_REQ_DIVS_CD" value="00" checked> 테스트!!!! </label>
+                            </div>
+                            <!--
                             <div class="align-self-center mr-5">
                                 <label><input type="radio" name="yryType" value="03" checked> 연차 </label>
                                 <label><input type="radio" name="yryType" value="04"> 기타 </label>
                             </div>
+                            -->
                         </div>
 
                         <div class="card-body flex-height d-flex">
@@ -308,10 +316,10 @@
 
                         <!-- 전체연차일수/ 남은연차일수 표기 -->
                         <div class="card-body flex-height d-flex"><!--style="margin-right: 20px;">-->
-                            <span>전체연차일수 : </span>
-                            <span id="txt_allAnhoDays">0</span>
-                            <span> / 남은연차일수 : </span>
+                            <span> 남은연차일수 : </span>
                             <span id="txt_rmnAnhoDays">0</span>
+                            <span> / 전체연차일수 : </span>
+                            <span id="txt_allAnhoDays">0</span>
                         </div>
 
                         <div class="card-body flex-height d-flex">
