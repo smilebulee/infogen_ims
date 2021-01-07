@@ -6,7 +6,8 @@
         *   Session Email 값 기준 근무 결재요청 리스트 조회
         *********************************************************************/
         var param = {
-            "email" : sessionStorage.getItem("email")                                  // 추후 Session Value 연동.
+            //"email" : sessionStorage.getItem("email")                       // 추후 Session Value 연동.
+            "email" : "ishwang@infogen.co.kr"                                 // 추후 Session Value 연동.
         }
 
         $.ajaxCall( param, {
@@ -16,7 +17,6 @@
              'data' : JSON.stringify(param),
              'async' : false,
              'callbackFn' : function(data){
-
                 // 리턴
                 wrkApvlGrd(data);
              }
@@ -26,7 +26,7 @@
         *   근무결재요청 Grid 생성
         *********************************************************************/
         function wrkApvlGrd(data){
-
+            debugger;
             var wrkApvlTable = '<table class="table table-bordered table-responsive-md text-center"  id="tblWrkApvl" >';
             wrkApvlTable += '<thead>';
             wrkApvlTable += '<tr>';
@@ -106,7 +106,7 @@
 
         confirmMsg('저장하시겠습니까?', function(){
             var param = {
-                "email" : sessionStorage.getItem("email"),                                   // 추후 Session Value 연동.
+                "email" : sessionStorage.getItem("email"),               // 추후 Session Value 연동.
                 "apvlReqDivs" : $("#sbx_type option:selected").val(),    //01: 야근, 02:휴일, 03: 연차
                 "wrkDt" : $("#ipt_wrkDt").val().substring(0,10),
                 "wrkTme" : $("#ipt_wrkDt").val().substring(11,13) +""+ $("#ipt_wrkDt").val().substring(14,16) +"" + $("#ipt_wrkDt").val().substring(17,19),
@@ -176,8 +176,9 @@
                             <div class="align-self-center mr-5">
                                 <select id="sbx_type" class="form-control" name="type">
                                     <option value="00" selected>선택</option>
-                                    <option value="01">휴일근무</option>
-                                    <option value="02">야근근무</option>
+                                    <option value="01">야근근무</option>
+                                    <option value="02">휴일근무</option>
+                                    <option value="03">연차</option>
                                 </select>
                             </div>
                         </div>

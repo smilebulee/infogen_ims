@@ -2,38 +2,120 @@
 
         <script type="text/javascript">
         $(document).ready(function(){
+            /*********************************************************************
+            *   화면 초기화
+            *********************************************************************/
+            // 로그인 여부 확인
+            if(sessionStorage.getItem("email") == null){
+                location.href = "{% url 'main:login_form' %}";
+            }
+
+            // 공통 코드 조회 - 결재 승인 상태 구분
+            retrieveCmmCd('sbx_type', 'APVL_STTS_CD');
+
+            // SessionSetting 정보 가져오기
+            var param = {
+                "email" : sessionStorage.getItem("email"),
+                "authId" : sessionStorage.getItem("authId")
+            }
+            console.log("###########SessionSettingInfo::", param);
+
+            // 사용자조회 이메일 : SessionSetting email로 설정
+            $('#ipt_apvlSearchNamePop').val(param.email)
+
+            // 결재승인 버튼 및 직원조회 기능 권한 처리
+            if(param.authId != "ADMIN") {
+                $('#apvlAcptBtn').css("display", 'none');
+                //$('#ipt_apvlSearchNamePop").attr('readonly' true);
+                //$("#ipt_apvlSearchNamePop").attr('onclick','').unbind('click');
+            }
+
+            $('#apvlAcptBtn').click(function(){
+                if(param.authId != "ADMIN") {
+                    alertMsg('결재 승인 권한이 없습니다.');
+                    return false;
+                }
+            });
+
+
+            ////////////////////////////////////////////////////////////////////////////////////
+            ///////////////////////////////////////임시//////////////////////////////////////////
+            ////////////////////////////////////////////////////////////////////////////////////
+
+            /*********************************************************************
+            *   이벤트 바인딩 및 함수 선언
+            *********************************************************************/
 
             $("#searchBtn").click(function(){
 
                 /*********************************************************************
                 *   Session Email 값 기준 근무 결재요청 리스트 조회
                 *********************************************************************/
-                var param = {
-                    "email" : $("#apvlEmpEmailHidden").text(),                                   // 추후 Session Value 연동.
-                    "apvlStusDivs" : $("#sbx_type option:selected").val(),    //TB_APVL_REQ_MGMT_M APVL_STUS 값 => 01,02: 승인, 승인반려 NULL: 미승인
+                var params = {
+//                    "email" : sessionStorage.getItem("email"),
+//                    "email" : $("#apvlEmpEmailHidden").text(),                // 추후 Session Value 연동.
+                    "email" : 'ishwang@infogen.co.kr',                          // 추후 Session Value 연동.
+                    "apvlStusDivs" : $("#sbx_type option:selected").val(),      //TB_APVL_REQ_MGMT_M APVL_STUS 값 => 01,02: 승인, 승인반려 NULL: 미승인
                 }
+
+                debugger;
+                console.log("###########params::", params);
                 var url = "{% url 'dili_api:getApvlReqHist' %}";
-                submissionCallMap(param,'GET',url,apvlReqHistGrd);
+
+                submissionCallList( params, 'GET', url, apvlReqHistGrd );
+
             });
 
+            // 직원조회 권한 처리 및 모달 오픈
+            if(param.authId == "ADMIN") {
+                $("#ipt_apvlSearchNamePop").click(function(){
+                    var url = "{% url 'dili_api:empMgmtPop' %}" ;
 
-            $("#ipt_apvlSearchNamePop").click(function(){
-                var url = "{% url 'dili_api:empMgmtPop' %}" ;
+                    $('#empModalDiv').css("width","50%");
+
+                    modal('empModalDiv');
+
+                    $('#empModal').load(url);
+                });
+            }
+            // 결재등록 모달 오픈
+            $("#apvlReqBtn").click(function(){
+                //var url = "{% url 'dili_api:apvlReqPop' %}" ; /////////////////////////////수정
+                var url = "{% url 'dili_api:yryApvlReq' %}" ; /////////////////////////////수정
 
 
-                $('#empModalDiv').css("width","50%");
+                $('#apvlReqModalDiv').css("width","50%");
 
-                modal('empModalDiv');
+                modal('apvlReqModalDiv');
 
-                $('#empModal').load(url);
+                $('#apvlReqModal').load(url);
             });
 
+            // 결재승인 모달 오픈
+            $("#apvlAcptBtn").click(function(){
+                //var url = "{% url 'dili_api:apvlAcptPop' %}" ; /////////////////////////수정
+                var url = "{% url 'dili_api:wrkApvlReq' %}" ; /////////////////////////수정
+
+
+                $('#apvlAcptModalDiv').css("width","50%");
+
+                modal('apvlAcptModalDiv');
+
+                $('#apvlAcptModal').load(url);
+            });
+
+            /*
+            $("#selectBtn").click(function(){
+                $('#empModal').hide();
+            });
+            */
         });
 
         /*********************************************************************
         *   근무결재요청 Grid 생성
         *********************************************************************/
         function apvlReqHistGrd(data){
+            debugger;
             var apvlReqHistTable = '<table class="table table-bordered table-responsive-md text-center">';
             apvlReqHistTable += '<thead>';
             apvlReqHistTable += '<tr>';
@@ -92,23 +174,30 @@
         }
 
         function onclickEvt(trId) {
-            var param = {
-                "email" : $("#apvlEmpEmailHidden").text(),                                  // 추후 Session Value 연동.
+            var params = {
+                "email" : $("#apvlEmpEmailHidden").text(),                   // 추후 Session Value 연동.
                 "wrkDt" : $(trId).children().eq(2).text().substring(0,10)
             }
 
-            $.ajaxCall( param, {
+/*
+            $.ajaxCall( params, {
                  'method' : 'GET',
                  'url' : "{% url 'dili_api:getApvlReqHistDetl' %}",
                  'dataType' : 'json',
-                 'data' : JSON.stringify(param),
+                 'data' : JSON.stringify(params),
                  'async' : false,
                  'callbackFn' : function(data){
-
                     // 리턴
                     setApvlReqHistDetl(data);
                  }
             });
+*/
+            submissionCallList( params, "GET", "{% url 'dili_api:getApvlReqHistDetl' %}", function(data){
+                setApvlReqHistDetl(data);
+            });
+
+
+
         }
 
         function setApvlReqHistDetl(data) {
@@ -127,7 +216,6 @@
 
 
     </script>
-
         <!--직원조회 모달 영역 -->
         <div style="width:100%">
             <div id="empModalDiv" class="modalUi">
@@ -145,12 +233,51 @@
             </div>
         </div>
 
+
+        <!--결재등록 모달 영역 -->
+        <div style="width:100%">
+            <div id="apvlReqModalDiv" class="modalUi">
+                <div id="apvlReqModal">
+                </div>
+                <a class="modal_close_btn" id="exitApvlReqModalBtn">
+                    <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-x-circle" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                       <path fill-rule="evenodd" d="
+                       M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                       <path fill-rule="evenodd" d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+                    </svg>
+                </a>
+            </div>
+        </div>
+
+        <!--결재승인 모달 영역 -->
+        <div style="width:100%">
+            <div id="apvlAcptModalDiv" class="modalUi">
+                <div id="apvlAcptModal">
+                </div>
+                <a class="modal_close_btn" id="exitApvlAcptModalBtn">
+                    <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-x-circle" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                       <path fill-rule="evenodd" d="
+                       M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                       <path fill-rule="evenodd" d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+                    </svg>
+                </a>
+            </div>
+        </div>
+
         <div class="row">
             <div class="col-sm-12">
                 <div class="mb-4" role="alert">
-                    <h5>
-                        <b>결재요청 이력</b>
-                    </h5>
+                    <div class="align-self-start">
+                        <h5>
+                            <b>결재요청 이력</b>
+                        </h5>
+                    </div>
+                    <div class="align-self-center">
+                        <button class="btn btn-primary" id="apvlReqBtn">결재등록</button>
+                    </div>
+                    <div class="align-self-end">
+                        <button class="btn btn-primary" id="apvlAcptBtn">결재승인</button>
+                    </div>
                 </div>
 
                 <!-- 1. 사원 조회영역 -->
@@ -174,10 +301,8 @@
                                 </div>
                                 <div class="align-self-start align-self-center mr-3">구분</div>
                                 <div class="align-self-center mr-5">
-                                    <select id="sbx_type" class="form-control" name="type">
+                                    <select id="sbx_type" name="sbx_type" class="form-control">
                                         <option value="00" selected>선택</option>
-                                        <option value="01">미승인</option>
-                                        <option value="02">승인</option>
                                     </select>
                                 </div>
                                 <div class="align-self-end align-self-center">

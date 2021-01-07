@@ -223,6 +223,32 @@ class yryApvlReq(generic.TemplateView):
         return render(request, template_name)
         # return render(request, template_name, rr)
 
+class apvlReqPop(generic.TemplateView):
+    def get(self, request, *args, **kwargs):
+        template_name = 'dili/apvlReqPop.html'
+
+        # r = requests.get('http://dili_api:5006/hello')
+        # rr = {
+        #     "result": r.text
+        # }
+        return render(request, template_name)
+        # return render(request, template_name, rr)
+
+
+
+class apvlAcptPop(generic.TemplateView):
+    def get(self, request, *args, **kwargs):
+        template_name = 'dili/apvlAcptPop.html'
+
+        # r = requests.get('http://dili_api:5006/hello')
+        # rr = {
+        #     "result": r.text
+        # }
+        return render(request, template_name)
+        # return render(request, template_name, rr)
+
+
+
 class noticeLst(generic.TemplateView):
     def get(self, request, *args, **kwargs):
         template_name = 'dili/noticeLst.html'

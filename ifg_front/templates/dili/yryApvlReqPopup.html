@@ -13,14 +13,48 @@
             "ok": "확인", "cancel": "취소"
         }
     });
-    $(document).ready(function(){
 
+    /*********************************************************************
+    *   Session Email 값 기준 연차정보 조회
+    *********************************************************************/
+    function setAnhoMgmt(){
+        var param = {
+//            "email" : sessionStorage.getItem("email")
+            "email" : 'ishwang@infogen.co.kr'
+        }
+
+        $.ajaxCall( param, {
+             'method' : 'GET',
+             'url' : "{% url 'dili_api:getYryMgmt' %}",
+             'dataType' : 'json',
+             'data' : JSON.stringify(param),
+             'async' : false,
+             'callbackFn' : function(data){
+                debugger;
+                if(data.length > 0){
+                    $('#txt_allAnhoDays').text(data[0].ALL_YRY_DAYS) //전체연차일수
+                    $('#txt_rmnAnhoDays').text(data[0].ALL_YRY_DAYS - data[0].USE_YRY_DAYS) //남은연차일수
+
+                }else {
+
+                    $('#txt_allAnhoDays').text(0) //전체연차일수
+                    $('#txt_rmnAnhoDays').text(0) //남은연차일수
+                }
+             }
+        });
+    }
+
+
+
+    $(document).ready(function(){
+        setAnhoMgmt();
         /*********************************************************************
         *   남은 연차 조회
         *********************************************************************/
-
+/*
         var param = {
-            "email" : sessionStorage.getItem("email")
+//            "email" : sessionStorage.getItem("email")
+            "email" : 'ishwang@infogen.co.kr'
         }
 
         $.ajaxCall( param, {
@@ -35,8 +69,9 @@
                 useYryYn(data);
              }
         });
-
+*/
         function useYryYn(data) {
+        debugger;
             if(data[0].USE_YRY_YN == 'N') {
                 $('#exitSchdModal').click();
             }
@@ -269,6 +304,14 @@
                            <div class="align-self-center mr-5">
                                 <input type="text" class="form-control" id="ipt_emerCtpl" name="ipt_emerCtpl" placeholder="01012345678" maxlength="11"/>
                             </div>
+                        </div>
+
+                        <!-- 전체연차일수/ 남은연차일수 표기 -->
+                        <div class="card-body flex-height d-flex"><!--style="margin-right: 20px;">-->
+                            <span>전체연차일수 : </span>
+                            <span id="txt_allAnhoDays">0</span>
+                            <span> / 남은연차일수 : </span>
+                            <span id="txt_rmnAnhoDays">0</span>
                         </div>
 
                         <div class="card-body flex-height d-flex">
