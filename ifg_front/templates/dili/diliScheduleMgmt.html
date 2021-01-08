@@ -1095,6 +1095,10 @@
                 var srhClickDay = srhClickData.getDay();  // 요일 (0~6으로 출력, 0:일요일, 1:월요일, 6:토요일)
                 crteTodayShow(srhClickYear, srhClickMonth, srhClickDate, srhClickDay);
 
+                $('#txt_mmYy').text(tempSrhClickData[0]);
+                $('#txt_mmMm').text(tempSrhClickData[1]);
+                setMonthGridData();
+
                 $('#btn_showGrd').trigger('click');
                 $('#btn_showWeek').trigger('click');
 
@@ -1145,6 +1149,10 @@
                 crteTodayShow(srhClickYear, srhClickMonth, srhClickDate, srhClickDay);
                 $('#btn_showGrd').trigger('click');
                 $('#btn_showWeek').trigger('click');
+
+                $('#txt_mmYy').text(tempSrhClickData[0]);
+                $('#txt_mmMm').text(tempSrhClickData[1]);
+                setMonthGridData();
             });
 
             setLabel(calendar);
