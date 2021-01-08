@@ -1,0 +1,244 @@
+<script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function(){
+        //결재 소제목 지정
+        if($('input:radio[name="APVL_DIVS_CD"]:checked').val() == '01') {
+            $('#apvlReqTit').html("<b>야간근무 결재 요청</b>");
+
+        } else if ($('input:radio[name="APVL_DIVS_CD"]:checked').val() == '02') {
+            $('#apvlReqTit').html("<b>휴일근무 결재 요청</b>");
+        }
+
+        // 공통 코드 조회 - '결재 구분'
+        retrieveCmmCd("apvlReqMthdType", 'APVL_REQ_MTHD_CD');
+
+        /*********************************************************************
+        *   Session Email 값 기준 근무 결재요청 리스트 조회
+        *********************************************************************/
+        var param = {
+            "email" : sessionStorage.getItem("email")
+        }
+
+        $.ajaxCall( param, {
+             'method' : 'GET',
+             'url' : "{% url 'dili_api:getWrkApvlReq' %}",
+             'dataType' : 'json',
+             'data' : JSON.stringify(param),
+             'async' : false,
+             'callbackFn' : function(data){
+                // 리턴
+                wrkApvlGrd(data);
+             }
+        });
+
+        /*********************************************************************
+        *   근무결재요청 Grid 생성
+        *********************************************************************/
+        function wrkApvlGrd(data){
+            var wrkApvlTable = '<table class="table table-bordered table-responsive-md text-center"  id="tblWrkApvl" >';
+            wrkApvlTable += '<thead>';
+            wrkApvlTable += '<tr>';
+            wrkApvlTable += '<th class="text-center">순번</th>';
+            wrkApvlTable += '<th class="text-center">일자</th>';
+            wrkApvlTable += '<th class="text-center">구분</th>';
+            wrkApvlTable += '</tr>';
+            wrkApvlTable += '</thead>';
+            wrkApvlTable += '<tbody>';
+
+            if(data.length > 0) {
+                for(var i = 0; i < data.length; i++){
+                    var wrkDtm = "";
+                    if(data[i].WRK_DT != "") {
+                        if(data[i].WRK_TME != "") {
+                            wrkDtm = data[i].WRK_DT + " " + data[i].WRK_TME.substring(0,2) +":"+ data[i].WRK_TME.substring(2,4) +":"+ data[i].WRK_TME.substring(4,6)
+                        } else {
+                            wrkDtm = data[i].WRK_DT
+                        }
+                    }
+
+                    wrkApvlTable += '<tr id ="grd_wrkApvl'+i+'" onclick="onclickEvt(this)">';
+                    wrkApvlTable += '<td id="no" class="pt-3-half">'+(i+1)+'</td>';
+                    wrkApvlTable += '<td id="wrkDt" class="pt-3-half">'+wrkDtm+'</td>';
+                    wrkApvlTable += '<td id="wrkType" class="pt-3-half">'+data[i].WRK_TYPE+'</td>';
+                    wrkApvlTable += '</tr>';
+
+                }
+            }
+
+
+            wrkApvlTable += '</tbody>';
+            wrkApvlTable += '</table>';
+
+            document.getElementById('grd_wrkApvlReq').innerHTML = wrkApvlTable;
+        }
+
+    });
+
+    function onclickEvt(trId) {
+        var table = document.getElementById("tblWrkApvl");
+        var tr = table.getElementsByTagName("tr");
+        for(var i=0; i<tr.length; i++){
+            tr[i].style.background = "white";
+        }
+        document.getElementById(trId.id).style.backgroundColor = "lightgrey";
+        $("#ipt_wrkDt").val($('#'+trId.id).children().eq(1).text());
+
+        $("#apvlReqMthdType option").removeAttr("selected");
+
+        if($('#'+trId.id).children().eq(2).text() == "") {
+            $("#apvlReqMthdType option[value='00']").attr("selected", true);
+        } else if($('#'+trId.id).children().eq(2).text() == "휴일근무") {
+            $("#apvlReqMthdType option[value='01']").attr("selected", true);
+        } else if($('#'+trId.id).children().eq(2).text() == "야근근무") {
+            $("#apvlReqMthdType option[value='02']").attr("selected", true);
+        }
+
+    }
+
+
+    function btnReqEvt() {
+        if($("#ipt_wrkDt").val() == "") {
+            alertMsg("일자를 선택해주세요.");
+            return;
+        }
+
+        if($("#apvlReqMthdType option:selected").val() == "" || $("#apvlReqMthdType option:selected").val() == "00") {
+            alertMsg("결재 구분을 선택해주세요.");
+            return;
+        }
+
+        if($("#txa_reqRsn").val() == "") {
+            alertMsg("사유를 입력해주세요.");
+            return;
+        }
+
+        confirmMsg('저장하시겠습니까?', function(){
+            var param = {
+                "email" : sessionStorage.getItem("email"),               // 추후 Session Value 연동.
+                "apvlReqDivs" : $("#apvlReqMthdType option:selected").val(),    //01: 선결재, 02: 후결재
+                "wrkDt" : $("#ipt_wrkDt").val().substring(0,10),
+                "wrkTme" : $("#ipt_wrkDt").val().substring(11,13) +""+ $("#ipt_wrkDt").val().substring(14,16) +"" + $("#ipt_wrkDt").val().substring(17,19),
+                "wrkReqRsn": $("#txa_reqRsn").val(),
+                "th1AprvStus": "01",
+                "th1AprvNm": "hykim@infogen.co.kr",
+                "th2AprvStus": "01",
+                "th2AprvNm": "yblee1987@infogen.co.kr"
+
+            }
+
+            $.ajaxCall( param, {
+                 method : 'POST',
+                 'url' : '/dili/saveApvlReq/post',
+                 'dataType' : 'json',
+                 'data' : JSON.stringify(param),
+                 'async' : false,
+                 'callbackFn' : function(data){
+
+                    // 리턴
+                    g_toast.push('저장 되었습니다.');
+                    $('#exitApvlModal').click();
+                 }
+            });
+        });
+    }
+
+</script>
+<div class="row">
+    <div class="col-sm-12">
+        <div class="accordion mb-4" id="grp_wrkApvlReq">
+            <div class="mb-4" role="alert">
+                <h6 id="apvlReqTit">
+                    <b>근무결재 요청</b>
+                </h6>
+            </div>
+            <div class="p-0" id="head_wrkApvlReq">
+                <!-- Title -->
+<!--
+                <h2 class="mb-0">
+                    <button class="btn btn-link btn-block text-left text-dark" type="button" data-toggle="collapse" data-target="#col_wrkApvlReq" aria-expanded="true" aria-controls="collapseOne">
+                        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-caret-down-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z"/>
+                        </svg>
+                        근무결재 요청
+                    </button>
+                </h2>
+-->
+                <!-- Body -->
+                <div style="position: relative;" id="grid-parent">
+                    <div id="grd_wrkApvlReq">grid</div>
+                </div>
+
+
+                <div class="flex-height d-flex m-0 p-2">
+                    <div class="align-self-start align-self-center mr-3">근무 일자</div>
+                    <div class="align-self-center mr-5">
+                        <input type="text" class="form-control" id="ipt_wrkDt" name="ipt_wrkDt" placeholder="" maxlength="24" readonly/>
+                    </div>
+                </div>
+
+                <div class="flex-height d-flex m-0 p-2">
+                    <div class="align-self-start align-self-center mr-3">결재 구분</div>
+                    <div class="align-self-center mr-5">
+                        <select id="apvlReqMthdType" class="form-control" name="APVL_REQ_MTHD_CD">
+                            <option value="00" selected>선택</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="flex-height d-flex m-0 p-2">
+                    <div class="align-self-start align-self-center mr-3">근무 사유</div>
+                    <div class="align-self-center mr-7">
+                        <textarea id="txa_reqRsn" name="reqRsn" maxlength="500" style="resize: none; width:350px;height:70px;" placeholder="사유를 입력해주세요."></textarea>
+                    </div>
+                </div>
+
+                <div class="flex-height d-flex m-0 p-2">
+                    <div class="align-self-start align-self-center mr-3"></div>
+                    <div class="align-self-center mr-7">
+                        <button class="button" id="btn_req" onclick="btnReqEvt()">요청</button>
+                    </div>
+                </div>
+
+            </div>
+<!--
+            <div id="col_wrkApvlReq" class="collapse show" aria-labelledby="head_wrkApvlReq" data-parent="#grp_wrkApvlReq">
+                <div style="position: relative;" id="grid-parent">
+                    <div id="grd_wrkApvlReq">grid</div>
+                </div>
+
+
+                <div class="flex-height d-flex m-0 p-2">
+                    <div class="align-self-start align-self-center mr-3">근무 일자</div>
+                    <div class="align-self-center mr-5">
+                        <input type="text" class="form-control" id="ipt_wrkDt" name="ipt_wrkDt" placeholder="" maxlength="24" readonly/>
+                    </div>
+                </div>
+
+                <div class="flex-height d-flex m-0 p-2">
+                    <div class="align-self-start align-self-center mr-3">결재 구분</div>
+                    <div class="align-self-center mr-5">
+                        <select id="apvlReqMthdType" class="form-control" name="type">
+                            <option value="00" selected>선택</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="flex-height d-flex m-0 p-2">
+                    <div class="align-self-start align-self-center mr-3">근무 사유</div>
+                    <div class="align-self-center mr-7">
+                        <textarea id="txa_reqRsn" name="reqRsn" maxlength="500" style="resize: none; width:350px;height:70px;" placeholder="사유를 입력해주세요."></textarea>
+                    </div>
+                </div>
+
+                <div class="flex-height d-flex m-0 p-2">
+                    <div class="align-self-start align-self-center mr-3"></div>
+                    <div class="align-self-center mr-7">
+                        <button class="button" id="btn_req" onclick="btnReqEvt()">요청</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+-->
+
+    </div>
+</div>

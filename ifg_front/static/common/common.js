@@ -64,19 +64,25 @@ function retrieveCmmCd(cmp_id, grp_id){
             'data' : JSON.stringify(param),
             'async' : false,
             'callbackFn' : function(data){
-                for(var i = 0; i < data.length; i++){
+                for(var i = 0; i < data.length; i++) {
                     if($('#' + cmp_id).attr('type') == 'radio') {
-                        var radio = $("<label><input type='radio' name='"+data[i].CMM_CD_GRP_ID+"' value='"+data[i].CMM_CD+"'>&nbsp;"+data[i].CMM_CD_NAME+"&nbsp;&nbsp;&nbsp;</label>");
-                        console.log(radio);
+                        var strRadio ="<label><input type='radio' name='" + data[i].CMM_CD_GRP_ID  + "' value='" + data[i].CMM_CD;
 
-                        $('#' + cmp_id).parent().append(radio);
+                        if(i == 0) {
+                            strRadio += "' checked>&nbsp;" + data[i].CMM_CD_NAME + "&nbsp;&nbsp;&nbsp;</label>";
+                        } else {
+                            strRadio += "'>&nbsp;" + data[i].CMM_CD_NAME + "&nbsp;&nbsp;&nbsp;</label>";
+                        }
 
-                        //윤상은 작업중 2020-01-07
+                        //var radio = ${strRadio);
+                        $('#' + cmp_id).parent().append($(strRadio));
+
                     } else {
                         var option = $("<option value = "+data[i].CMM_CD+">"+data[i].CMM_CD_NAME+"</option>");
                         $('#' + cmp_id).append(option);
                     }
                 }
+
             }
     });
  }
