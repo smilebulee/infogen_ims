@@ -50,6 +50,8 @@ urlpatterns = [
     url(r'^getWeekGridData/', views.getWeekGridData, name='getWeekGridData'),
     url(r'^getMonthGridData/', views.getMonthGridData, name='getMonthGridData'),
 
+    url(r'^getTotalWrktm/', views.getTotalWrktm, name='getTotalWrktm'),
+
     url(r'^saveStrtTm/', views.saveStrtTm, name='saveStrtTm'),
     url(r'^saveEndTm/', views.saveEndTm, name='saveEndTm'),
 

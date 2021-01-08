@@ -812,6 +812,9 @@
                 "dt"  : dt
             }
 
+            var url = "{% url 'dili_api:getTotalWrktm' %}";
+            submissionCallMap(param,'GET',url,getTotalWrktmSubMitDone);
+
             $.ajaxCall( param, {
                  'method' : 'GET',
                  'url' : "{% url 'dili_api:getWrkTimeInfoByEml' %}",
@@ -838,6 +841,11 @@
             });
        }
 
+       function getTotalWrktmSubMitDone(data){
+
+            $('#monthTotalWrkTm').val(data[0].WRK_TOT_TM);
+       }
+
         /*********************************************************************
         *   Draw Chart Event - 근무누적시간 누적막대그래프 그리기
         *   nmlWrkTime      - 정상근무시간
@@ -847,11 +855,11 @@
         function drawChart(nmlWrkTime, aprvWrkTime, notAprvWrkTime) {
 
             var arr = [nmlWrkTime, aprvWrkTime, notAprvWrkTime]
-
+            var rmndTm = $('#monthTotalWrkTm').val() - (nmlWrkTime + aprvWrkTime + notAprvWrkTime);
             var barOptions_stacked = {
                 title: {
                     display: true,
-                    text: '총 근무시간 : ' + (nmlWrkTime + aprvWrkTime + notAprvWrkTime) + 'H',
+                    text: '나의 총 근무시간 / 잔여시간(근무가능시간) : ' + (nmlWrkTime + aprvWrkTime + notAprvWrkTime) + 'H' + ' / ' + rmndTm + 'H (' + $('#monthTotalWrkTm').val()  + 'H)',
                     fontSize: 15,
                     padding: 0
                 },
@@ -1239,6 +1247,7 @@
 
 
     </script>
+        <input type="hidden" id="monthTotalWrkTm"/>
         <input type="hidden" id="clickDate"/>
         <!--근무시간관리상세 모달 영역 -->
         <div id="my_modal" class="modalUi">

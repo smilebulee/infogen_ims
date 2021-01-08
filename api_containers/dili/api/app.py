@@ -264,6 +264,37 @@ class yryMgmt(Resource): # Mariadb 연결 진행
 
         return result2
 
+class totalWrktm(Resource): # Mariadb 연결 진행
+    def get(self):
+        data = request.get_json()
+
+        #requirements pymysql import 후 커넥트 사용
+        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
+                                        charset='utf8', autocommit=False)
+        try:
+            with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+                #쿼리문 실행
+                sql = "SELECT CONCAT(COUNT(*) * 10.4) AS WRK_TOT_TM"\
+                      "    FROM TB_DT_INFO"\
+                      "   WHERE 1=1"\
+                      "   AND DT LIKE '" + data["dt"] + "%'"\
+                      "   AND HLDY_DIVS_CD = '01'"\
+                      "   AND DOW_DIVS_CD NOT IN ('01','07')"
+                logging.debug(sql)
+                cursor.execute(sql)
+
+        finally:
+            mysql_con.close()
+
+        result2 = cursor.fetchall()
+        for row in result2:
+            logging.debug('====== row====')
+            logging.debug(row)
+            logging.debug('===============')
+        array = list(result2)  # 결과를 리스트로
+
+        return json.dumps(result2, indent=4, cls=DateTimeEncoder)
+
 class hldyMgmt(Resource): # Mariadb 연결 진행
     def get(self):
 
@@ -1606,6 +1637,7 @@ api.add_resource(updateEndTm,'/updateEndTm') #api 선언
 api.add_resource(yryUseDays,'/yryUseDays') #api 선언
 api.add_resource(retrieveCmmCd,'/retrieveCmmCd') #api 선언
 api.add_resource(scheduleStatLst,'/scheduleStatLst') #api 선언
+api.add_resource(totalWrktm,'/totalWrktm') #api 선언
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5006, debug=True)
