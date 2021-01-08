@@ -75,11 +75,11 @@
 
                     if ($('#empEmailHidden').val() == null || $('#empEmailHidden').val() == "") {
 
-                        document.getElementById('pop_strtJob').innerHTML = '<input type="button" onclick="onclickStrtTm()" value="출근버튼">';
+                        document.getElementById('pop_strtJob').innerHTML = '<input type="button" class="button" onclick="onclickStrtTm()" value="출근버튼">';
 
                     }else if($('#empEmailHidden').val() == sessionStorage.getItem("email")){
 
-                        document.getElementById('pop_strtJob').innerHTML = '<input type="button" onclick="onclickStrtTm()" value="출근버튼">';
+                        document.getElementById('pop_strtJob').innerHTML = '<input type="button" class="button" onclick="onclickStrtTm()" value="출근버튼">';
                     }else {
                         $('#pop_strtJob').text("-");
                     }
@@ -95,11 +95,11 @@
 
                     if ($('#empEmailHidden').val() == null || $('#empEmailHidden').val() == "") {
 
-                        document.getElementById('pop_endJob').innerHTML = '<input type="button" onclick="onclickEndTm()" value="퇴근버튼">';
+                        document.getElementById('pop_endJob').innerHTML = '<input type="button" class="button" onclick="onclickEndTm()" value="퇴근버튼">';
 
                     }else if($('#empEmailHidden').val() == sessionStorage.getItem("email")){
 
-                        document.getElementById('pop_endJob').innerHTML = '<input type="button" onclick="onclickEndTm()" value="퇴근버튼">';
+                        document.getElementById('pop_endJob').innerHTML = '<input type="button"  class="button" onclick="onclickEndTm()" value="퇴근버튼">';
                     }else {
                         $('#pop_endJob').text("-");
                     }
@@ -115,11 +115,11 @@
                     if(apvlStus == "미등록"){
                         if ($('#empEmailHidden').val() == null || $('#empEmailHidden').val() == "") {
 
-                            document.getElementById('pop_apvlStus').innerHTML = '<input type="button" onclick="onclickApvlUpld()" value="결재올리기">';
+                            document.getElementById('pop_apvlStus').innerHTML = '<input type="button" class="button" onclick="onclickApvlUpld()" value="결재올리기">';
 
                         }else if($('#empEmailHidden').val() == sessionStorage.getItem("email")){
 
-                            document.getElementById('pop_apvlStus').innerHTML = '<input type="button" onclick="onclickApvlUpld()" value="결재올리기">';
+                            document.getElementById('pop_apvlStus').innerHTML = '<input type="button" class="button" onclick="onclickApvlUpld()" value="결재올리기">';
 
                         }else {
                             $('#pop_apvlStus').text(apvlStus);
@@ -138,11 +138,11 @@
 
                     if ($('#empEmailHidden').val() == null || $('#empEmailHidden').val() == "") {
 
-                        document.getElementById('pop_apvlStus').innerHTML = '<input type="button" onclick="onclickApvlUpld()" value="결재올리기">';
+                        document.getElementById('pop_apvlStus').innerHTML = '<input type="button" class="button" onclick="onclickApvlUpld()" value="결재올리기">';
 
                     }else if($('#empEmailHidden').val() == sessionStorage.getItem("email")){
 
-                        document.getElementById('pop_apvlStus').innerHTML = '<input type="button" onclick="onclickApvlUpld()" value="결재올리기">';
+                        document.getElementById('pop_apvlStus').innerHTML = '<input type="button" class="button" onclick="onclickApvlUpld()" value="결재올리기">';
 
                     }else {
                         $('#pop_apvlStus').text(apvlStus);
@@ -206,7 +206,7 @@
         document.getElementById('pop_schdDetlTm').innerHTML = '정상근무 : '+normWrkTm+' / 초과근무 : '+overWrkTm;
         $('#pop_schdDetlAllTm').text(allWrkTm);
         if(overWrkTm != "00:00:00"){
-            document.getElementById('pop_apvlStus').innerHTML = '<input type="button" onclick="onclickApvlUpld()" value="결재올리기">';
+            document.getElementById('pop_apvlStus').innerHTML = '<input type="button" class="button" onclick="onclickApvlUpld()" value="결재올리기">';
         }else {
             $('#pop_apvlStus').text("-");
         }
