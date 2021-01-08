@@ -28,14 +28,15 @@
              'data' : JSON.stringify(param),
              'async' : false,
              'callbackFn' : function(data){
+             debugger;
                 if(data.length > 0){
-                    $('#txt_allAnhoDays').text(data[0].ALL_YRY_DAYS) //전체연차일수
+                    $('#txt_allAnhoDays').text(data[0].ALL_YRY_DAYS)                        //전체연차일수
                     $('#txt_rmnAnhoDays').text(data[0].ALL_YRY_DAYS - data[0].USE_YRY_DAYS) //남은연차일수
 
                 }else {
 
-                    $('#txt_allAnhoDays').text(0) //전체연차일수
-                    $('#txt_rmnAnhoDays').text(0) //남은연차일수
+                    $('#txt_allAnhoDays').text(0)                                           //전체연차일수
+                    $('#txt_rmnAnhoDays').text(0)                                           //남은연차일수
                 }
              }
         });
@@ -44,13 +45,20 @@
 
 
     $(document).ready(function(){
-        // 공통 코드 조회 - '결재 구분'
-        retrieveCmmCd("yryType", 'APVL_REQ_DIVS_CD');
-        debugger;
+        //결재 소제목 지정
+        if($('input:radio[name="APVL_REQ_DIVS_CD"]:checked').val() == '03') {
+            $('#apvlReqTit').html("<b>연차 사용 결재 요청</b>");
 
-        // 결재 구분 기본 선택 값 지정 - '야간근무'
-        //$('input[name="APVL_REQ_DIVS_CD"][value="01"]').prop("checked", true)
-        //$("input:radio[name='APVL_REQ_DIVS_CD']:radio[value='01']").prop('checked', true);
+        }
+
+        // 공통 코드 조회 - '신청구분'
+        retrieveCmmCd("rb_apvlReqKdCd", 'APVL_REQ_KD_CD');
+        // 공통 코드 조회 - '휴가종류'
+        retrieveCmmCd("rb_ptoKdCd", 'PTO_KD_CD');
+
+        // 남은 연차, 총 연차 조회
+        setAnhoMgmt();
+
 
         /*********************************************************************
         *   남은 연차 조회
@@ -146,23 +154,23 @@
         }
 
     });
-
-    $(document).on("change","input:radio[name='APVL_REQ_DIVS_CD']",function(){
+/*
+    $(document).on("change","input:radio[name='APVL_REQ_MTHD_CD']",function(){
             console.log("동적컴포넌트::onchange");
             var url = "";
-            if($("input[name='APVL_REQ_DIVS_CD']:checked").val() == '01') {
+            if($("input[name='APVL_REQ_MTHD_CD']:checked").val() == '01') {
                 url = "{% url 'dili_api:apvlReqPop' %}" ;
-            } else if($("input[name='APVL_REQ_DIVS_CD']:checked").val() == '02') {
+            } else if($("input[name='APVL_REQ_MTHD_CD']:checked").val() == '02') {
                 url = "{% url 'dili_api:yryApvlReq' %}" ;
-            } else if($("input[name='APVL_REQ_DIVS_CD']:checked").val() == '03') {
+            } else if($("input[name='APVL_REQ_MTHD_CD']:checked").val() == '03') {
                 url = "{% url 'dili_api:wrkApvlReq' %}" ;
             }
             $('#testDi2v').load(url);
     });
-
+*/
     function btnReqEvt2() {
-        if($('input[name="yryType"]:checked').val() == "") {
-            alertMsg("휴가종류를 선택해주세요.");
+        if($('input[name="reqType"]:checked').val() == "") {
+            alertMsg("결재 구분을 선택해주세요.");
             return;
         }
 
@@ -195,7 +203,7 @@
 
                 var tmpParam = {
                     "email" : sessionStorage.getItem("email"),
-                    "apvlReqDivs" : $('input[name="yryType"]:checked').val(),    //01: 야근, 02:휴일, 03: 연차
+                    "apvlReqDivs" : $('input[name="reqType"]:checked').val(),    //01: 선결재, 02: 후결재//////////////////////////////수정
                     "wrkDt" : $("#ipt_holiTerm1").val(),
                     "wrkTme" : "000000",
                     "wrkReqRsn": $("#txa_holiRsn").val(),
@@ -217,8 +225,8 @@
                         date.setDate(date.getDate() + 1)
 
                         var tmpParam = {
-                            "email" : sessionStorage.getItem("email"),                                   // 추후 Session Value 연동.
-                            "apvlReqDivs" : $('input[name="yryType"]:checked').val(),    //01: 야근, 02:휴일, 03: 연차
+                            "email" : sessionStorage.getItem("email"),
+                            "apvlReqDivs" : $('input[name="reqType"]:checked').val(),    //01: 선결재, 02: 후결재//////////////////////////////수정
                             "wrkDt" : setWeek(date).baseDate,
                             "wrkTme" : "000000",
                             "wrkReqRsn": $("#txa_holiRsn").val(),
@@ -251,54 +259,35 @@
     }
 
     </script>
-    <div class="row">
-        <div class="col-sm-12">
-            <div class="mb-4" role="alert">
-                <h5>
-                    <b>결재 요청</b>
-                </h5>
-            <div id="testDi2v">
-                <h5>
-                    <b>test</b>
-                </h5>
-            </div>
-
-            </div>
-
+<div class="row">
+    <div class="col-sm-12">
             <div class="accordion mb-4" id="grp_yryApvlReq">
-                <div class="card">
-                    <div class="card-header p-0" id="head_yryApvlReq">
-                        <h2 class="mb-0">
-                            <button class="btn btn-link btn-block text-left text-dark" type="button" data-toggle="collapse" data-target="#col_yryApvlReq" aria-expanded="true" aria-controls="collapseOne">
-                                <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-caret-down-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z"/>
-                                </svg>
-                                결재 요청
-                            </button>
-                        </h2>
-                    </div>
-                    <div id="col_yryApvlReq" class="collapse show" aria-labelledby="head_yryApvlReq" data-parent="#grp_yryApvlReq">
-                        <div class="card-body flex-height d-flex">
-                            <div class="align-self-start align-self-center mr-3">결재 유형</div>
-                            <div class="align-self-center mr-5">
-                                <input id="yryType" type="radio" name="APVL_REQ_DIVS_CD" value="00" style="display : none;">
-                            </div>
-                            <!--
-                            <div class="align-self-center mr-5">
-                                <label><input type="radio" name="yryType" value="03" checked> 연차 </label>
-                                <label><input type="radio" name="yryType" value="04"> 기타 </label>
-                            </div>
-                            -->
-                        </div>
+                <div class="mb-4" role="alert">
+                    <!-- Title -->
+                    <h6 id="apvlReqTit">
+                        <b>근무결재 요청</b>
+                    </h6>
+                </div>
 
-                        <div class="card-body flex-height d-flex">
+                <div class="p-0" id="head_yryApvlReq">
+
+                    <!-- Body -->
+                    <div id="col_yryApvlReq" class="collapse show" aria-labelledby="head_yryApvlReq" data-parent="#grp_yryApvlReq">
+                        <div class="flex-height d-flex m-0 p-2">
                             <div class="align-self-start align-self-center mr-3">신청구분</div>
                             <div class="align-self-center mr-5">
-                                <label><input type="radio" name="rqstType" value="00" checked> 신청 </label>
+                                <input id="rb_apvlReqKdCd" type="radio" name="APVL_REQ_KD_CD" value="00" style="display : none;">
                             </div>
                         </div>
 
-                        <div class="card-body flex-height d-flex">
+                        <div class="flex-height d-flex m-0 p-2">
+                            <div class="align-self-start align-self-center mr-3">휴가종류</div>
+                           <div class="align-self-center mr-5">
+                                <input id="rb_ptoKdCd" type="radio" name="PTO_KD_CD" value="00" style="display : none;">
+                            </div>
+                        </div>
+
+                        <div class="flex-height d-flex m-0 p-2">
                             <div class="align-self-start align-self-center mr-3">휴가기간</div>
                             <input type="hidden" name="date" id="datepickerData1"/>
                             <div id="btn_datepicker1" class="align-self-center mr-5" >
@@ -311,37 +300,42 @@
                             </div>
                         </div>
 
-                        <div class="card-body flex-height d-flex">
+                        <div class="flex-height d-flex m-0 p-2">
                             <div class="align-self-start align-self-center mr-3">휴가일수</div>
                             <div class="align-self-center mr-5">
                                 <input type="text" class="form-control" id="ipt_holiDays" name="ipt_holiDays" maxlength="4" readonly/>
                             </div>
                         </div>
 
-                        <div class="card-body flex-height d-flex">
+                        <div class="flex-height d-flex m-0 p-2">
                             <div class="align-self-start align-self-center mr-5">사유</div>
+                            <!--
                             <div class="align-self-center mr-5">
                                 <textarea id="txa_holiRsn" name="holiRsn" maxlength="500" placeholder="휴가 사유를 입력해주세요."></textarea>
                             </div>
+                            -->
+                            <div class="align-self-center mr-7">
+                                <textarea id="txa_holiRsn" name="reqRsn" maxlength="500" style="resize: none; width:350px;height:70px;" placeholder="휴가 사유를 입력해주세요."></textarea>
+                            </div>
                         </div>
 
-                        <div class="card-body flex-height d-flex">
+                        <div class="flex-height d-flex m-0 p-2">
                             <div class="align-self-start align-self-center mr-2">비상연락망</div>
-                           <div class="align-self-center mr-5">
+                            <div class="align-self-center mr-5">
                                 <input type="text" class="form-control" id="ipt_emerCtpl" name="ipt_emerCtpl" placeholder="01012345678" maxlength="11"/>
                             </div>
                         </div>
 
-                        <!-- 전체연차일수/ 남은연차일수 표기 -->
-                        <div class="card-body flex-height d-flex"><!--style="margin-right: 20px;">-->
-                            <span> 남은 연차 일수 : </span>
+                        <!-- 남은 연차 일수 / 총 연차 일수 표기 -->
+                        <div class="flex-height d-flex m-0 p-2"><!--style="margin-right: 20px;">-->
+                            <span> 남은 연차 일수 :&nbsp;</span>
                             <span id="txt_rmnAnhoDays">0</span>
-                            <span> 일 / 총 연차 일수 : </span>
+                            <span>&nbsp;일 / 총 연차 일수 :&nbsp;</span>
                             <span id="txt_allAnhoDays">0</span>
-                            <span> 일</span>
+                            <span>&nbsp;일</span>
                         </div>
 
-                        <div class="card-body flex-height d-flex">
+                        <div class="flex-height d-flex m-0 p-2">
                             <div class="align-self-start align-self-center mr-3"></div>
                             <div class="align-self-center mr-7">
                                 <button type="button" class="button" id="btn_req" onclick="btnReqEvt2()">요청</button>
