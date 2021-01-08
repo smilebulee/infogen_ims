@@ -215,7 +215,7 @@ def getEmpInfo(request):
 
 class wrkApvlReq(generic.TemplateView):
     def get(self, request, *args, **kwargs):
-        template_name = 'dili/wrkApvlReqPopup.html'
+        template_name = 'dili/apvlReqWrkSub.html'
 
         # r = requests.get('http://dili_api:5006/hello')
         # rr = {
@@ -227,7 +227,7 @@ class wrkApvlReq(generic.TemplateView):
     
 class yryApvlReq(generic.TemplateView):
     def get(self, request, *args, **kwargs):
-        template_name = 'dili/yryApvlReqPopup.html'
+        template_name = 'dili/apvlReqYrySub.html'
 
         # r = requests.get('http://dili_api:5006/hello')
         # rr = {
