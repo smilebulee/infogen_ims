@@ -76,8 +76,7 @@
         }
         // 결재등록 모달 오픈
         $("#apvlReqBtn").click(function(){
-            //var url = "{% url 'dili_api:apvlReqPop' %}" ; /////////////////////////////수정
-            var url = "{% url 'dili_api:yryApvlReq' %}" ; /////////////////////////////수정
+            var url = "{% url 'dili_api:apvlReqPop' %}" ;
 
 
             $('#apvlReqModalDiv').css("width","50%");
@@ -111,7 +110,6 @@
     *   근무결재요청 Grid 생성
     *********************************************************************/
     function apvlReqHistGrd(data){
-        debugger;
         var apvlReqHistTable = '<table class="table table-bordered table-responsive-md text-center">';
         apvlReqHistTable += '<thead>';
         apvlReqHistTable += '<tr>';
@@ -170,7 +168,6 @@
     }
 
     function onclickEvt(trId) {
-        debugger;
         var params = {
             "email" : sessionStorage.getItem("email"),
             "wrkDt" : $(trId).children().eq(2).text().substring(0,10)   //ex. 2020-11-03 날짜
@@ -245,7 +242,7 @@
     </div>
 </div>
 
-<!--결재승인 모달 영역 -->
+<!-- 결재승인 모달 영역 -->
 <div style="width:100%">
     <div id="apvlAcptModalDiv" class="modalUi">
         <div id="apvlAcptModal">
@@ -298,7 +295,7 @@
                         <div class="align-self-start align-self-center mr-3">구분</div>
                         <div class="align-self-center mr-5">
                             <select id="sbx_type" name="sbx_type" class="form-control">
-                                <option value="00" selected>선택</option>
+                                <option value="00" selected>전체</option>
                             </select>
                         </div>
                         <div class="align-self-end align-self-center">
