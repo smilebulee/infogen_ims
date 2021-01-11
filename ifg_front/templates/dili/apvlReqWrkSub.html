@@ -135,17 +135,17 @@
             }
 
             $.ajaxCall( param, {
-                 method : 'POST',
-                 'url' : '/dili/saveApvlReq/post',
-                 'dataType' : 'json',
-                 'data' : JSON.stringify(param),
-                 'async' : false,
-                 'callbackFn' : function(data){
+                method : 'POST',
+                'url' : '/dili/saveApvlReq/post',
+                'dataType' : 'json',
+                'data' : JSON.stringify(param),
+                'async' : false,
+                'callbackFn' : function(data){
                     debugger;
                     // 리턴
                     g_toast.push('저장 되었습니다.');
-                    $('#exitApvlModal').click();
-                 }
+                    $('#exitEmpModalBtn').click();
+                }
             });
         });
     }
