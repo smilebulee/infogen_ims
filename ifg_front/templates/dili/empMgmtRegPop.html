@@ -71,8 +71,19 @@
             console.log("아이디 중복체크 > 등록가능");
             $('#ipt_empId').attr('readonly', true);
             $('#submitBtn').attr('disabled',false);
+            $('#reIsExistBtn').attr('hidden', false);
         }
     };
+
+
+    /* 아이디 재설정 클릭 이벤트 */
+    function onClickReIsExistBtn(){
+        alert("아이디 재설정 클릭!");
+        $('#ipt_empId').attr('readonly', false);
+        $('#ipt_empId').val("");
+        $('#ipt_empId').focus();
+        $('#submitBtn').attr('disabled',true);
+    }
 
     /* 등록버튼 클릭 이벤트 */
     function onClickSubmitBtn() {
@@ -179,6 +190,11 @@
         $('#exitEmpModalBtn').click();
     };
 
+    /* 리셋 버튼 클릭 이벤트 */
+    function onClickResetBtn() {
+        $('#ipt_empId').attr('readonly', false);
+    };
+
 </script>
     <div class="row">
         <div class="mb-4" role="alert">
@@ -193,17 +209,24 @@
                     <tr>
                         <td><label for="ipt_empId">아이디</label></td>
                         <td><input type="text" class="form-control" id="ipt_empId" name="ipt_empId" placeholder="ID" maxlength="30" style="width:300px;"/></td>
-                        <td><button class="button" id="isExistBtn" type="button" onclick="onClickIsExistBtn()" float="right">중복확인</button></td>
+
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td>
+                            <button class="button" id="isExistBtn" type="button" onclick="onClickIsExistBtn()" float="right">중복확인</button>
+                            <button class="button" id="reIsExistBtn" type="button" onclick="onClickReIsExistBtn()" float="right" hidden>아이디 재설정</button>
+                        </td>
                     </tr>
                     <!-- 비밀번호 -->
                     <tr>
                         <td><label for="ipt_empPw">비밀번호</label></td>
-                        <td colspan="2"><input type="password" class="form-control" id="ipt_empPw" name="ipt_empPw" placeholder="PASSWORD" maxlength="10" style="width:300px;"/></td>
+                        <td><input type="password" class="form-control" id="ipt_empPw" name="ipt_empPw" placeholder="PASSWORD" maxlength="10" style="width:300px;"/></td>
                     </tr>
                     <!-- 권한 -->
                     <tr>
                         <td><label for="ipt_empAuthId">권한</label></td>
-                        <td colspan="2">
+                        <td>
                             <select id="ipt_empAuthId" name="ipt_empAuthId" style="width:300px;">
                                 <option value="00" selected>선택</option>
                                 <option value="01">관리자</option>
@@ -215,22 +238,22 @@
                     <!-- 성명 -->
                     <tr>
                         <td><label for="ipt_empNm">성명</label></td>
-                        <td colspan="2"><input type="text" class="form-control" id="ipt_empNm" name="ipt_empNm" placeholder="NAME" maxlength="10" style="width:300px;"/></td>
+                        <td><input type="text" class="form-control" id="ipt_empNm" name="ipt_empNm" placeholder="NAME" maxlength="10" style="width:300px;"/></td>
                     </tr>
                     <!-- 생년월일 -->
                     <tr>
                         <td><label for="ipt_empBd">생년월일</label></td>
-                        <td colspan="2"><input type="date" class="form-control" id="ipt_empBd" name="ipt_empBd" maxlength="8" max="9999-12-31" style="width:300px;"/></td>
+                        <td><input type="date" class="form-control" id="ipt_empBd" name="ipt_empBd" maxlength="8" max="9999-12-31" style="width:300px;"/></td>
                     </tr>
                     <!-- 전화번호 -->
                     <tr>
                         <td><label for="ipt_empMb">전화번호</label></td>
-                        <td colspan="2"><input type="tel" class="form-control" id="ipt_empMb" name="ipt_empMb" maxlength="13" placeholder="000-0000-0000"style="width:300px;"/></td>
+                        <td><input type="tel" class="form-control" id="ipt_empMb" name="ipt_empMb" maxlength="13" placeholder="000-0000-0000"style="width:300px;"/></td>
                     </tr>
                      <!-- 부서 -->
                     <tr>
                         <td><label for="ipt_empDept">부서</label></td>
-                        <td colspan="2">
+                        <td>
                             <select id="ipt_empDept" name="ipt_empDept" style="width:300px;">
                                 <option value="00" selected>선택</option>
                                 <option value="01">전자/제조파트</option>
@@ -244,9 +267,9 @@
                     </tr>
                     <!-- 버튼 -->
                     <tr>
-                        <td colspan="3" style="text-align:right;">
+                        <td colspan="2" style="text-align:right;">
                             <button class="button" id="submitBtn" type="button" onclick="onClickSubmitBtn()" float="right" disabled>등록</button>
-                            <input class="button" id="resetBtn" type="reset" float="right"/>
+                            <input class="button" id="resetBtn" type="reset" onclick="onClickResetBtn()" float="right"/>
                             <button class="button" id="closeBtn" type="button" onclick="onClickCloseBtn()" float="right">닫기</button>
                         </td>
                     </tr>

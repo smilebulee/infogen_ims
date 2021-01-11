@@ -1770,7 +1770,7 @@ class empMgmtEditSubmit(Resource):
                                                 "EMP_TEL = '"+ipt_empMb+"', " \
                                                 "EMP_BDAY  = '"+ipt_empBd+"', " \
                                                 "DEPT_CD = '"+ipt_empDept+"' " \
-                                                "WHERE `EMP_ID` = '"+ipt_empId+"'" \
+                                                "WHERE EMP_ID = '"+ipt_empId+"'" \
 
                 logger.info(sql)
                 cursor.execute(sql)
