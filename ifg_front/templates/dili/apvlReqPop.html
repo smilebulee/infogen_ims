@@ -50,11 +50,11 @@
             // 팝업 오픈
             var url = "{% url 'dili_api:empMgmtPop' %}" ;
 
-            $('#apvlEmpModalDiv').css("width","80%");
-            $('#apvlEmpModalDiv').css("z-index", 99999999999);
-            modal('apvlEmpModalDiv');
+            $('#empModalDiv').css("width","80%");
+            $('#empModalDiv').css("z-index", 99999999999);
+            modal('empModalDiv');
 
-            $('#apvlEmpModal').load(url);
+            $('#empModal').load(url);
         }
 
         // 결재 방법에 따른 화면 분기
@@ -89,6 +89,7 @@
 
 
 <!--직원조회 모달 영역 -->
+<!--
 <div style="width:100%">
     <div id="apvlEmpModalDiv" class="modalUi">
         <div id="apvlEmpModal">
@@ -104,7 +105,7 @@
         </a>
     </div>
 </div>
-
+-->
 
 <div class="row">
     <div class="col-sm-12">
