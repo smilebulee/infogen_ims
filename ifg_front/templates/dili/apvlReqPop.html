@@ -1,5 +1,8 @@
 <script type="text/javascript">
     $(document).ready(function(){
+        // 기본 결재 방법 = 선결재
+        var currReqMthd = '01';
+
         // 공통 코드 조회 - '결재 유형'
         retrieveCmmCd("rb_apvlReqDivsCd", 'APVL_DIVS_CD');
 
@@ -54,8 +57,14 @@
             $('#apvlEmpModal').load(url);
         }
 
+        // 결재 방법에 따른 화면 분기
+        if ( currReqMthd == '01' ) {
 
 
+        } else {
+
+
+        }
 
 
     });
@@ -84,7 +93,7 @@
     <div id="apvlEmpModalDiv" class="modalUi">
         <div id="apvlEmpModal">
         </div>
-        <a class="modal_close_btn" id="exitApvlEmpModalBtn">
+        <a class="modal_close_btn" id="exitEmpModalBtn">
             <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-x-circle" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                <path fill-rule="evenodd" d="
                M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
