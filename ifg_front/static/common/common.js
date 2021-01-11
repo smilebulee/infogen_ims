@@ -51,7 +51,7 @@ function retrieveCmmCdTest(sbx_id, grp_id){
  }
 
 /* 공통코드 조회 및 radio, select 컴포넌트 등록 */
-function retrieveCmmCd(cmp_id, grp_id){
+function retrieveCmmCd(cmp_id, grp_id, callBackFunc){
     var param = {
         "cmp_id" : cmp_id,
         "grp_id" : grp_id
@@ -83,6 +83,13 @@ function retrieveCmmCd(cmp_id, grp_id){
                     }
                 }
 
+                if(callBackFunc) {
+                    if(typeof callBackFunc == 'function') {
+                        callBackFunc(data);
+                    } else if(typeof callBackFunc == 'string') {
+                        window[callBackFunc](data);
+                    }
+                }
             }
     });
  }

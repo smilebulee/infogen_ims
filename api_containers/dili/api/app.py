@@ -772,12 +772,14 @@ class apvlReqHistDetl(Resource): # Mariadb 연결 진행
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 # 쿼리문 실행
                 sql = "SELECT NVL(B.EMP_NAME,'') TH1_APRV_NM" \
-                      "      ,CASE WHEN A.TH1_APRV_STUS = '02' THEN '승인'" \
+                      "      , CASE WHEN A.TH1_APRV_STUS = '02' THEN '승인'" \
                       "            ELSE '미승인' END TH1_APRV_STUS_NM" \
-                      "   FROM TB_APVL_REQ_MGMT_M A, TB_EMP_MGMT B, TB_EMP_MGMT C " \
+                      "      , A.APVL_REQ_DT" \
+                      "   FROM TB_APVL_REQ_MGMT_M A, TB_EMP_MGMT B " \
                       "  WHERE A.TH1_APRV_NM = B.EMP_EMAIL" \
-                      "   AND A.EMP_EMAL_ADDR = '" + data["email"] + "'"
-                logging.debug("apvlReqHist SQL문" + sql)
+                      "   AND A.EMP_EMAL_ADDR = '" + data["email"] + "'" \
+                      "   AND A.WRK_DT = '" + data["wrkDt"] + "'"
+                logging.debug("apvlReqHistDetl SQL문" + sql)
                 cursor.execute(sql)
 
         finally:
