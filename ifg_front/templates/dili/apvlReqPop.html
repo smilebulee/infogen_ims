@@ -20,25 +20,30 @@
         $('#apvlReqDiv').load("{% url 'dili_api:wrkApvlReq' %}");
 
         //////////////////////테스트 중
-        //세팅할 empIdx 지정
-        var empIptId;
+        //세팅할 empName, empEmail 지정
+        var empIptNm;
+        var empIptEmail;
 
         // 결재자 검색 - 직원조회 모달 오픈
         $("#ipt_apvlLnSearchNamePop").click(function(){
-            empIptId = 'ipt_apvlLnSearchNamePop';
+            empIptNm = 'ipt_apvlLnSearchNamePop';
+            empIptEmail = 'ipt_apvlLnSearchEmailPop';
             openEmpMgmtPop();
         });
 
         // 참조자 검색 - 직원조회 모달 오픈
         $("#ipt_apvlLnRfSearchNamePop").click(function(){
-            empIptId = 'ipt_apvlLnRfSearchNamePop';
+            empIptNm = 'ipt_apvlLnRfSearchNamePop';
+            empIptEmail = 'ipt_apvlLnRfSearchEmailPop';
             openEmpMgmtPop();
         });
 
         // 직원조회 모달 닫기 - 후처리
         $("#ipt_apvlSearchNamePop").change(function(){
-            $('#' + empIptId).val($('#ipt_searchNamePop').val());
-            empIptId = '';
+            $('#' + empIptNm).val($('#ipt_apvlSearchNamePop').val());
+            $('#' + empIptEmail).val($('#apvlEmpEmailHidden').val());
+            empIptNm = '';
+            empIptEmail = '';
 
         });
 
@@ -176,6 +181,7 @@
                                 <div class="align-self-center mr-3">
                                     <div class="align-self-center mr-3">
                                         <input type="text" class="form-control" id="ipt_apvlLnSearchNamePop" name="ipt_apvlLnSearchNamePop" placeholder="이름을 입력해주세요." maxlength="10" readonly/>
+                                        <input type="text" class="form-control" id="ipt_apvlLnSearchEmailPop" name="ipt_apvlLnSearchEmailPop" readonly/>
                                     </div>
                                 </div>
 
@@ -190,6 +196,7 @@
                                 <div class="align-self-center mr-3">
                                     <div class="align-self-center mr-3">
                                         <input type="text" class="form-control" id="ipt_apvlLnRfSearchNamePop" name="ipt_apvlLnSearchNamePop" placeholder="이름을 입력해주세요." maxlength="10" readonly/>
+                                        <input type="text" class="form-control" id="ipt_apvlLnRfSearchEmailPop" name="ipt_apvlLnRfSearchEmailPop" readonly/>
                                     </div>
                                 </div>
                             </div>
