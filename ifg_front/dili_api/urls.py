@@ -49,6 +49,12 @@ urlpatterns = [
     url(r'^saveYryApvlReq/post', views.saveYryApvlReq, name='saveYryApvlReq'),
     url(r'^getWeekGridData/', views.getWeekGridData, name='getWeekGridData'),
     url(r'^getMonthGridData/', views.getMonthGridData, name='getMonthGridData'),
+    url(r'^empMgmtRegPop', views.empMgmtRegPop.as_view(), name='empMgmtRegPop'),
+    url(r'^empMgmtReg/post', views.empMgmtReg, name='empMgmtReg'),
+    url(r'^empMgmtEditPop/', views.empMgmtEditPop.as_view(), name='empMgmtEditPop'),
+    url(r'^empMgmtEdit/post', views.empMgmtEdit, name='empMgmtEdit'),
+    url(r'^getEditEmpInfo/', views.getEditEmpInfo, name='getEditEmpInfo'),
+    url(r'^empMgmtDel/post', views.empMgmtDel, name='empMgmtDel'),
 
     url(r'^saveStrtTm/', views.saveStrtTm, name='saveStrtTm'),
     url(r'^saveEndTm/', views.saveEndTm, name='saveEndTm'),

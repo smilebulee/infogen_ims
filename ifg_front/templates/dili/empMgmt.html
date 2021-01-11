@@ -1,192 +1,237 @@
-{% extends 'common/base.html' %}
-{% block content %}
-    <div class="container">
-        <script type="text/javascript">
-        $(document).ready(function(){
-            /* 메인 화면에서 받는 이메일 파라미터 */
-            var param = {
-                "name" : ''
-            }
+<script type="text/javascript">
+$(document).ready(function(){
+    /* 메인 화면에서 받는 이메일 파라미터 */
+    var param = {
+        "name" : ''
+    }
 
-            /* 목록조회 */
-            $.ajaxCall( param, {
-                 'method' : 'GET',
-                 'url' : "{% url 'dili_api:getEmpInfo' %}",
-                 'dataType' : 'json',
-                 'data' : JSON.stringify(param),
-                 'async' : false,
-                 'callbackFn' : function(data){
-                    // 로그
-                    console.log("data : ",data)
-                    // 리턴
-                    empListGrd(data);
-                 }
-            });
+    /* 목록조회 */
+    $.ajaxCall( param, {
+         'method' : 'GET',
+         'url' : "{% url 'dili_api:getEmpInfo' %}",
+         'dataType' : 'json',
+         'data' : JSON.stringify(param),
+         'async' : false,
+         'callbackFn' : function(data){
+            // 로그
+            console.log("data : ",data)
+            // 리턴
+            empListGrd(data);
+         }
+    });
 
-            $('#searchBtn').click(function(){
-                onClickSearchBtn(ipt_searchName);
-            });
+    $('#searchBtn').click(function(){
+        onClickSearchBtn(ipt_searchName);
+    });
 
-            $('#searchAllBtn').click(function(){
-                var param = {
-                    "name" : ''
-                }
-                $.ajaxCall( param, {
-                     'method' : 'GET',
-                     'url' : "{% url 'dili_api:getEmpInfo' %}",
-                     'dataType' : 'json',
-                     'data' : JSON.stringify(param),
-                     'async' : false,
-                     'callbackFn' : function(data){
-                        // 로그
-                        console.log("data : ",data)
-                        // 리턴
-                        empListGrd(data);
-                     }
-                });
-            });
+    $('#searchAllBtn').click(function(){
 
-            /* 직원목록 엔터 조회 */
-            $('#ipt_searchName').keydown(function(e){
-                    //엔터키 입력 + 이름컬럼에 값이 있는 경우.
-                    if ( e.keyCode == 13 && $('#ipt_searchName').val() != 'undefined' ) {
-                        var param = {
-                            name : $('#ipt_searchName').val()
-                        }
-                        if( $('#ipt_searchName').val() == "" || $('#ipt_searchName').val() == null ){
-                            alert("직원 이름을 입력해 주세요.");
-                        } else if ($('#ipt_searchName').val().length < 2){
-                            alert("직원 이름은 두 글자 이상 입력해 주세요.");
-                        } else {
-                            //목록조회
-                            $.ajaxCall( param, {
-                                 'method' : 'GET',
-                                 'url' : "{% url 'dili_api:getEmpInfo' %}",
-                                 'dataType' : 'json',
-                                 'data' : JSON.stringify(param),
-                                 'async' : false,
-                                 'callbackFn' : function(data){
-                                    // 로그
-                                    console.log("data : ",data)
-                                    // 리턴
-                                    empListGrd(data);
-                                 }
-                            });
-                        }
-                    }
-            });
+        $('[name="ipt_searchName"]').val("");
 
+        var param = {
+            "name" : ''
+        }
+        $.ajaxCall( param, {
+             'method' : 'GET',
+             'url' : "{% url 'dili_api:getEmpInfo' %}",
+             'dataType' : 'json',
+             'data' : JSON.stringify(param),
+             'async' : false,
+             'callbackFn' : function(data){
+                // 로그
+                console.log("data : ",data)
+                // 리턴
+                empListGrd(data);
+             }
         });
+    });
 
-        /* 직원 검색 기능 */
-        function onClickSearchBtn(ipt_searchName) {
-            var param = {
-                "name" : $('[name="ipt_searchName"]').val()
-            }
-            if( $('#ipt_searchName').val() == "" || $('#ipt_searchName').val() == null ){
-                alert("직원 이름을 입력해 주세요.");
-            } else if ($('#ipt_searchName').val().length < 2){
-                alert("직원 이름은 두 글자 이상 입력해 주세요.");
-            } else {
-                /* 목록조회 */
-                $.ajaxCall( param, {
-                     'method' : 'GET',
-                     'url' : "{% url 'dili_api:getEmpInfo' %}",
-                     'dataType' : 'json',
-                     'data' : JSON.stringify(param),
-                     'async' : false,
-                     'callbackFn' : function(data){
-                        // 로그
-                        console.log("data : ",data)
-                        // 리턴
-                        empListGrd(data);
-                     }
-                });
-            }
-        };
-
-
-        /* 직원목록 생성 */
-        function empListGrd(data){
-            var size = data.length;
-            var empListTable = '<table class="table table-bordered table-responsive-md text-center">';
-            empListTable += '<thead>';
-            empListTable += '<tr>';
-            empListTable += '<th class="text-center">순번</th>';
-            empListTable += '<th class="text-center">이름</th>';
-            empListTable += '<th class="text-center">E-Mail</th>';
-            empListTable += '<th class="text-center">연락처</th>';
-            empListTable += '</tr>';
-            empListTable += '</thead>';
-            empListTable += '<tbody>';
-
-            console.log("Start")
-            console.log(data)
-            console.log(typeof(data))
-
-            if(data.length > 0) {
-                for(var i = 0; i < size; i++){
-
-                    empListTable += '<tr id ="grd_empList">';
-                    empListTable += '<td id="no" class="pt-3-half">'+(i+1)+'</td>';
-                    empListTable += '<td id="empName" class="pt-3-half">'+data[i].EMP_NAME+'</td>';
-                    empListTable += '<td id="empEmail" class="pt-3-half">'+data[i].EMP_EMAIL+'</td>';
-                    empListTable += '<td id="empTel" class="pt-3-half">'+data[i].EMP_TEL+'</td>';
-                    empListTable += '</tr>';
-
+    /* 직원목록 엔터 조회 */
+    $('#ipt_searchName').keydown(function(e){
+            //엔터키 입력 + 이름컬럼에 값이 있는 경우.
+            if ( e.keyCode == 13 && $('#ipt_searchName').val() != 'undefined' ) {
+                var param = {
+                    name : $('#ipt_searchName').val()
+                }
+                if( $('#ipt_searchName').val() == "" || $('#ipt_searchName').val() == null ){
+                    alert("직원 이름을 입력해 주세요.");
+                } else if ($('#ipt_searchName').val().length < 2){
+                    alert("직원 이름은 두 글자 이상 입력해 주세요.");
+                } else {
+                    //목록조회
+                    $.ajaxCall( param, {
+                         'method' : 'GET',
+                         'url' : "{% url 'dili_api:getEmpInfo' %}",
+                         'dataType' : 'json',
+                         'data' : JSON.stringify(param),
+                         'async' : false,
+                         'callbackFn' : function(data){
+                            // 로그
+                            console.log("data : ",data)
+                            // 리턴
+                            empListGrd(data);
+                         }
+                    });
                 }
             }
+    });
+
+});
+
+function onDblClickEvt(i) {
+    console.log(' onDblClickEvt :  ', i);
+
+    var email = i;
+    $('#hidden_selectMail').val(email);
+
+    var url = "{% url 'dili_api:empMgmtEditPop' %}" + "/?email=" +email ;
+
+    $('#empModalDiv').css("width","30%");
+
+    modal('empModalDiv');
+
+    $('#empModal').load(url);
+
+};
+
+/* 직원 검색 기능 */
+function onClickSearchBtn(ipt_searchName) {
+    var param = {
+        "name" : $('[name="ipt_searchName"]').val()
+    }
+    if( $('#ipt_searchName').val() == "" || $('#ipt_searchName').val() == null ){
+        alert("직원 이름을 입력해 주세요.");
+    } else if ($('#ipt_searchName').val().length < 2){
+        alert("직원 이름은 두 글자 이상 입력해 주세요.");
+    } else {
+        /* 목록조회 */
+        $.ajaxCall( param, {
+             'method' : 'GET',
+             'url' : "{% url 'dili_api:getEmpInfo' %}",
+             'dataType' : 'json',
+             'data' : JSON.stringify(param),
+             'async' : false,
+             'callbackFn' : function(data){
+                // 로그
+                console.log("data : ",data)
+                // 리턴
+                empListGrd(data);
+             }
+        });
+    }
+};
 
 
-            empListTable += '</tbody>';
-            empListTable += '</table>';
+/* 직원목록 생성 */
+function empListGrd(data){
+    var size = data.length;
+    var empListTable = '<table class="table table-bordered table-responsive-md text-center">';
+    empListTable += '<thead>';
+    empListTable += '<tr>';
+    empListTable += '<th class="text-center">순번</th>';
+    empListTable += '<th class="text-center">이름</th>';
+    empListTable += '<th class="text-center">E-Mail</th>';
+    empListTable += '<th class="text-center">연락처</th>';
+    empListTable += '</tr>';
+    empListTable += '</thead>';
+    empListTable += '<tbody>';
 
-            document.getElementById('grd_empListTable').innerHTML = empListTable;
-        };
+    console.log("Start")
+    console.log(data)
+    console.log(typeof(data))
+
+    if(data.length > 0) {
+        for(var i = 0; i < size; i++){
+
+            empListTable += '<tr id ="grd_empList" ondblclick="onDblClickEvt(\''+data[i].EMP_EMAIL+'\')">';
+            empListTable += '<td id="no" class="pt-3-half">'+(i+1)+'</td>';
+            empListTable += '<td id="empName" class="pt-3-half">'+data[i].EMP_NAME+'</td>';
+            empListTable += '<td id="empEmail" class="pt-3-half">'+data[i].EMP_EMAIL+'</td>';
+            empListTable += '<td id="empTel" class="pt-3-half">'+data[i].EMP_TEL+'</td>';
+            empListTable += '</tr>';
+
+        }
+    }
 
 
-        function makePaging(ret){
-            $('#paging_navi').makePagingNavi(ret, 'getGridList');
-        };
+    empListTable += '</tbody>';
+    empListTable += '</table>';
+
+    document.getElementById('grd_empListTable').innerHTML = empListTable;
+
+    $("#ipt_searchName").click(function(){
+        $('[name="ipt_searchName"]').val("");
+    });
+};
 
 
+function makePaging(ret){
+    $('#paging_navi').makePagingNavi(ret, 'getGridList');
+};
 
-    </script>
+// 직원조회 권한 처리 및 모달 오픈
+
+$("#empMgmtRegBtn").click(function(){
+    var url = "{% url 'dili_api:empMgmtRegPop' %}" ;
+
+    $('#empModalDiv').css("width","30%");
+
+    modal('empModalDiv');
+
+    $('#empModal').load(url);
+});
 
 
-        <div class="row">
-            <div class="col-sm-12">
-                <div class="mb-4" role="alert">
-                    <h5>
-                        <b>직원관리</b>
-                    </h5>
-                </div>
+</script>
+<!--직원등록, 수정 모달 영역 -->
+<div style="width:100%">
+    <div id="empModalDiv" class="modalUi">
+        <div id="empModal">
+        </div>
+        <a class="modal_close_btn" id="exitEmpModalBtn">
+            <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-x-circle" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+               <path fill-rule="evenodd" d="
+               M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+               <path fill-rule="evenodd" d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+            </svg>
+            <span id="apvlEmpEmailHidden" style="display:none;" ></span>
+            <span id="apvlReqHidden" style="display:none;" >apvlReq</span>
+        </a>
+    </div>
+</div>
 
-                <div class="accordion mb-4" id="grp_search">
-                    <div class="card">
+<div class="row">
+    <div class="col-sm-12">
+        <div class="mb-4" role="alert">
+            <h5>
+                <b>직원관리</b>
+            </h5>
+        </div>
 
-                        <div id="col_search" class="collapse show" aria-labelledby="head_search" data-parent="#grp_search">
-                            <div class="card-body flex-height d-flex m-0 p-2">
-                                <div class="align-self-start align-self-center mr-3">성함</div>
-                                <div class="align-self-center mr-3">
-                                    <input type="text" class="form-control" id="ipt_searchName" name="ipt_searchName" placeholder="직원 성함을 입력해주세요." maxlength="10"/>
-                                </div>
-                                <div class="align-self-center mr-3">
-                                    <button class="btn btn-primary" id="searchBtn" type="button">검색</button>
-                                </div>
-                                <div class="align-self-end align-self-center mr-3" style="float: right">
-                                    <button class="btn btn-primary" id="searchAllBtn" type="button">전체 조회</button>
-                                </div>
-                            </div>
+        <div class="accordion mb-4" id="grp_search">
+            <div class="card">
+
+                <div id="col_search" class="collapse show" aria-labelledby="head_search" data-parent="#grp_search">
+                    <div class="card-body flex-height d-flex m-0 p-2">
+                        <div class="align-self-start align-self-center mr-3">성함</div>
+                        <div class="align-self-center mr-3">
+                            <input type="text" class="form-control" id="ipt_searchName" name="ipt_searchName" placeholder="이름을 입력해주세요." maxlength="10"/>
+                        </div>
+                        <div class="align-self-center mr-3">
+                            <button class="button" id="searchBtn" type="button">검색</button>
+                        </div>
+                        <div class="align-self-end align-self-center mr-3" style="float: right">
+                            <button class="button" id="searchAllBtn" type="button">전체 조회</button>
+                            <input type="text" class="form-control" id="hidden_selectMail" name="hidden_selectMail" maxlength="30" style="width:300px;" readonly hidden/>
+                            <button class="button" id="empMgmtRegBtn" type="button">등록</button>
                         </div>
                     </div>
                 </div>
-                <center>
-                    <div id="grd_empListTable"></div>
-
-                </center>
             </div>
         </div>
-    </div>
+        <center>
+            <div id="grd_empListTable"></div>
 
-{% endblock %}
+        </center>
+    </div>
+</div>

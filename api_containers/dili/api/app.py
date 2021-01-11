@@ -1574,6 +1574,231 @@ class scheduleStatLst(Resource):
 
         return json.dumps(result2, indent=4, cls=DateTimeEncoder)
 
+class empMgmtRegSubmit(Resource):
+    def post(self):
+        logger.info('========app.py empMgmtRegSubmit=========')
+        params = request.get_json()
+        logger.info(params)
+
+        for row in request.form:
+            logger.info(row + ':' + request.form[row])
+            globals()[row] = request.form[row]
+
+        ipt_empId = request.form['ipt_empId']
+        ipt_empPw = request.form['ipt_empPw']
+        ipt_empAuthId = request.form['ipt_empAuthId']
+        ipt_empNm = request.form['ipt_empNm']
+        ipt_empBd = request.form['ipt_empBd']
+        ipt_empMb = request.form['ipt_empMb']
+        ipt_empDept = request.form['ipt_empDept']
+        ipt_empEmail = ipt_empId + "@infogen.co.kr";
+
+
+        logging.debug("====Param data====")
+
+        logging.debug("ipt_empId = " + ipt_empId)
+        logging.debug("ipt_empEmail = " + ipt_empEmail)
+        logging.debug("ipt_empPw = " + ipt_empPw)
+        logging.debug("ipt_empAuthId = " + ipt_empAuthId)
+        logging.debug("ipt_empNm = " + ipt_empNm)
+        logging.debug("ipt_empBd = " + ipt_empBd)
+        logging.debug("ipt_empMb = " + ipt_empMb)
+        logging.debug("ipt_empDept = " + ipt_empDept)
+
+
+        logging.debug("=====================")
+
+
+
+        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
+                                    charset='utf8', autocommit=False)
+
+
+        logging.debug("save Start")
+
+        try:
+            with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+                sql= "INSERT INTO TB_EMP_MGMT (EMP_ID, " \
+                                                "EMP_EMAIL, " \
+                                                "EMP_PW, " \
+                                                "EMP_NAME, " \
+                                                "AUTH_ID, " \
+                                                "EMP_TEL, " \
+                                                "EMP_BDAY, " \
+                                                "DEPT_CD) " \
+                                    "VALUES('" + ipt_empId + "', " \
+                                            "'" + ipt_empEmail + "', " \
+                                            "'" + ipt_empPw + "', " \
+                                            "'" + ipt_empNm + "', " \
+                                            "'" + ipt_empAuthId + "', " \
+                                            "'" + ipt_empMb + "', " \
+                                            "'" + ipt_empBd + "', " \
+                                            "'" + ipt_empDept + "')"\
+
+                logger.info(sql)
+                cursor.execute(sql)
+                mysql_con.commit()
+
+        finally:
+            mysql_con.close()
+
+        retJson = {
+            "status": 200,
+            "msg": "Data has been saved successfully"
+        }
+
+        return jsonify(retJson)
+
+
+class empOneInfo(Resource): # Mariadb 연결 진행
+    def get(self):
+
+        data = request.get_json()
+
+        logging.debug('================== App Start ==================')
+        logging.debug(data)
+        logging.debug(data["email"])
+        logging.debug(request.args.get('email'))
+        logging.debug(request.args.get('param'))
+        logging.debug('================== App End ==================')
+
+        #requirements pymysql import 후 커넥트 사용
+        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
+                                        charset='utf8', autocommit=False)
+        try:
+            with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+                #쿼리문 실행
+                sql = "SELECT EMP_ID, EMP_PW, AUTH_ID, EMP_NAME, EMP_BDAY, EMP_TEL, DEPT_CD FROM TB_EMP_MGMT WHERE EMP_EMAIL = '" + data["email"] + "'"
+
+                logging.debug(sql)
+                cursor.execute(sql)
+                logging.debug('getEditEmpInfo SUCCESS')
+
+        finally:
+            mysql_con.close()
+            logging.debug('getEditEmpInfo CLOSE')
+
+
+
+        result2 = cursor.fetchall()
+        for row in result2:
+            logging.debug('====== row====')
+            logging.debug(row)
+            logging.debug('===============')
+        array = list(result2)  # 결과를 리스트로
+
+        return json.dumps(result2, indent=4, cls=DateTimeEncoder)
+
+class empMgmtEditSubmit(Resource):
+    def post(self):
+        logger.info('========app.py empMgmtEditSubmit=========')
+        params = request.get_json()
+        logger.info(params)
+
+        for row in request.form:
+            logger.info(row + ':' + request.form[row])
+            globals()[row] = request.form[row]
+
+        ipt_empId = request.form['ipt_empId']
+        ipt_empPw = request.form['ipt_empPw']
+        ipt_empAuthId = request.form['ipt_empAuthId']
+        ipt_empNm = request.form['ipt_empNm']
+        ipt_empBd = request.form['ipt_empBd']
+        ipt_empMb = request.form['ipt_empMb']
+        ipt_empDept = request.form['ipt_empDept']
+        ipt_empEmail = ipt_empId + "@infogen.co.kr";
+
+
+        logging.debug("====Param data====")
+
+        logging.debug("ipt_empId = " + ipt_empId)
+        logging.debug("ipt_empEmail = " + ipt_empEmail)
+        logging.debug("ipt_empPw = " + ipt_empPw)
+        logging.debug("ipt_empAuthId = " + ipt_empAuthId)
+        logging.debug("ipt_empNm = " + ipt_empNm)
+        logging.debug("ipt_empBd = " + ipt_empBd)
+        logging.debug("ipt_empMb = " + ipt_empMb)
+        logging.debug("ipt_empDept = " + ipt_empDept)
+
+
+        logging.debug("=====================")
+
+
+
+        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
+                                    charset='utf8', autocommit=False)
+
+
+        logging.debug("save Start")
+
+        try:
+            with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+                sql= "UPDATE TB_EMP_MGMT SET EMP_PW = '"+ipt_empPw+"', " \
+                                                "EMP_NAME = '"+ipt_empNm+"', " \
+                                                "AUTH_ID = '"+ipt_empAuthId+"', " \
+                                                "EMP_TEL = '"+ipt_empMb+"', " \
+                                                "EMP_BDAY  = '"+ipt_empBd+"', " \
+                                                "DEPT_CD = '"+ipt_empDept+"' " \
+                                                "WHERE `EMP_ID` = '"+ipt_empId+"'" \
+
+                logger.info(sql)
+                cursor.execute(sql)
+                mysql_con.commit()
+
+        finally:
+            mysql_con.close()
+
+        retJson = {
+            "status": 200,
+            "msg": "Data has been saved successfully"
+        }
+
+        return jsonify(retJson)
+
+class empMgmtDelSubmit(Resource):
+    def post(self):
+        logger.info('========app.py empMgmtDelSubmit=========')
+        params = request.get_json()
+        logger.info(params)
+
+        for row in request.form:
+            logger.info(row + ':' + request.form[row])
+            globals()[row] = request.form[row]
+
+        ipt_empId = request.form['ipt_empId']
+
+        logging.debug("====Param data====")
+
+        logging.debug("ipt_empId = " + ipt_empId)
+
+        logging.debug("=====================")
+
+
+
+        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
+                                    charset='utf8', autocommit=False)
+
+
+        logging.debug("save Start")
+
+        try:
+            with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+                sql= "DELETE FROM TB_EMP_MGMT WHERE EMP_ID = '"+ipt_empId+"'"
+
+                logger.info(sql)
+                cursor.execute(sql)
+                mysql_con.commit()
+
+        finally:
+            mysql_con.close()
+
+        retJson = {
+            "status": 200,
+            "msg": "Data has been saved successfully"
+        }
+
+        return jsonify(retJson)
+
 api.add_resource(Hello, '/hello')
 api.add_resource(Register, '/register')
 api.add_resource(Retrieve, '/retrieve')
@@ -1606,6 +1831,9 @@ api.add_resource(updateEndTm,'/updateEndTm') #api 선언
 api.add_resource(yryUseDays,'/yryUseDays') #api 선언
 api.add_resource(retrieveCmmCd,'/retrieveCmmCd') #api 선언
 api.add_resource(scheduleStatLst,'/scheduleStatLst') #api 선언
-
+api.add_resource(empMgmtRegSubmit,'/empMgmtRegSubmit') #api 선언
+api.add_resource(empOneInfo,'/empOneInfo') #api 선언
+api.add_resource(empMgmtEditSubmit,'/empMgmtEditSubmit') #api 선언
+api.add_resource(empMgmtDelSubmit,'/empMgmtDelSubmit') #api 선언
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5006, debug=True)

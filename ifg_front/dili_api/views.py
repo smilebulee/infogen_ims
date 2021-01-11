@@ -684,5 +684,92 @@ class diliWebUiSamp(generic.TemplateView):
 
         return render(request, template_name)
 
+class empMgmtRegPop(generic.TemplateView):
+    def get(self, request, *args, **kwargs):
+        template_name = 'dili/empMgmtRegPop.html'
 
+        return render(request, template_name)
 
+def empMgmtReg(request):
+    param = json.loads(request.POST['param'])
+
+    logger.info("Parameters Start")
+    logger.info(param)
+    logger.info("Parameters End")
+
+    datas = {
+    }
+
+    for row in param:
+        logger.info("------views.py------")
+        datas.setdefault(row, param[row])
+
+    r = requests.post('http://dili_api:5006/empMgmtRegSubmit', data=datas)
+    logger.info(r)
+    logger.info(r.text)
+    logger.info(r.json())
+
+    return JsonResponse(r.json(), safe=False)
+
+class empMgmtEditPop(generic.TemplateView):
+    def get(self, request, *args, **kwargs):
+        template_name = 'dili/empMgmtEditPop.html'
+
+        return render(request, template_name)
+        # return render(request, template_name, rr)
+
+def getEditEmpInfo(request):
+    param = json.loads(request.GET['param'])
+
+    logger.info("Parameters Logging Start")
+    logger.info(param)
+    logger.info("Parameters Logging End")
+
+    # api 호출
+    r = requests.get('http://dili_api:5006/empOneInfo', json=param)
+    logger.info(r)
+    logger.info(r.text)
+    logger.info(r.json())
+    return JsonResponse(ast.literal_eval(r.json()), safe=False)
+
+def empMgmtEdit(request):
+    param = json.loads(request.POST['param'])
+
+    logger.info("Parameters Start")
+    logger.info(param)
+    logger.info("Parameters End")
+
+    datas = {
+    }
+
+    for row in param:
+        logger.info("------views.py------")
+        datas.setdefault(row, param[row])
+
+    r = requests.post('http://dili_api:5006/empMgmtEditSubmit', data=datas)
+    logger.info(r)
+    logger.info(r.text)
+    logger.info(r.json())
+
+    return JsonResponse(r.json(), safe=False)
+
+def empMgmtDel(request):
+    param = json.loads(request.POST['param'])
+
+    logger.info("Parameters Start")
+    logger.info(param)
+    logger.info("Parameters End")
+
+    datas = {
+    }
+
+    for row in param:
+        logger.info("------views.py------")
+        datas.setdefault(row, param[row])
+
+    r = requests.post('http://dili_api:5006/empMgmtDelSubmit', data=datas)
+    logger.info(r)
+    logger.info(r.text)
+    logger.info(r.json())
+
+    return JsonResponse(r.json(), safe=False)

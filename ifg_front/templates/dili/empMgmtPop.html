@@ -129,6 +129,45 @@
             }
         };
 
+        /* 그리드 더블클릭 이벤트 */
+        function onDblClickEvt(i){
+            console.log($("#apvlReqHidden").text());
+            if($("#apvlReqHidden").text() == "apvlReq" ) {
+                if($("#apvlEmpEmailHidden").text() == null || $("#apvlEmpEmailHidden").text() == ""){
+                    alert("직원을 선택해 주세요.");
+                }else{
+                    $('#exitEmpModalBtn').click();
+                }
+            } else {
+                if($("#empEmailHidden").val() == null || $("#empEmailHidden").val() == ""){
+                    alert("직원을 선택해 주세요.");
+                }else{
+                    if( $("#empEmailHidden").val() != null && $("#empEmailHidden").val() != "" ){
+                        dataCustomArray = new Array();
+                        $(".modal_close_btn").click();
+                        weekDate = setWeek(getCurrentDate());                                                       // 현재일이 포함된 주의 Start,End Date 조회
+
+                        $('#baseEndDate').text("");                                                                  // Span Object EndDate 값이 달라질 경우에만, Chart를 다시 그리므로, 초기화작업.
+
+                        getWrkTimeByIml(null, weekDate.strtDate, weekDate.endDate);
+                        //현재 날짜 가져오기
+                        var today = new Date();
+                        var year = today.getFullYear(); // 년도
+                        var month = today.getMonth();  // 월 (today.getMonth()는 0~11로 출력)
+                        var date = today.getDate();  // 날짜
+                        var day = today.getDay();  // 요일 (0~6으로 출력, 0:일요일, 1:월요일, 6:토요일)
+
+                        $('#txt_mmYy').text(year); //그리드 월tab 년도 초기값 입력
+                        $('#txt_mmMm').text(month + 1); //그리드 월tab 월 초기값 입력
+
+                        setMonthGridData();                                                                         // Month Grid 생성
+                        crteTodayShow(year, month, date, day);                                                      // Grid UI(주) 날짜 세팅
+                        createCalendar();
+                        setAnhoMgmt();
+                    }
+                }
+            }
+        };
 
         /* 그리드 클릭 이벤트 */
         function onClickEvt(i) {
@@ -324,7 +363,7 @@
 
 
                 for(var i = 0; i < size; i++){
-                    empListTable += '<tr id ="grd_empList'+i+'" onclick="onClickEvt(this)">';
+                    empListTable += '<tr id ="grd_empList'+i+'" onclick="onClickEvt(this)" ondblclick="onDblClickEvt(this)">';
                     empListTable += '<td class="pt-3-half">'+data[i].EMP_NAME+'</td>';
                     empListTable += '<td class="pt-3-half">'+data[i].EMP_EMAIL+'</td>';
                     empListTable += '<td class="pt-3-half">'+data[i].EMP_TEL+'</td>';
@@ -341,7 +380,18 @@
             empListTable += '</tbody>';
             empListTable += '</table>';
 
+            if(size > 0) {
+                empListTable += '<div class="align-self-end align-self-center" style="width:80px;float: right;">';
+                empListTable += '<button class="button" id="selectBtn" type="button" onclick="onClickselectBtn()">선택</button>';
+                empListTable += '</div>';
+            }
+
             document.getElementById('grd_empListTable').innerHTML = empListTable;
+
+            $("#ipt_searchName").click(function(){
+                $('[name="ipt_searchName"]').val("");
+            });
+
         };
 
 
@@ -361,7 +411,7 @@
                                     <input type="text" class="form-control" id="ipt_searchName" name="ipt_searchName" placeholder="이름을 입력해주세요." maxlength="10"/>
                                 </div>
                                 <div class="align-self-end align-self-center">
-                                    <button class="btn btn-primary" id="searchBtn" type="button">검색</button>
+                                    <button class="button" id="searchBtn" type="button">검색</button>
                                 </div>
                             </div>
                         </div>
@@ -369,9 +419,7 @@
                 <center>
                     <div id="grd_empListTable"></div>
                 </center>
-                <div class="align-self-end align-self-center" style='width:80px;float: left;'>
-                    <button class="btn btn-primary" id="selectBtn" type="button">선택</button>
-                </div>
+
             </div>
         </div>
     </div>
