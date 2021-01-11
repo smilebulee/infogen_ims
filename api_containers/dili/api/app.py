@@ -512,7 +512,7 @@ class wrkApvlReq(Resource): # Mariadb 연결 진행
                       "            THEN A.NGHT_WRK_TM" \
                       "            ELSE '' END WRK_TME" \
                       "     , CASE WHEN NVL(A.HLDY_WRK_TM,'') != 000000 AND NVL(A.NGHT_WRK_TM,'') = 000000 THEN '휴일근무' " \
-                      "            WHEN NVL(A.HLDY_WRK_TM,'') = 000000 AND NVL(A.NGHT_WRK_TM,'') != 000000 THEN '야근근무' " \
+                      "            WHEN NVL(A.HLDY_WRK_TM,'') = 000000 AND NVL(A.NGHT_WRK_TM,'') != 000000 THEN '야간근무' " \
                       "            ELSE '' END WRK_TYPE " \
                       "  FROM TB_WRK_TM_MGMT_M A" \
                       " WHERE A.EMP_EMAL_ADDR = '" + data["email"] + "'" \
@@ -618,7 +618,7 @@ class apvlReqHist(Resource): # Mariadb 연결 진행
                           "            WHEN A.APVL_REQ_DIVS = '02' THEN NVL(A.WRK_TME,'') " \
                           "            ELSE '' END WRK_TME  " \
                           "      ,CASE WHEN A.APVL_REQ_DIVS = '01' THEN '휴일근무' " \
-                          "            WHEN A.APVL_REQ_DIVS = '02' THEN '야근근무' " \
+                          "            WHEN A.APVL_REQ_DIVS = '02' THEN '야간근무' " \
                           "            WHEN A.APVL_REQ_DIVS = '03' THEN '연차결재'  " \
                           "            ELSE '' END APVL_REQ_NM  " \
                           "      ,CASE WHEN A.TH1_APRV_STUS = '01' THEN '미승인'" \
@@ -637,7 +637,7 @@ class apvlReqHist(Resource): # Mariadb 연결 진행
                           "            WHEN A.APVL_REQ_DIVS = '02' THEN NVL(A.WRK_TME,'') " \
                           "            ELSE '' END WRK_TME  " \
                           "      ,CASE WHEN A.APVL_REQ_DIVS = '01' THEN '휴일근무' " \
-                          "            WHEN A.APVL_REQ_DIVS = '02' THEN '야근근무' " \
+                          "            WHEN A.APVL_REQ_DIVS = '02' THEN '야간근무' " \
                           "            WHEN A.APVL_REQ_DIVS = '03' THEN '연차결재'  " \
                           "            ELSE '' END APVL_REQ_NM  " \
                           "      ,CASE WHEN A.TH1_APRV_STUS = '01' THEN '미승인'" \
@@ -657,7 +657,7 @@ class apvlReqHist(Resource): # Mariadb 연결 진행
                           "            WHEN A.APVL_REQ_DIVS = '02' THEN NVL(A.WRK_TME,'') " \
                           "            ELSE '' END WRK_TME  " \
                           "      ,CASE WHEN A.APVL_REQ_DIVS = '01' THEN '휴일근무' " \
-                          "            WHEN A.APVL_REQ_DIVS = '02' THEN '야근근무' " \
+                          "            WHEN A.APVL_REQ_DIVS = '02' THEN '야간근무' " \
                           "            WHEN A.APVL_REQ_DIVS = '03' THEN '연차결재'  " \
                           "            ELSE '' END APVL_REQ_NM  " \
                           "      ,CASE WHEN A.TH1_APRV_STUS = '01' THEN '미승인'" \

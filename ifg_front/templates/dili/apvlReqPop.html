@@ -1,7 +1,14 @@
 <script type="text/javascript">
+    // 후결재 판단 변수
+    var currReqMthd;
+    var currDt;
+
     $(document).ready(function(){
-        // 기본 결재 방법 = 선결재
-        var currReqMthd = '01';
+        //결재 방법
+        if(currReqMthd == null || currReqMthd == '') {
+            // 기본 결재 방법 = 선결재
+            currReqMthd = '01';
+        }
 
         // 공통 코드 조회 - '결재 유형'
         retrieveCmmCd("rb_apvlReqDivsCd", 'APVL_DIVS_CD');
@@ -65,13 +72,15 @@
 
         // 결재 방법에 따른 화면 분기
         if ( currReqMthd == '01' ) {
-
-
+            $('#ipt_wrkDt').prop('readOnly', false);
+            // ipt_wrkDt
+            /////////////////////////////////////////////////////////////////////// 작업중 분기
         } else {
+            $('#ipt_wrkDt').prop('readOnly', true);
+            /////////////////////////////////////////////////////////////////////// 작업중 분기
 
 
         }
-
 
     });
 
@@ -212,9 +221,7 @@
                             <button class="button" id="btn_req">요청</button>
                         </div>
                     </div>
-
                 </div>
-
             </div>
         </div>
     </div>

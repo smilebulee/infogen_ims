@@ -90,8 +90,13 @@
         for(var i=0; i<tr.length; i++){
             tr[i].style.background = "white";
         }
-        document.getElementById(trId.id).style.backgroundColor = "lightgrey";
-        $("#ipt_wrkDt").val($('#'+trId.id).children().eq(1).text());
+        $(trId).css('backgroundColor', 'lightgrey');
+//        document.getElementById(trId.id).style.backgroundColor = "lightgrey";
+//        $(trId).find('td:nth-child(' + trId.rowIndex + ')')
+
+
+        //$("#ipt_wrkDt").val($('#'+trId.id).children().eq(1).text());
+        $("#ipt_wrkDt").val($('#'+trId.id).children().eq(1).text().replace(" ", "T"));
 
         $("#rb_apvlReqMthdCd option").removeAttr("selected");
 
@@ -181,7 +186,8 @@
                 <div class="flex-height d-flex m-0 p-2">
                     <div class="align-self-start align-self-center mr-3">근무 일자</div>
                     <div class="align-self-center mr-5">
-                        <input type="text" class="form-control" id="ipt_wrkDt" name="ipt_wrkDt" placeholder="" maxlength="24" readonly/>
+                        <!--<input type="text" class="form-control" id="ipt_wrkDt" name="ipt_wrkDt" placeholder="" maxlength="24" readonly/>-->
+                        <input type="datetime-local" class="form-control" id="ipt_wrkDt" name="ipt_wrkDt" placeholder="" maxlength="24" readonly/>
                     </div>
                 </div>
 
