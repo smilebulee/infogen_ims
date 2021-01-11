@@ -50,11 +50,12 @@
             // 팝업 오픈
             var url = "{% url 'dili_api:empMgmtPop' %}" ;
 
-            $('#empModalDiv').css("width","80%");
-            $('#empModalDiv').css("z-index", 99999999999);
             modal('empModalDiv');
 
             $('#empModal').load(url);
+
+            $('#empModalDiv').css("width", "40%");
+            $('#empModalDiv').css("z-index", 10);
         }
 
         // 결재 방법에 따른 화면 분기

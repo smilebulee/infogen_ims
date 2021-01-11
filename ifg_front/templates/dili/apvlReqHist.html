@@ -79,11 +79,12 @@
             $("#ipt_apvlSearchNamePop").click(function(){
                 var url = "{% url 'dili_api:empMgmtPop' %}" ;
 
-                $('#empModalDiv').css("width","50%");
-                $('#empModalDiv').css("z-index", 99999999999);
                 modal('empModalDiv');
 
                 $('#empModal').load(url);
+
+                $('#empModalDiv').css("width", "40%");
+                $('#empModalDiv').css("z-index", 10);
             });
         }
         // 결재등록 모달 오픈
@@ -223,7 +224,7 @@
 
 <!--직원조회 모달 영역 -->
 <div style="width:100%">
-    <div id="empModalDiv" class="modalUi" style="z-index:999999">
+    <div id="empModalDiv" class="modalUi">
         <div id="empModal">
         </div>
         <a class="modal_close_btn" id="exitEmpModalBtn">

@@ -640,10 +640,13 @@ class apvlReqHist(Resource): # Mariadb 연결 진행
                           "            WHEN A.APVL_REQ_DIVS = '02' THEN '야근근무' " \
                           "            WHEN A.APVL_REQ_DIVS = '03' THEN '연차결재'  " \
                           "            ELSE '' END APVL_REQ_NM  " \
+                          "      ,CASE WHEN A.TH1_APRV_STUS = '01' THEN '미승인'" \
+                          "            WHEN A.TH1_APRV_STUS = '02' THEN '승인'" \
+                          "            ELSE 'N/A' END APRV_STUS_NM" \
                           "  FROM TB_APVL_REQ_MGMT_M A, TB_EMP_MGMT B" \
                           " WHERE A.EMP_EMAL_ADDR = B.EMP_EMAIL" \
                           "   AND A.EMP_EMAL_ADDR = '" + email + "'"\
-                          "   AND (NVL(A.TH1_APRV_STUS,'') NOT IN ('02'))"
+                          "   AND (NVL(A.TH1_APRV_STUS,'') IN ('01'))"
                     logging.debug("apvlReqHist SQL문" + sql)
                     cursor.execute(sql)
                 if apvlStusDivs == "02":
