@@ -264,6 +264,37 @@ class yryMgmt(Resource): # Mariadb 연결 진행
 
         return result2
 
+class totalWrktm(Resource): # Mariadb 연결 진행
+    def get(self):
+        data = request.get_json()
+
+        #requirements pymysql import 후 커넥트 사용
+        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
+                                        charset='utf8', autocommit=False)
+        try:
+            with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+                #쿼리문 실행
+                sql = "SELECT CONCAT(COUNT(*) * 10.4) AS WRK_TOT_TM"\
+                      "    FROM TB_DT_INFO"\
+                      "   WHERE 1=1"\
+                      "   AND DT LIKE '" + data["dt"] + "%'"\
+                      "   AND HLDY_DIVS_CD = '01'"\
+                      "   AND DOW_DIVS_CD NOT IN ('01','07')"
+                logging.debug(sql)
+                cursor.execute(sql)
+
+        finally:
+            mysql_con.close()
+
+        result2 = cursor.fetchall()
+        for row in result2:
+            logging.debug('====== row====')
+            logging.debug(row)
+            logging.debug('===============')
+        array = list(result2)  # 결과를 리스트로
+
+        return json.dumps(result2, indent=4, cls=DateTimeEncoder)
+
 class hldyMgmt(Resource): # Mariadb 연결 진행
     def get(self):
 
@@ -598,9 +629,9 @@ class apvlReqHist(Resource): # Mariadb 연결 진행
                           "            WHEN A.APVL_REQ_DIVS = '02' THEN '야근근무' " \
                           "            WHEN A.APVL_REQ_DIVS = '03' THEN '연차결재'  " \
                           "            ELSE '' END APVL_REQ_NM  " \
-                          "      ,CASE WHEN A.TH1_APRV_STUS != '' AND A.TH1_APRV_STUS = '' THEN '미승인'" \
-                          "            WHEN A.TH1_APRV_STUS != '' AND A.TH1_APRV_STUS != '' THEN '승인'" \
-                          "            ELSE '미승인' END APRV_STUS_NM" \
+                          "      ,CASE WHEN A.TH1_APRV_STUS = '01' THEN '미승인'" \
+                          "            WHEN A.TH1_APRV_STUS = '02' THEN '승인'" \
+                          "            ELSE 'N/A' END APRV_STUS_NM" \
                           "  FROM TB_APVL_REQ_MGMT_M A, TB_EMP_MGMT B" \
                           " WHERE A.EMP_EMAL_ADDR = B.EMP_EMAIL" \
                           "   AND A.EMP_EMAL_ADDR = '" + email + "'"
@@ -620,7 +651,7 @@ class apvlReqHist(Resource): # Mariadb 연결 진행
                           "  FROM TB_APVL_REQ_MGMT_M A, TB_EMP_MGMT B" \
                           " WHERE A.EMP_EMAL_ADDR = B.EMP_EMAIL" \
                           "   AND A.EMP_EMAL_ADDR = '" + email + "'"\
-                          "   AND (NVL(A.TH1_APRV_STUS,'') NOT IN ('01','02'))"
+                          "   AND (NVL(A.TH1_APRV_STUS,'') NOT IN ('02'))"
                     logging.debug("apvlReqHist SQL문" + sql)
                     cursor.execute(sql)
                 if apvlStusDivs == "02":
@@ -634,13 +665,13 @@ class apvlReqHist(Resource): # Mariadb 연결 진행
                           "            WHEN A.APVL_REQ_DIVS = '02' THEN '야근근무' " \
                           "            WHEN A.APVL_REQ_DIVS = '03' THEN '연차결재'  " \
                           "            ELSE '' END APVL_REQ_NM  " \
-                          "      ,CASE WHEN A.TH1_APRV_STUS != '' THEN '미승인'" \
-                          "            WHEN A.TH1_APRV_STUS != '' THEN '승인'" \
-                          "            ELSE '미승인' END APRV_STUS_NM" \
+                          "      ,CASE WHEN A.TH1_APRV_STUS = '01' THEN '미승인'" \
+                          "            WHEN A.TH1_APRV_STUS = '02' THEN '승인'" \
+                          "            ELSE 'N/A' END APRV_STUS_NM" \
                           "  FROM TB_APVL_REQ_MGMT_M A, TB_EMP_MGMT B" \
                           " WHERE A.EMP_EMAL_ADDR = B.EMP_EMAIL" \
                           "   AND A.EMP_EMAL_ADDR = '" + email + "'"\
-                          "   AND A.TH1_APRV_STUS IN ('01', '02')"
+                          "   AND A.TH1_APRV_STUS NOT IN ('01')"
                     logging.debug("apvlReqHist SQL문" + sql)
                     cursor.execute(sql)
 
@@ -746,7 +777,7 @@ class apvlReqHistDetl(Resource): # Mariadb 연결 진행
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 # 쿼리문 실행
                 sql = "SELECT NVL(B.EMP_NAME,'') TH1_APRV_NM" \
-                      "      ,CASE WHEN A.TH1_APRV_STUS != '' THEN '승인'" \
+                      "      ,CASE WHEN A.TH1_APRV_STUS = '02' THEN '승인'" \
                       "            ELSE '미승인' END TH1_APRV_STUS_NM" \
                       "   FROM TB_APVL_REQ_MGMT_M A, TB_EMP_MGMT B, TB_EMP_MGMT C " \
                       "  WHERE A.TH1_APRV_NM = B.EMP_EMAIL" \
@@ -1831,6 +1862,7 @@ api.add_resource(updateEndTm,'/updateEndTm') #api 선언
 api.add_resource(yryUseDays,'/yryUseDays') #api 선언
 api.add_resource(retrieveCmmCd,'/retrieveCmmCd') #api 선언
 api.add_resource(scheduleStatLst,'/scheduleStatLst') #api 선언
+api.add_resource(totalWrktm,'/totalWrktm') #api 선언
 api.add_resource(empMgmtRegSubmit,'/empMgmtRegSubmit') #api 선언
 api.add_resource(empOneInfo,'/empOneInfo') #api 선언
 api.add_resource(empMgmtEditSubmit,'/empMgmtEditSubmit') #api 선언

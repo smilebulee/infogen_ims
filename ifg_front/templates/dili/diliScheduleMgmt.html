@@ -67,6 +67,17 @@
                 tempStrtDt = setWeek(dfrStrtDate).baseDate;
                 tempEndDt = setWeek(dfrEndDate).baseDate;
                 setWeekGridData(tempStrtDt, tempEndDt);
+
+                $('#txt_mmYy').text($('#txt_weekEndYy').text());
+                $('#txt_mmMm').text($('#txt_weekEndMm').text());
+                setMonthGridData();
+
+                var weekBtnNowDay = new Date($('#txt_mmYy').text(), Number($('#txt_mmMm').text())-1, 1);
+
+                calendar.clear();
+                calendar.setDate(weekBtnNowDay);
+                getCalendarSessionDate();
+                setLabel(calendar);
             });
 
             /*********************************************************************
@@ -101,6 +112,17 @@
                 tempStrtDt = setWeek(nxtStrtDate).baseDate;
                 tempEndDt = setWeek(nxtEndDate).baseDate;
                 setWeekGridData(tempStrtDt, tempEndDt);
+
+                $('#txt_mmYy').text($('#txt_weekEndYy').text());
+                $('#txt_mmMm').text($('#txt_weekEndMm').text());
+                setMonthGridData();
+
+                var weekBtnNowDay = new Date($('#txt_mmYy').text(), Number($('#txt_mmMm').text())-1, 1);
+
+                calendar.clear();
+                calendar.setDate(weekBtnNowDay);
+                getCalendarSessionDate();
+                setLabel(calendar);
             });
 
             /*********************************************************************
@@ -118,6 +140,19 @@
                 $('#txt_mmMm').text(showMmGridDtDfr.getMonth() + 1); //그리드 월tab 월 이전 값 입력
 
                 setMonthGridData();
+
+                var weekBtnNowDay = new Date($('#txt_mmYy').text(), Number($('#txt_mmMm').text())-1, 1);
+                var weekBtnYear = weekBtnNowDay.getFullYear();
+                var weekBtnMonth = weekBtnNowDay.getMonth();
+                var weekBtnDate = weekBtnNowDay.getDate();
+                var weekBtnDay = weekBtnNowDay.getDay();
+
+                crteTodayShow(weekBtnYear, weekBtnMonth, weekBtnDate, weekBtnDay);
+
+                calendar.clear();
+                calendar.setDate(weekBtnNowDay);
+                getCalendarSessionDate();
+                setLabel(calendar);
 
             });
 
@@ -137,6 +172,18 @@
 
                 setMonthGridData();
 
+                var weekBtnNowDay = new Date($('#txt_mmYy').text(), Number($('#txt_mmMm').text())-1, 1);
+                var weekBtnYear = weekBtnNowDay.getFullYear();
+                var weekBtnMonth = weekBtnNowDay.getMonth();
+                var weekBtnDate = weekBtnNowDay.getDate();
+                var weekBtnDay = weekBtnNowDay.getDay();
+
+                crteTodayShow(weekBtnYear, weekBtnMonth, weekBtnDate, weekBtnDay);
+
+                calendar.clear();
+                calendar.setDate(weekBtnNowDay);
+                getCalendarSessionDate();
+                setLabel(calendar);
 
             });
 
@@ -167,8 +214,11 @@
                 $('#grp_calendar').show('');
                 $('.grid-btnAction').css("display","none");
                 $('.calendar-btnAction').css("display","");
+
+                var weekBtnNowDay = new Date($('#txt_mmYy').text(), Number($('#txt_mmMm').text())-1, 1);
+
                 calendar.clear();
-                calendar.today();
+                calendar.setDate(weekBtnNowDay);
                 getCalendarSessionDate();
                 setLabel(calendar);
             });
@@ -199,6 +249,11 @@
                     var weekBtnDay = weekBtnNowDay.getDay();
 
                     crteTodayShow(weekBtnYear, weekBtnMonth, weekBtnDate, weekBtnDay);
+
+                    calendar.clear();
+                    calendar.setDate(weekBtnNowDay);
+                    getCalendarSessionDate();
+                    setLabel(calendar);
                 }
 
                 weekBtnClickChk = 1;
@@ -267,6 +322,17 @@
                     date = selectDatepickerDate.getDate();  // 날짜
                     day = selectDatepickerDate.getDay();  // 요일 (0~6으로 출력, 0:일요일, 1:월요일, 6:토요일)
                     crteTodayShow(year, month, date, day);
+
+                    $('#txt_mmYy').text($('#txt_weekEndYy').text());
+                    $('#txt_mmMm').text($('#txt_weekEndMm').text());
+                    setMonthGridData();
+
+                    var weekBtnNowDay = new Date($('#txt_mmYy').text(), Number($('#txt_mmMm').text())-1, 1);
+
+                    calendar.clear();
+                    calendar.setDate(weekBtnNowDay);
+                    getCalendarSessionDate();
+                    setLabel(calendar);
                 }
 	        });
 
@@ -289,6 +355,19 @@
                 $('#txt_mmYy').text(selectMonthpickerData.getFullYear()); //그리드 월tab 년도 값 입력
                 $('#txt_mmMm').text(selectMonthpickerData.getMonth() + 1); //그리드 월tab 월 값 입력
                 setMonthGridData();
+
+                var weekBtnNowDay = new Date($('#txt_mmYy').text(), Number($('#txt_mmMm').text())-1, 1);
+                var weekBtnYear = weekBtnNowDay.getFullYear();
+                var weekBtnMonth = weekBtnNowDay.getMonth();
+                var weekBtnDate = weekBtnNowDay.getDate();
+                var weekBtnDay = weekBtnNowDay.getDay();
+
+                crteTodayShow(weekBtnYear, weekBtnMonth, weekBtnDate, weekBtnDay);
+
+                calendar.clear();
+                calendar.setDate(weekBtnNowDay);
+                getCalendarSessionDate();
+                setLabel(calendar);
             });
 
 
@@ -795,8 +874,14 @@
             console.log(' Debug [Email] : '+email );
             console.log(' Debug [dt] : '+dt );
 
-            var baseEndDate = $('#baseEndDate').text();
+            //var baseEndDate = $('#baseEndDate').text();
 
+            if(dt == $('#grapDt').val()){
+
+                return;
+            }
+
+            $('#grapDt').val(dt);
             //email 파라미터가 null / EmptyString 으로 인입된 경우 $('#empEmailHidden') 값 또는, Session 값을 기준하여 셋팅.
             if (email == null || email == "") {
 
@@ -812,6 +897,9 @@
                 "dt"  : dt
             }
 
+            var url = "{% url 'dili_api:getTotalWrktm' %}";
+            submissionCallMap(param,'GET',url,getTotalWrktmSubMitDone);
+
             $.ajaxCall( param, {
                  'method' : 'GET',
                  'url' : "{% url 'dili_api:getWrkTimeInfoByEml' %}",
@@ -821,7 +909,7 @@
                  'callbackFn' : function(data, status, xhr){
                     console.log("data : ",data)
 
-                    $('#baseEndDate').text(endDate);                  // endDate가 변경되는 경우만 Server Call하기 위해 변수셋팅.
+                    //$('#baseEndDate').text(endDate);                  // endDate가 변경되는 경우만 Server Call하기 위해 변수셋팅.
 
                     if(data.length > 0) {
                         var normWrkTm = Number(data[0].NORM_WRK_TM);
@@ -838,6 +926,11 @@
             });
        }
 
+       function getTotalWrktmSubMitDone(data){
+
+            $('#monthTotalWrkTm').val(data[0].WRK_TOT_TM);
+       }
+
         /*********************************************************************
         *   Draw Chart Event - 근무누적시간 누적막대그래프 그리기
         *   nmlWrkTime      - 정상근무시간
@@ -847,11 +940,11 @@
         function drawChart(nmlWrkTime, aprvWrkTime, notAprvWrkTime) {
 
             var arr = [nmlWrkTime, aprvWrkTime, notAprvWrkTime]
-
+            var rmndTm = $('#monthTotalWrkTm').val() - (nmlWrkTime + aprvWrkTime + notAprvWrkTime);
             var barOptions_stacked = {
                 title: {
                     display: true,
-                    text: '총 근무시간 : ' + (nmlWrkTime + aprvWrkTime + notAprvWrkTime) + 'H',
+                    text: '나의 총 근무시간 / 잔여시간(근무가능시간) : ' + (nmlWrkTime + aprvWrkTime + notAprvWrkTime) + 'H' + ' / ' + rmndTm + 'H (' + $('#monthTotalWrkTm').val()  + 'H)',
                     fontSize: 15,
                     padding: 0
                 },
@@ -984,7 +1077,7 @@
             calendar.on('clickSchedule', function(event) {
                 /*작업중*/
                 $('.tui-full-calendar-month-guide-block').remove();
-                console.log(event.schedule.end.getFullYear()+"-"+(event.schedule.end.getMonth()+1)+"-"+event.schedule.end.getDate());
+                console.log("asdsad"+event.schedule.end.getFullYear()+"-"+(event.schedule.end.getMonth()+1)+"-"+event.schedule.end.getDate());
 
                 var tmp = event.schedule.end.getFullYear()+"-"+(event.schedule.end.getMonth()+1)+"-"+event.schedule.end.getDate();
                 var tmpDtbase = setWeek(tmp).baseDate;
@@ -996,11 +1089,15 @@
                 var srhClickData = new Date(tempSrhClickData[0], Number(tempSrhClickData[1])-1, tempSrhClickData[2]);
 
                 //날짜 세팅
-                var srhClickYear = srhClickData.getFullYear(); // 년도
-                var srhClickMonth = srhClickData.getMonth();  // 월 (today.getMonth()는 0~11로 출력)
-                var srhClickDate = srhClickData.getDate();  // 날짜
-                var srhClickDay = srhClickData.getDay();  // 요일 (0~6으로 출력, 0:일요일, 1:월요일, 6:토요일)
+                var srhClickYear = event.schedule.end.getFullYear(); // 년도
+                var srhClickMonth = event.schedule.end.getMonth();  // 월 (today.getMonth()는 0~11로 출력)
+                var srhClickDate = event.schedule.end.getDate();  // 날짜
+                var srhClickDay = event.schedule.end.getDay();  // 요일 (0~6으로 출력, 0:일요일, 1:월요일, 6:토요일)
                 crteTodayShow(srhClickYear, srhClickMonth, srhClickDate, srhClickDay);
+
+                $('#txt_mmYy').text(tempSrhClickData[0]);
+                $('#txt_mmMm').text(tempSrhClickData[1]);
+                setMonthGridData();
 
                 $('#btn_showGrd').trigger('click');
                 $('#btn_showWeek').trigger('click');
@@ -1035,7 +1132,7 @@
 
 
 
-                console.log(schedule.end.getFullYear()+"-"+(schedule.end.getMonth()+1)+"-"+schedule.end.getDate());
+                console.log("asdsad"+schedule.end.getFullYear()+"-"+(schedule.end.getMonth()+1)+"-"+schedule.end.getDate());
                 var tmp = schedule.end.getFullYear()+"-"+(schedule.end.getMonth()+1)+"-"+schedule.end.getDate();
                 var tmpDtbase = setWeek(tmp).baseDate;
                 weekDate = setWeek(tmp);                                   // 선택된 일이 포함된 주의 Start,End Date 조회
@@ -1045,13 +1142,17 @@
                 var srhClickData = new Date(tempSrhClickData[0], Number(tempSrhClickData[1])-1, tempSrhClickData[2]);
 
                 //날짜 세팅
-                var srhClickYear = srhClickData.getFullYear(); // 년도
-                var srhClickMonth = srhClickData.getMonth();  // 월 (today.getMonth()는 0~11로 출력)
-                var srhClickDate = srhClickData.getDate();  // 날짜
-                var srhClickDay = srhClickData.getDay();  // 요일 (0~6으로 출력, 0:일요일, 1:월요일, 6:토요일)
+                var srhClickYear = schedule.end.getFullYear(); // 년도
+                var srhClickMonth = schedule.end.getMonth();  // 월 (today.getMonth()는 0~11로 출력)
+                var srhClickDate = schedule.end.getDate();  // 날짜
+                var srhClickDay = schedule.end.getDay();  // 요일 (0~6으로 출력, 0:일요일, 1:월요일, 6:토요일)
                 crteTodayShow(srhClickYear, srhClickMonth, srhClickDate, srhClickDay);
                 $('#btn_showGrd').trigger('click');
                 $('#btn_showWeek').trigger('click');
+
+                $('#txt_mmYy').text(tempSrhClickData[0]);
+                $('#txt_mmMm').text(tempSrhClickData[1]);
+                setMonthGridData();
             });
 
             setLabel(calendar);
@@ -1239,6 +1340,8 @@
 
 
     </script>
+        <input type="hidden" id="grapDt"/>
+        <input type="hidden" id="monthTotalWrkTm"/>
         <input type="hidden" id="clickDate"/>
         <!--근무시간관리상세 모달 영역 -->
         <div id="my_modal" class="modalUi">
@@ -1337,7 +1440,7 @@
                         <div id="col_totWrkTime" class="collapse show" aria-labelledby="head_totWrkTime" data-parent="#grp_totWrkTime">
                             <div class="mt-3" style="width:100%;">
                                 <div class="chart-container" style="display:block; width:100%; height:120px;">
-                                    <span id="baseEndDate" style="display:none;" ></span>
+                                    <!--<span id="baseEndDate" style="display:none;" ></span>-->
                                     <canvas id="Chart1"></canvas>
                                 </div>
                             </div>

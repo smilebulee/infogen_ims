@@ -170,6 +170,19 @@ def getWrkTimeInfoByEml(request):
     logger.info(json.loads(r.text))
     return JsonResponse(ast.literal_eval(r.json()), safe=False)
 
+def getTotalWrktm(request):
+    param = json.loads(request.GET['param'])
+
+    logger.info(param)
+
+    # api 호출
+    r = requests.get('http://dili_api:5006/totalWrktm', json=param)
+    logger.info(r)
+    logger.info(r.text)
+    logger.info(logger.info(ast.literal_eval(r.json())))
+    logger.info(json.loads(r.text))
+    return JsonResponse(ast.literal_eval(r.json()), safe=False)
+
 def getEmpList(request):
     param = json.loads(request.GET['param'])
 
@@ -202,7 +215,7 @@ def getEmpInfo(request):
 
 class wrkApvlReq(generic.TemplateView):
     def get(self, request, *args, **kwargs):
-        template_name = 'dili/wrkApvlReqPopup.html'
+        template_name = 'dili/apvlReqWrkSub.html'
 
         # r = requests.get('http://dili_api:5006/hello')
         # rr = {
@@ -214,7 +227,7 @@ class wrkApvlReq(generic.TemplateView):
     
 class yryApvlReq(generic.TemplateView):
     def get(self, request, *args, **kwargs):
-        template_name = 'dili/yryApvlReqPopup.html'
+        template_name = 'dili/apvlReqYrySub.html'
 
         # r = requests.get('http://dili_api:5006/hello')
         # rr = {
