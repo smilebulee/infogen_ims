@@ -56,7 +56,6 @@
 
     /* 아이디 중복체크 결과 */
     function isExistResult(data){
-    debugger;
         console.log("Start")
         console.log(data)
         console.log(typeof(data))
@@ -78,7 +77,6 @@
 
     /* 아이디 재설정 클릭 이벤트 */
     function onClickReIsExistBtn(){
-        alert("아이디 재설정 클릭!");
         $('#ipt_empId').attr('readonly', false);
         $('#ipt_empId').val("");
         $('#ipt_empId').focus();
