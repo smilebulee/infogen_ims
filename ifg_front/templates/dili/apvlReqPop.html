@@ -3,6 +3,9 @@
     var currReqMthd;
     var currDt;
 
+    var empIptNm;
+    var empIptEmail;
+
     $(document).ready(function(){
         //결재 방법
         if(currReqMthd == null || currReqMthd == '') {
@@ -28,8 +31,8 @@
 
         //////////////////////테스트 중
         //세팅할 empName, empEmail 지정
-        var empIptNm;
-        var empIptEmail;
+        //var empIptNm;
+        //var empIptEmail;
 
         // 결재자 검색 - 직원조회 모달 오픈
         $("#ipt_apvlLnSearchNamePop").click(function(){
@@ -48,7 +51,7 @@
         // 직원조회 모달 닫기 - 후처리
         $("#ipt_apvlSearchNamePop").change(function(){
             $('#' + empIptNm).val($('#ipt_apvlSearchNamePop').val());
-            $('#' + empIptEmail).val($('#apvlEmpEmailHidden').val());
+            $('#' + empIptEmail).val($('#ipt_apvlSearchEmailPop').val());
             empIptNm = '';
             empIptEmail = '';
 

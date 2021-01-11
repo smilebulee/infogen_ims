@@ -171,6 +171,7 @@ function onDblClickEvt(i){
 
 /* 그리드 클릭 이벤트 */
 function onClickEvt(i) {
+debugger;
     console.log(' onClickEvt :  ', i.id);
     console.log(' onClickEvt :  ', $('#'+i.id).children().eq(1).text());
 
@@ -184,10 +185,12 @@ function onClickEvt(i) {
     $("#empEmailHidden").val(email);
     $("#apvlEmpEmailHidden").text(email);
     $('#ipt_apvlSearchNamePop').val(name);
+    $('#ipt_apvlSearchEmailPop').val(email);
 };
 
 /* 검색버튼 클릭 이벤트 */
 function onClickSearchBtn(ipt_searchName) {
+    alert("검색버튼 클릭!");
     var param = {
         "name" : $('[name="ipt_searchName"]').val()
     }
@@ -216,6 +219,7 @@ function onClickSearchBtn(ipt_searchName) {
 
                     if (data.length == 1) {
                         $('#ipt_apvlSearchNamePop').val(data[0].EMP_NAME);
+                        $('#ipt_apvlSearchEmailPop').val(data[0].EMP_EMAIL);
                         $('#apvlEmpEmailHidden').text(data[0].EMP_EMAIL);
                         $('#exitEmpModalBtn').click();
                     } else {
