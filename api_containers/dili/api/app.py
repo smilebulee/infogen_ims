@@ -1867,5 +1867,6 @@ api.add_resource(empMgmtRegSubmit,'/empMgmtRegSubmit') #api 선언
 api.add_resource(empOneInfo,'/empOneInfo') #api 선언
 api.add_resource(empMgmtEditSubmit,'/empMgmtEditSubmit') #api 선언
 api.add_resource(empMgmtDelSubmit,'/empMgmtDelSubmit') #api 선언
+
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5006, debug=True)
