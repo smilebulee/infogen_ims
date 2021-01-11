@@ -20,19 +20,19 @@
         //세팅할 empIdx 지정
         var empIptId;
 
-        // 직원조회 모달 오픈
+        // 결재자 검색 - 직원조회 모달 오픈
         $("#ipt_apvlLnSearchNamePop").click(function(){
             empIptId = 'ipt_apvlLnSearchNamePop';
             openEmpMgmtPop();
         });
 
-        // 직원조회 모달 오픈
+        // 참조자 검색 - 직원조회 모달 오픈
         $("#ipt_apvlLnRfSearchNamePop").click(function(){
             empIptId = 'ipt_apvlLnRfSearchNamePop';
             openEmpMgmtPop();
         });
 
-        // 직원조회 모달 오픈
+        // 직원조회 모달 닫기 - 후처리
         $("#ipt_apvlSearchNamePop").change(function(){
             $('#' + empIptId).val($('#ipt_searchNamePop').val());
             empIptId = '';
