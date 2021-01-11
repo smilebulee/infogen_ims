@@ -105,3 +105,17 @@ $.urlParam = function(name){
     }
 }
 
+/*********************************************************************
+*   Dialog Setting
+*********************************************************************/
+var cf_dialog = new ax5.ui.dialog();
+var nTitle =  "<span style='color:#fd7e14;font-size:20px;'><i class='fa fa-check-circle'></i></span> CHECK";
+
+cf_dialog.setConfig({
+    title: nTitle,
+    theme : "info",
+    lang:{
+        "ok": "확인",
+        "cancel": "취소"
+    }
+});

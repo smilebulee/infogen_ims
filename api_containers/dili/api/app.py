@@ -541,20 +541,20 @@ class saveApvlReq(Resource): # Mariadb 연결 진행
 
         params = request.get_json()
         logger.info(params)
+        logger.info("saveApvlReq")
 
         for row in request.form:
             logger.info(row + ':' + request.form[row])
             globals()[row] = request.form[row]
 
         email = request.form['email']
+        logger.info("@test" + email + "test")
         apvlReqDivs = request.form['apvlReqDivs']
         wrkDt = request.form['wrkDt']
         wrkTme = request.form['wrkTme']
         wrkReqRsn = request.form['wrkReqRsn']
         th1AprvStus = request.form['th1AprvStus']
         th1AprvNm = request.form['th1AprvNm']
-
-
 
         #requirements pymysql import 후 커넥트 사용
         mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
@@ -572,18 +572,10 @@ class saveApvlReq(Resource): # Mariadb 연결 진행
                                                       "`TH1_APRV_STUS`," \
                                                       "`TH1_APRV_NM`," \
                                                       "`APVL_LAST_APRV_DT`)" \
-                                                      "VALUES( %s, %s, %s, %s, %s, NOW(), %s, %s, NOW())" \
+                                                      "VALUES( '" + email + "', '" + apvlReqDivs + "', '" + wrkDt + "', '" + wrkTme + "', '" + wrkReqRsn + "', NOW(), '" + th1AprvStus+ "', '" + th1AprvNm + "', NOW())"
 
-                # "ON DUPLICATE KEY UPDATE "
-                # "EMP_EMAL_ADDR = %s, " \
-                # "APVL_REQ_DIVS = %s," \
-                # "WRK_DT = %s," \
-                # "WRK_TME = %s," \
-                # "WRK_REQ_RSN = %s," \
-                # "TH1_APRV_STUS = %s," \
-                # "TH1_APRV_NM = %s," \
                 logger.info(sql)
-                cursor.execute(sql, (email, apvlReqDivs, wrkDt, wrkTme, wrkReqRsn, th1AprvStus, th1AprvNm))
+                cursor.execute(sql)
 
                 mysql_con.commit()
 

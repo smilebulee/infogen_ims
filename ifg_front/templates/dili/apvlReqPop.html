@@ -1,12 +1,65 @@
 <script type="text/javascript">
     $(document).ready(function(){
-        // 공통 코드 조회 - '결재 구분'
+        // 공통 코드 조회 - '결재 유형'
         retrieveCmmCd("rb_apvlReqDivsCd", 'APVL_DIVS_CD');
+
+        // 공통 코드 조회 - '결재 구분'
+        retrieveCmmCd("rb_apvlReqMthdCd", 'APVL_REQ_MTHD_CD');
+
+        // '결재 구분' radio 값 선택 불가 처리 - 로직으로 선택 기간이 현재 날짜보다 이후인 경우 선결재, 이전인 경우 후결재 처리
+        $("input[name='APVL_REQ_MTHD_CD']:not(:checked)").prop('disabled', 'disabled');
+
+        // 공통 코드 조회 - '결재선 구분'
+        retrieveCmmCd("sbx_apvlLnDivsCd", 'APVL_LN_DIVS_CD');
 
         // 결재 구분 기본 선택 값 지정 - '야간근무'
         //$("input:radio[name='APVL_DIVS_CD']:radio[value='01']").prop('checked', true);
         $('#apvlReqDiv').load("{% url 'dili_api:wrkApvlReq' %}");
+
+        //////////////////////테스트 중
+        //세팅할 empIdx 지정
+        var empIptId;
+
+        // 직원조회 모달 오픈
+        $("#ipt_apvlLnSearchNamePop").click(function(){
+            empIptId = 'ipt_apvlLnSearchNamePop';
+            openEmpMgmtPop();
+        });
+
+        // 직원조회 모달 오픈
+        $("#ipt_apvlLnRfSearchNamePop").click(function(){
+            empIptId = 'ipt_apvlLnRfSearchNamePop';
+            openEmpMgmtPop();
+        });
+
+        // 직원조회 모달 오픈
+        $("#ipt_apvlSearchNamePop").change(function(){
+            $('#' + empIptId).val($('#ipt_searchNamePop').val());
+            empIptId = '';
+
+        });
+
+
+        // 직원 조회 모달 팝업 오픈
+        function openEmpMgmtPop(ipt_id) {
+            // 전달할 직원명 param 세팅
+            $('#ipt_searchNamePop').val($('#' + ipt_id).val());
+            // 팝업 오픈
+            var url = "{% url 'dili_api:empMgmtPop' %}" ;
+
+            $('#apvlEmpModalDiv').css("width","80%");
+            $('#apvlEmpModalDiv').css("z-index", 99999999999);
+            modal('apvlEmpModalDiv');
+
+            $('#apvlEmpModal').load(url);
+        }
+
+
+
+
+
     });
+
 
     $(document).on("change","input:radio[name='APVL_DIVS_CD']",function(){
         var url = "";
@@ -21,8 +74,28 @@
             url = "{% url 'dili_api:yryApvlReq' %}" ;
         }
         $('#apvlReqDiv').load(url);
+
     });
 </script>
+
+
+<!--직원조회 모달 영역 -->
+<div style="width:100%">
+    <div id="apvlEmpModalDiv" class="modalUi">
+        <div id="apvlEmpModal">
+        </div>
+        <a class="modal_close_btn" id="exitApvlEmpModalBtn">
+            <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-x-circle" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+               <path fill-rule="evenodd" d="
+               M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+               <path fill-rule="evenodd" d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+            </svg>
+            <span id="apvlEmpEmailHidden" style="display:none;" ></span>
+            <span id="apvlReqHidden" style="display:none;" >apvlReq</span>
+        </a>
+    </div>
+</div>
+
 
 <div class="row">
     <div class="col-sm-12">
@@ -45,14 +118,24 @@
                         </button>
                     </h2>
                 </div>
+
                 <!-- Card Body -->
                 <div id="col_yryApvlReq" class="collapse show" aria-labelledby="head_yryApvlReq" data-parent="#grp_yryApvlReq">
-                    <div class="card-body flex-height d-flex">
-                        <div class="align-self-start align-self-center mr-3">결재 유형</div>
+                    <div class="card-body flex-height d-flex mb-4 col-sm-12">
                         <div class="align-self-center mr-5">
-                            <input id="rb_apvlReqDivsCd" type="radio" name="APVL_DIVS_CD" value="00" style="display : none;">
+                            <div class="align-self-start align-self-center mr-3">결재 유형</div>
+                            <div class="align-self-center mr-5">
+                                <input id="rb_apvlReqDivsCd" type="radio" name="APVL_DIVS_CD" value="00" style="display : none;">
+                            </div>
+                        </div>
+                        <div class="align-self-center mr-5">
+                            <div class="align-self-start align-self-center mr-3">결재 구분</div>
+                            <div class="align-self-center mr-5">
+                                <input id="rb_apvlReqMthdCd" type="radio" name="APVL_REQ_MTHD_CD" value="00" style="display : none;">
+                            </div>
                         </div>
                     </div>
+
 
                     <!-- 결재유형 radioButton 선택 값에 따라 변경되는 영역 -->
                     <div id="apvlReqDiv" class="card-body flex-height d-flex">
@@ -60,6 +143,58 @@
                             <b>Div Change</b>
                         </h5>
                     </div>
+
+                    <!-- 결재선 지정 영역 -->
+                    <div id="apvlLnDiv" class="col-sm-12">
+                        <div class="mb-4" role="alert">
+                            <h6 id="apvlReqTit">
+                                <b>결재선 선택</b>
+                            </h6>
+                        </div>
+
+                        <div id="col_search" class="collapse show" aria-labelledby="head_search" data-parent="#grp_searchApvlLn">
+                            <div class="card-body flex-height d-flex m-0 p-2">
+                                <!-- 결재순서 -->
+                                <!--<div class="align-self-start align-self-center mr-3">구분</div>-->
+                                <div class="align-self-center mr-3">
+                                    <select id="sbx_apvlLnDivsCd" name="APVL_LN_DIVS_CD" class="form-control">
+                                    </select>
+                                </div>
+
+                                <!--<div class="align-self-start align-self-center mr-3">성명</div>-->
+                                <div class="align-self-center mr-3">
+                                    <div class="align-self-center mr-3">
+                                        <input type="text" class="form-control" id="ipt_apvlLnSearchNamePop" name="ipt_apvlLnSearchNamePop" placeholder="이름을 입력해주세요." maxlength="10" readonly/>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div class="card-body flex-height d-flex m-0 p-2">
+                                <!-- 참조자 -->
+                                <div class="align-self-center mr-5">
+                                    <span>참조 &nbsp;&nbsp;</span>
+                                </div>
+                                <!--<div class="align-self-start align-self-center mr-3">성명</div>-->
+                                <div class="align-self-center mr-3">
+                                    <div class="align-self-center mr-3">
+                                        <input type="text" class="form-control" id="ipt_apvlLnRfSearchNamePop" name="ipt_apvlLnSearchNamePop" placeholder="이름을 입력해주세요." maxlength="10" readonly/>
+                                    </div>
+                                </div>
+                            </div>
+                            <input type="hidden" class="form-control" id="ipt_searchNamePop" name="ipt_searchNamePop" readonly/>
+                            <!--<input type="hidden" class="form-control" id="apvlEmpEmailHidden" name="apvlEmpEmailHidden" readonly/>-->
+                        </div>
+                    </div>
+
+                    <!-- 결재 요청 버튼 영역 -->
+                    <div class="flex-height d-flex m-0 p-2">
+                        <div class="align-self-start align-self-center mr-3"></div>
+                        <div class="align-self-center mr-7">
+                            <button class="button" id="btn_req">요청</button>
+                        </div>
+                    </div>
+
                 </div>
 
             </div>
