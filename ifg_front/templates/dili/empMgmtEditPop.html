@@ -19,11 +19,7 @@
     });
 
     $(document).ready(function(){
-        // 공통 코드 조회 - '부서조회'
-        retrieveCmmCd('sbx_empDept', 'SLIN_BZDP');
 
-        // 공통 코드 조회 - '권한 조회'
-        retrieveCmmCd('sbx_empAuthId', 'AUTH_CD');
 
         /* 부모창에서 선택한 직원 email*/
         $('#hidden_empMail').val(document.getElementById('hidden_selectMail').value);
@@ -58,7 +54,7 @@
 
     /* 해당 직원 정보 input창에 입력 */
     function empInfoSet(data){
-    debugger;
+
         console.log("Start")
         console.log(data)
         console.log(typeof(data))
@@ -71,6 +67,15 @@
         var get_empTel = data[0].EMP_TEL;
         var get_empDCd = data[0].DEPT_CD;
 
+        // 공통 코드 조회 - '부서조회'
+        retrieveCmmCd('sbx_empDept', 'SLIN_BZDP', function(){
+            $("#sbx_empDept option[value='"+get_empDCd+"']").attr("selected", true);
+        });
+
+        // 공통 코드 조회 - '권한 조회'
+        retrieveCmmCd('sbx_empAuthId', 'AUTH_CD', function(){
+            $("#sbx_empAuthId option[value='"+get_empAId+"']").attr("selected", true);
+        });
 
 
         $('#ipt_empId').val(get_empId);
@@ -79,8 +84,6 @@
         $('#ipt_empBd').val(get_empBd);
         $('#ipt_empMb').val(get_empTel);
 
-        $('#sbx_empAuthId').val(get_empAId);
-        $('#sbx_empDept').val(get_empDCd);
     };
 
     /* 수정버튼 클릭 이벤트 */
