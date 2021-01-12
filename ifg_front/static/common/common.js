@@ -51,7 +51,7 @@ function retrieveCmmCdTest(sbx_id, grp_id){
  }
 
 /* 공통코드 조회 및 radio, select 컴포넌트 등록 */
-function retrieveCmmCd(cmp_id, grp_id){
+function retrieveCmmCd(cmp_id, grp_id, callBackFunc){
     var param = {
         "cmp_id" : cmp_id,
         "grp_id" : grp_id
@@ -83,9 +83,45 @@ function retrieveCmmCd(cmp_id, grp_id){
                     }
                 }
 
+                if(callBackFunc) {
+                    if(typeof callBackFunc == 'function') {
+                        callBackFunc(data);
+                    } else if(typeof callBackFunc == 'string') {
+                        window[callBackFunc](data);
+                    }
+                }
             }
     });
  }
+
+
+/* 이메일 주소로 사용자 이름 조회 */
+function retrieveEmpNmByEmail(empEmail, callBackFunc) { // 추후 콜백 function 추가 }, callBackFunc){
+    //var empNm = '';
+
+    var param = {
+        "email" : empEmail
+    }
+
+    $.ajaxCall( param, {
+        'method' : 'GET',
+        'url' : '/dili/getEmpName/',
+        'dataType' : 'json',
+        'data' : JSON.stringify(param),
+        'async' : false,
+        'callbackFn' : function(data){
+            //empNm = data[0].EMP_NAME;
+            if(callBackFunc) {
+                if(typeof callBackFunc == 'function') {
+                    callBackFunc(data);
+                } else if(typeof callBackFunc == 'string') {
+                    window[callBackFunc](data);
+                }
+            }
+        }
+    });
+}
+
 
 
 /* url로 넘긴 param 받기

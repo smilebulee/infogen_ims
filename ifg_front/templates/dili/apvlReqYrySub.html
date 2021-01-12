@@ -289,7 +289,7 @@
 
                         var tmpParam = {
                             "email" : sessionStorage.getItem("email"),
-                            "apvlReqDivs" : $('input[name="rb_apvlReqMthdCd"]:checked').val(),    //01: 선결재, 02: 후결재//////////////////////////////수정
+                            "apvlReqDivs" : $('input[name="rb_apvlReqMthdCd"]:checked').val(),    //01: 선결재, 02: 후결재
                             "wrkDt" : setWeek(date).baseDate,
                             "wrkTme" : "000000",
                             "wrkReqRsn": $("#txa_holiRsn").val(),
@@ -336,15 +336,6 @@
 
                     <!-- Body -->
                     <div id="col_yryApvlReq" class="collapse show" aria-labelledby="head_yryApvlReq" data-parent="#grp_yryApvlReq">
-<!--
-
-                        <div class="flex-height d-flex m-0 p-2">
-                            <div class="align-self-start align-self-center mr-3">결재 구분</div>
-                            <div class="align-self-center mr-5">
-                                <input id="rb_apvlReqMthdCd" type="radio" name="APVL_REQ_MTHD_CD" value="00" style="display : none;">
-                            </div>
-                        </div>
--->
                         <div class="flex-height d-flex m-0 p-2">
                             <div class="align-self-start align-self-center mr-3">신청 구분</div>
                             <div class="align-self-center mr-5">
@@ -402,14 +393,6 @@
                             <span id="txt_allAnhoDays">0</span>
                             <span>&nbsp;일</span>
                         </div>
-<!--
-                        <div class="flex-height d-flex m-0 p-2">
-                            <div class="align-self-start align-self-center mr-3"></div>
-                            <div class="align-self-center mr-7">
-                                <button type="button" class="button" id="btn_req" onclick="btnReqEvt2()">요청</button>
-                            </div>
-                        </div>
--->
                     </div>
                 </div>
             </div>

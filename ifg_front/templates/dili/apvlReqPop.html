@@ -1,13 +1,47 @@
 <script type="text/javascript">
-    $(document).ready(function(){
-        // 기본 결재 방법 = 선결재
-        var currReqMthd = '01';
+    // 후결재 판단 변수
+    currReqMthd = $('#currReqMthd').val() || '';
+    currDt = $('#pop_dt').val() || '';
 
+    function checkApvlReqMthdCd(currReqMthd) {
+            $("input:radio[name='APVL_REQ_MTHD_CD']:radio[value='" + currReqMthd + "']").prop('checked', true);
+            $("input[name='APVL_REQ_MTHD_CD']:not(:checked)").prop('disabled', 'disabled');
+            $("input[name='APVL_REQ_MTHD_CD']:checked").prop('disabled', false);
+    }
+
+    function retrieveApvlReqMthdCd() {
+        // 결재 방법에 따른 화면 분기
+        if ( currReqMthd == '01' ) {
+            // 선결재
+            $('#ipt_wrkDt').prop('readOnly', false);
+            checkApvlReqMthdCd(currReqMthd);
+            $("#grid-parent").css('display', 'none');
+        } else {
+            // 후결재
+            $('#ipt_wrkDt').prop('readOnly', true);
+            checkApvlReqMthdCd(currReqMthd);
+            $("#grid-parent").css('display', 'none');
+
+        }
+    }
+
+
+    var empIptNm;
+    var empIptEmail;
+
+    $(document).ready(function(){
         // 공통 코드 조회 - '결재 유형'
         retrieveCmmCd("rb_apvlReqDivsCd", 'APVL_DIVS_CD');
 
         // 공통 코드 조회 - '결재 구분'
-        retrieveCmmCd("rb_apvlReqMthdCd", 'APVL_REQ_MTHD_CD');
+        // retrieveCmmCd("rb_apvlReqMthdCd", 'APVL_REQ_MTHD_CD', 'retrieveApvlReqMthdCd');
+
+        //결재 방법
+        if(currReqMthd == null || currReqMthd == '') {
+            // 기본 결재 방법 = 선결재
+            currReqMthd = '01';
+        }
+
 
         // '결재 구분' radio 값 선택 불가 처리 - 로직으로 선택 기간이 현재 날짜보다 이후인 경우 선결재, 이전인 경우 후결재 처리
         $("input[name='APVL_REQ_MTHD_CD']:not(:checked)").prop('disabled', 'disabled');
@@ -20,25 +54,30 @@
         $('#apvlReqDiv').load("{% url 'dili_api:wrkApvlReq' %}");
 
         //////////////////////테스트 중
-        //세팅할 empIdx 지정
-        var empIptId;
+        //세팅할 empName, empEmail 지정
+        //var empIptNm;
+        //var empIptEmail;
 
         // 결재자 검색 - 직원조회 모달 오픈
         $("#ipt_apvlLnSearchNamePop").click(function(){
-            empIptId = 'ipt_apvlLnSearchNamePop';
+            empIptNm = 'ipt_apvlLnSearchNamePop';
+            empIptEmail = 'ipt_apvlLnSearchEmailPop';
             openEmpMgmtPop();
         });
 
         // 참조자 검색 - 직원조회 모달 오픈
         $("#ipt_apvlLnRfSearchNamePop").click(function(){
-            empIptId = 'ipt_apvlLnRfSearchNamePop';
+            empIptNm = 'ipt_apvlLnRfSearchNamePop';
+            empIptEmail = 'ipt_apvlLnRfSearchEmailPop';
             openEmpMgmtPop();
         });
 
         // 직원조회 모달 닫기 - 후처리
         $("#ipt_apvlSearchNamePop").change(function(){
-            $('#' + empIptId).val($('#ipt_searchNamePop').val());
-            empIptId = '';
+            $('#' + empIptNm).val($('#ipt_apvlSearchNamePop').val());
+            $('#' + empIptEmail).val($('#ipt_apvlSearchEmailPop').val());
+            empIptNm = '';
+            empIptEmail = '';
 
         });
 
@@ -50,20 +89,12 @@
             // 팝업 오픈
             var url = "{% url 'dili_api:empMgmtPop' %}" ;
 
-            $('#apvlEmpModalDiv').css("width","80%");
-            $('#apvlEmpModalDiv').css("z-index", 99999999999);
-            modal('apvlEmpModalDiv');
+            modal('empModalDiv');
 
-            $('#apvlEmpModal').load(url);
-        }
+            $('#empModal').load(url);
 
-        // 결재 방법에 따른 화면 분기
-        if ( currReqMthd == '01' ) {
-
-
-        } else {
-
-
+            $('#empModalDiv').css("width", "40%");
+            $('#empModalDiv').css("z-index", 10);
         }
 
 
@@ -85,10 +116,12 @@
         $('#apvlReqDiv').load(url);
 
     });
+
 </script>
 
 
 <!--직원조회 모달 영역 -->
+<!--
 <div style="width:100%">
     <div id="apvlEmpModalDiv" class="modalUi">
         <div id="apvlEmpModal">
@@ -104,7 +137,7 @@
         </a>
     </div>
 </div>
-
+-->
 
 <div class="row">
     <div class="col-sm-12">
@@ -174,6 +207,7 @@
                                 <div class="align-self-center mr-3">
                                     <div class="align-self-center mr-3">
                                         <input type="text" class="form-control" id="ipt_apvlLnSearchNamePop" name="ipt_apvlLnSearchNamePop" placeholder="이름을 입력해주세요." maxlength="10" readonly/>
+                                        <input type="text" class="form-control" id="ipt_apvlLnSearchEmailPop" name="ipt_apvlLnSearchEmailPop" readonly/>
                                     </div>
                                 </div>
 
@@ -188,6 +222,7 @@
                                 <div class="align-self-center mr-3">
                                     <div class="align-self-center mr-3">
                                         <input type="text" class="form-control" id="ipt_apvlLnRfSearchNamePop" name="ipt_apvlLnSearchNamePop" placeholder="이름을 입력해주세요." maxlength="10" readonly/>
+                                        <input type="text" class="form-control" id="ipt_apvlLnRfSearchEmailPop" name="ipt_apvlLnRfSearchEmailPop" readonly/>
                                     </div>
                                 </div>
                             </div>
@@ -203,9 +238,7 @@
                             <button class="button" id="btn_req">요청</button>
                         </div>
                     </div>
-
                 </div>
-
             </div>
         </div>
     </div>

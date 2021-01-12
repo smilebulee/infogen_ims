@@ -212,6 +212,20 @@ def getEmpInfo(request):
     logger.info(r.json())
     return JsonResponse(ast.literal_eval(r.json()), safe=False)
 
+def getEmpName(request):
+    param = json.loads(request.GET['param'])
+
+    logger.info("Parameters Logging Start")
+    logger.info(param)
+    logger.info("Parameters Logging End")
+
+    # api 호출
+    r = requests.get('http://dili_api:5006/empName', json=param)
+    logger.info(r)
+    logger.info(r.text)
+    logger.info(r.json())
+    return JsonResponse(ast.literal_eval(r.json()), safe=False)
+
 
 class wrkApvlReq(generic.TemplateView):
     def get(self, request, *args, **kwargs):
@@ -497,6 +511,28 @@ def saveApvlReq(request):
     logger.info(r.json())
     return JsonResponse(r.json())
 
+def saveApvlAcpt(request):
+    param = json.loads(request.POST['param'])
+
+    logger.info("Parameters Start")
+    logger.info(param)
+    logger.info("Parameters End")
+
+    datas = {
+    }
+
+    for row in param:
+        logger.info("------views.py------")
+        logger.info(row)
+        logger.info(row + ':' + param[row])
+        datas.setdefault(row, param[row])
+
+    r = requests.post('http://dili_api:5006/saveApvlAcpt', data=datas)
+    logger.info(r)
+    logger.info(r.text)
+    logger.info(r.json())
+    return JsonResponse(r.json())
+
 #공통 코드 조회
 def retrieveCmmCd(request):
     param = json.loads(request.GET['param'])
@@ -578,6 +614,21 @@ def getApvlReqHistDetl(request):
 
     # api 호출
     r = requests.get('http://dili_api:5006/apvlReqHistDetl', json=param)
+    logger.info(r)
+    logger.info(r.text)
+    logger.info(logger.info(ast.literal_eval(r.json())))
+    logger.info(json.loads(r.text))
+    return JsonResponse(ast.literal_eval(r.json()), safe=False)
+
+def getApvlAcptHist(request):
+    param = json.loads(request.GET['param'])
+
+    logger.info("Parameters Start")
+    logger.info(param)
+    logger.info("Parameters End")
+
+    # api 호출
+    r = requests.get('http://dili_api:5006/apvlAcptHist', json=param)
     logger.info(r)
     logger.info(r.text)
     logger.info(logger.info(ast.literal_eval(r.json())))

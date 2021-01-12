@@ -19,6 +19,12 @@
     });
 
     $(document).ready(function(){
+        // 공통 코드 조회 - '부서 조회'
+        retrieveCmmCd('sbx_empDept', 'SLIN_BZDP');
+
+        // 공통 코드 조회 - '권한 조회'
+        retrieveCmmCd('sbx_empAuthId', 'AUTH_CD');
+
         /*name = $('#addEmpBtn').val();
         console.log(' Debug [Name] : '+name );*/
 
@@ -71,6 +77,8 @@
             $('#ipt_empId').attr('readonly', true);
             $('#submitBtn').attr('disabled',false);
             $('#reIsExistBtn').attr('hidden', false);
+            $('#ipt_empId').attr('style', 'width:165px');
+            $('#isExistBtn').attr('hidden', true);
         }
     };
 
@@ -81,17 +89,20 @@
         $('#ipt_empId').val("");
         $('#ipt_empId').focus();
         $('#submitBtn').attr('disabled',true);
+        $('#reIsExistBtn').attr('hidden', true);
+        $('#ipt_empId').attr('style', 'width:200px');
+        $('#isExistBtn').attr('hidden', false);
     }
 
     /* 등록버튼 클릭 이벤트 */
     function onClickSubmitBtn() {
         var ipt_empId = $('[name="ipt_empId"]').val();
         var ipt_empPw = $('[name="ipt_empPw"]').val();
-        var ipt_empAuthId = $('[name="ipt_empAuthId"] option:selected').val();
+        var ipt_empAuthId = $('[name="sbx_empAuthId"] option:selected').val();
         var ipt_empNm = $('[name="ipt_empNm"]').val();
         var ipt_empBd = $('[name="ipt_empBd"]').val();
         var ipt_empMb = $('[name="ipt_empMb"]').val();
-        var ipt_empDept = $('[name="ipt_empDept"] option:selected').val();
+        var ipt_empDept = $('[name="sbx_empDept"] option:selected').val();
 
         if( ipt_empId == "" || ipt_empId == null ){
             alert("직원 아이디를 입력해 주세요.");
@@ -99,7 +110,7 @@
         } else if (ipt_empPw == "" || ipt_empPw == null ){
             alert("직원 비밀번호를 입력해 주세요.");
             return false;
-        } else if (ipt_empAuthId == "00" || ipt_empAuthId == null ){
+        } else if (ipt_empAuthId == "none" || ipt_empAuthId == null ){
             alert("직원 권한을 선택해 주세요.");
             return false;
         } else if (ipt_empNm == "" || ipt_empNm == null ){
@@ -122,20 +133,6 @@
             return false;
         }
 
-        switch(ipt_empAuthId){
-            case "01":
-                ipt_empAuthId = "ADMIN";
-                break;
-            case "02":
-                ipt_empAuthId = "USER";
-                break;
-            case "03":
-                ipt_empAuthId = "GM"; //GeneralManager
-                break;
-            default:
-                ipt_empAuthId = "error";
-                break;
-        }
 
         var param = {
             "ipt_empId" : ipt_empId,
@@ -191,146 +188,86 @@
     /* 리셋 버튼 클릭 이벤트 */
     function onClickResetBtn() {
         $('#ipt_empId').attr('readonly', false);
+        $('#reIsExistBtn').attr('hidden', true);
+        $('#ipt_empId').attr('style', 'width:200px');
+        $('#isExistBtn').attr('hidden', false);
     };
 
 </script>
     <div class="row">
         <div class="mb-4" role="alert">
-            <h5>
+            <h6>
                 <b>직원등록</b>
-            </h5>
+            </h6>
         </div>
         <div class="flex-height d-flex m-0 p-2">
             <form method="post" id="submitEmp" action="">
-                <table>
-                    <!-- 아이디 -->
-                    <tr>
-                        <td><label for="ipt_empId">아이디</label></td>
-                        <td><input type="text" class="form-control" id="ipt_empId" name="ipt_empId" placeholder="ID" maxlength="30" style="width:300px;"/></td>
+                <!-- 아이디 -->
+                <div class="flex-height d-flex m-0 p-2">
+                    <div class="align-self-start align-self-center mr-4"><label for="ipt_empId">아이디&nbsp;&nbsp;</label></div>
+                    <div class="align-self-center mr-2">
+                        <input type="text" class="form-control" id="ipt_empId" name="ipt_empId" placeholder="ID" maxlength="30" style="width:200px;">
+                    </div>
+                    <div class="align-self-center mr-5">
+                        <button class="button" id="reIsExistBtn" type="button" onclick="onClickReIsExistBtn()" hidden="hidden">아이디 재설정</button>
+                        <button class="button" id="isExistBtn" type="button" onclick="onClickIsExistBtn()">중복확인</button>
+                    </div>
+                </div>
+                <!-- 비밀번호 -->
+                <div class="flex-height d-flex m-0 p-2">
+                    <div class="align-self-start align-self-center mr-3"><label for="ipt_empPw">비밀번호</label></div>
+                    <div class="align-self-center mr-5">
+                        <input type="password" class="form-control" id="ipt_empPw" name="ipt_empPw" placeholder="PASSWORD" maxlength="10" style="width:300px;"/>
+                    </div>
+                </div>
+                <!-- 비밀번호 -->
+                <div class="flex-height d-flex m-0 p-2">
+                    <div class="align-self-start align-self-center mr-5"><label for="sbx_empAuthId">권한</label></div>
+                    <div class="align-self-center mr-5">
+                        <select id="sbx_empAuthId" name="sbx_empAuthId" class="form-control">
+                            <option value="none" selected>선택</option>
+                        </select>
+                    </div>
+                </div>
+                <!-- 성명 -->
+                <div class="flex-height d-flex m-0 p-2">
+                    <div class="align-self-start align-self-center mr-5"><label for="ipt_empNm">성명</label></div>
+                    <div class="align-self-center mr-5">
+                        <input type="text" class="form-control" id="ipt_empNm" name="ipt_empNm" placeholder="NAME" maxlength="10" style="width:300px;"/>
+                    </div>
+                </div>
+                <!-- 생년월일 -->
+                <div class="flex-height d-flex m-0 p-2">
+                    <div class="align-self-start align-self-center mr-3"><label for="ipt_empBd">생년월일</label></div>
+                    <div class="align-self-center mr-5">
+                        <input type="date" class="form-control" id="ipt_empBd" name="ipt_empBd" maxlength="8" max="9999-12-31" style="width:300px;"/>
+                    </div>
+                </div>
+                <!-- 전화번호 -->
+                <div class="flex-height d-flex m-0 p-2">
+                    <div class="align-self-start align-self-center mr-3"><label for="ipt_empMb">전화번호</label></div>
+                    <div class="align-self-center mr-5">
+                        <input type="tel" class="form-control" id="ipt_empMb" name="ipt_empMb" maxlength="13" placeholder="000-0000-0000"style="width:300px;"/>
+                    </div>
+                </div>
+                <!-- 부서 -->
+                <div class="flex-height d-flex m-0 p-2">
+                    <div class="align-self-start align-self-center mr-5"><label for="sbx_empDept">부서</label></div>
+                    <div class="align-self-center mr-5">
+                        <select id="sbx_empDept" name="sbx_empDept" class="form-control">
+                            <option value="00" selected>선택</option>
+                        </select>
+                    </div>
+                </div>
+                <!-- 버튼 -->
+                <div class="flex-height d-flex m-0 p-2">
+                    <div class="align-self-center mr-5">
+                        <button class="button" id="submitBtn" type="button" onclick="onClickSubmitBtn()" float="right" disabled>등록</button>
+                        <input class="button" id="resetBtn" type="reset" onclick="onClickResetBtn()" float="right"/>
+                        <button class="button" id="closeBtn" type="button" onclick="onClickCloseBtn()" float="right">닫기</button>
+                    </div>
 
-                    </tr>
-                    <tr>
-                        <td></td>
-                        <td>
-                            <button class="button" id="isExistBtn" type="button" onclick="onClickIsExistBtn()" float="right">중복확인</button>
-                            <button class="button" id="reIsExistBtn" type="button" onclick="onClickReIsExistBtn()" float="right" hidden>아이디 재설정</button>
-                        </td>
-                    </tr>
-                    <!-- 비밀번호 -->
-                    <tr>
-                        <td><label for="ipt_empPw">비밀번호</label></td>
-                        <td><input type="password" class="form-control" id="ipt_empPw" name="ipt_empPw" placeholder="PASSWORD" maxlength="10" style="width:300px;"/></td>
-                    </tr>
-                    <!-- 권한 -->
-                    <tr>
-                        <td><label for="ipt_empAuthId">권한</label></td>
-                        <td>
-                            <select id="ipt_empAuthId" name="ipt_empAuthId" style="width:300px;">
-                                <option value="00" selected>선택</option>
-                                <option value="01">관리자</option>
-                                <option value="02">일반사용자</option>
-                                <option value="03">사업부장</option>
-                            </select>
-                        </td>
-                    </tr>
-                    <!-- 성명 -->
-                    <tr>
-                        <td><label for="ipt_empNm">성명</label></td>
-                        <td><input type="text" class="form-control" id="ipt_empNm" name="ipt_empNm" placeholder="NAME" maxlength="10" style="width:300px;"/></td>
-                    </tr>
-                    <!-- 생년월일 -->
-                    <tr>
-                        <td><label for="ipt_empBd">생년월일</label></td>
-                        <td><input type="date" class="form-control" id="ipt_empBd" name="ipt_empBd" maxlength="8" max="9999-12-31" style="width:300px;"/></td>
-                    </tr>
-                    <!-- 전화번호 -->
-                    <tr>
-                        <td><label for="ipt_empMb">전화번호</label></td>
-                        <td><input type="tel" class="form-control" id="ipt_empMb" name="ipt_empMb" maxlength="13" placeholder="000-0000-0000"style="width:300px;"/></td>
-                    </tr>
-                     <!-- 부서 -->
-                    <tr>
-                        <td><label for="ipt_empDept">부서</label></td>
-                        <td>
-                            <select id="ipt_empDept" name="ipt_empDept" style="width:300px;">
-                                <option value="00" selected>선택</option>
-                                <option value="01">전자/제조파트</option>
-                                <option value="02">통신파트</option>
-                                <option value="03">화학파트</option>
-                                <option value="04">전략사업 파트</option>
-                                <option value="05">DX사업 파트</option>
-                                <option value="06">사업지원팀</option>
-                           </select>
-                        </td>
-                    </tr>
-                    <!-- 버튼 -->
-                    <tr>
-                        <td colspan="2" style="text-align:right;">
-                            <button class="button" id="submitBtn" type="button" onclick="onClickSubmitBtn()" float="right" disabled>등록</button>
-                            <input class="button" id="resetBtn" type="reset" onclick="onClickResetBtn()" float="right"/>
-                            <button class="button" id="closeBtn" type="button" onclick="onClickCloseBtn()" float="right">닫기</button>
-                        </td>
-                    </tr>
-                </table>
-                <!-- <div class="align-self-start align-self-center mr-3">
-                    <label for="ipt_empId">아이디</label>
                 </div>
-                <div class="align-self-center mr-3">
-                    <input type="text" class="form-control" id="ipt_empId" name="ipt_empId" placeholder="ID" maxlength="30" style="width:300px;"/>
-                </div>
-                <div class="align-self-start align-self-center mr-3">
-                    <label for="ipt_empPw">비밀번호</label>
-                </div>
-                <div class="align-self-center mr-3">
-                    <input type="password" class="form-control" id="ipt_empPw" name="ipt_empPw" placeholder="PASSWORD" maxlength="10" style="width:300px;"/>
-                </div>
-                <div class="align-self-start align-self-center mr-3">
-                    <label for="ipt_empAuthId">권한</label>
-                </div>
-                <div class="align-self-center mr-3">
-                    <select id="ipt_empAuthId" name="ipt_empAuthId" style="width:300px;">
-                        <option value="00" selected>선택</option>
-                        <option value="01">관리자</option>
-                        <option value="02">일반사용자</option>
-                        <option value="03">사업부장</option>
-                    </select>
-                </div>
-                <div class="align-self-start align-self-center mr-3">
-                    <label for="ipt_empNm">성명</label>
-                </div>
-                <div class="align-self-center mr-3">
-                    <input type="text" class="form-control" id="ipt_empNm" name="ipt_empNm" placeholder="NAME" maxlength="10" style="width:300px;"/>
-                </div>
-                <div class="align-self-start align-self-center mr-3">
-                    <label for="ipt_empBd">생년월일</label>
-                </div>
-                <div class="align-self-center mr-3">
-                    <input type="date" class="form-control" id="ipt_empBd" name="ipt_empBd" maxlength="8" style="width:300px;"/>
-                </div>
-                <div class="align-self-start align-self-center mr-3">
-                    <label for="ipt_empMb">전화번호</label>
-                </div>
-                <div class="align-self-center mr-3">
-                    <input type="tel" class="form-control" id="ipt_empMb" name="ipt_empMb" maxlength="13" placeholder="000-0000-0000"style="width:300px;"/>
-                </div>
-                <div class="align-self-start align-self-center mr-3">
-                    <label for="ipt_empDept">부서</label>
-                </div>
-                <div class="align-self-center mr-3">
-                    <select id="ipt_empDept" name="ipt_empDept" style="width:300px;">
-                        <option value="00" selected>선택</option>
-                        <option value="01">전자/제조파트</option>
-                        <option value="02">통신파트</option>
-                        <option value="03">화학파트</option>
-                        <option value="04">전략사업 파트</option>
-                        <option value="05">DX사업 파트</option>
-                        <option value="06">사업지원팀</option>
-                   </select>
-                </div>
-                <div class="container" id="btn_C">
-                    <button class="button" id="submitBtn" type="button" onclick="onClickSubmitBtn()" float="right">등록</button>
-                    <input class="button" id="resetBtn" type="reset" float="right"/>
-                </div> -->
 
             </form>
         </div>
