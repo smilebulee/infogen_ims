@@ -95,6 +95,35 @@ function retrieveCmmCd(cmp_id, grp_id, callBackFunc){
  }
 
 
+/* 이메일 주소로 사용자 이름 조회 */
+function retrieveEmpNmByEmail(empEmail, callBackFunc) { // 추후 콜백 function 추가 }, callBackFunc){
+    //var empNm = '';
+
+    var param = {
+        "email" : empEmail
+    }
+
+    $.ajaxCall( param, {
+        'method' : 'GET',
+        'url' : '/dili/getEmpName/',
+        'dataType' : 'json',
+        'data' : JSON.stringify(param),
+        'async' : false,
+        'callbackFn' : function(data){
+            //empNm = data[0].EMP_NAME;
+            if(callBackFunc) {
+                if(typeof callBackFunc == 'function') {
+                    callBackFunc(data);
+                } else if(typeof callBackFunc == 'string') {
+                    window[callBackFunc](data);
+                }
+            }
+        }
+    });
+}
+
+
+
 /* url로 넘긴 param 받기
 사용방법 : var value = $.urlParam("key"); //url 에서 get 으로 넘긴 parameter 'key' 받기
 */
