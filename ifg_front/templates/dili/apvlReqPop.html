@@ -1,23 +1,47 @@
 <script type="text/javascript">
     // 후결재 판단 변수
-    var currReqMthd;
-    var currDt;
+    currReqMthd = $('#currReqMthd').val() || '';
+    currDt = $('#pop_dt').val() || '';
+
+    function checkApvlReqMthdCd(currReqMthd) {
+            $("input:radio[name='APVL_REQ_MTHD_CD']:radio[value='" + currReqMthd + "']").prop('checked', true);
+            $("input[name='APVL_REQ_MTHD_CD']:not(:checked)").prop('disabled', 'disabled');
+            $("input[name='APVL_REQ_MTHD_CD']:checked").prop('disabled', false);
+    }
+
+    function retrieveApvlReqMthdCd() {
+        // 결재 방법에 따른 화면 분기
+        if ( currReqMthd == '01' ) {
+            // 선결재
+            $('#ipt_wrkDt').prop('readOnly', false);
+            checkApvlReqMthdCd(currReqMthd);
+            $("#grid-parent").css('display', 'none');
+        } else {
+            // 후결재
+            $('#ipt_wrkDt').prop('readOnly', true);
+            checkApvlReqMthdCd(currReqMthd);
+            $("#grid-parent").css('display', 'none');
+
+        }
+    }
+
 
     var empIptNm;
     var empIptEmail;
 
     $(document).ready(function(){
+        // 공통 코드 조회 - '결재 유형'
+        retrieveCmmCd("rb_apvlReqDivsCd", 'APVL_DIVS_CD');
+
+        // 공통 코드 조회 - '결재 구분'
+        // retrieveCmmCd("rb_apvlReqMthdCd", 'APVL_REQ_MTHD_CD', 'retrieveApvlReqMthdCd');
+
         //결재 방법
         if(currReqMthd == null || currReqMthd == '') {
             // 기본 결재 방법 = 선결재
             currReqMthd = '01';
         }
 
-        // 공통 코드 조회 - '결재 유형'
-        retrieveCmmCd("rb_apvlReqDivsCd", 'APVL_DIVS_CD');
-
-        // 공통 코드 조회 - '결재 구분'
-        retrieveCmmCd("rb_apvlReqMthdCd", 'APVL_REQ_MTHD_CD');
 
         // '결재 구분' radio 값 선택 불가 처리 - 로직으로 선택 기간이 현재 날짜보다 이후인 경우 선결재, 이전인 경우 후결재 처리
         $("input[name='APVL_REQ_MTHD_CD']:not(:checked)").prop('disabled', 'disabled');
@@ -73,17 +97,6 @@
             $('#empModalDiv').css("z-index", 10);
         }
 
-        // 결재 방법에 따른 화면 분기
-        if ( currReqMthd == '01' ) {
-            $('#ipt_wrkDt').prop('readOnly', false);
-            // ipt_wrkDt
-            /////////////////////////////////////////////////////////////////////// 작업중 분기
-        } else {
-            $('#ipt_wrkDt').prop('readOnly', true);
-            /////////////////////////////////////////////////////////////////////// 작업중 분기
-
-
-        }
 
     });
 
@@ -103,6 +116,7 @@
         $('#apvlReqDiv').load(url);
 
     });
+
 </script>
 
 

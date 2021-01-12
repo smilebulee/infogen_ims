@@ -18,8 +18,15 @@
         }
         console.log("###########SessionSettingInfo::", param);
 
+
+        debugger;
         // 사용자조회 이메일 : SessionSetting email로 설정
-        $('#ipt_apvlSearchNamePop').val(param.email)
+        $('#ipt_apvlSearchEmailPop').val(param.email)
+        retrieveEmpNmByEmail(param.email, function(data) {
+            $('#ipt_apvlSearchNamePop').val(data[0].EMP_NAME);
+            $('#ipt_searchName').val(data[0].EMP_NAME);
+        });
+
 
         // 결재승인 버튼 및 직원조회 기능 권한 처리
         if(param.authId != "ADMIN") {
@@ -36,7 +43,8 @@
         });
 
         $('#ipt_apvlSearchNamePop').change(function() {
-            $('#ipt_searchNamePop').val($('#ipt_apvlSearchNamePop').val());
+            console.log("ipt_apvlSearchNamePop변화 => change 이벤트 안됨 추후 테스트 필요");
+            $('#ipt_searchName').val($('#ipt_apvlSearchNamePop').val());
         });
 
         ////////////////////////////////////////////////////////////////////////////////////
@@ -76,7 +84,7 @@
 
         // 직원조회 권한 처리 및 모달 오픈
         if(param.authId == "ADMIN") {
-            $("#ipt_apvlSearchNamePop").click(function(){
+            $("#ipt_searchName").click(function(){
                 var url = "{% url 'dili_api:empMgmtPop' %}" ;
 
                 modal('empModalDiv');
@@ -101,8 +109,8 @@
 
         // 결재승인 모달 오픈
         $("#apvlAcptBtn").click(function(){
-            //var url = "{% url 'dili_api:apvlAcptPop' %}" ; /////////////////////////수정
-            var url = "{% url 'dili_api:wrkApvlReq' %}" ; /////////////////////////수정
+            var url = "{% url 'dili_api:apvlAcptPop' %}" ; /////////////////////////수정
+            //var url = "{% url 'dili_api:wrkApvlReq' %}" ; /////////////////////////수정
 
 
             $('#apvlAcptModalDiv').css("width","50%");
@@ -120,7 +128,7 @@
     });
 
     /*********************************************************************
-    *   근무결재요청 Grid 생성
+    *   근무결재요청내역 Grid 생성
     *********************************************************************/
     function apvlReqHistGrd(data){
         var apvlReqHistTable = '<table class="table table-bordered table-responsive-md text-center">';
@@ -165,10 +173,9 @@
             apvlReqHistTable += '<td id="aprvStusNm" class="pt-3-half"></td>';
             apvlReqHistTable += '</tr>';
 
+            $("#thApvlReqDt").text("");
             $("#thAprvNm1").text("");
-            $("#thAprvNm2").text("");
             $("#thAprvStus1").text("");
-            $("#thAprvStus2").text("");
 
         }
 
@@ -181,46 +188,42 @@
 
     }
 
+
+    /*********************************************************************
+    *   Grid 클릭 이벤트 처리 - 배경색 지정, 상세보기 트랜잭션
+    *********************************************************************/
     function onclickEvt(trId) {
+        //선택한 행에 대해 backgroundColor 지정
+        $(trId).prevAll().css("background-color","");
+        $(trId).nextAll().css("background-color","");
+        $(trId).css("background-color","lightGrey");
+
+        // 트랜잭션
         var params = {
             "email" : sessionStorage.getItem("email"),
             "wrkDt" : $(trId).children().eq(2).text().substring(0,10)   //ex. 2020-11-03 날짜
         }
 
-    /*
-        $.ajaxCall( params, {
-             'method' : 'GET',
-             'url' : "{% url 'dili_api:getApvlReqHistDetl' %}",
-             'dataType' : 'json',
-             'data' : JSON.stringify(params),
-             'async' : false,
-             'callbackFn' : function(data){
-                // 리턴
-                setApvlReqHistDetl(data);
-             }
-        });
-    */
         submissionCallList( params, "GET", "{% url 'dili_api:getApvlReqHistDetl' %}", function(data){
             setApvlReqHistDetl(data);
         });
-
-
-
     }
 
+    /*********************************************************************
+    *   Grid 선택한 행에 따라 상세보기
+    *********************************************************************/
     function setApvlReqHistDetl(data) {
         if(data == undefined || data == null || data.length == 0) {
+            $("#thApvlReqDt").text("");
             $("#thAprvNm1").text("");
-            $("#thAprvNm2").text("");
             $("#thAprvStus1").text("");
-            $("#thAprvStus2").text("");
         } else {
+            $("#thApvlReqDt").text(data[0].APVL_REQ_DT);
             $("#thAprvNm1").text(data[0].TH1_APRV_NM);
-            $("#thAprvNm2").text(data[0].TH2_APRV_NM);
             $("#thAprvStus1").text(data[0].TH1_APRV_STUS_NM);
-            $("#thAprvStus2").text(data[0].TH2_APRV_STUS_NM);
         }
     }
+
 </script>
 
 <!--직원조회 모달 영역 -->
@@ -281,6 +284,7 @@
             </div>
             <div class="align-self-center mr-3">
                 <button class="button" id="apvlReqBtn">결재등록</button>
+                <input type="hidden" id="currReqMthd" value="01"></input>
             </div>
             <div class="align-self-end align-self-center">
                 <button class="button" id="apvlAcptBtn">결재승인</button>
@@ -304,8 +308,9 @@
                     <div class="card-body flex-height d-flex m-0 p-2">
                         <div class="align-self-start align-self-center mr-3">성명</div>
                         <div class="align-self-center mr-3">
-                            <input type="text" class="form-control" id="ipt_apvlSearchNamePop" name="ipt_apvlSearchNamePop" placeholder="이름을 입력해주세요." maxlength="10" readonly/>
-                            <input type="text" class="form-control" id="ipt_apvlSearchEmailPop" name="ipt_apvlSearchEmailPop" placeholder="이름을 입력해주세요." maxlength="10" readonly/>
+                            <input type="text" class="form-control" id="ipt_searchName" name="ipt_searchName" placeholder="이름을 입력해주세요." maxlength="10" readonly/>
+                            <input type="hidden" class="form-control" id="ipt_apvlSearchNamePop" name="ipt_apvlSearchNamePop" readonly/>
+                            <input type="hidden" class="form-control" id="ipt_apvlSearchEmailPop" name="ipt_apvlSearchEmailPop" readonly/>
                         </div>
                         <div class="align-self-start align-self-center mr-3">구분</div>
                         <div class="align-self-center mr-5">
@@ -343,30 +348,27 @@
                         <div id="grd_apvlReqHistDetl">
                             <table class="table table-bordered table-responsive-md text-center">
                                 <thead>
-                                <tr>
-                                    <th class="text-center">결재 차수</th>
-                                    <th class="text-center">결재자</th>
-                                    <th class="text-center">결재상태</th>
-                                </tr>
+                                    <tr>
+                                        <!--<th class="text-center">결재 차수</th>-->
+                                        <th class="text-center">결재 요청일</th>
+                                        <th class="text-center">결재자</th>
+                                        <th class="text-center">결재상태</th>
+                                    </tr>
                                 </thead>
                                 <tbody>
-                                <tr>
-                                   <td id="apvlTh1" class="pt-3-half">1</td>
-                                   <td id="thAprvNm1" class="pt-3-half"></td>
-                                   <td id="thAprvStus1" class="pt-3-half"></td>
-                                </tr>
-                                <!--
-                                <tr>
-                                   <td id="apvlTh2" class="pt-3-half">2</td>
-                                   <td id="thAprvNm2" class="pt-3-half"></td>
-                                   <td id="thAprvStus2" class="pt-3-half"></td>
-                                </tr>
-                                -->
+                                    <tr>
+                                       <!--<td id="apvlTh1" class="pt-3-half">1</td>-->
+                                       <td id="thApvlReqDt" class="pt-3-half"></td>
+                                       <td id="thAprvNm1" class="pt-3-half"></td>
+                                       <td id="thAprvStus1" class="pt-3-half"></td>
+                                    </tr>
                                 </tbody>
                             </table>
                         </div>
                     </div>
+
                 </div>
+
             </div>
         </div>
     </div>
