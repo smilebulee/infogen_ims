@@ -70,7 +70,6 @@
                 }
 
                 document.getElementById('sbx_wrkDtYy').innerHTML = wrkDtYy;
-                debugger;
                 $("#sbx_wrkDtYy").val(year);
                 $("#sbx_wrkDtMm").val(month+1);
             }
@@ -89,7 +88,7 @@
                 monthChk = $('#sbx_wrkDtMm').val();
             }
             var setMDt = $('#sbx_wrkDtYy').val() + "-" + monthChk;
-            debugger;
+
             var param = {
                 "dept" : $("#sbx_dept").val(),
                 "email" : $("#ipt_searchNamePop").val(),
