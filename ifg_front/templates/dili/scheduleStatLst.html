@@ -44,7 +44,7 @@
 
                 document.getElementById('sbx_dept').innerHTML = deptList;
 
-                if (sessionStorage.getItem("deptCd") == "01") {
+                if (sessionStorage.getItem("deptCd") == "01") {su
                     $("#sbx_dept option:eq(01)").attr("selected", "selected");
                 } else if (sessionStorage.getItem("deptCd") == "02") {
                     $("#sbx_dept option:eq(02)").attr("selected", "selected");
@@ -127,7 +127,8 @@
                     scheduleStatLstTable += '<td id="wrkDivs" class="pt-3-half">'+data[i].WRK_DIVS+'</td>';
 
                     var wrkTm = data[i].WRK_STRT_TM + " ~ " + data[i].WRK_END_TM;
-                    scheduleStatLstTable += '<td id="wrkTm" class="pt-3-half">'+wrkTm+'</td>';
+                    var allWrkTm = " (근무시간 = " + data[i].ALL_WRK_TM.substring(0,2) + ":" + data[i].ALL_WRK_TM.substring(2,4) + ":" + data[i].ALL_WRK_TM.substring(4,6) + ")"
+                    scheduleStatLstTable += '<td id="wrkTm" class="pt-3-half">'+wrkTm+allWrkTm + '</td>';
                     scheduleStatLstTable += '<td id="apvlStus" class="pt-3-half">'+data[i].APVL_STUS+'</td>';
                     scheduleStatLstTable += '</tr>';
                 }
