@@ -4,6 +4,8 @@
     }
 </style>
 <script type="text/javascript">
+    var initFlag = true;
+
     /*********************************************************************
     *   Dialog Setting
     *********************************************************************/
@@ -54,7 +56,6 @@
 
     /* 해당 직원 정보 input창에 입력 */
     function empInfoSet(data){
-
         console.log("Start")
         console.log(data)
         console.log(typeof(data))
@@ -67,16 +68,23 @@
         var get_empTel = data[0].EMP_TEL;
         var get_empDCd = data[0].DEPT_CD;
 
-        // 공통 코드 조회 - '부서조회'
-        retrieveCmmCd('sbx_empDept', 'SLIN_BZDP', function(){
+
+        if(initFlag) {
+            // 공통 코드 조회 - '부서조회'
+            retrieveCmmCd('sbx_empDept', 'SLIN_BZDP', function(){
+                $("#sbx_empDept option[value='"+get_empDCd+"']").attr("selected", true);
+            });
+            // 공통 코드 조회 - '권한 조회'
+            retrieveCmmCd('sbx_empAuthId', 'AUTH_CD', function(){
+                $("#sbx_empAuthId option[value='"+get_empAId+"']").attr("selected", true);
+            });
+            initFlag = false;
+        } else {
+            $("#sbx_empDept option").removeAttr("selected")
             $("#sbx_empDept option[value='"+get_empDCd+"']").attr("selected", true);
-        });
-
-        // 공통 코드 조회 - '권한 조회'
-        retrieveCmmCd('sbx_empAuthId', 'AUTH_CD', function(){
+            $("#sbx_empAuthId option").removeAttr("selected")
             $("#sbx_empAuthId option[value='"+get_empAId+"']").attr("selected", true);
-        });
-
+         }
 
         $('#ipt_empId').val(get_empId);
         $('#ipt_empPw').val(get_empPw);
