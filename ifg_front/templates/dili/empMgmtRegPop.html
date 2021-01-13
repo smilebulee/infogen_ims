@@ -77,6 +77,8 @@
             $('#ipt_empId').attr('readonly', true);
             $('#submitBtn').attr('disabled',false);
             $('#reIsExistBtn').attr('hidden', false);
+            $('#ipt_empId').attr('style', 'width:165px');
+            $('#isExistBtn').attr('hidden', true);
         }
     };
 
@@ -87,6 +89,9 @@
         $('#ipt_empId').val("");
         $('#ipt_empId').focus();
         $('#submitBtn').attr('disabled',true);
+        $('#reIsExistBtn').attr('hidden', true);
+        $('#ipt_empId').attr('style', 'width:200px');
+        $('#isExistBtn').attr('hidden', false);
     }
 
     /* 등록버튼 클릭 이벤트 */
@@ -98,8 +103,6 @@
         var ipt_empBd = $('[name="ipt_empBd"]').val();
         var ipt_empMb = $('[name="ipt_empMb"]').val();
         var ipt_empDept = $('[name="sbx_empDept"] option:selected').val();
-
-        alert("ipt_empAuthId" + ipt_empAuthId + "ipt_empDept" + ipt_empDept);
 
         if( ipt_empId == "" || ipt_empId == null ){
             alert("직원 아이디를 입력해 주세요.");
@@ -185,6 +188,9 @@
     /* 리셋 버튼 클릭 이벤트 */
     function onClickResetBtn() {
         $('#ipt_empId').attr('readonly', false);
+        $('#reIsExistBtn').attr('hidden', true);
+        $('#ipt_empId').attr('style', 'width:200px');
+        $('#isExistBtn').attr('hidden', false);
     };
 
 </script>
@@ -199,10 +205,12 @@
                 <!-- 아이디 -->
                 <div class="flex-height d-flex m-0 p-2">
                     <div class="align-self-start align-self-center mr-4"><label for="ipt_empId">아이디&nbsp;&nbsp;</label></div>
+                    <div class="align-self-center mr-2">
+                        <input type="text" class="form-control" id="ipt_empId" name="ipt_empId" placeholder="ID" maxlength="30" style="width:200px;">
+                    </div>
                     <div class="align-self-center mr-5">
-                        <input type="text" class="form-control" id="ipt_empId" name="ipt_empId" placeholder="ID" maxlength="30" style="width:300px;"/>
-                        <button class="button" id="reIsExistBtn" type="button" onclick="onClickReIsExistBtn()" float="right" hidden>아이디 재설정</button>
-                        <button class="button" id="isExistBtn" type="button" onclick="onClickIsExistBtn()" float="right">중복확인</button>
+                        <button class="button" id="reIsExistBtn" type="button" onclick="onClickReIsExistBtn()" hidden="hidden">아이디 재설정</button>
+                        <button class="button" id="isExistBtn" type="button" onclick="onClickIsExistBtn()">중복확인</button>
                     </div>
                 </div>
                 <!-- 비밀번호 -->
