@@ -192,11 +192,9 @@ $("#empMgmtRegBtn").click(function(){
                         <div class="align-self-center mr-3">
                             <input type="text" class="form-control" id="ipt_searchName" name="ipt_searchName" placeholder="이름을 입력해주세요." maxlength="10"/>
                         </div>
-                        <div class="align-self-center mr-3">
-                            <button class="button" id="searchBtn" type="button">검색</button>
-                        </div>
-                        <div class="align-self-end align-self-center mr-3" style="float: right">
-                            <input type="text" class="form-control" id="hidden_selectMail" name="hidden_selectMail" maxlength="30" style="width:300px;" readonly hidden/>
+                        <div class="align-self-end align-self-center mr-3" style="position:absolute; right:0;">
+                            <button class="button mr-2" id="searchBtn" type="button">검색</button>
+                            <input type="text" class="form-control" id="hidden_selectMail" name="hidden_selectMail" maxlength="30" readonly hidden/>
                             <button class="button" id="empMgmtRegBtn" type="button">등록</button>
                         </div>
                     </div>

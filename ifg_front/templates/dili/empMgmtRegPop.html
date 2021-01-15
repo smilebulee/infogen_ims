@@ -62,14 +62,12 @@
             console.log("아이디 중복체크 > 등록 불가능");
             $('#ipt_empId').val("");
             $('#ipt_empId').focus();
-            $('#submitBtn').attr('disabled',true);
+
         }else{
             g_toast.push("사용 가능한 아이디입니다.");
             console.log("아이디 중복체크 > 등록가능");
             $('#ipt_empId').attr('readonly', true);
-            $('#submitBtn').attr('disabled',false);
             $('#reIsExistBtn').attr('hidden', false);
-            /*$('#ipt_empId').attr('style', 'width:165px');*/
             $('#isExistBtn').attr('hidden', true);
         }
     };
@@ -80,9 +78,7 @@
         $('#ipt_empId').attr('readonly', false);
         $('#ipt_empId').val("");
         $('#ipt_empId').focus();
-        $('#submitBtn').attr('disabled',true);
         $('#reIsExistBtn').attr('hidden', true);
-        /*$('#ipt_empId').attr('style', 'width:200px');*/
         $('#isExistBtn').attr('hidden', false);
     }
 
@@ -96,8 +92,12 @@
         var ipt_empMb = $('[name="ipt_empMb"]').val();
         var ipt_empDept = $('[name="sbx_empDept"] option:selected').val();
 
+
         if( ipt_empId == "" || ipt_empId == null ){
             alert("직원 아이디를 입력해 주세요.");
+            return false;
+        } else if($('#reIsExistBtn').is(":hidden")) {
+            alert("직원 아이디 중복여부 체크해 주세요.");
             return false;
         } else if (ipt_empPw == "" || ipt_empPw == null ){
             alert("직원 비밀번호를 입력해 주세요.");
@@ -257,7 +257,7 @@
                     <!-- 버튼 -->
                     <div class="flex-height d-flex mb-2">
                         <div class="align-self-center mr-5">
-                            <button class="button" id="submitBtn" type="button" onclick="onClickSubmitBtn()" disabled>등록</button>
+                            <button class="button" id="submitBtn" type="button" onclick="onClickSubmitBtn()">등록</button>
                             <input class="button" id="resetBtn" type="reset" onclick="onClickResetBtn()" />
                             <button class="button" id="closeBtn" type="button" onclick="onClickCloseBtn()" >닫기</button>
                         </div>
