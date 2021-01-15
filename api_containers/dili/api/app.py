@@ -1660,12 +1660,17 @@ class scheduleStatLst(Resource):
                       "	     ,(SELECT C.EMP_NAME " \
                       "	         FROM TB_EMP_MGMT C" \
                       "	        WHERE C.EMP_EMAIL = NVL(A.EMP_EMAL_ADDR, B.EMP_EMAL_ADDR)) OCEM_NAME" \
-                      "      ,(SELECT NVL((SELECT F.CMM_CD_NAME" \
-                      "				         FROM TB_CMM_CD_DETL F" \
-                      "				        WHERE F.CMM_CD_GRP_ID = 'APVL_REQ_DIVS_CD'" \
-                      "   				      AND F.CMM_CD = B.APVL_REQ_DIVS), '정상근무')" \
-                      "          FROM DUAL) WRK_DIVS" \
-                      "		 ,NVL(B.TH1_APRV_STUS,' ') APVL_STUS" \
+                      "      ,CASE WHEN B.EMP_EMAL_ADDR IS NULL AND (A.HLDY_WRK_TM != '000000' OR A.NGHT_WRK_TM != '000000') THEN '야근(미승인)'" \
+                      "            WHEN B.APVL_REQ_DIVS IS NOT NULL THEN (SELECT F.CMM_CD_NAME" \
+                      "                                                     FROM TB_CMM_CD_DETL F" \
+                      "      										       WHERE F.CMM_CD_GRP_ID = 'APVL_DIVS_CD'" \
+                      "      				     						     AND F.CMM_CD = B.APVL_REQ_DIVS)" \
+                      "      		ELSE '정상근무' END WRK_DIVS" \
+                      "		 ,(SELECT NVL((SELECT F.CMM_CD_NAME" \
+                      "                      FROM TB_CMM_CD_DETL F" \
+                      "                     WHERE F.CMM_CD_GRP_ID = 'APVL_STTS_CD'" \
+                      "                       AND F.CMM_CD = B.TH1_APRV_STUS), '')" \
+                      "          FROM DUAL) APVL_STUS" \
                       "		 ,CASE WHEN NVL(B.APVL_REQ_DIVS, '') = '' THEN NVL(A.JOB_STRT_TM, '')" \
                       "		       WHEN B.APVL_REQ_DIVS = '01' OR B.APVL_REQ_DIVS = '02'" \
                       "		       THEN NVL(B.JOB_STRT_TM, '') ELSE '' END WRK_STRT_TM" \
@@ -1673,6 +1678,8 @@ class scheduleStatLst(Resource):
                       "		       WHEN B.APVL_REQ_DIVS = '01' OR B.APVL_REQ_DIVS = '02'" \
                       "		       THEN NVL(B.JOB_END_TM, '') ELSE '' END WRK_END_TM" \
                       "		 ,NVL(A.ALL_WRK_TM,'') ALL_WRK_TM" \
+                      "      ,CASE WHEN B.EMP_EMAL_ADDR IS NULL AND (A.HLDY_WRK_TM != '000000' OR A.NGHT_WRK_TM != '000000') THEN 'N'" \
+                      "            ELSE 'Y' END APVL_REQ_YN" \
                       "  FROM TB_WRK_TM_MGMT_M A" \
                       "  LEFT OUTER JOIN" \
                       "       TB_APVL_REQ_MGMT_M B" \
@@ -1685,13 +1692,17 @@ class scheduleStatLst(Resource):
                 if data["apvlStus"] != "" and data["apvlStus"] != "00":
                       sql += "    AND B.TH1_APRV_STUS = '" + data["apvlStus"] + "'" \
 
-                if data["wrkDivs"] != "" and data["wrkDivs"] != "00" and data["wrkDivs"] != "04":
+                if data["wrkDivs"] != "" and data["wrkDivs"] != "00" and data["wrkDivs"] != "04" and data["wrkDivs"] != "05":
                       sql += "    AND B.APVL_REQ_DIVS = '" + data["wrkDivs"] + "'" \
 
                 if data["wrkDivs"] != "" and data["wrkDivs"] == "04":
                       sql += "    AND A.HLDY_WRK_TM = '000000'" \
                              "    AND A.NGHT_WRK_TM = '000000'" \
                              "    AND A.ALL_WRK_TM != '000000'" \
+                    
+                if data["wrkDivs"] != "" and data["wrkDivs"] == "05":
+                      sql += "    AND B.EMP_EMAL_ADDR IS NULL" \
+                             "    AND (A.HLDY_WRK_TM != '000000' OR A.NGHT_WRK_TM != '000000')" \
 
                 if data["dept"] != "" and data["dept"] != "00":
                       sql += "    AND A.EMP_EMAL_ADDR IN (SELECT H.EMP_EMAIL" \
@@ -1716,12 +1727,17 @@ class scheduleStatLst(Resource):
                       "		  ,(SELECT C.EMP_NAME" \
                       "	          FROM TB_EMP_MGMT C" \
                       "	         WHERE C.EMP_EMAIL = NVL(A.EMP_EMAL_ADDR, B.EMP_EMAL_ADDR)) OCEM_NAME" \
-                      "      ,(SELECT NVL((SELECT F.CMM_CD_NAME" \
-                      "				         FROM TB_CMM_CD_DETL F" \
-                      "				        WHERE F.CMM_CD_GRP_ID = 'APVL_REQ_DIVS_CD'" \
-                      "   				      AND F.CMM_CD = B.APVL_REQ_DIVS), '정상근무')" \
-                      "          FROM DUAL) WRK_DIVS" \
-                      "		 ,NVL(B.TH1_APRV_STUS,' ') APVL_STUS" \
+                      "      ,CASE WHEN B.EMP_EMAL_ADDR IS NULL AND (A.HLDY_WRK_TM != '000000' OR A.NGHT_WRK_TM != '000000') THEN '야근(미승인)'" \
+                      "            WHEN B.APVL_REQ_DIVS IS NOT NULL THEN (SELECT F.CMM_CD_NAME" \
+                      "                                                     FROM TB_CMM_CD_DETL F" \
+                      "      										       WHERE F.CMM_CD_GRP_ID = 'APVL_DIVS_CD'" \
+                      "      				     						     AND F.CMM_CD = B.APVL_REQ_DIVS)" \
+                      "      		ELSE '정상근무' END WRK_DIVS" \
+                      "		 ,(SELECT NVL((SELECT F.CMM_CD_NAME" \
+                      "                      FROM TB_CMM_CD_DETL F" \
+                      "                     WHERE F.CMM_CD_GRP_ID = 'APVL_STTS_CD'" \
+                      "                       AND F.CMM_CD = B.TH1_APRV_STUS), '')" \
+                      "          FROM DUAL) APVL_STUS" \
                       "		 ,CASE WHEN NVL(B.APVL_REQ_DIVS, '') = '' THEN NVL(A.JOB_STRT_TM, '')" \
                       "		       WHEN B.APVL_REQ_DIVS = '01' OR B.APVL_REQ_DIVS = '02'" \
                       "		       THEN NVL(B.JOB_STRT_TM, '') ELSE '' END WRK_STRT_TM" \
@@ -1729,6 +1745,8 @@ class scheduleStatLst(Resource):
                       "		       WHEN B.APVL_REQ_DIVS = '01' OR B.APVL_REQ_DIVS = '02'" \
                       "		       THEN NVL(B.JOB_END_TM, '') ELSE '' END WRK_END_TM" \
                       "		 ,NVL(B.WRK_TME,'') ALL_WRK_TM" \
+                      "      ,CASE WHEN B.EMP_EMAL_ADDR IS NULL AND (A.HLDY_WRK_TM != '000000' OR A.NGHT_WRK_TM != '000000') THEN 'N'" \
+                      "            ELSE 'Y' END APVL_REQ_YN" \
                       "   FROM TB_WRK_TM_MGMT_M A" \
                       "  RIGHT OUTER JOIN" \
                       "        TB_APVL_REQ_MGMT_M B" \
@@ -1741,13 +1759,17 @@ class scheduleStatLst(Resource):
                 if data["apvlStus"] != "" and data["apvlStus"] != "00":
                       sql += "    AND B.TH1_APRV_STUS = '" + data["apvlStus"] + "'" \
 
-                if data["wrkDivs"] != "" and data["wrkDivs"] != "00" and data["wrkDivs"] != "04":
+                if data["wrkDivs"] != "" and data["wrkDivs"] != "00" and data["wrkDivs"] != "04" and data["wrkDivs"] != "05":
                       sql += "    AND B.APVL_REQ_DIVS = '" + data["wrkDivs"] + "'" \
                     
                 if data["wrkDivs"] != "" and data["wrkDivs"] == "04":
                       sql += "    AND A.HLDY_WRK_TM = '000000'" \
                              "    AND A.NGHT_WRK_TM = '000000'" \
                              "    AND A.ALL_WRK_TM != '000000'" \
+
+                if data["wrkDivs"] != "" and data["wrkDivs"] == "05":
+                      sql += "    AND B.EMP_EMAL_ADDR IS NULL" \
+                             "    AND (A.HLDY_WRK_TM != '000000' OR A.NGHT_WRK_TM != '000000')" \
                 
                 if data["dept"] != "" and data["dept"] != "00":
                       sql += "    AND B.EMP_EMAL_ADDR IN (SELECT H.EMP_EMAIL" \
