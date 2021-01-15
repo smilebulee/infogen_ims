@@ -24,27 +24,6 @@ $(document).ready(function(){
         onClickSearchBtn(ipt_searchName);
     });
 
-    $('#searchAllBtn').click(function(){
-
-        $('[name="ipt_searchName"]').val("");
-
-        var param = {
-            "name" : ''
-        }
-        $.ajaxCall( param, {
-             'method' : 'GET',
-             'url' : "{% url 'dili_api:getEmpInfo' %}",
-             'dataType' : 'json',
-             'data' : JSON.stringify(param),
-             'async' : false,
-             'callbackFn' : function(data){
-                // 로그
-                console.log("data : ",data)
-                // 리턴
-                empListGrd(data);
-             }
-        });
-    });
 
     /* 직원목록 엔터 조회 */
     $('#ipt_searchName').keydown(function(e){
@@ -99,33 +78,29 @@ function onClickSearchBtn(ipt_searchName) {
     var param = {
         "name" : $('[name="ipt_searchName"]').val()
     }
-    if( $('#ipt_searchName').val() == "" || $('#ipt_searchName').val() == null ){
-        alert("직원 이름을 입력해 주세요.");
-    } else if ($('#ipt_searchName').val().length < 2){
-        alert("직원 이름은 두 글자 이상 입력해 주세요.");
-    } else {
-        /* 목록조회 */
-        $.ajaxCall( param, {
-             'method' : 'GET',
-             'url' : "{% url 'dili_api:getEmpInfo' %}",
-             'dataType' : 'json',
-             'data' : JSON.stringify(param),
-             'async' : false,
-             'callbackFn' : function(data){
-                // 로그
-                console.log("data : ",data)
-                // 리턴
-                empListGrd(data);
-             }
-        });
-    }
+
+    /* 목록조회 */
+    $.ajaxCall( param, {
+         'method' : 'GET',
+         'url' : "{% url 'dili_api:getEmpInfo' %}",
+         'dataType' : 'json',
+         'data' : JSON.stringify(param),
+         'async' : false,
+         'callbackFn' : function(data){
+            // 로그
+            console.log("data : ",data)
+            // 리턴
+            empListGrd(data);
+         }
+    });
+
 };
 
 
 /* 직원목록 생성 */
 function empListGrd(data){
     var size = data.length;
-    var empListTable = '<table class="table table-bordered table-responsive-md text-center">';
+    var empListTable = '<table class="table table-bordered text-center">';
     empListTable += '<thead>';
     empListTable += '<tr>';
     empListTable += '<th class="text-center">순번</th>';
@@ -221,7 +196,6 @@ $("#empMgmtRegBtn").click(function(){
                             <button class="button" id="searchBtn" type="button">검색</button>
                         </div>
                         <div class="align-self-end align-self-center mr-3" style="float: right">
-                            <button class="button" id="searchAllBtn" type="button">전체 조회</button>
                             <input type="text" class="form-control" id="hidden_selectMail" name="hidden_selectMail" maxlength="30" style="width:300px;" readonly hidden/>
                             <button class="button" id="empMgmtRegBtn" type="button">등록</button>
                         </div>
