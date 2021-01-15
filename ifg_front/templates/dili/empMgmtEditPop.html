@@ -59,8 +59,6 @@
         var get_empPw = data[0].EMP_PW;
         var get_empAId = data[0].AUTH_ID;
         var get_empName = data[0].EMP_NAME;
-        var get_empBd = data[0].EMP_BDAY;
-        var get_empTel = data[0].EMP_TEL;
         var get_empDCd = data[0].DEPT_CD;
 
 
@@ -84,8 +82,7 @@
         $('#ipt_empId').val(get_empId);
         $('#ipt_empPw').val(get_empPw);
         $('#ipt_empNm').val(get_empName);
-        $('#ipt_empBd').val(get_empBd);
-        $('#ipt_empMb').val(get_empTel);
+
 
     };
 
@@ -95,8 +92,6 @@
         var ipt_empPw = $('[name="ipt_empPw"]').val();
         var ipt_empAuthId = $('[name="sbx_empAuthId"] option:selected').val();
         var ipt_empNm = $('[name="ipt_empNm"]').val();
-        var ipt_empBd = $('[name="ipt_empBd"]').val();
-        var ipt_empMb = $('[name="ipt_empMb"]').val();
         var ipt_empDept = $('[name="sbx_empDept"] option:selected').val();
 
         if( ipt_empId == "" || ipt_empId == null ){
@@ -111,20 +106,11 @@
         } else if (ipt_empNm == "" || ipt_empNm == null ){
             alert("직원 이름을 입력해 주세요.");
             return false;
-        } else if (ipt_empBd == "" || ipt_empBd == null ){
-            alert("직원 생년월일을 입력해 주세요.");
-            return false;
-        } else if (ipt_empMb == "" || ipt_empMb == null ){
-            alert("직원 연락처를 입력해 주세요.");
-            return false;
         } else if (ipt_empDept == "00" || ipt_empDept == null ){
             alert("직원 부서를 선택해 주세요.");
             return false;
         } else if (ipt_empNm.length < 2){
             alert("직원 이름은 두 글자 이상 입력해 주세요.");
-            return false;
-        }else if (ipt_empMb.length < 13){
-            alert("직원 연락처는 010-0000-0000 형식으로 입력해 주세요.");
             return false;
         }
 
@@ -133,8 +119,6 @@
             "ipt_empPw" : ipt_empPw,
             "ipt_empAuthId" : ipt_empAuthId,
             "ipt_empNm" : ipt_empNm,
-            "ipt_empBd" : ipt_empBd,
-            "ipt_empMb" : ipt_empMb,
             "ipt_empDept" : ipt_empDept
         }
 
@@ -148,7 +132,6 @@
                         callbackFn:function(data){
                             if(data){
                                 // 리턴
-                                 //location.href = "{% url 'dili_api:empMgmt' %}";
                                  url = "{% url 'dili_api:empMgmt' %}";
                                  $('#grd_empListTable').load(url);
                                  $('#exitEmpModalBtn').click();
@@ -267,22 +250,8 @@
                         <input type="text" class="form-control" id="ipt_empNm" name="ipt_empNm" placeholder="NAME" maxlength="10"/>
                     </div>
                 </div>
-                <!-- 생년월일 -->
-                <div class="flex-height d-flex mb-2">
-                    <div class="align-self-start align-self-center mr-3"><label for="ipt_empBd">생년월일</label></div>
-                    <div class="align-self-center mr-5">
-                        <input type="date" class="form-control" id="ipt_empBd" name="ipt_empBd" maxlength="8" max="9999-12-31" />
-                    </div>
-                </div>
-                <!-- 전화번호 -->
-                <div class="flex-height d-flex mb-2">
-                    <div class="align-self-start align-self-center mr-3"><label for="ipt_empMb">전화번호</label></div>
-                    <div class="align-self-center mr-5">
-                        <input type="tel" class="form-control" id="ipt_empMb" name="ipt_empMb" maxlength="13" placeholder="000-0000-0000" />
-                    </div>
-                </div>
                 <!-- 부서 -->
-                <div class="flex-height d-flex mb-2">
+                <div class="flex-height d-flex mb-3">
                     <div class="align-self-start align-self-center mr-5"><label for="sbx_empDept">부서</label></div>
                     <div class="align-self-center mr-5">
                         <select id="sbx_empDept" name="sbx_empDept" class="form-control">

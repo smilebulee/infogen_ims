@@ -32,26 +32,22 @@ $(document).ready(function(){
                 var param = {
                     name : $('#ipt_searchName').val()
                 }
-                if( $('#ipt_searchName').val() == "" || $('#ipt_searchName').val() == null ){
-                    alert("직원 이름을 입력해 주세요.");
-                } else if ($('#ipt_searchName').val().length < 2){
-                    alert("직원 이름은 두 글자 이상 입력해 주세요.");
-                } else {
-                    //목록조회
-                    $.ajaxCall( param, {
-                         'method' : 'GET',
-                         'url' : "{% url 'dili_api:getEmpInfo' %}",
-                         'dataType' : 'json',
-                         'data' : JSON.stringify(param),
-                         'async' : false,
-                         'callbackFn' : function(data){
-                            // 로그
-                            console.log("data : ",data)
-                            // 리턴
-                            empListGrd(data);
-                         }
-                    });
-                }
+
+                //목록조회
+                $.ajaxCall( param, {
+                     'method' : 'GET',
+                     'url' : "{% url 'dili_api:getEmpInfo' %}",
+                     'dataType' : 'json',
+                     'data' : JSON.stringify(param),
+                     'async' : false,
+                     'callbackFn' : function(data){
+                        // 로그
+                        console.log("data : ",data)
+                        // 리턴
+                        empListGrd(data);
+                     }
+                });
+
             }
     });
 
@@ -104,9 +100,10 @@ function empListGrd(data){
     empListTable += '<thead>';
     empListTable += '<tr>';
     empListTable += '<th class="text-center">순번</th>';
+    empListTable += '<th class="text-center">아이디</th>';
     empListTable += '<th class="text-center">이름</th>';
-    empListTable += '<th class="text-center">E-Mail</th>';
-    empListTable += '<th class="text-center">연락처</th>';
+    empListTable += '<th class="text-center">권한</th>';
+    empListTable += '<th class="text-center">부서</th>';
     empListTable += '</tr>';
     empListTable += '</thead>';
     empListTable += '<tbody>';
@@ -120,9 +117,10 @@ function empListGrd(data){
 
             empListTable += '<tr id ="grd_empList" ondblclick="onDblClickEvt(\''+data[i].EMP_EMAIL+'\')">';
             empListTable += '<td id="no" class="pt-3-half">'+(i+1)+'</td>';
+            empListTable += '<td id="empName" class="pt-3-half">'+data[i].EMP_ID+'</td>';
             empListTable += '<td id="empName" class="pt-3-half">'+data[i].EMP_NAME+'</td>';
-            empListTable += '<td id="empEmail" class="pt-3-half">'+data[i].EMP_EMAIL+'</td>';
-            empListTable += '<td id="empTel" class="pt-3-half">'+data[i].EMP_TEL+'</td>';
+            empListTable += '<td id="empEmail" class="pt-3-half">'+data[i].AUTH_VAL+'</td>';
+            empListTable += '<td id="empTel" class="pt-3-half">'+data[i].DEPT_NAME+'</td>';
             empListTable += '</tr>';
 
         }
@@ -195,7 +193,7 @@ $("#empMgmtRegBtn").click(function(){
                         <div class="align-self-center mr-3">
                             <button class="button" id="searchBtn" type="button">검색</button>
                         </div>
-                        <div class="align-self-end align-self-center mr-3" style="position:absolute; right:0;">
+                        <div class="align-self-end align-self-center mr-3">
                             <input type="text" class="form-control" id="hidden_selectMail" name="hidden_selectMail" maxlength="30" readonly hidden/>
                             <button class="button" id="empMgmtRegBtn" type="button">등록</button>
                         </div>

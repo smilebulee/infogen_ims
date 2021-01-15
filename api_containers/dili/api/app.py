@@ -872,8 +872,11 @@ class empInfo(Resource): # Mariadb 연결 진행
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 #쿼리문 실행
-                sql = "SELECT SEQ_NO, EMP_NAME, EMP_EMAIL, EMP_TEL FROM TB_EMP_MGMT WHERE EMP_NAME LIKE '%" + data["name"] + "%' ORDER BY SEQ_NO"
-
+                sql = "SELECT SEQ_NO, EMP_NAME, EMP_EMAIL, EMP_ID, AUTH_ID, C.CMM_CD_NAME AUTH_VAL, DEPT_CD, DEPT_NAME " \
+                      "FROM TB_EMP_MGMT E, TB_CMM_CD_DETL C " \
+                      "WHERE EMP_NAME LIKE '%" + data["name"] + "%' " \
+                                                                "AND E.AUTH_ID = C.CMM_CD " \
+                                                                "ORDER BY SEQ_NO"
                 logging.debug(sql)
                 cursor.execute(sql)
 
@@ -1782,8 +1785,6 @@ class empMgmtRegSubmit(Resource):
         ipt_empPw = request.form['ipt_empPw']
         ipt_empAuthId = request.form['ipt_empAuthId']
         ipt_empNm = request.form['ipt_empNm']
-        ipt_empBd = request.form['ipt_empBd']
-        ipt_empMb = request.form['ipt_empMb']
         ipt_empDept = request.form['ipt_empDept']
         ipt_empEmail = ipt_empId + "@infogen.co.kr";
 
@@ -1795,8 +1796,6 @@ class empMgmtRegSubmit(Resource):
         logging.debug("ipt_empPw = " + ipt_empPw)
         logging.debug("ipt_empAuthId = " + ipt_empAuthId)
         logging.debug("ipt_empNm = " + ipt_empNm)
-        logging.debug("ipt_empBd = " + ipt_empBd)
-        logging.debug("ipt_empMb = " + ipt_empMb)
         logging.debug("ipt_empDept = " + ipt_empDept)
 
 
@@ -1817,17 +1816,16 @@ class empMgmtRegSubmit(Resource):
                                                 "EMP_PW, " \
                                                 "EMP_NAME, " \
                                                 "AUTH_ID, " \
-                                                "EMP_TEL, " \
-                                                "EMP_BDAY, " \
-                                                "DEPT_CD) " \
+                                                "DEPT_CD, " \
+                                                "DEPT_NAME) " \
                                     "VALUES('" + ipt_empId + "', " \
                                             "'" + ipt_empEmail + "', " \
                                             "'" + ipt_empPw + "', " \
                                             "'" + ipt_empNm + "', " \
                                             "'" + ipt_empAuthId + "', " \
-                                            "'" + ipt_empMb + "', " \
-                                            "'" + ipt_empBd + "', " \
-                                            "'" + ipt_empDept + "')"\
+                                            "'" + ipt_empDept + "', " \
+                                            "(SELECT CMM_CD_NAME DEPT_VAL FROM TB_CMM_CD_DETL WHERE CMM_CD_GRP_ID = 'SLIN_BZDP' AND CMM_CD = " \
+                                            "'" + ipt_empDept + "'))"\
 
                 logger.info(sql)
                 cursor.execute(sql)
@@ -1862,7 +1860,7 @@ class empOneInfo(Resource): # Mariadb 연결 진행
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 #쿼리문 실행
-                sql = "SELECT EMP_ID, EMP_PW, AUTH_ID, EMP_NAME, EMP_BDAY, EMP_TEL, DEPT_CD FROM TB_EMP_MGMT WHERE EMP_EMAIL = '" + data["email"] + "'"
+                sql = "SELECT EMP_ID, EMP_PW, AUTH_ID, EMP_NAME, DEPT_CD FROM TB_EMP_MGMT WHERE EMP_EMAIL = '" + data["email"] + "'"
 
                 logging.debug(sql)
                 cursor.execute(sql)
@@ -1897,10 +1895,8 @@ class empMgmtEditSubmit(Resource):
         ipt_empPw = request.form['ipt_empPw']
         ipt_empAuthId = request.form['ipt_empAuthId']
         ipt_empNm = request.form['ipt_empNm']
-        ipt_empBd = request.form['ipt_empBd']
-        ipt_empMb = request.form['ipt_empMb']
         ipt_empDept = request.form['ipt_empDept']
-        ipt_empEmail = ipt_empId + "@infogen.co.kr";
+        ipt_empEmail = ipt_empId;
 
 
         logging.debug("====Param data====")
@@ -1910,8 +1906,6 @@ class empMgmtEditSubmit(Resource):
         logging.debug("ipt_empPw = " + ipt_empPw)
         logging.debug("ipt_empAuthId = " + ipt_empAuthId)
         logging.debug("ipt_empNm = " + ipt_empNm)
-        logging.debug("ipt_empBd = " + ipt_empBd)
-        logging.debug("ipt_empMb = " + ipt_empMb)
         logging.debug("ipt_empDept = " + ipt_empDept)
 
 
@@ -1930,9 +1924,8 @@ class empMgmtEditSubmit(Resource):
                 sql= "UPDATE TB_EMP_MGMT SET EMP_PW = '"+ipt_empPw+"', " \
                                                 "EMP_NAME = '"+ipt_empNm+"', " \
                                                 "AUTH_ID = '"+ipt_empAuthId+"', " \
-                                                "EMP_TEL = '"+ipt_empMb+"', " \
-                                                "EMP_BDAY  = '"+ipt_empBd+"', " \
-                                                "DEPT_CD = '"+ipt_empDept+"' " \
+                                                "DEPT_CD = '"+ipt_empDept+"', " \
+                                                "DEPT_NAME = (SELECT CMM_CD_NAME DEPT_VAL FROM TB_CMM_CD_DETL WHERE CMM_CD_GRP_ID = 'SLIN_BZDP' AND CMM_CD = '" + ipt_empDept + "') " \
                                                 "WHERE EMP_ID = '"+ipt_empId+"'" \
 
                 logger.info(sql)

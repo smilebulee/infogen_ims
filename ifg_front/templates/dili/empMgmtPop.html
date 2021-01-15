@@ -365,8 +365,8 @@ function empListGrd(data){
     if(size > 0) {
         empListTable += '<tr>';
         empListTable += '<th class="text-center">이름</th>';
-        empListTable += '<th class="text-center">E-Mail</th>';
-        empListTable += '<th class="text-center">연락처</th>';
+        empListTable += '<th class="text-center">아이디</th>';
+        empListTable += '<th class="text-center">부서</th>';
         empListTable += '<th class="text-center" style="display:none;">체크박스</th>';
         empListTable += '</tr>';
         empListTable += '</thead>';
@@ -381,7 +381,7 @@ function empListGrd(data){
             empListTable += '<tr id ="grd_empList'+i+'" onclick="onClickEvt(this)" ondblclick="onDblClickEvt(this)">';
             empListTable += '<td class="pt-3-half">'+data[i].EMP_NAME+'</td>';
             empListTable += '<td class="pt-3-half">'+data[i].EMP_EMAIL+'</td>';
-            empListTable += '<td class="pt-3-half">'+data[i].EMP_TEL+'</td>';
+            empListTable += '<td class="pt-3-half">'+data[i].DEPT_NAME+'</td>';
             empListTable += '<td class="pt-3-half" style="display: none;">checkbox</td>';
             empListTable += '</tr>';
 

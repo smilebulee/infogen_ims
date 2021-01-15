@@ -28,8 +28,6 @@
         if( email == "" || email == null){
             alert("아이디를 입력해주세요");
         }else{
-            email += "@infogen.co.kr";
-
             var param = {
                 "email" : email
             }
@@ -88,8 +86,6 @@
         var ipt_empPw = $('[name="ipt_empPw"]').val();
         var ipt_empAuthId = $('[name="sbx_empAuthId"] option:selected').val();
         var ipt_empNm = $('[name="ipt_empNm"]').val();
-        var ipt_empBd = $('[name="ipt_empBd"]').val();
-        var ipt_empMb = $('[name="ipt_empMb"]').val();
         var ipt_empDept = $('[name="sbx_empDept"] option:selected').val();
 
 
@@ -102,26 +98,17 @@
         } else if (ipt_empPw == "" || ipt_empPw == null ){
             alert("직원 비밀번호를 입력해 주세요.");
             return false;
-        } else if (ipt_empAuthId == "none" || ipt_empAuthId == null ){
-            alert("직원 권한을 선택해 주세요.");
-            return false;
         } else if (ipt_empNm == "" || ipt_empNm == null ){
             alert("직원 이름을 입력해 주세요.");
-            return false;
-        } else if (ipt_empBd == "" || ipt_empBd == null ){
-            alert("직원 생년월일을 입력해 주세요.");
-            return false;
-        } else if (ipt_empMb == "" || ipt_empMb == null ){
-            alert("직원 연락처를 입력해 주세요.");
-            return false;
-        } else if (ipt_empDept == "00" || ipt_empDept == null ){
-            alert("직원 부서를 선택해 주세요.");
             return false;
         } else if (ipt_empNm.length < 2){
             alert("직원 이름은 두 글자 이상 입력해 주세요.");
             return false;
-        }else if (ipt_empMb.length < 13){
-            alert("직원 연락처는 010-0000-0000 형식으로 입력해 주세요.");
+        } else if (ipt_empAuthId == "none" || ipt_empAuthId == null ){
+            alert("직원 권한을 선택해 주세요.");
+            return false;
+        } else if (ipt_empDept == "00" || ipt_empDept == null ){
+            alert("직원 부서를 선택해 주세요.");
             return false;
         }
 
@@ -131,8 +118,6 @@
             "ipt_empPw" : ipt_empPw,
             "ipt_empAuthId" : ipt_empAuthId,
             "ipt_empNm" : ipt_empNm,
-            "ipt_empBd" : ipt_empBd,
-            "ipt_empMb" : ipt_empMb,
             "ipt_empDept" : ipt_empDept
         }
 
@@ -212,6 +197,13 @@
                     <input type="password" class="form-control" id="ipt_empPw" name="ipt_empPw" placeholder="PASSWORD" maxlength="10" />
                 </div>
             </div>
+            <!-- 성명 -->
+            <div class="flex-height d-flex mb-2">
+                <div class="align-self-start align-self-center mr-5"><label for="ipt_empNm">성명</label></div>
+                <div class="align-self-center mr-5">
+                    <input type="text" class="form-control" id="ipt_empNm" name="ipt_empNm" placeholder="NAME" maxlength="10" />
+                </div>
+            </div>
             <!-- 권한 -->
             <div class="flex-height d-flex mb-2">
                 <div class="align-self-start align-self-center mr-5"><label for="sbx_empAuthId">권한</label></div>
@@ -221,29 +213,8 @@
                     </select>
                 </div>
             </div>
-            <!-- 성명 -->
-            <div class="flex-height d-flex mb-2">
-                <div class="align-self-start align-self-center mr-5"><label for="ipt_empNm">성명</label></div>
-                <div class="align-self-center mr-5">
-                    <input type="text" class="form-control" id="ipt_empNm" name="ipt_empNm" placeholder="NAME" maxlength="10" />
-                </div>
-            </div>
-            <!-- 생년월일 -->
-            <div class="flex-height d-flex mb-2">
-                <div class="align-self-start align-self-center mr-3"><label for="ipt_empBd">생년월일</label></div>
-                <div class="align-self-center mr-3">
-                    <input type="date" class="form-control" id="ipt_empBd" name="ipt_empBd" maxlength="8" max="9999-12-31" />
-                </div>
-            </div>
-            <!-- 전화번호 -->
-            <div class="flex-height d-flex mb-2">
-                <div class="align-self-start align-self-center mr-3"><label for="ipt_empMb">전화번호</label></div>
-                <div class="align-self-center mr-5">
-                    <input type="tel" class="form-control" id="ipt_empMb" name="ipt_empMb" maxlength="13" placeholder="000-0000-0000"/>
-                </div>
-            </div>
             <!-- 부서 -->
-            <div class="flex-height d-flex mb-2">
+            <div class="flex-height d-flex mb-3">
                 <div class="align-self-start align-self-center mr-5"><label for="sbx_empDept">부서</label></div>
                 <div class="align-self-center mr-5">
                     <select id="sbx_empDept" name="sbx_empDept" class="form-control">
