@@ -124,7 +124,11 @@
                     scheduleStatLstTable += '<td id="wrkDt" class="pt-3-half">'+data[i].WRK_DT+'</td>';
                     scheduleStatLstTable += '<td id="deptNm" class="pt-3-half">'+data[i].DEPT_NAME+'</td>';
                     scheduleStatLstTable += '<td id="ocemName" class="pt-3-half">'+data[i].OCEM_NAME+'</td>';
-                    scheduleStatLstTable += '<td id="wrkDivs" class="pt-3-half">'+data[i].WRK_DIVS+'</td>';
+                    var star = '';
+                    if(data[i].APVL_REQ_YN == 'N') {
+                        star += '★';
+                    }
+                    scheduleStatLstTable += '<td id="wrkDivs" class="pt-3-half">'+star + data[i].WRK_DIVS+'</td>';
 
                     var wrkTm = data[i].WRK_STRT_TM + " ~ " + data[i].WRK_END_TM;
                     var allWrkTm = " (근무시간 = " + data[i].ALL_WRK_TM.substring(0,2) + ":" + data[i].ALL_WRK_TM.substring(2,4) + ":" + data[i].ALL_WRK_TM.substring(4,6) + ")"
@@ -162,7 +166,7 @@
             <div class="col-sm-12">
                 <div class="mb-4" role="alert">
                     <h5>
-                        <b>스케줄 현황 조회</b>
+                        <b>근무현황관리</b>
                     </h5>
                 </div>
 
@@ -200,15 +204,15 @@
                                         <option value = "02">휴일근무</option>
                                         <option value = "03">연차</option>
                                         <option value = "04">정상근무</option>
+                                        <option value = "05">야근(미승인)</option>
                                     </select>
                                 </div>
                                 <div class="align-self-start align-self-center mr-3">결재상태</div>
                                 <div class="align-self-center mr-5">
                                     <select id="sbx_apvlStatus" class="form-control" name="type">
                                         <option value = "00" selected>전체</option>
-                                        <option value = "01">승인</option>
-                                        <option value = "02">결재진행중</option>
-                                        <option value = "03">미등록</option>
+                                        <option value = "01">미승인</option>
+                                        <option value = "02">승인</option>
                                     </select>
                                 </div>
                                 <div class="align-self-start align-self-center mr-3">일자</div>
