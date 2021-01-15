@@ -503,6 +503,7 @@
         *   Grid UI(주) 날짜 세팅
         *********************************************************************/
         function crteTodayShow(year, month, date, day){
+            console.log("받은날짜 : " +year+"-"+Number(month+1)+"-"+date+"/"+day)
             var strtDate = null;
             var endDate = null;
 
@@ -1093,11 +1094,10 @@
                 var srhClickMonth = event.schedule.end.getMonth();  // 월 (today.getMonth()는 0~11로 출력)
                 var srhClickDate = event.schedule.end.getDate();  // 날짜
                 var srhClickDay = event.schedule.end.getDay();  // 요일 (0~6으로 출력, 0:일요일, 1:월요일, 6:토요일)
-                crteTodayShow(srhClickYear, srhClickMonth, srhClickDate, srhClickDay);
-
-                $('#txt_mmYy').text(tempSrhClickData[0]);
-                $('#txt_mmMm').text(tempSrhClickData[1]);
+                $('#txt_mmYy').text(srhClickYear);
+                $('#txt_mmMm').text(Number(srhClickMonth+1));
                 setMonthGridData();
+                crteTodayShow(srhClickYear, srhClickMonth, srhClickDate, srhClickDay);
 
                 $('#btn_showGrd').trigger('click');
                 $('#btn_showWeek').trigger('click');
@@ -1146,13 +1146,14 @@
                 var srhClickMonth = schedule.end.getMonth();  // 월 (today.getMonth()는 0~11로 출력)
                 var srhClickDate = schedule.end.getDate();  // 날짜
                 var srhClickDay = schedule.end.getDay();  // 요일 (0~6으로 출력, 0:일요일, 1:월요일, 6:토요일)
+                $('#txt_mmYy').text(srhClickYear);
+                $('#txt_mmMm').text(Number(srhClickMonth+1));
+                setMonthGridData();
                 crteTodayShow(srhClickYear, srhClickMonth, srhClickDate, srhClickDay);
                 $('#btn_showGrd').trigger('click');
                 $('#btn_showWeek').trigger('click');
 
-                $('#txt_mmYy').text(tempSrhClickData[0]);
-                $('#txt_mmMm').text(tempSrhClickData[1]);
-                setMonthGridData();
+
             });
 
             setLabel(calendar);
