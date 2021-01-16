@@ -1808,7 +1808,7 @@ class empMgmtRegSubmit(Resource):
         ipt_empAuthId = request.form['ipt_empAuthId']
         ipt_empNm = request.form['ipt_empNm']
         ipt_empDept = request.form['ipt_empDept']
-        ipt_empEmail = ipt_empId + "@infogen.co.kr";
+        ipt_empEmail = ipt_empId;
 
 
         logging.debug("====Param data====")
