@@ -577,7 +577,18 @@ class saveApvlReq(Resource): # Mariadb 연결 진행
                                                       "`TH1_APRV_STUS`," \
                                                       "`TH1_APRV_NM`," \
                                                       "`APVL_LAST_APRV_DT`)" \
-                                                      "VALUES( '" + email + "', '" + apvlDivs+ "', '" + apvlReqDivs + "', '" + wrkDt + "', '" + jobStrtTm + "', '" + jobEndTm + "', '" + wrkTme + "', '" + wrkReqRsn + "', NOW(), '" + th1AprvStus+ "', '" + th1AprvNm + "', NOW())"
+                                                      "VALUES( '" + email \
+                                                         + "', '" + apvlDivs\
+                                                         + "', '" + apvlReqDivs \
+                                                         + "', '" + wrkDt \
+                                                         + "', '" + jobStrtTm \
+                                                         + "', '" + jobEndTm \
+                                                         + "', '" + wrkTme \
+                                                         + "', '" + wrkReqRsn \
+                                                         + "',      NOW()" \
+                                                           ", '"  + th1AprvStus\
+                                                         + "', '" + th1AprvNm \
+                                                         + "',      NOW())"
 
                 logger.info(sql)
                 cursor.execute(sql)

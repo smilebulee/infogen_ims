@@ -250,6 +250,7 @@ class yryApvlReq(generic.TemplateView):
         return render(request, template_name)
         # return render(request, template_name, rr)
 
+
 class apvlReqPop(generic.TemplateView):
     def get(self, request, *args, **kwargs):
         template_name = 'dili/apvlReqPop.html'
@@ -261,6 +262,19 @@ class apvlReqPop(generic.TemplateView):
         return render(request, template_name)
         # return render(request, template_name, rr)
 
+
+class apvlReqBfrPop(generic.TemplateView):
+    def get(self, request, *args, **kwargs):
+        template_name = 'dili/apvlReqBfrPop.html'
+
+        return render(request, template_name)
+
+
+class apvlReqLtrPop(generic.TemplateView):
+    def get(self, request, *args, **kwargs):
+        template_name = 'dili/apvlReqLtrPop.html'
+
+        return render(request, template_name)
 
 
 class apvlAcptPop(generic.TemplateView):

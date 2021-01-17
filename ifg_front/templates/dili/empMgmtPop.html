@@ -64,7 +64,7 @@
 
                             //    $('#ipt_apvlSearchNamePop').change();
                             $('#ipt_apvlSearchEmailPop').val(email);
-                            $('#ipt_apvlSearchNamePop').val(name).trigger('change');    //change 이벤트 안됨. 추후 수정 예정
+                            $('#ipt_apvlSearchNamePop').val(name).trigger('click');    //change 이벤트 안됨. 추후 수정 예정
 
                         $('#exitEmpModalBtn').click();
                     } else {
@@ -140,9 +140,11 @@ function onDblClickEvt(i){
         if($("#apvlEmpEmailHidden").text() == null || $("#apvlEmpEmailHidden").text() == ""){
             alert("직원을 선택해 주세요.");
         }else{
-            //    $('#ipt_apvlSearchNamePop').change();
+            var email = $(i).children().eq(1).text(); // 그리드에서 선택한 email 값
+            var name = $(i).children().eq(0).text(); // 그리드에서 선택한 name 값
+
             $('#ipt_apvlSearchEmailPop').val(email);
-            $('#ipt_apvlSearchNamePop').val(name).trigger('change');    //change 이벤트 안됨. 추후 수정 예정
+            $('#ipt_apvlSearchNamePop').val(name).trigger('click');    //change 이벤트 안됨. 추후 수정 예정
 
 
             $('#exitEmpModalBtn').click();
@@ -195,7 +197,7 @@ function onClickEvt(i) {
 
 //    $('#ipt_apvlSearchNamePop').change();
     $('#ipt_apvlSearchEmailPop').val(email);
-    $('#ipt_apvlSearchNamePop').val(name).trigger('change');    //change 이벤트 안됨. 추후 수정 예정
+    $('#ipt_apvlSearchNamePop').val(name).trigger('click');    //change 이벤트 안됨. 추후 수정 예정
 
 };
 
@@ -229,7 +231,7 @@ function onClickSearchBtn(ipt_searchName) {
 
                     if (data.length == 1) {
                         $('#ipt_apvlSearchEmailPop').val(data[0].EMP_EMAIL);
-                        $('#ipt_apvlSearchNamePop').val(data[0].EMP_NAME).trigger('change');
+                        $('#ipt_apvlSearchNamePop').val(data[0].EMP_NAME).trigger('click');
                         $('#apvlEmpEmailHidden').text(data[0].EMP_EMAIL);
                         $('#exitEmpModalBtn').click();
 

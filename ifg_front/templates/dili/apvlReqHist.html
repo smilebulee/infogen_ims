@@ -65,6 +65,10 @@
         *********************************************************************/
 
         $("#searchBtn").click(function(){
+            //결재 상세 테이블 초기화
+            $("#thApvlReqDt").text("");
+            $("#thAprvNm1").text("");
+            $("#thAprvStus1").text("");
 
             /*********************************************************************
             *   Session Email 값 기준 근무 결재요청 리스트 조회
@@ -97,7 +101,7 @@
         }
         // 결재등록 모달 오픈
         $("#apvlReqBtn").click(function(){
-            var url = "{% url 'dili_api:apvlReqPop' %}" ;
+            var url = "{% url 'dili_api:apvlReqBfrPop' %}" ;
 
 
             $('#apvlReqModalDiv').css("width","50%");
@@ -282,13 +286,7 @@
                     <b>결재요청 이력</b>
                 </h5>
             </div>
-            <div class="align-self-center mr-3">
-                <button class="button" id="apvlReqBtn">결재등록</button>
-                <input type="hidden" id="currReqMthd" value="01"></input>
-            </div>
-            <div class="align-self-end align-self-center">
-                <button class="button" id="apvlAcptBtn">결재승인</button>
-            </div>
+
         </div>
 
         <!-- 1. 사원 조회영역 -->
@@ -318,8 +316,16 @@
                                 <option value="00" selected>전체</option>
                             </select>
                         </div>
-                        <div class="align-self-end align-self-center">
+                        <div class="align-self-end align-self-center mr-3">
                             <button class="button" id="searchBtn">조회</button>
+                        </div>
+
+                        <div class="align-self-center mr-3">
+                            <button class="button" id="apvlReqBtn">결재등록</button>
+                            <input type="hidden" id="currReqMthd" value="01"></input>
+                        </div>
+                        <div class="align-self-end align-self-center">
+                            <button class="button" id="apvlAcptBtn">결재승인</button>
                         </div>
                     </div>
                 </div>
