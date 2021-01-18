@@ -55,12 +55,13 @@
 
             $('#empModal').load(url);
 
-            $('#empModalDiv').css("width", "40%");
-            $('#empModalDiv').css("z-index", 10);
+            //$('#empModalDiv').css("width", "40%");
+            $('#empModalDiv').css("z-index", 15);
         }
 
         // 요청 버튼 선택 시, 유효성 검증 및 데이터 저장
-        $(document).on("click","#btn_apvlLtrReq",function(){
+        //$(document).on("click","#btn_apvlLtrReq",function(){
+        $('#btn_apvlLtrReq').click(function(){
             //공란 여부 검증
             //근무일자 유효성 검증
             if($("#ipt_wrkDt").val() == "") {
