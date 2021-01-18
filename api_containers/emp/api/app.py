@@ -522,19 +522,24 @@ class getMainMenu(Resource):  # Mariadb 연결 진행
     def get(self):
 
         logger.info('getMainMenu_app_start')
+        data = request.get_json()
         # requirements pymysql import 후 커넥트 사용
         mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
                                     charset='utf8', autocommit=False)
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 # 쿼리문 실행
-                sql = sql = "SELECT MENU_ID, MENU_NM" \
+                sql = "SELECT MENU_ID, MENU_NM" \
                             "    FROM TB_MENU_M" \
                             "   WHERE 1=1" \
                             "   AND MENU_LVL_NO = '1'"\
                             "   AND HPOS_MENU_ID = 'MAIN_MENU'" \
-                            "   AND SCRN_IDC_YN	= 'Y'" \
-                            "   ORDER BY SORT_ORD"
+                            "   AND SCRN_IDC_YN	= 'Y'"
+
+                if data["authId"] != "ADMIN":
+                      sql += "AND MENU_AUTH = 'ALL'" \
+
+                sql +="   ORDER BY SORT_ORD"
                 cursor.execute(sql)
 
         finally:
@@ -561,13 +566,18 @@ class getSubMenu(Resource):  # Mariadb 연결 진행
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 # 쿼리문 실행
-                sql = sql = "SELECT MENU_ID, MENU_NM, NVL(MENU_URL_ADDR,'N/A') AS MENU_URL_ADDR" \
-                            "    FROM TB_MENU_M" \
-                            "   WHERE 1=1" \
-                            "   AND MENU_LVL_NO = '2'"\
-                            "   AND HPOS_MENU_ID = '" + data["menuId"] + "'" \
-                            "   AND SCRN_IDC_YN	= 'Y'" \
-                            "   ORDER BY SORT_ORD"
+                sql = "SELECT MENU_ID, MENU_NM, NVL(MENU_URL_ADDR,'N/A') AS MENU_URL_ADDR" \
+                      "    FROM TB_MENU_M" \
+                      "   WHERE 1=1" \
+                      "   AND MENU_LVL_NO = '2'"\
+                      "   AND HPOS_MENU_ID = '" + data["menuId"] + "'" \
+                      "   AND SCRN_IDC_YN	= 'Y'"
+
+                if data["authId"] != "ADMIN":
+                      sql += "AND MENU_AUTH = 'ALL'" \
+
+                sql +="   ORDER BY SORT_ORD"
+                logging.debug(sql)
                 cursor.execute(sql)
 
         finally:

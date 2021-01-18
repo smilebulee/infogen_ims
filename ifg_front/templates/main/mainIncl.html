@@ -38,7 +38,9 @@
                 location.href = "{% url 'main:login_form' %}";
              }
              $('#subMenuDiv').hide();
-             var param = {}
+             var param = {
+                "authId"     : sessionStorage.getItem("authId")
+             }
              var url = "{% url 'main:getMainMenu' %}";
 
              submissionCallMap(param,'GET',url,mainMenuDataSubMitDone);
@@ -68,7 +70,8 @@
 
             var param = {
 
-                "menuId"     : mainMenuId.id
+                "menuId"     : mainMenuId.id,
+                "authId"     : sessionStorage.getItem("authId")
             }
 
             var url = "{% url 'main:getSubMenu' %}";
