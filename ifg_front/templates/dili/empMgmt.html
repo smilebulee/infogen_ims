@@ -1,9 +1,11 @@
 <script type="text/javascript">
+/* 메인 화면에서 받는 이메일 파라미터 */
+var param = {
+    "name" : '',
+    "authId" : sessionStorage.getItem("authId")
+}
+
 $(document).ready(function(){
-    /* 메인 화면에서 받는 이메일 파라미터 */
-    var param = {
-        "name" : ''
-    }
 
     /* 목록조회 */
     $.ajaxCall( param, {
@@ -51,23 +53,24 @@ $(document).ready(function(){
             }
     });
 
+    /* 로그인한 아이디가 관리자일 경우*/
+    if(param.authId == "ADMIN") {
+        /* 검색, 등록버튼 활성화 */
+        $('#ipt_searchName').attr('readonly',false);
+        $('#empMgmtRegBtn').attr('disabled',false);
+        $('#searchBtn').attr('disabled',false);
+
+    }else{
+        /* 검색, 등록버튼 비활성화 */
+        $('#ipt_searchName').attr('readonly',true);
+        $('#empMgmtRegBtn').attr('disabled',true);
+        $('#searchBtn').attr('disabled',true);
+
+    }
+
 });
 
-function onDblClickEvt(i) {
-    console.log(' onDblClickEvt :  ', i);
 
-    var email = i;
-    $('#hidden_selectMail').val(email);
-
-    var url = "{% url 'dili_api:empMgmtEditPop' %}" + "/?email=" +email ;
-
-    //$('#empModalDiv').css("width","30%");
-
-    modal('empModalDiv');
-
-    $('#empModal').load(url);
-
-};
 
 /* 직원 검색 기능 */
 function onClickSearchBtn(ipt_searchName) {
@@ -115,7 +118,11 @@ function empListGrd(data){
     if(data.length > 0) {
         for(var i = 0; i < size; i++){
 
-            empListTable += '<tr id ="grd_empList" ondblclick="onDblClickEvt(\''+data[i].EMP_EMAIL+'\')">';
+            if(param.authId == "ADMIN") { /* 관리자일 경우 더블클릭 이벤트 */
+                empListTable += '<tr id ="grd_empList" ondblclick="onDblClickEvt(\''+data[i].EMP_EMAIL+'\')">';
+            }else{
+                empListTable += '<tr id ="grd_empList")>';
+            }
             empListTable += '<td id="no" class="pt-3-half">'+(i+1)+'</td>';
             empListTable += '<td id="empName" class="pt-3-half">'+data[i].EMP_ID+'</td>';
             empListTable += '<td id="empName" class="pt-3-half">'+data[i].EMP_NAME+'</td>';
@@ -137,6 +144,18 @@ function empListGrd(data){
     });
 };
 
+/* 그리드 더블클릭 이벤트 (직원정보 수정 팝업) */
+function onDblClickEvt(i) {
+    var email = i;
+    $('#hidden_selectMail').val(email);
+
+    var url = "{% url 'dili_api:empMgmtEditPop' %}" + "/?email=" +email ;
+
+    modal('empModalDiv');
+
+    $('#empModal').load(url);
+
+};
 
 function makePaging(ret){
     $('#paging_navi').makePagingNavi(ret, 'getGridList');

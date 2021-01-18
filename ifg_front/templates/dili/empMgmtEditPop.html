@@ -19,10 +19,9 @@
 
 
         /* 부모창에서 선택한 직원 email*/
-        $('#hidden_empMail').val(document.getElementById('hidden_selectMail').value);
-
         var email = document.getElementById('hidden_selectMail').value;
 
+        $('#hidden_empMail').val(email);
         getEditEmpInfo(email);
 
     });

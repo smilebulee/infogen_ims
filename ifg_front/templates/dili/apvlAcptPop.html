@@ -15,8 +15,6 @@
              'data' : JSON.stringify(param),
              'async' : false,
              'callbackFn' : function(data){
-                debugger;
-                // 리턴
                 wrkApvlAcptGrd(data);
              }
         });
@@ -26,14 +24,13 @@
         *   근무결재요청 Grid 생성
         *********************************************************************/
         function wrkApvlAcptGrd(data){
-            debugger;
             document.getElementById('grd_wrkApvlAcpt').innerHTML = '';
 
             var wrkApvlTable =  '<table class="table table-bordered table-responsive-md text-center"  id="tblWrkApvlAcpt" >';
                 wrkApvlTable += '<thead>';
                 wrkApvlTable += '<tr>';
                 wrkApvlTable += '<th class="text-center">순번</th>';
-                wrkApvlTable += '<th class="text-center">결재 요청 일자</th>';
+                wrkApvlTable += '<th class="text-center">결재 요청일</th>';
                 wrkApvlTable += '<th class="text-center">구분</th>';
                 wrkApvlTable += '<th class="text-center">기안자</th>';
                 wrkApvlTable += '</tr>';
@@ -67,7 +64,6 @@
             wrkApvlTable += '</tbody>';
             wrkApvlTable += '</table>';
 
-
             document.getElementById('grd_wrkApvlAcpt').innerHTML = wrkApvlTable;
         }
 
@@ -89,38 +85,10 @@
                  'data' : JSON.stringify(param),
                  'async' : false,
                  'callbackFn' : function(data){
-                    debugger;
-                    // 리턴
                     wrkApvlAcptGrd(data);
                  }
             });
 
-        }
-
-        function onApvlAcptClickEvt(trId) {
-            var table = document.getElementById("tblWrkApvlAcpt");
-            var tr = table.getElementsByTagName("tr");
-
-            for(var i=0; i<tr.length; i++){
-                tr[i].style.background = "white";
-            }
-            document.getElementById(trId.id).style.backgroundColor = "lightgrey";
-
-            var arrWrkDt = $('#'+trId.id).children().eq(4).text().split(';')
-            $("#ipt_reqAcptWrkDt").val(arrWrkDt[0]);
-            $("#ipt_reqAcptJobStrtTm").val(arrWrkDt[1]);
-            $("#ipt_reqAcptJobEndTm").val(arrWrkDt[2]);
-            $("#txa_reqAcptRsn").val(arrWrkDt[3]);
-            $("#ipt_reqAcptEmpEmalAddr").val(arrWrkDt[4]);
-    /*
-            if($('#'+trId.id).children().eq(2).text() == "") {
-                $("#sbx_type option[value='00']").attr("selected", true);
-            } else if($('#'+trId.id).children().eq(2).text() == "휴일근무") {
-                $("#sbx_type option[value='01']").attr("selected", true);
-            } else if($('#'+trId.id).children().eq(2).text() == "야간근무") {
-                $("#sbx_type option[value='02']").attr("selected", true);
-            }
-    */
         }
 
 
@@ -131,44 +99,73 @@
             srchApvlAcptHist();
         });
 
-        // 승인, 반려 버튼 클릭 시 로직
-        function btnReqEvt(thisId) {
-            var apvlAcptStus = '';
-            if(thisId == 'btn_acpt') {
-                //승인 버튼을 선택할 경우
-                apvlAcptStus = '02';
-            } else {
-                apvlAcptStus = '03';
-            }
-
-            cf_dialog.confirm('저장하시겠습니까?', function(){
-                if(this.key == 'ok'){
-                    var param = {
-                        "email"         : $("#ipt_reqAcptEmpEmalAddr").val(),   //기안자 아이디
-                        "wrkDt"         : $("#ipt_reqAcptWrkDt").val(),         //근무일자
-                        "th1AprvStus"   : apvlAcptStus,                         //01: 미승인, 02: 승인, 03: 반려
-                        //"th1AprvNm"     : sessionStorage.getItem("email"),    //결재자 : 로그인한 사용자 아이디
-                    }
-
-                    //param["th1AprvStus"] = thisId == 'btn_acpt' ? '02' : '03';
-                    console.log("###param", param);
-
-                    $.ajaxCall( param, {
-                         method : 'POST',
-                         'url' : '/dili/saveApvlAcpt/post',
-                         'dataType' : 'json',
-                         'data' : JSON.stringify(param),
-                         'async' : false,
-                         'callbackFn' : function(data){
-                            g_toast.push('저장 되었습니다.');
-                            $('#exitApvlAcptModalBtn').click();
-                            //$('#srchAcptHistBtn').click();
-                         }
-                    });
-                }
-            });
-        }
     });
+
+
+    // 승인, 반려 버튼 클릭 시 로직
+    function btnReqEvt(thisId) {
+        var apvlAcptStus = '';
+        if(thisId == 'btn_acpt') {
+            //승인 버튼을 선택할 경우
+            apvlAcptStus = '02';
+        } else {
+            apvlAcptStus = '03';
+        }
+
+        cf_dialog.confirm('저장하시겠습니까?', function(){
+            if(this.key == 'ok'){
+                var param = {
+                    "email"         : $("#ipt_reqAcptEmpEmalAddr").val(),   //기안자 아이디
+                    "wrkDt"         : $("#ipt_reqAcptWrkDt").val(),         //근무일자
+                    "th1AprvStus"   : apvlAcptStus,                         //01: 미승인, 02: 승인, 03: 반려
+                    //"th1AprvNm"     : sessionStorage.getItem("email"),    //결재자 : 로그인한 사용자 아이디
+                }
+
+                //param["th1AprvStus"] = thisId == 'btn_acpt' ? '02' : '03';
+                console.log("###param", param);
+
+                $.ajaxCall( param, {
+                     method : 'POST',
+                     'url' : '/dili/saveApvlAcpt/post',
+                     'dataType' : 'json',
+                     'data' : JSON.stringify(param),
+                     'async' : false,
+                     'callbackFn' : function(data){
+                        g_toast.push('저장 되었습니다.');
+                        //$('#exitApvlAcptModalBtn').click();
+                        //$('#srchAcptHistBtn').click();
+                     }
+                });
+            }
+        });
+    }
+
+
+    function onApvlAcptClickEvt(trId) {
+    var table = document.getElementById("tblWrkApvlAcpt");
+    var tr = table.getElementsByTagName("tr");
+
+    for(var i=0; i<tr.length; i++){
+        tr[i].style.background = "white";
+    }
+    document.getElementById(trId.id).style.backgroundColor = "lightgrey";
+
+    var arrWrkDt = $('#'+trId.id).children().eq(4).text().split(';')
+    $("#ipt_reqAcptWrkDt").val(arrWrkDt[0]);
+    $("#ipt_reqAcptJobStrtTm").val(arrWrkDt[1]);
+    $("#ipt_reqAcptJobEndTm").val(arrWrkDt[2]);
+    $("#txa_reqAcptRsn").val(arrWrkDt[3]);
+    $("#ipt_reqAcptEmpEmalAddr").val(arrWrkDt[4]);
+/*
+    if($('#'+trId.id).children().eq(2).text() == "") {
+        $("#sbx_type option[value='00']").attr("selected", true);
+    } else if($('#'+trId.id).children().eq(2).text() == "휴일근무") {
+        $("#sbx_type option[value='01']").attr("selected", true);
+    } else if($('#'+trId.id).children().eq(2).text() == "야간근무") {
+        $("#sbx_type option[value='02']").attr("selected", true);
+    }
+*/
+}
 </script>
 
 <div class="row">
@@ -219,7 +216,7 @@
                                             <div class="align-self-start align-self-center mr-3">근무 일자</div>
                                             <div class="align-self-center mr-5">
                                                 <!--<input type="text" class="form-control" id="ipt_reqAcptWrkDt" name="ipt_reqAcptWrkDt" placeholder="" maxlength="24" readonly/>-->
-                                                <input type="date" class="align-self-start align-self-center mr-1" id="ipt_reqAcptWrkDt"       name="ipt_reqAcptWrkDt" />
+                                                <input type="text" class="align-self-start align-self-center mr-1" id="ipt_reqAcptWrkDt"       name="ipt_reqAcptWrkDt"     style="width: 115px;"/>
                                                 <input type="time" class="align-self-start align-self-center"      id="ipt_reqAcptJobStrtTm"   name="ipt_reqAcptJobStrtTm" />
                                                 <span              class="align-self-start align-self-center">&nbsp;&nbsp;~&nbsp;&nbsp;</span>
                                                 <input type="time" class="align-self-start align-self-center mr-1" id="ipt_reqAcptJobEndTm"    name="ipt_reqAcptJobEndTm" />

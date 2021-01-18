@@ -19,7 +19,6 @@
         console.log("###########SessionSettingInfo::", param);
 
 
-        debugger;
         // 사용자조회 이메일 : SessionSetting email로 설정
         $('#ipt_apvlSearchEmailPop').val(param.email)
         retrieveEmpNmByEmail(param.email, function(data) {
@@ -101,7 +100,6 @@
         // 결재등록 모달 오픈
         $("#apvlReqBtn").click(function(){
             var url = "{% url 'dili_api:apvlReqBfrPop' %}" ;
-
 
             $('#apvlReqModalDiv').css("width","50%");
 
