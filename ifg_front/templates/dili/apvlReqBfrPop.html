@@ -2,6 +2,9 @@
     $(document).ready(function(){
         // 결재자 검색 - 직원조회 모달 오픈
         $("#ipt_apvlLnSearchNamePop").click(function(){
+            //자식창에서 여는 직원 조회 팝업임을 표시
+            $('#apvlReqIptFlagHidden').text("apvlReqBfrPop");
+
             openEmpMgmtPop();
         });
 
@@ -25,14 +28,25 @@
 
     });
 
+/*
     // 직원 조회 시, 결재자 input 세팅
     $(document).on("click","#ipt_apvlSearchNamePop",function(){
-        $('#ipt_apvlLnSearchEmailPop').val($('#ipt_apvlSearchEmailPop').val());
-        $('#ipt_apvlLnSearchNamePop').val($('#ipt_apvlSearchNamePop').val());
-        $("#apvlEmpEmailHidden").text('')
+        if($('#apvlReqIptFlagHidden').text() == 'apvlReqHist'){
+        //부모창에서 연 경우,
+            $('#ipt_searchName').val($('#ipt_apvlSearchNamePop').val());
+            $('#ipt_searchEmail').val($('#ipt_apvlSearchEmailPop').val());
+            $('#apvlReqIptFlagHidden').text('')
+        } else if($('#apvlReqIptFlagHidden').text() == 'apvlReqBfrPop') {
+            //자식창에서 연 경우,
+            $('#ipt_apvlLnSearchEmailPop').val($('#ipt_apvlSearchEmailPop').val());
+            $('#ipt_apvlLnSearchNamePop').val($('#ipt_apvlSearchNamePop').val());
+            $('#apvlReqIptFlagHidden').text('')
+        }
+
+        //$("#apvlEmpEmailHidden").text('')
 
     });
-
+*/
     // 요청 버튼 선택 시, 유효성 검증 및 데이터 저장
     $(document).on("click","#btn_apvlBfrReq",function(){
         //공란 여부 검증
@@ -154,12 +168,14 @@
                                 <div class="accordion mb-4" id="grp_wrkApvlReq">
                                     <div class="p-0" id="head_wrkApvlReq">
                                         <!-- Body -->
+                                        <!--
                                         <div class="flex-height d-flex m-0 p-2">
                                             <div class="align-self-start align-self-center mr-3">결재 유형</div>
                                             <div class="align-self-center">
                                                 <span class="align-self-start align-self-center">선결재</span>
                                             </div>
                                         </div>
+                                        -->
 
                                         <div class="flex-height d-flex m-0 p-2">
                                             <div class="align-self-start align-self-center mr-3">근무 일자</div>

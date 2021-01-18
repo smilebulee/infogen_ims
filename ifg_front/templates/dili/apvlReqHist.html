@@ -23,7 +23,8 @@
         $('#ipt_apvlSearchEmailPop').val(param.email)
         retrieveEmpNmByEmail(param.email, function(data) {
             $('#ipt_apvlSearchNamePop').val(data[0].EMP_NAME);
-            $('#ipt_searchName').val(data[0].EMP_NAME);
+            $('#ipt_apvlSearchName').val(data[0].EMP_NAME);
+            $('#ipt_apvlSearchEmail').val(param.email);
         });
 
 
@@ -41,23 +42,12 @@
             }
         });
 
+        /*
         $('#ipt_apvlSearchNamePop').change(function() {
             console.log("ipt_apvlSearchNamePop변화 => change 이벤트 안됨 추후 테스트 필요");
-            $('#ipt_searchName').val($('#ipt_apvlSearchNamePop').val());
+            $('#ipt_apvlSearchName').val($('#ipt_apvlSearchNamePop').val());
         });
-
-        ////////////////////////////////////////////////////////////////////////////////////
-        ///////////////////////////////////////임시//////////////////////////////////////////
-        ///////////////////////////////////////임시//////////////////////////////////////////
-        ///////////////////////////////////////임시//////////////////////////////////////////
-        ///////////////////////////////////////임시//////////////////////////////////////////
-
-        //세팅할 empIdx 지정
-        var empIptId;
-
-
-        ///////////////////////////////////////임시//////////////////////////////////////////
-        ////////////////////////////////////////////////////////////////////////////////////
+        */
 
         /*********************************************************************
         *   이벤트 바인딩 및 함수 선언
@@ -73,7 +63,8 @@
             *   Session Email 값 기준 근무 결재요청 리스트 조회
             *********************************************************************/
             var params = {
-                "email" : sessionStorage.getItem("email"),
+                //"email" : sessionStorage.getItem("email"),////////////////////////////////////////////////바꾸기
+                "email" : $("#ipt_apvlSearchEmail").val() || sessionStorage.getItem("email"),
                 "apvlStusDivs" : $("#sbx_type option:selected").val(),      //TB_APVL_REQ_MGMT_M APVL_STUS 값 => 01,02: 승인, 승인반려 NULL: 미승인
             }
 
@@ -82,11 +73,34 @@
 
             submissionCallList( params, 'GET', url, apvlReqHistGrd );
 
+
         });
+
+
+        // 직원 조회 시, 결재자 input 세팅
+        //$(document).on("click","#ipt_apvlSearchNamePop",function(){
+        $('#ipt_apvlSearchNamePop').click(function() {
+            if($('#apvlReqIptFlagHidden').text() == 'apvlReqHist'){
+            //부모창에서 연 경우,
+                $('#ipt_apvlSearchName').val($('#ipt_apvlSearchNamePop').val());
+                $('#ipt_apvlSearchEmail').val($('#ipt_apvlSearchEmailPop').val());
+                //$('#apvlReqIptFlagHidden').text('');
+            } else if($('#apvlReqIptFlagHidden').text() == 'apvlReqBfrPop') {
+                //자식창에서 연 경우,
+                $('#ipt_apvlLnSearchEmailPop').val($('#ipt_apvlSearchEmailPop').val());
+                $('#ipt_apvlLnSearchNamePop').val($('#ipt_apvlSearchNamePop').val());
+                //$('#apvlReqIptFlagHidden').text('');
+            }
+            //$("#apvlEmpEmailHidden").text('');
+        });
+
 
         // 직원조회 권한 처리 및 모달 오픈
         if(param.authId == "ADMIN") {
-            $("#ipt_searchName").click(function(){
+            $("#ipt_apvlSearchName").click(function(){
+                //부모창에서 여는 직원 조회 팝업임을 표시
+                $('#apvlReqIptFlagHidden').text("apvlReqHist");
+
                 var url = "{% url 'dili_api:empMgmtPop' %}" ;
 
                 modal('empModalDiv');
@@ -132,17 +146,17 @@
     *   근무결재요청내역 Grid 생성
     *********************************************************************/
     function apvlReqHistGrd(data){
-        var apvlReqHistTable = '<table class="table table-bordered table-responsive-md text-center">';
-        apvlReqHistTable += '<thead>';
-        apvlReqHistTable += '<tr>';
-        apvlReqHistTable += '<th class="text-center">순번</th>';
-        apvlReqHistTable += '<th class="text-center">성명</th>';
-        apvlReqHistTable += '<th class="text-center">근무일자</th>';
-        apvlReqHistTable += '<th class="text-center">구분</th>';
-        apvlReqHistTable += '<th class="text-center">승인상태</th>';
-        apvlReqHistTable += '</tr>';
-        apvlReqHistTable += '</thead>';
-        apvlReqHistTable += '<tbody>';
+        var apvlReqHistTable =  '<table class="table table-bordered table-responsive-md text-center">';
+            apvlReqHistTable += '<thead>';
+            apvlReqHistTable += '<tr>';
+            apvlReqHistTable += '<th class="text-center">순번</th>';
+            apvlReqHistTable += '<th class="text-center">성명</th>';
+            apvlReqHistTable += '<th class="text-center">근무일자</th>';
+            apvlReqHistTable += '<th class="text-center">구분</th>';
+            apvlReqHistTable += '<th class="text-center">승인상태</th>';
+            apvlReqHistTable += '</tr>';
+            apvlReqHistTable += '</thead>';
+            apvlReqHistTable += '<tbody>';
 
         if(data.length > 0) {
             for(var i = 0; i < data.length; i++){
@@ -240,6 +254,7 @@
             </svg>
             <span id="apvlEmpEmailHidden" style="display:none;" ></span>
             <span id="apvlReqHidden" style="display:none;" >apvlReq</span>
+            <span id="apvlReqIptFlagHidden" style="display:none;" ></span>
         </a>
     </div>
 </div>
@@ -303,7 +318,8 @@
                     <div class="card-body flex-height d-flex m-0 p-2">
                         <div class="align-self-start align-self-center mr-3">성명</div>
                         <div class="align-self-center mr-3">
-                            <input type="text" class="form-control" id="ipt_searchName" name="ipt_searchName" placeholder="이름을 입력해주세요." maxlength="10" readonly/>
+                            <input type="text" class="form-control" id="ipt_apvlSearchName" name="ipt_apvlSearchName" placeholder="이름을 입력해주세요." maxlength="10" />
+                            <input type="hidden" class="form-control" id="ipt_apvlSearchEmail" name="ipt_apvlSearchEmail" readonly/>
                             <input type="hidden" class="form-control" id="ipt_apvlSearchNamePop" name="ipt_apvlSearchNamePop" readonly/>
                             <input type="hidden" class="form-control" id="ipt_apvlSearchEmailPop" name="ipt_apvlSearchEmailPop" readonly/>
                         </div>

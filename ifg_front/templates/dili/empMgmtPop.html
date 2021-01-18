@@ -5,7 +5,7 @@
 
 -->
 <script type="text/javascript">
-var test;
+var nRow;
   $(document).ready(function(){
     $('.tui-full-calendar-month-guide-block').remove();
     /* 메인 화면에서 받는 NAME 파라미터 */
@@ -48,24 +48,25 @@ var test;
 
                         $('#empEmailHidden').val(email);
 
-                            //현재 날짜 가져오기
-                            var today = new Date();
-                            var year = today.getFullYear(); // 년도
-                            var month = today.getMonth();  // 월 (today.getMonth()는 0~11로 출력)
-                            var date = today.getDate();  // 날짜
-                            var day = today.getDay();  // 요일 (0~6으로 출력, 0:일요일, 1:월요일, 6:토요일)
+                        //현재 날짜 가져오기
+                        var today = new Date();
+                        var year = today.getFullYear(); // 년도
+                        var month = today.getMonth();  // 월 (today.getMonth()는 0~11로 출력)
+                        var date = today.getDate();  // 날짜
+                        var day = today.getDay();  // 요일 (0~6으로 출력, 0:일요일, 1:월요일, 6:토요일)
 
-                            $('#txt_mmYy').text(year); //그리드 월tab 년도 초기값 입력
-                            $('#txt_mmMm').text(month + 1); //그리드 월tab 월 초기값 입력
+                        $('#txt_mmYy').text(year); //그리드 월tab 년도 초기값 입력
+                        $('#txt_mmMm').text(month + 1); //그리드 월tab 월 초기값 입력
 
-                            setMonthGridData();                                                                              // Month Grid 생성
-                            crteTodayShow(year, month, date, day);                                                        // Grid UI(주) 날짜 세팅
-                            createCalendar();
-                            setAnhoMgmt();
+                        setMonthGridData();                                                                              // Month Grid 생성
+                        crteTodayShow(year, month, date, day);                                                        // Grid UI(주) 날짜 세팅
+                        createCalendar();
+                        setAnhoMgmt();
 
-                            //    $('#ipt_apvlSearchNamePop').change();
-                            $('#ipt_apvlSearchEmailPop').val(email);
-                            $('#ipt_apvlSearchNamePop').val(name).trigger('click');    //change 이벤트 안됨. 추후 수정 예정
+                        //    $('#ipt_apvlSearchNamePop').change();
+                        $('#ipt_apvlSearchEmailPop').val(email);
+                        $("#apvlEmpEmailHidden").text(email);
+                        $('#ipt_apvlSearchNamePop').val(name).trigger('click');    //change 이벤트 안됨. 추후 수정 예정
 
                         $('#exitEmpModalBtn').click();
                     } else {
@@ -101,10 +102,11 @@ function onClickselectBtn() {
         if($("#apvlEmpEmailHidden").text() == null || $("#apvlEmpEmailHidden").text() == ""){
             alert("직원을 선택해 주세요.");
         }else{
-            var email = $(test).children().eq(1).text(); // 그리드에서 선택한 email 값
-            var name = $(test).children().eq(0).text(); // 그리드에서 선택한 name 값
+            var email = $(nRow).children().eq(1).text(); // 그리드에서 선택한 email 값
+            var name = $(nRow).children().eq(0).text(); // 그리드에서 선택한 name 값
 
             $('#ipt_apvlSearchEmailPop').val(email);
+            $("#apvlEmpEmailHidden").text(email);
             $('#ipt_apvlSearchNamePop').val(name).trigger('click');    //change 이벤트 안됨. 추후 수정 예정
 
             $('#exitEmpModalBtn').click();
@@ -143,7 +145,6 @@ function onClickselectBtn() {
 
 /* 그리드 더블클릭 이벤트 */
 function onDblClickEvt(i){
-test = i;
     console.log($("#apvlReqHidden").text());
     if($("#apvlReqHidden").text() == "apvlReq" ) {
         if($("#apvlEmpEmailHidden").text() == null || $("#apvlEmpEmailHidden").text() == ""){
@@ -153,10 +154,11 @@ test = i;
             var name = $(i).children().eq(0).text(); // 그리드에서 선택한 name 값
 
             $('#ipt_apvlSearchEmailPop').val(email);
+            $("#apvlEmpEmailHidden").text(email);
             $('#ipt_apvlSearchNamePop').val(name).trigger('click');    //change 이벤트 안됨. 추후 수정 예정
 
-
             $('#exitEmpModalBtn').click();
+            $("#apvlEmpEmailHidden").text('');
             ///////////////////////////////////////////////////////////////////////////////////
         }
     } else {
@@ -205,9 +207,11 @@ function onClickEvt(i) {
 
     $("#empEmailHidden").val(email);
     $("#apvlEmpEmailHidden").text(email);
+    nRow = i;
 
 //    $('#ipt_apvlSearchNamePop').change();
     $('#ipt_apvlSearchEmailPop').val(email);
+    $("#apvlEmpEmailHidden").text(email);
     $('#ipt_apvlSearchNamePop').val(name).trigger('click');    //change 이벤트 안됨. 추후 수정 예정
 
 };
@@ -242,8 +246,9 @@ function onClickSearchBtn(ipt_searchName) {
 
                     if (data.length == 1) {
                         $('#ipt_apvlSearchEmailPop').val(data[0].EMP_EMAIL);
-                        $('#ipt_apvlSearchNamePop').val(data[0].EMP_NAME).trigger('click');
                         $('#apvlEmpEmailHidden').text(data[0].EMP_EMAIL);
+                        $('#ipt_apvlSearchNamePop').val(data[0].EMP_NAME).trigger('click');
+
                         $('#exitEmpModalBtn').click();
 
                     } else {
@@ -428,7 +433,6 @@ function empListGrd(data){
 
 
 </script>
-<div class="row">
     <div class="col-sm-12">
         <div class="accordion mb-4" id="grp_search">
             <div class="card">

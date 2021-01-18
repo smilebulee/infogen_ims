@@ -20,76 +20,9 @@
         });
 
 
-        /*********************************************************************
-        *   근무결재요청 Grid 생성
-        *********************************************************************/
-        function wrkApvlAcptGrd(data){
-            document.getElementById('grd_wrkApvlAcpt').innerHTML = '';
-
-            var wrkApvlTable =  '<table class="table table-bordered table-responsive-md text-center"  id="tblWrkApvlAcpt" >';
-                wrkApvlTable += '<thead>';
-                wrkApvlTable += '<tr>';
-                wrkApvlTable += '<th class="text-center">순번</th>';
-                wrkApvlTable += '<th class="text-center">결재 요청일</th>';
-                wrkApvlTable += '<th class="text-center">구분</th>';
-                wrkApvlTable += '<th class="text-center">기안자</th>';
-                wrkApvlTable += '</tr>';
-                wrkApvlTable += '</thead>';
-                wrkApvlTable += '<tbody>';
-
-            if(data.length > 0) {
-                for(var i = 0; i < data.length; i++){
-                /* 임시주석 윤상은 2021-01-17
-                    var wrkDtm = "";
-                    if(data[i].WRK_DT != "") {
-                        if(data[i].WRK_TME != "") {
-                            wrkDtm = data[i].WRK_DT + " " + data[i].WRK_TME.substring(0,2) +":"+ data[i].WRK_TME.substring(2,4) +":"+ data[i].WRK_TME.substring(4,6)
-                        } else {
-                            wrkDtm = data[i].WRK_DT
-                        }
-                    }
-                */
-
-                    wrkApvlTable += '<tr id ="grd_wrkApvlAcpt'+i+'" onclick="onApvlAcptClickEvt(this)">';
-                    wrkApvlTable += '<td class="pt-3-half">'+(i+1)+'</td>';
-                    wrkApvlTable += '<td class="pt-3-half">'+data[i].APVL_REQ_DT+'</td>';
-                    wrkApvlTable += '<td class="pt-3-half">'+data[i].APVL_REQ_NM+'</td>';
-                    wrkApvlTable += '<td class="pt-3-half">'+data[i].EMP_NAME+'</td>';
-                    wrkApvlTable += '<td class="pt-3-half" style="display: none;">' + data[i].WRK_DT + ";" + data[i].JOB_STRT_TM + ";" + data[i].JOB_END_TM + ";" + data[i].WRK_REQ_RSN + ";" + data[i].EMP_EMAL_ADDR + '</td>';
-                    wrkApvlTable += '</tr>';
-
-                }
-            }
-
-            wrkApvlTable += '</tbody>';
-            wrkApvlTable += '</table>';
-
-            document.getElementById('grd_wrkApvlAcpt').innerHTML = wrkApvlTable;
-        }
 
 
-        /*********************************************************************
-        *   근무결재요청 조회 transaction
-        *********************************************************************/
-        function srchApvlAcptHist() {
-            var param = {
-                "email" : sessionStorage.getItem("email"),
-                "apvlStusDivs" : "01"                       //'미승인' 상태 요청 조회
-            }
-            console.log("##srchApvlAcptHist param::", param);
 
-            $.ajaxCall( param, {
-                 'method' : 'GET',
-                 'url' : "{% url 'dili_api:getApvlAcptHist' %}",
-                 'dataType' : 'json',
-                 'data' : JSON.stringify(param),
-                 'async' : false,
-                 'callbackFn' : function(data){
-                    wrkApvlAcptGrd(data);
-                 }
-            });
-
-        }
 
 
         /*********************************************************************
@@ -101,6 +34,75 @@
 
     });
 
+    /*********************************************************************
+    *   근무결재요청 Grid 생성
+    *********************************************************************/
+    function wrkApvlAcptGrd(data){
+        document.getElementById('grd_wrkApvlAcpt').innerHTML = '';
+
+        var wrkApvlTable =  '<table class="table table-bordered table-responsive-md text-center"  id="tblWrkApvlAcpt" >';
+            wrkApvlTable += '<thead>';
+            wrkApvlTable += '<tr>';
+            wrkApvlTable += '<th class="text-center">순번</th>';
+            wrkApvlTable += '<th class="text-center">결재 요청일</th>';
+            wrkApvlTable += '<th class="text-center">구분</th>';
+            wrkApvlTable += '<th class="text-center">기안자</th>';
+            wrkApvlTable += '</tr>';
+            wrkApvlTable += '</thead>';
+            wrkApvlTable += '<tbody>';
+
+        if(data.length > 0) {
+            for(var i = 0; i < data.length; i++){
+            /* 임시주석 윤상은 2021-01-17
+                var wrkDtm = "";
+                if(data[i].WRK_DT != "") {
+                    if(data[i].WRK_TME != "") {
+                        wrkDtm = data[i].WRK_DT + " " + data[i].WRK_TME.substring(0,2) +":"+ data[i].WRK_TME.substring(2,4) +":"+ data[i].WRK_TME.substring(4,6)
+                    } else {
+                        wrkDtm = data[i].WRK_DT
+                    }
+                }
+            */
+
+                wrkApvlTable += '<tr id ="grd_wrkApvlAcpt'+i+'" onclick="onApvlAcptClickEvt(this)">';
+                wrkApvlTable += '<td class="pt-3-half">'+(i+1)+'</td>';
+                wrkApvlTable += '<td class="pt-3-half">'+data[i].APVL_REQ_DT+'</td>';
+                wrkApvlTable += '<td class="pt-3-half">'+data[i].APVL_REQ_NM+'</td>';
+                wrkApvlTable += '<td class="pt-3-half">'+data[i].EMP_NAME+'</td>';
+                wrkApvlTable += '<td class="pt-3-half" style="display: none;">' + data[i].WRK_DT + ";" + data[i].JOB_STRT_TM + ";" + data[i].JOB_END_TM + ";" + data[i].WRK_REQ_RSN + ";" + data[i].EMP_EMAL_ADDR + '</td>';
+                wrkApvlTable += '</tr>';
+
+            }
+        }
+
+        wrkApvlTable += '</tbody>';
+        wrkApvlTable += '</table>';
+
+        document.getElementById('grd_wrkApvlAcpt').innerHTML = wrkApvlTable;
+    }
+
+    /*********************************************************************
+    *   근무결재요청 조회 transaction
+    *********************************************************************/
+    function srchApvlAcptHist() {
+        var param = {
+            "email" : sessionStorage.getItem("email"),
+            "apvlStusDivs" : "01"                       //'미승인' 상태 요청 조회
+        }
+        console.log("##srchApvlAcptHist param::", param);
+
+        $.ajaxCall( param, {
+             'method' : 'GET',
+             'url' : "{% url 'dili_api:getApvlAcptHist' %}",
+             'dataType' : 'json',
+             'data' : JSON.stringify(param),
+             'async' : false,
+             'callbackFn' : function(data){
+                wrkApvlAcptGrd(data);
+             }
+        });
+
+    }
 
     // 승인, 반려 버튼 클릭 시 로직
     function btnReqEvt(thisId) {
@@ -134,6 +136,7 @@
                         g_toast.push('저장 되었습니다.');
                         //$('#exitApvlAcptModalBtn').click();
                         //$('#srchAcptHistBtn').click();
+                        srchApvlAcptHist();
                      }
                 });
             }
@@ -196,6 +199,7 @@
                                 <div class="accordion mb-4" id="grp_wrkApvlAcpt">
                                     <div class="p-0" id="head_wrkApvlAcpt">
                                         <!-- Body -->
+                                        <!--
                                         <div class="flex-height d-flex m-0 p-2">
                                             <div class="align-self-center mr-5">
                                                 <span>구분&nbsp;</span>
@@ -207,6 +211,7 @@
                                                 <button class="button" id="srchAcptHistBtn">조회</button>
                                             </div>
                                         </div>
+                                        -->
 
                                         <div style="position: relative;" id="grid-parent">
                                             <div id="grd_wrkApvlAcpt">grid</div>
@@ -216,7 +221,7 @@
                                             <div class="align-self-start align-self-center mr-3">근무 일자</div>
                                             <div class="align-self-center mr-5">
                                                 <!--<input type="text" class="form-control" id="ipt_reqAcptWrkDt" name="ipt_reqAcptWrkDt" placeholder="" maxlength="24" readonly/>-->
-                                                <input type="text" class="align-self-start align-self-center mr-1" id="ipt_reqAcptWrkDt"       name="ipt_reqAcptWrkDt"     style="width: 115px;"/>
+                                                <input type="date" class="align-self-start align-self-center mr-1" id="ipt_reqAcptWrkDt"       name="ipt_reqAcptWrkDt" />
                                                 <input type="time" class="align-self-start align-self-center"      id="ipt_reqAcptJobStrtTm"   name="ipt_reqAcptJobStrtTm" />
                                                 <span              class="align-self-start align-self-center">&nbsp;&nbsp;~&nbsp;&nbsp;</span>
                                                 <input type="time" class="align-self-start align-self-center mr-1" id="ipt_reqAcptJobEndTm"    name="ipt_reqAcptJobEndTm" />
