@@ -763,32 +763,40 @@ class apvlAcptHist(Resource):  # Mariadb 연결 진행
                 # 쿼리문 실행
                 if apvlStusDivs == "00":
                     # 전체
-                    sql = "SELECT B.EMP_NAME " \
+                    sql = "SELECT A.EMP_EMAL_ADDR, C.EMP_NAME " \
                           "     , NVL(A.WRK_DT,'') WRK_DT " \
                           "     , NVL(A.JOB_STRT_TM, '') JOB_STRT_TM " \
                           "     , NVL(A.JOB_END_TM, '') JOB_END_TM " \
                           "     , CASE WHEN A.APVL_REQ_DIVS = '01' THEN NVL(A.WRK_TME,'') WHEN A.APVL_REQ_DIVS = '02' THEN NVL(A.WRK_TME,'') ELSE '' END WRK_TME  " \
-                          "     , CASE WHEN A.APVL_REQ_DIVS = '01' THEN '휴일근무' WHEN A.APVL_REQ_DIVS = '02' THEN '야간근무' WHEN A.APVL_REQ_DIVS = '03' THEN '연차결재' ELSE '' END APVL_REQ_NM  " \
-                          "     , CASE WHEN A.TH1_APRV_STUS != '' AND A.TH1_APRV_STUS = ''  THEN '미승인'  " \
-                          "       	   WHEN A.TH1_APRV_STUS != '' AND A.TH1_APRV_STUS != '' THEN '승인'  " \
-                          "            ELSE '미승인' END APRV_STUS_NM " \
-                          "  FROM TB_APVL_REQ_MGMT_M A, TB_EMP_MGMT B " \
-                          " WHERE A.EMP_EMAL_ADDR = B.EMP_EMAIL  " \
+                          "     , CASE WHEN A.APVL_REQ_DIVS = '01' THEN '야간근무' WHEN A.APVL_REQ_DIVS = '02' THEN '휴일근무' WHEN A.APVL_REQ_DIVS = '03' THEN '연차결재' ELSE '' END APVL_REQ_NM  " \
+                          "     , CASE WHEN A.TH1_APRV_STUS = '01' THEN '미승인'  " \
+                          "       	   WHEN A.TH1_APRV_STUS = '02' THEN '승인'  " \
+                          "            ELSE '반려' END APRV_STUS_NM " \
+                          "     , NVL(A.APVL_REQ_DT, '') APVL_REQ_DT " \
+                          "     , NVL(A.WRK_REQ_RSN, '') WRK_REQ_RSN " \
+                          "  FROM TB_APVL_REQ_MGMT_M A, TB_EMP_MGMT B, TB_EMP_MGMT C " \
+                          " WHERE A.EMP_EMAL_ADDR = C.EMP_EMAIL  " \
+                          "   AND A.TH1_APRV_NM = B.EMP_EMAIL  " \
                           "   AND A.TH1_APRV_NM = '" + email + "' "
 
                     logging.debug("apvlReqHist SQL문" + sql)
                     cursor.execute(sql)
                 if apvlStusDivs == "01":
                     # 미승인
-                    sql = "SELECT B.EMP_NAME " \
+                    sql = "SELECT A.EMP_EMAL_ADDR, C.EMP_NAME " \
                           "     , NVL(A.WRK_DT,'') WRK_DT " \
+                          "     , NVL(A.JOB_STRT_TM, '') JOB_STRT_TM " \
+                          "     , NVL(A.JOB_END_TM, '') JOB_END_TM " \
                           "     , CASE WHEN A.APVL_REQ_DIVS = '01' THEN NVL(A.WRK_TME,'') WHEN A.APVL_REQ_DIVS = '02' THEN NVL(A.WRK_TME,'') ELSE '' END WRK_TME  " \
-                          "     , CASE WHEN A.APVL_REQ_DIVS = '01' THEN '휴일근무' WHEN A.APVL_REQ_DIVS = '02' THEN '야간근무' WHEN A.APVL_REQ_DIVS = '03' THEN '연차결재' ELSE '' END APVL_REQ_NM  " \
-                          "     , CASE WHEN A.TH1_APRV_STUS != '' AND A.TH1_APRV_STUS = '' THEN '미승인'  " \
-                          "       		 WHEN A.TH1_APRV_STUS != '' AND A.TH1_APRV_STUS != '' THEN '승인'  " \
-                          "            ELSE '미승인' END APRV_STUS_NM " \
-                          "  FROM TB_APVL_REQ_MGMT_M A, TB_EMP_MGMT B " \
-                          " WHERE A.EMP_EMAL_ADDR = B.EMP_EMAIL  " \
+                          "     , CASE WHEN A.APVL_REQ_DIVS = '01' THEN '야간근무' WHEN A.APVL_REQ_DIVS = '02' THEN '휴일근무' WHEN A.APVL_REQ_DIVS = '03' THEN '연차결재' ELSE '' END APVL_REQ_NM  " \
+                          "     , CASE WHEN A.TH1_APRV_STUS = '01' THEN '미승인'  " \
+                          "       	   WHEN A.TH1_APRV_STUS = '02' THEN '승인'  " \
+                          "            ELSE '반려' END APRV_STUS_NM " \
+                          "     , NVL(A.APVL_REQ_DT, '') APVL_REQ_DT " \
+                          "     , NVL(A.WRK_REQ_RSN, '') WRK_REQ_RSN " \
+                          "  FROM TB_APVL_REQ_MGMT_M A, TB_EMP_MGMT B, TB_EMP_MGMT C " \
+                          " WHERE A.EMP_EMAL_ADDR = C.EMP_EMAIL  " \
+                          "   AND A.TH1_APRV_NM = B.EMP_EMAIL  " \
                           "   AND A.TH1_APRV_NM = '" + email + "' " \
                           "   AND A.TH1_APRV_STUS = '" + apvlStusDivs + "'"
 
@@ -796,15 +804,20 @@ class apvlAcptHist(Resource):  # Mariadb 연결 진행
                     cursor.execute(sql)
                 if apvlStusDivs == "02":
                     # 승인
-                    sql = "SELECT B.EMP_NAME " \
+                    sql = "SELECT A.EMP_EMAL_ADDR, C.EMP_NAME " \
                           "     , NVL(A.WRK_DT,'') WRK_DT " \
+                          "     , NVL(A.JOB_STRT_TM, '') JOB_STRT_TM " \
+                          "     , NVL(A.JOB_END_TM, '') JOB_END_TM " \
                           "     , CASE WHEN A.APVL_REQ_DIVS = '01' THEN NVL(A.WRK_TME,'') WHEN A.APVL_REQ_DIVS = '02' THEN NVL(A.WRK_TME,'') ELSE '' END WRK_TME  " \
-                          "     , CASE WHEN A.APVL_REQ_DIVS = '01' THEN '휴일근무' WHEN A.APVL_REQ_DIVS = '02' THEN '야간근무' WHEN A.APVL_REQ_DIVS = '03' THEN '연차결재' ELSE '' END APVL_REQ_NM  " \
-                          "     , CASE WHEN A.TH1_APRV_STUS != '' AND A.TH1_APRV_STUS = '' THEN '미승인'  " \
-                          "       		 WHEN A.TH1_APRV_STUS != '' AND A.TH1_APRV_STUS != '' THEN '승인'  " \
-                          "            ELSE '미승인' END APRV_STUS_NM " \
-                          "  FROM TB_APVL_REQ_MGMT_M A, TB_EMP_MGMT B " \
-                          " WHERE A.EMP_EMAL_ADDR = B.EMP_EMAIL  " \
+                          "     , CASE WHEN A.APVL_REQ_DIVS = '01' THEN '야간근무' WHEN A.APVL_REQ_DIVS = '02' THEN '휴일근무' WHEN A.APVL_REQ_DIVS = '03' THEN '연차결재' ELSE '' END APVL_REQ_NM  " \
+                           "     , CASE WHEN A.TH1_APRV_STUS = '01' THEN '미승인'  " \
+                          "       	   WHEN A.TH1_APRV_STUS = '02' THEN '승인'  " \
+                          "            ELSE '반려' END APRV_STUS_NM " \
+                          "     , NVL(A.APVL_REQ_DT, '') APVL_REQ_DT " \
+                          "     , NVL(A.WRK_REQ_RSN, '') WRK_REQ_RSN " \
+                          "  FROM TB_APVL_REQ_MGMT_M A, TB_EMP_MGMT B, TB_EMP_MGMT C " \
+                          " WHERE A.EMP_EMAL_ADDR = C.EMP_EMAIL  " \
+                          "   AND A.TH1_APRV_NM = B.EMP_EMAIL  " \
                           "   AND A.TH1_APRV_NM = '" + email + "' " \
                           "   AND A.TH1_APRV_STUS = '" + apvlStusDivs + "'"
 
