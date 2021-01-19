@@ -26,11 +26,13 @@
             $('#empModalDiv').css("z-index", 15);
         }
 
+
     });
 
 /*
     // 직원 조회 시, 결재자 input 세팅
     $(document).on("click","#ipt_apvlSearchNamePop",function(){
+
         if($('#apvlReqIptFlagHidden').text() == 'apvlReqHist'){
         //부모창에서 연 경우,
             $('#ipt_searchName').val($('#ipt_apvlSearchNamePop').val());
@@ -139,7 +141,7 @@
 </script>
 
 
-<div class="row" style="width :650px;">
+<div class="row" style="width :640px;">
     <div class="col-sm-12">
         <div class="mb-4" role="alert">
         <h6>
@@ -194,7 +196,22 @@
                 <div class="align-self-center mr-3">
                     <div class="align-self-center mr-3">
                         <input type="text" class="align-self-start align-self-center mr-1 form-control" id="ipt_apvlLnSearchNamePop" name="ipt_apvlLnSearchNamePop" placeholder="이름을 입력해주세요." maxlength="10" readonly/>
-                        <input type="text" class="align-self-start align-self-center mr-1 form-control" id="ipt_apvlLnSearchEmailPop" name="ipt_apvlLnSearchEmailPop" style="width:235px" readonly/>
+                        <input type="text" class="align-self-start align-self-center mr-1 form-control" id="ipt_apvlLnSearchEmailPop" name="ipt_apvlLnSearchEmailPop" style="width:235px; display=none;" readonly/>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="card-body flex-height d-flex m-0 p-2">
+                <!-- 결재자 -->
+                <div class="align-self-center mr-5 " style="font-weight:bold">
+                    <span>참조&nbsp;</span>
+                </div>
+
+                <div class="align-self-center mr-3">
+                    <div class="align-self-center mr-3">
+                        <input type="text" class="align-self-start align-self-center mr-1 form-control" id="ipt_refSearchNamePop" name="ipt_refSearchNamePop" placeholder="이름을 입력해주세요." maxlength="10" readonly/>
+                        <input type="text" class="align-self-start align-self-center mr-1 form-control" id="ipt_refSearchEmailPop" name="ipt_refSearchEmailPop" style="width:235px; display=none;" readonly/>
                     </div>
                 </div>
 
