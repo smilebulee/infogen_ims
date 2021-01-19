@@ -142,92 +142,66 @@
 <div class="row">
     <div class="col-sm-12">
         <div class="mb-4" role="alert">
-            <h5>
-                <b>야간 근무</b>
-            </h5>
-        </div>
-
-        <div class="accordion mb-4" id="grp_yryApvlReq">
-            <div class="card">
-                <div class="card-header p-0" id="head_yryApvlReq">
-                    <h2 class="mb-0">
-                        <button class="btn btn-link btn-block text-left text-dark" type="button" data-toggle="collapse" data-target="#col_yryApvlReq" aria-expanded="true" aria-controls="collapseOne">
-                            <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-caret-down-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z"/>
-                            </svg>
-                            결재 요청
-                        </button>
-                    </h2>
-                </div>
-
-                <!-- Card Body -->
-                <div id="col_yryApvlReq" class="collapse show" aria-labelledby="head_yryApvlReq" data-parent="#grp_yryApvlReq">
-                    <!-- 결재유형(선/후) 값에 따라 변경되는 영역 -->
-                    <div id="apvlReqDiv" class="card-body flex-height d-flex">
-                        <div class="row">
-                            <div class="col-sm-12">
-                                <div class="accordion mb-4" id="grp_wrkApvlReq">
-                                    <div class="p-0" id="head_wrkApvlReq">
-                                        <!-- Body -->
-                                        <!--
-                                        <div class="flex-height d-flex m-0 p-2">
-                                            <div class="align-self-start align-self-center mr-3">결재 유형</div>
-                                            <div class="align-self-center">
-                                                <span class="align-self-start align-self-center">선결재</span>
-                                            </div>
-                                        </div>
-                                        -->
-
-                                        <div class="flex-height d-flex m-0 p-2">
-                                            <div class="align-self-start align-self-center mr-3">근무 일자</div>
-                                            <div class="align-self-center mr-5">
-                                                <!--<input type="text" class="form-control" id="ipt_wrkDt" name="ipt_wrkDt" placeholder="" maxlength="24" readonly/>-->
-                                                <input type="date" class="align-self-start align-self-center mr-1" id="ipt_wrkDt"       name="ipt_wrkDt" />
-                                                <input type="time" class="align-self-start align-self-center"      id="ipt_jobStrtTm"   name="ipt_jobStrtTm" />
-                                                <span              class="align-self-start align-self-center">&nbsp;&nbsp;~&nbsp;&nbsp;</span>
-                                                <input type="time" class="align-self-start align-self-center mr-1" id="ipt_jobEndTm"    name="ipt_jobEndTm" />
-                                            </div>
-                                        </div>
-
-                                        <div class="flex-height d-flex m-0 p-2">
-                                            <div class="align-self-start align-self-center mr-3">근무 사유</div>
-                                            <div class="align-self-center mr-7">
-                                                <textarea id="txa_reqBfrRsn" name="reqRsn" maxlength="500" style="resize: none; width:440px;height:70px;" placeholder="사유를 입력해주세요."></textarea>
-                                            </div>
-                                        </div>
-
-                                        <!-- 결재선 지정 영역 -->
-                                        <div class="card-body flex-height d-flex m-0 p-2">
-                                            <!-- 결재자 -->
-                                            <div class="align-self-center mr-5">
-                                                <span>결재&nbsp;</span>
-                                            </div>
-
-                                            <div class="align-self-center mr-3">
-                                                <div class="align-self-center mr-3">
-                                                    <input type="text" class="align-self-start align-self-center mr-1" id="ipt_apvlLnSearchNamePop" name="ipt_apvlLnSearchNamePop" placeholder="이름을 입력해주세요." maxlength="10" readonly/>
-                                                    <input type="text" class="align-self-start align-self-center mr-1" id="ipt_apvlLnSearchEmailPop" name="ipt_apvlLnSearchEmailPop" style="width:235px" readonly/>
-                                                </div>
-                                            </div>
-
-                                        </div>
-
-                                        <!-- 결재 요청 버튼 영역 -->
-                                        <div class="flex-height d-flex m-0 p-2">
-                                            <div class="align-self-start align-self-center mr-3"></div>
-                                            <div class="align-self-center mr-7">
-                                                <button class="button" id="btn_apvlBfrReq">요청</button>
-                                            </div>
-                                        </div>
-
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+        <h6>
+            <b>결재 요청</b>
+        </h6>
+    </div>
+    <div class="accordion mb-4" id="grp_wrkApvlReq">
+        <div class="p-0" id="head_wrkApvlReq">
+            <!-- Body -->
+            <!--
+            <div class="flex-height d-flex m-0 p-2">
+                <div class="align-self-start align-self-center mr-3">결재 유형</div>
+                <div class="align-self-center">
+                    <span class="align-self-start align-self-center">선결재</span>
                 </div>
             </div>
+            -->
+
+            <div class="flex-height d-flex m-0 p-2">
+                <div class="align-self-start align-self-center mr-3" style="font-weight:bold">근무 일자</div>
+                <div class="align-self-center mr-5">
+                    <!--<input type="text" class="form-control" id="ipt_wrkDt" name="ipt_wrkDt" placeholder="" maxlength="24" readonly/>-->
+                    <input type="date" class="align-self-start align-self-center mr-1 form-control" id="ipt_wrkDt"       name="ipt_wrkDt" />
+                    <input type="time" class="align-self-start align-self-center form-control"      id="ipt_jobStrtTm"   name="ipt_jobStrtTm" />
+                    <span              class="align-self-start align-self-center form-control">&nbsp;&nbsp;~&nbsp;&nbsp;</span>
+                    <input type="time" class="align-self-start align-self-center mr-1 form-control" id="ipt_jobEndTm"    name="ipt_jobEndTm" />
+                </div>
+            </div>
+
+            <div class="flex-height d-flex m-0 p-2">
+                <div class="align-self-start align-self-center mr-3" style="font-weight:bold">근무 사유</div>
+                <div class="align-self-center mr-7">
+                    <textarea id="txa_reqBfrRsn" class="form-control" name="reqRsn" maxlength="500" style="resize: none; width:440px;height:70px;" placeholder="사유를 입력해주세요."></textarea>
+                </div>
+            </div>
+
+            <!-- 결재선 지정 영역 -->
+            <div class="card-body flex-height d-flex m-0 p-2">
+                <!-- 결재자 -->
+                <div class="align-self-center mr-5 " style="font-weight:bold">
+                    <span>결재&nbsp;</span>
+                </div>
+
+                <div class="align-self-center mr-3">
+                    <div class="align-self-center mr-3">
+                        <input type="text" class="align-self-start align-self-center mr-1 form-control" id="ipt_apvlLnSearchNamePop" name="ipt_apvlLnSearchNamePop" placeholder="이름을 입력해주세요." maxlength="10" readonly/>
+                        <input type="text" class="align-self-start align-self-center mr-1 form-control" id="ipt_apvlLnSearchEmailPop" name="ipt_apvlLnSearchEmailPop" style="width:235px" readonly/>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- 결재 요청 버튼 영역 -->
+            <div class="flex-height d-flex m-0 p-2">
+                <div class="align-self-start align-self-center mr-3"></div>
+                <div class="align-self-center mr-7">
+                    <button class="button" id="btn_apvlBfrReq">요청</button>
+                </div>
+            </div>
+
         </div>
+    </div>
     </div>
 </div>
 
