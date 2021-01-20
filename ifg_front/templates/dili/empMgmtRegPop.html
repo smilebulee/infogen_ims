@@ -92,11 +92,17 @@
         if( ipt_empId == "" || ipt_empId == null ){
             alert("직원 아이디를 입력해 주세요.");
             return false;
+        } else if(ipt_empId.length < 4 || ipt_empId.length > 12 ) {
+            alert("직원 아이디는 4 ~ 12자로 입력해주세요.");
+            return false;
         } else if($('#reIsExistBtn').is(":hidden")) {
             alert("직원 아이디 중복여부 체크해 주세요.");
             return false;
         } else if (ipt_empPw == "" || ipt_empPw == null ){
             alert("직원 비밀번호를 입력해 주세요.");
+            return false;
+        } else if(ipt_empPw.length < 4 || ipt_empPw.length > 12 ) {
+            alert("직원 비밀번호는 4 ~ 12자로 입력해주세요.");
             return false;
         } else if (ipt_empNm == "" || ipt_empNm == null ){
             alert("직원 이름을 입력해 주세요.");
