@@ -19,10 +19,12 @@
         console.log("###########SessionSettingInfo::", param);
 
 
-        // 사용자조회 이메일 : SessionSetting email로 설정
-        $('#ipt_apvlSearchEmailPop').val(param.email)
+        // 사용자 조회 > 이메일 : SessionSetting email로 설정
+        $('#ipt_apvlSearchEmailPop').val(param.email);
+        // 사용자 조회 > 이름 : SessionSetting email로 이름 조회하여 설정
         retrieveEmpNmByEmail(param.email, function(data) {
             $('#ipt_apvlSearchNamePop').val(data[0].EMP_NAME);
+            // 직원 조회 팝업으로 넘기고 받는 파라미터 값 설정
             $('#ipt_apvlSearchName').val(data[0].EMP_NAME);
             $('#ipt_apvlSearchEmail').val(param.email);
         });
@@ -42,32 +44,42 @@
             }
         });
 
+
         /*
         $('#ipt_apvlSearchNamePop').change(function() {
-            console.log("ipt_apvlSearchNamePop변화 => change 이벤트 안됨 추후 테스트 필요");
+            console.log("ipt_apvlSearchNamePop변화 => change 이벤트 안되어 click 이벤트로 임시 사용 중 추후 테스트 필요");
             $('#ipt_apvlSearchName').val($('#ipt_apvlSearchNamePop').val());
         });
         */
 
+
+        // 결재 내역 그리드가 없을 경우, 결재 상세 테이블 숨김
+        if($('#grd_apvlReqHist').html() == '') {
+            $('#grd_apvlReqHistDetl').css('display', 'none');
+        }
+
+
         /*********************************************************************
         *   이벤트 바인딩 및 함수 선언
         *********************************************************************/
-
+        //조회 버튼 클릭 이벤트
         $("#searchBtn").click(function(){
+            /*
             //결재 상세 테이블 초기화
             $("#thApvlReqDt").text("");
             $("#thAprvNm1").text("");
             $("#thAprvStus1").text("");
+            // 결재 상세 테이블 숨김
+            $('#grd_apvlReqHistDetl').css('display', 'none');
+            */
 
             /*********************************************************************
             *   Session Email 값 기준 근무 결재요청 리스트 조회
             *********************************************************************/
             var params = {
-                //"email" : sessionStorage.getItem("email"),////////////////////////////////////////////////바꾸기
-                "email" : $("#ipt_apvlSearchEmail").val() || sessionStorage.getItem("email"),
-                "apvlStusDivs" : $("#sbx_type option:selected").val(),      //TB_APVL_REQ_MGMT_M APVL_STUS 값 => 01,02: 승인, 승인반려 NULL: 미승인
+                "email" : $("#ipt_apvlSearchEmail").val() || sessionStorage.getItem("email"),   //사용자 조회  > 이메일 값
+                "apvlStusDivs" : $("#sbx_type option:selected").val(),                          //TB_APVL_REQ_MGMT_M APVL_STUS 값 => 01,02: 승인, 승인반려 NULL: 미승인
             }
-
             console.log("###########params::", params);
             var url = "{% url 'dili_api:getApvlReqHist' %}";
 
@@ -80,18 +92,23 @@
         // 직원 조회 시, 결재자 input 세팅
         //$(document).on("click","#ipt_apvlSearchNamePop",function(){
         $('#ipt_apvlSearchNamePop').click(function() {
+
             if($('#apvlReqIptFlagHidden').text() == 'apvlReqHist'){
-            //부모창에서 연 경우,
+                //부모창에서 연 경우, 직원 조회 > 이름, 이메일 세팅
                 $('#ipt_apvlSearchName').val($('#ipt_apvlSearchNamePop').val());
                 $('#ipt_apvlSearchEmail').val($('#ipt_apvlSearchEmailPop').val());
-                //$('#apvlReqIptFlagHidden').text('');
-            } else if($('#apvlReqIptFlagHidden').text() == 'apvlReqBfrPop') {
-                //자식창에서 연 경우,
-                $('#ipt_apvlLnSearchEmailPop').val($('#ipt_apvlSearchEmailPop').val());
+                $('#apvlReqIptFlagHidden').text('')
+            } else if($('#apvlReqIptFlagHidden').text() == 'apvlLnReqBfrPop') {
+                //자식창에서 연 경우, 결재자 조회 > 이름, 이메일 세팅
                 $('#ipt_apvlLnSearchNamePop').val($('#ipt_apvlSearchNamePop').val());
-                //$('#apvlReqIptFlagHidden').text('');
+                $('#ipt_apvlLnSearchEmailPop').val($('#ipt_apvlSearchEmailPop').val());
+                $('#apvlReqIptFlagHidden').text('')
+            } else if($('#apvlReqIptFlagHidden').text() == 'refReqBfrPop') {
+                //자식창에서 연 경우, 참조자 조회 > 이름, 이메일 세팅
+                $('#ipt_refSearchNamePop').val($('#ipt_apvlSearchNamePop').val());
+                $('#ipt_refSearchEmailPop').val($('#ipt_apvlSearchEmailPop').val());
+                $('#apvlReqIptFlagHidden').text('')
             }
-            //$("#apvlEmpEmailHidden").text('');
         });
 
 
@@ -102,49 +119,43 @@
                 $('#apvlReqIptFlagHidden').text("apvlReqHist");
 
                 var url = "{% url 'dili_api:empMgmtPop' %}" ;
-
                 modal('empModalDiv');
-
                 $('#empModal').load(url);
-
-                //$('#empModalDiv').css("width", "40%");
                 $('#empModalDiv').css("z-index", 15);
             });
         }
+
+
         // 결재등록 모달 오픈
         $("#apvlReqBtn").click(function(){
             var url = "{% url 'dili_api:apvlReqBfrPop' %}" ;
 
-            //$('#apvlReqModalDiv').css("width","50%");
-
             modal('apvlReqModalDiv');
-
             $('#apvlReqModal').load(url);
         });
 
+
         // 결재승인 모달 오픈
         $("#apvlAcptBtn").click(function(){
-            var url = "{% url 'dili_api:apvlAcptPop' %}" ; /////////////////////////수정
-            //var url = "{% url 'dili_api:wrkApvlReq' %}" ; /////////////////////////수정
-
-            //$('#apvlAcptModalDiv').css("width","50%");
+            var url = "{% url 'dili_api:apvlAcptPop' %}" ;
 
             modal('apvlAcptModalDiv');
-
             $('#apvlAcptModal').load(url);
         });
 
-        /*
-        $("#selectBtn").click(function(){
-            $('#empModal').hide();
-        });
-        */
     });
 
     /*********************************************************************
     *   근무결재요청내역 Grid 생성
     *********************************************************************/
     function apvlReqHistGrd(data){
+        // 결재 상세 테이블 숨김
+        $('#grd_apvlReqHistDetl').css('display', 'none');
+        // 결재 상세 input 값 초기화
+        $("#thApvlReqDt").text("");
+        $("#thAprvNm1").text("");
+        $("#thAprvStus1").text("");
+
         var apvlReqHistTable =  '<table class="table table-bordered text-center">';
             apvlReqHistTable += '<thead>';
             apvlReqHistTable += '<tr>';
@@ -180,25 +191,16 @@
             }
         } else {
             apvlReqHistTable += '<tr">';
-            apvlReqHistTable += '<td id="no'+i+'" class="pt-3-half"></td>';
-            apvlReqHistTable += '<td id="empName" class="pt-3-half"></td>';
-            apvlReqHistTable += '<td id="wrkDt" class="pt-3-half"></td>';
-            apvlReqHistTable += '<td id="apvlReqNm" class="pt-3-half"></td>';
-            apvlReqHistTable += '<td id="aprvStusNm" class="pt-3-half"></td>';
+            apvlReqHistTable += '<td colspan="5" class="pt-3-half">결재 요청 내역이 없습니다.</td>';
             apvlReqHistTable += '</tr>';
 
-            $("#thApvlReqDt").text("");
-            $("#thAprvNm1").text("");
-            $("#thAprvStus1").text("");
-
         }
-
 
         apvlReqHistTable += '</tbody>';
         apvlReqHistTable += '</table>';
 
 //        document.getElementById('grd_apvlReqHist').innerHTML = apvlReqHistTable;
-        $('#grd_apvlReqHist').html(apvlReqHistTable); ////////////////여기테스트
+        $('#grd_apvlReqHist').html(apvlReqHistTable);
 
     }
 
@@ -227,16 +229,25 @@
     *   Grid 선택한 행에 따라 상세보기
     *********************************************************************/
     function setApvlReqHistDetl(data) {
+        // 결재 상세 테이블 보임
+        $('#grd_apvlReqHistDetl').css('display', 'block');
         if(data == undefined || data == null || data.length == 0) {
+            // 결재 상세 테이블 숨김
+            //$('#grd_apvlReqHistDetl').css('display', 'none');
+            // 결재 상세 input 값 초기화
             $("#thApvlReqDt").text("");
             $("#thAprvNm1").text("");
             $("#thAprvStus1").text("");
         } else {
+            // 결재 상세 테이블 보임
+            //$('#grd_apvlReqHistDetl').css('display', 'block');
+            // 결재 상세 input 값 초기화
             $("#thApvlReqDt").text(data[0].APVL_REQ_DT);
             $("#thAprvNm1").text(data[0].TH1_APRV_NM);
             $("#thAprvStus1").text(data[0].TH1_APRV_STUS_NM);
         }
     }
+
 
 </script>
 
