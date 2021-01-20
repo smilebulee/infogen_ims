@@ -1,6 +1,16 @@
 <script type="text/javascript">
     $(document).ready(function(){
         /*********************************************************************
+        *   화면 초기화
+        *********************************************************************/
+        // 공통 코드 조회 - '결재 승인 상태 구분'
+        retrieveCmmCd('sbx_aprvStusNm', 'APVL_STTS_CD', function() {
+            // 결재 승인 상태 구분 기본 값 : 01(미승인)
+            $('[name="APVL_STTS_CD"]').val('01');
+        });
+
+
+        /*********************************************************************
         *   Session Email 값 기준 근무 결재요청 리스트 조회
         *********************************************************************/
         var param = {
@@ -38,8 +48,10 @@
     *   근무결재요청 Grid 생성
     *********************************************************************/
     function wrkApvlAcptGrd(data){
+        // div 초기화
         document.getElementById('grd_wrkApvlAcpt').innerHTML = '';
 
+        //div 안에 그릴 table 값 설정
         var wrkApvlTable =  '<table class="table table-bordered text-center"  id="tblWrkApvlAcpt" >';
             wrkApvlTable += '<thead>';
             wrkApvlTable += '<tr>';
@@ -73,6 +85,12 @@
                 wrkApvlTable += '</tr>';
 
             }
+        } else {
+                wrkApvlTable += '<tr id ="grd_wrkApvlAcpt'+i+'">';
+                wrkApvlTable += '<td colspan="4" class="pt-3-half">결재 승인 요청 내역이 없습니다.</td>';
+                wrkApvlTable += '</tr>';
+
+
         }
 
         wrkApvlTable += '</tbody>';
@@ -86,8 +104,8 @@
     *********************************************************************/
     function srchApvlAcptHist() {
         var param = {
-            "email" : sessionStorage.getItem("email"),
-            "apvlStusDivs" : "01"                       //'미승인' 상태 요청 조회
+            "email"        : sessionStorage.getItem("email"),   // 세션 값
+            "apvlStusDivs" : $('#sbx_aprvStusNm').val()         // 결재 승인 상태
         }
         console.log("##srchApvlAcptHist param::", param);
 
@@ -199,19 +217,19 @@
                                 <div class="accordion mb-4" id="grp_wrkApvlAcpt">
                                     <div class="p-0" id="head_wrkApvlAcpt">
                                         <!-- Body -->
-                                        <!--
                                         <div class="flex-height d-flex m-0 p-2">
                                             <div class="align-self-center mr-5">
                                                 <span>구분&nbsp;</span>
                                             </div>
-                                            <div class="align-self-center">
-                                                <span class="align-self-start align-self-center mr-5">미승인</span>
+                                            <div class="align-self-center mr-5">
+                                                <select id="sbx_aprvStusNm" name="APVL_STTS_CD" class="form-control">
+                                                    <option value="00" selected>전체</option>
+                                                </select>
                                             </div>
                                             <div class="align-self-end align-self-center">
                                                 <button class="button" id="srchAcptHistBtn">조회</button>
                                             </div>
                                         </div>
-                                        -->
 
                                         <div style="position: relative;" id="grid-parent">
                                             <div id="grd_wrkApvlAcpt">grid</div>
