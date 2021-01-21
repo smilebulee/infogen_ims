@@ -27,6 +27,7 @@ urlpatterns = [
     url(r'^yryApvlReq/', views.yryApvlReq.as_view(), name='yryApvlReq'),
     url(r'^apvlReqPop/', views.apvlReqPop.as_view(), name='apvlReqPop'),
     url(r'^apvlReqBfrPop/', views.apvlReqBfrPop.as_view(), name='apvlReqBfrPop'),   #선결재 팝업
+    url(r'^getDuplApvlReqCnt/', views.getDuplApvlReqCnt, name='getDuplApvlReqCnt'), #선결재 동일 일자 결재 건수 조회
     url(r'^apvlReqLtrPop/', views.apvlReqLtrPop.as_view(), name='apvlReqLtrPop'),   #후결재 팝업
     url(r'^apvlAcptPop/', views.apvlAcptPop.as_view(), name='apvlAcptPop'), 
     url(r'^noticeLst/', views.noticeLst.as_view(), name='noticeLst'),

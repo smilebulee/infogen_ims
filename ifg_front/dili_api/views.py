@@ -270,6 +270,22 @@ class apvlReqBfrPop(generic.TemplateView):
         return render(request, template_name)
 
 
+def getDuplApvlReqCnt(request):
+    param = json.loads(request.GET['param'])
+
+    logger.info("Parameters Start")
+    logger.info(param)
+    logger.info("Parameters End")
+
+    # api 호출
+    r = requests.get('http://dili_api:5006/duplApvlReqCnt', json=param)
+    logger.info(r)
+    logger.info(r.text)
+    logger.info(logger.info(ast.literal_eval(r.json())))
+    logger.info(json.loads(r.text))
+    return JsonResponse(ast.literal_eval(r.json()), safe=False)
+
+
 class apvlReqLtrPop(generic.TemplateView):
     def get(self, request, *args, **kwargs):
         template_name = 'dili/apvlReqLtrPop.html'

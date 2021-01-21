@@ -995,6 +995,37 @@ class empName(Resource): # Mariadb 연결 진행
         return json.dumps(result2, indent=4, cls=DateTimeEncoder)
 
 
+class duplApvlReqCnt(Resource): # Mariadb 연결 진행
+    def get(self):
+
+        data = request.get_json()
+
+        #requirements pymysql import 후 커넥트 사용
+        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
+                                        charset='utf8', autocommit=False)
+        try:
+            with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+                # 쿼리문 실행
+                sql = "SELECT COUNT(*) AS APVL_REQ_CNT " \
+                      "  FROM TB_APVL_REQ_MGMT_M " \
+                      " WHERE EMP_EMAL_ADDR = '" + data["email"] + "' " \
+                      "   AND WRK_DT = '" + data["wrkDt"] + "' "
+                logging.debug("apvlReqHistDetl SQL문" + sql)
+                cursor.execute(sql)
+
+        finally:
+            mysql_con.close()
+
+        result2 = cursor.fetchall()
+        for row in result2:
+            logging.debug('====== row====')
+            logging.debug(row)
+            logging.debug('===============')
+        array = list(result2)  # 결과를 리스트로
+
+        return json.dumps(result2, indent=4, cls=DateTimeEncoder)
+
+
 class apvlReqHistDetl(Resource): # Mariadb 연결 진행
     def get(self):
 
@@ -2089,6 +2120,7 @@ api.add_resource(wrkApvlReq,'/wrkApvlReq') #api 선언
 api.add_resource(saveApvlReq,'/saveApvlReq') #api 선언
 api.add_resource(saveApvlAcpt,'/saveApvlAcpt') #api 선언
 api.add_resource(apvlReqHist,'/apvlReqHist') #api 선언
+api.add_resource(duplApvlReqCnt,'/duplApvlReqCnt') #api 선언
 api.add_resource(apvlReqHistDetl,'/apvlReqHistDetl') #api 선언
 api.add_resource(apvlAcptHist,'/apvlAcptHist') #api 선언
 api.add_resource(calendarData,'/calendarData') #api 선언
