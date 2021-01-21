@@ -634,11 +634,14 @@
                             if(schdData[j].APVL_REQ_DT == "N/A" && schdData[j].APVL_LAST_APRV_DT == "N/A" && schdData[j].OVER_WRK_TM != "00:00:00"){
                                 apvlStus = "미등록"
                             }
-                            if(schdData[j].APVL_REQ_DT != "N/A" && schdData[j].APVL_LAST_APRV_DT == "N/A"){
+                            if(schdData[j].TH1_APRV_STUS == "01"){
                                 apvlStus = "진행중"
                             }
-                            if(schdData[j].APVL_REQ_DT != "N/A" && schdData[j].APVL_LAST_APRV_DT != "N/A"){
+                            if(schdData[j].TH1_APRV_STUS == "02"){
                                 apvlStus = "완료"
+                            }
+                            if(schdData[j].TH1_APRV_STUS == "03"){
+                                apvlStus = "반려"
                             }
                         }
                     }
@@ -742,11 +745,14 @@
                             if(schdData[j].APVL_REQ_DT == "N/A" && schdData[j].APVL_LAST_APRV_DT == "N/A" && schdData[j].OVER_WRK_TM != "00:00:00"){
                                 apvlStus = "미등록"
                             }
-                            if(schdData[j].APVL_REQ_DT != "N/A" && schdData[j].APVL_LAST_APRV_DT == "N/A"){
+                            if(schdData[j].TH1_APRV_STUS == "01"){
                                 apvlStus = "진행중"
                             }
-                            if(schdData[j].APVL_REQ_DT != "N/A" && schdData[j].APVL_LAST_APRV_DT != "N/A"){
+                            if(schdData[j].TH1_APRV_STUS == "02"){
                                 apvlStus = "완료"
+                            }
+                            if(schdData[j].TH1_APRV_STUS == "03"){
+                                apvlStus = "반려"
                             }
                         }
                     }
@@ -1239,11 +1245,14 @@
                 if(calendarData[i].APVL_REQ_DT == "N/A" && calendarData[i].APVL_LAST_APRV_DT == "N/A" && calendarData[i].OVER_WRK_TM != "00:00:00"){
                     apvlStus = "미등록"
                 }
-                if(calendarData[i].APVL_REQ_DT != "N/A" && calendarData[i].APVL_LAST_APRV_DT == "N/A"){
+                if(calendarData[i].TH1_APRV_STUS == "01"){
                     apvlStus = "진행중"
                 }
-                if(calendarData[i].APVL_REQ_DT != "N/A" && calendarData[i].APVL_LAST_APRV_DT != "N/A"){
+                if(calendarData[i].TH1_APRV_STUS == "02"){
                     apvlStus = "완료"
+                }
+                if(calendarData[i].TH1_APRV_STUS == "03"){
+                    apvlStus = "반려"
                 }
                 var dataCustom;
                 if(statTm != "-"){
@@ -1310,6 +1319,17 @@
                    $('div[data-calendar-id="'+dataCustomArray[i].calendarId+'"]').css("background-color","rgba( 255,139,139, 0.5 )");
                 }
             }
+            for(var i=0; i < dataCustomArray.length; i++) {
+                if(dataCustomArray[i].apvlStus == "진행중"){
+                   $('div[data-calendar-id="'+dataCustomArray[i].calendarId+'"]').css("background-color","rgba( 255,255,153, 0.5 )");
+                }
+            }
+            for(var i=0; i < dataCustomArray.length; i++) {
+                if(dataCustomArray[i].apvlStus == "반려"){
+                   $('div[data-calendar-id="'+dataCustomArray[i].calendarId+'"]').css("background-color","rgba( 153,153,255, 0.5 )");
+                }
+            }
+
         }
 
         /*********************************************************************
