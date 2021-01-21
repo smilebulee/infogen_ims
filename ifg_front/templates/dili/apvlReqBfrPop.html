@@ -101,7 +101,7 @@
         submissionCallList( param, 'GET', url, function(data) {
             if(data.length > 0 && data[0].APVL_REQ_CNT > 0) {
                 //동일 날짜에 결재요청건이 있는 경우
-                var msg = '일자 : " + param.wrkDt + '\n결재요청건이 ' + data[0].APVL_REQ_CNT + '건 있습니다.\n 결재 요청하시겠습니까?';
+                var msg = '일자 : ' + param.wrkDt + '\n결재요청건이 ' + data[0].APVL_REQ_CNT + '건 있습니다.\n 결재 요청하시겠습니까?';
                 cf_dialog.confirm(msg, function(){
                     if(this.key == 'ok'){
                         saveApvlReq();

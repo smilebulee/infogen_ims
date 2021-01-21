@@ -11,7 +11,7 @@ var nRow;
     /* 메인 화면에서 받는 NAME 파라미터 */
 
     name = $('#ipt_searchNamePop').val();
-
+    $('#ipt_searchName').focus();
 
     console.log(' Debug [Name] : '+name );
 
@@ -120,9 +120,9 @@ debugger;
             var email = $(nRow).children().eq(1).text(); // 그리드에서 선택한 email 값
             var name = $(nRow).children().eq(0).text(); // 그리드에서 선택한 name 값
 
-            $('#ipt_searchEmailPop').val(email);
+            $('#ipt_searchOcemEmailPop').val(email);
             $("#apvlEmpEmailHidden").text(email);
-            $('#ipt_searchNamePop').val(name).trigger('click');    //change 이벤트 안됨. 추후 수정 예정
+            $('#ipt_searchOcemNamePop').val(name).trigger('click');    //change 이벤트 안됨. 추후 수정 예정
 
             $('#exitEmpModalBtn').click();
 
@@ -184,9 +184,9 @@ function onDblClickEvt(i){
             var email = $(i).children().eq(1).text(); // 그리드에서 선택한 email 값
             var name = $(i).children().eq(0).text(); // 그리드에서 선택한 name 값
 
-            $('#ipt_searchEmailPop').val(email);
+            $('#ipt_searchOcemEmailPop').val(email);
             $("#apvlEmpEmailHidden").text(email);
-            $('#ipt_searchNamePop').val(name).trigger('click');    //change 이벤트 안됨. 추후 수정 예정
+            $('#ipt_searchOcemNamePop').val(name).trigger('click');    //change 이벤트 안됨. 추후 수정 예정
 
             $('#exitEmpModalBtn').click();
             $("#apvlEmpEmailHidden").text('');
@@ -241,11 +241,11 @@ function onClickEvt(i) {
     nRow = i;
 
 //    $('#ipt_apvlSearchNamePop').change();
-
+debugger;
     if($("#apvlReqHidden").text() == "scheduleStat") {
-        $('#ipt_searchEmailPop').val(email);
+        $('#ipt_searchOcemEmailPop').val(email);
         $('#apvlEmpEmailHidden').text(email);
-        $('#ipt_searchNamePop').val(name).trigger('click');
+        $('#ipt_searchOcemNamePop').val(name).trigger('click');
 
     } else {
         $('#ipt_apvlSearchEmailPop').val(email);
@@ -296,9 +296,9 @@ function onClickSearchBtn(ipt_searchName) {
                 } else if ( scrDivs == "scheduleStat" ) {
 
                     if (data.length == 1) {
-                        $('#ipt_searchEmailPop').val(data[0].EMP_EMAIL);
+                        $('#ipt_searchOcemEmailPop').val(data[0].EMP_EMAIL);
                         $('#apvlEmpEmailHidden').text(data[0].EMP_EMAIL);
-                        $('#ipt_searchNamePop').val(data[0].EMP_NAME).trigger('click');
+                        $('#ipt_searchOcemNamePop').val(data[0].EMP_NAME).trigger('click');
 
                         $('#exitEmpModalBtn').click();
 
@@ -349,6 +349,7 @@ function onClickSearchBtn(ipt_searchName) {
 /* 직원목록 엔터 조회 */
 $('#ipt_searchName').keydown(function(e){
         //엔터키 입력 + 이름컬럼에 값이 있는 경우.
+        debugger;
         if ( e.keyCode == 13 && $('#ipt_searchName').val() != 'undefined' ) {
             var param = {
                 name : $('#ipt_searchName').val()
@@ -367,7 +368,8 @@ $('#ipt_searchName').keydown(function(e){
                      'async' : false,
                      'callbackFn' : function(data){
                             // 로그
-                            console.log("data : ",data)
+                            console.log("data !!!!!!!!!!!: ",data)
+                            console.log("data.length !!!!!!!!!!!: ",data.length)
                             // 리턴
 
                             var scrDivs = $('#apvlReqHidden').text();
@@ -383,11 +385,14 @@ $('#ipt_searchName').keydown(function(e){
                                     empListGrd(data);
                                 }
                             } else if ( scrDivs == "scheduleStat" ) {
-
+                                console.log("scheduleStat: ",data.length)
                                 if (data.length == 1) {
-                                    $('#ipt_searchNamePop').val(data[0].EMP_NAME);
+                                    $('#ipt_searchOcemNamePop').val(data[0].EMP_NAME);
                                     $('#apvlEmpEmailHidden').text(data[0].EMP_EMAIL);
                                     $('#exitEmpModalBtn').click();
+
+                                    $('#ipt_searchOcemEmailPop').val(data[0].EMP_EMAIL);
+                                    $('#ipt_searchOcemNamePop').val(data[0].EMP_NAME).trigger('click');  //change 이벤트 안됨. 추후 수정 예정
                                 } else {
                                     empListGrd(data);
                                 }

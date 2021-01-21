@@ -10,7 +10,7 @@
             retrieveCmmCd('BSIS_YEAR',settingBaseYear);
 
             if(sessionStorage.getItem("authId") != "ADMIN") {
-                $("#ipt_searchName").val(sessionStorage.getItem("email"));
+                $("#ipt_searchOcemName").val(sessionStorage.getItem("email"));
             }
 
              //현재 날짜 가져오기
@@ -91,7 +91,7 @@
 
             var param = {
                 "dept" : $("#sbx_dept").val(),
-                "email" : $("#ipt_searchName").val(),
+                "email" : $("#ipt_searchOcemEmail").val(),
                 "wrkDivs" : $("#sbx_wrkKind").val(),
                 "apvlStus" : $("#sbx_apvlStatus").val(),
                 "wrkDt" : setMDt
@@ -142,24 +142,29 @@
             document.getElementById('grid_stat').innerHTML = scheduleStatLstTable;
         }
 
-        $("#ipt_searchName").click(function(){
+        $("#ipt_searchOcemName").click(function(){
             //부모창에서 여는 직원 조회 팝업임을 표시
             $('#apvlReqIptFlagHidden').text("scheduleStat");
-            debugger;
+
             var url = "{% url 'dili_api:empMgmtPop' %}" ;
             modal('empModalDiv');
             $('#empModal').load(url);
             $('#empModalDiv').css("z-index", 15);
         });
 
-        $('#ipt_searchNamePop').click(function() {
-        debugger;
-            if($('#apvlReqIptFlagHidden').text() == 'scheduleStat'){
+        $('#ipt_searchOcemNamePop').click(function() {
+            debugger;
+            if($('#apvlReqHidden').text() == 'scheduleStat'){
                 //부모창에서 연 경우, 직원 조회 > 이름, 이메일 세팅
-                $('#ipt_searchName').val($('#ipt_searchNamePop').val());
-                $('#ipt_searchEmail').val($('#ipt_searchEmailPop').val());
+                $('#ipt_searchOcemName').val($('#ipt_searchOcemNamePop').val());
+                $('#ipt_searchOcemEmail').val($('#ipt_searchOcemEmailPop').val());
                 $('#apvlReqIptFlagHidden').text('')
             }
+        });
+
+        $('#exitEmpModalBtn').click(function(){
+            $('#empModal').empty();
+            $('.model_layout').empty();
         });
 
 
@@ -174,9 +179,9 @@
                M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
                <path fill-rule="evenodd" d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
             </svg>
-            <span id="apvlEmpEmailHidden" style="display:none;" ></span>
+            <span id="apvlEmpEmailHidden" class="model_layout" style="display:none;" ></span>
             <span id="apvlReqHidden" style="display:none;" >scheduleStat</span>
-            <span id="apvlReqIptFlagHidden" style="display:none;" ></span>
+            <span id="apvlReqIptFlagHidden" class="model_layout" style="display:none;" ></span>
         </a>
     </div>
 
@@ -212,10 +217,10 @@
                             </div>
                             <div class="align-self-start align-self-center mr-3">성명</div>
                             <div class="align-self-center mr-5">
-                                <input type="text" class="form-control" id="ipt_searchName" name="ipt_searchName" placeholder="이름을 입력해주세요." maxlength="10"/>
-                                <input type="hidden" class="form-control" id="ipt_searchEmail" name="ipt_searchEmail" readonly/>
-                                <input type="hidden" class="form-control" id="ipt_searchNamePop" name="ipt_searchNamePop" readonly/>
-                                <input type="hidden" class="form-control" id="ipt_searchEmailPop" name="ipt_searchEmailPop" readonly/>
+                                <input type="text" class="form-control" id="ipt_searchOcemName" name="ipt_searchOcemName" placeholder="이름을 입력해주세요." maxlength="10" readonly/>
+                                <input type="hidden" class="form-control" id="ipt_searchOcemEmail" name="ipt_searchOcemEmail" readonly/>
+                                <input type="hidden" class="form-control" id="ipt_searchOcemNamePop" name="ipt_searchOcemNamePop" readonly/>
+                                <input type="hidden" class="form-control" id="ipt_searchOcemEmailPop" name="ipt_searchOcemEmailPop" readonly/>
                             </div>
                             <div class="align-self-start align-self-center mr-3">근무구분</div>
                             <div class="align-self-center mr-5">
