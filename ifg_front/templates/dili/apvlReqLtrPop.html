@@ -127,7 +127,6 @@
             //후결재 저장
             cf_dialog.confirm('근무 결재를 요청하시겠습니까?', function(){
                 if(this.key == 'ok'){
-                debugger;
                     $('#apvlReqIptFlagHidden').text('apvlReqLtrPop');
                     var inptStrtTm = $("#ipt_jobStrtTm").val().substring(0,2) +""+ $("#ipt_jobStrtTm").val().substring(3,5) +"00";
                     var inptEndTm  = $("#ipt_jobEndTm").val().substring(0,2) +""+ $("#ipt_jobEndTm").val().substring(3,5) +"00";
