@@ -381,6 +381,9 @@ $('#ipt_searchName').keydown(function(e){
                                     $('#ipt_apvlSearchNamePop').val(data[0].EMP_NAME);
                                     $('#apvlEmpEmailHidden').text(data[0].EMP_EMAIL);
                                     $('#exitEmpModalBtn').click();
+
+                                    $('#ipt_apvlSearchEmailPop').val(data[0].EMP_EMAIL);
+                                    $('#ipt_apvlSearchNamePop').val(data[0].EMP_NAME).trigger('click');    //change 이벤트 안됨. 추후 수정 예정
                                 } else {
                                     empListGrd(data);
                                 }
