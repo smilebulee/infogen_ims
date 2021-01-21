@@ -86,7 +86,6 @@
                 wrkApvlTable += '<td class="pt-3-half">' + data[i].EMP_NAME     +'</td>';
                 wrkApvlTable += '<td class="pt-3-half" style="display: none;">' + data[i].WRK_DT + ";" + data[i].JOB_STRT_TM + ";" + data[i].JOB_END_TM + ";" + data[i].WRK_REQ_RSN + ";" + data[i].EMP_EMAL_ADDR + '</td>';
                 wrkApvlTable += '</tr>';
-                debugger;
             }
         } else {
                 wrkApvlTable += '<tr id ="grd_wrkApvlAcpt'+i+'">';
@@ -110,7 +109,7 @@
             "email"        : sessionStorage.getItem("email"),   // 세션 값
             "apvlStusDivs" : $('#sbx_aprvStusNm').val()         // 결재 승인 상태
         }
-        console.log("##srchApvlAcptHist param::", param);
+        //console.log("##srchApvlAcptHist param::", param);
 
         $.ajaxCall( param, {
              'method' : 'GET',
@@ -145,7 +144,7 @@
                 }
 
                 //param["th1AprvStus"] = thisId == 'btn_acpt' ? '02' : '03';
-                console.log("###param", param);
+                //console.log("###param", param);
 
                 $.ajaxCall( param, {
                      method : 'POST',
@@ -175,7 +174,6 @@
     document.getElementById(trId.id).style.backgroundColor = "lightgrey";
 
     var arrWrkDt = $('#'+trId.id).children().eq(5).html().split(';')
-    console.log("asdf" + arrWrkDt[0]);
     $("#ipt_reqAcptWrkDt").val(arrWrkDt[0]);
     $("#ipt_reqAcptJobStrtTm").val(arrWrkDt[1]);
     $("#ipt_reqAcptJobEndTm").val(arrWrkDt[2]);
