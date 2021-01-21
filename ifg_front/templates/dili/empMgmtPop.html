@@ -97,6 +97,7 @@ var nRow;
 
 /* 선택버튼 클릭 이벤트 */
 function onClickselectBtn() {
+debugger;
     console.log($("#apvlReqHidden").text());
     if($("#apvlReqHidden").text() == "apvlReq" ) {
         if($("#apvlEmpEmailHidden").text() == null || $("#apvlEmpEmailHidden").text() == ""){
@@ -108,6 +109,20 @@ function onClickselectBtn() {
             $('#ipt_apvlSearchEmailPop').val(email);
             $("#apvlEmpEmailHidden").text(email);
             $('#ipt_apvlSearchNamePop').val(name).trigger('click');    //change 이벤트 안됨. 추후 수정 예정
+
+            $('#exitEmpModalBtn').click();
+
+        }
+    } else if($("#apvlReqHidden").text() == "scheduleStat" ) {
+        if($("#apvlEmpEmailHidden").text() == null || $("#apvlEmpEmailHidden").text() == ""){
+            alert("직원을 선택해 주세요.");
+        }else{
+            var email = $(nRow).children().eq(1).text(); // 그리드에서 선택한 email 값
+            var name = $(nRow).children().eq(0).text(); // 그리드에서 선택한 name 값
+
+            $('#ipt_searchEmailPop').val(email);
+            $("#apvlEmpEmailHidden").text(email);
+            $('#ipt_searchNamePop').val(name).trigger('click');    //change 이벤트 안됨. 추후 수정 예정
 
             $('#exitEmpModalBtn').click();
 
@@ -162,6 +177,21 @@ function onDblClickEvt(i){
             $("#apvlEmpEmailHidden").text('');
             ///////////////////////////////////////////////////////////////////////////////////
         }
+    } else if($("#apvlReqHidden").text() == "scheduleStat" ) {
+        if($("#apvlEmpEmailHidden").text() == null || $("#apvlEmpEmailHidden").text() == ""){
+            alert("직원을 선택해 주세요.");
+        }else{
+            var email = $(i).children().eq(1).text(); // 그리드에서 선택한 email 값
+            var name = $(i).children().eq(0).text(); // 그리드에서 선택한 name 값
+
+            $('#ipt_searchEmailPop').val(email);
+            $("#apvlEmpEmailHidden").text(email);
+            $('#ipt_searchNamePop').val(name).trigger('click');    //change 이벤트 안됨. 추후 수정 예정
+
+            $('#exitEmpModalBtn').click();
+            $("#apvlEmpEmailHidden").text('');
+            ///////////////////////////////////////////////////////////////////////////////////
+        }
     } else {
         if($("#empEmailHidden").val() == null || $("#empEmailHidden").val() == ""){
             alert("직원을 선택해 주세요.");
@@ -211,9 +241,17 @@ function onClickEvt(i) {
     nRow = i;
 
 //    $('#ipt_apvlSearchNamePop').change();
-    $('#ipt_apvlSearchEmailPop').val(email);
-    $("#apvlEmpEmailHidden").text(email);
-    $('#ipt_apvlSearchNamePop').val(name).trigger('click');    //change 이벤트 안됨. 추후 수정 예정
+
+    if($("#apvlReqHidden").text() == "scheduleStat") {
+        $('#ipt_searchEmailPop').val(email);
+        $('#apvlEmpEmailHidden').text(email);
+        $('#ipt_searchNamePop').val(name).trigger('click');
+
+    } else {
+        $('#ipt_apvlSearchEmailPop').val(email);
+        $("#apvlEmpEmailHidden").text(email);
+        $('#ipt_apvlSearchNamePop').val(name).trigger('click');    //change 이벤트 안됨. 추후 수정 예정
+    }
 
 };
 
@@ -249,6 +287,18 @@ function onClickSearchBtn(ipt_searchName) {
                         $('#ipt_apvlSearchEmailPop').val(data[0].EMP_EMAIL);
                         $('#apvlEmpEmailHidden').text(data[0].EMP_EMAIL);
                         $('#ipt_apvlSearchNamePop').val(data[0].EMP_NAME).trigger('click');
+
+                        $('#exitEmpModalBtn').click();
+
+                    } else {
+                        empListGrd(data);
+                    }
+                } else if ( scrDivs == "scheduleStat" ) {
+
+                    if (data.length == 1) {
+                        $('#ipt_searchEmailPop').val(data[0].EMP_EMAIL);
+                        $('#apvlEmpEmailHidden').text(data[0].EMP_EMAIL);
+                        $('#ipt_searchNamePop').val(data[0].EMP_NAME).trigger('click');
 
                         $('#exitEmpModalBtn').click();
 
@@ -327,6 +377,15 @@ $('#ipt_searchName').keydown(function(e){
 
                                 if (data.length == 1) {
                                     $('#ipt_apvlSearchNamePop').val(data[0].EMP_NAME);
+                                    $('#apvlEmpEmailHidden').text(data[0].EMP_EMAIL);
+                                    $('#exitEmpModalBtn').click();
+                                } else {
+                                    empListGrd(data);
+                                }
+                            } else if ( scrDivs == "scheduleStat" ) {
+
+                                if (data.length == 1) {
+                                    $('#ipt_searchNamePop').val(data[0].EMP_NAME);
                                     $('#apvlEmpEmailHidden').text(data[0].EMP_EMAIL);
                                     $('#exitEmpModalBtn').click();
                                 } else {
