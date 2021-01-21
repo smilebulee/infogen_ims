@@ -99,6 +99,9 @@
         } else if (ipt_empPw == "" || ipt_empPw == null ){
             alert("직원 비밀번호를 입력해 주세요.");
             return false;
+        } else if(ipt_empPw.length < 4 || ipt_empPw.length > 12 ) {
+            alert("직원 비밀번호는 4 ~ 12자로 입력해주세요.");
+            return false;
         } else if (ipt_empAuthId == "none" || ipt_empAuthId == null ){
             alert("직원 권한을 선택해 주세요.");
             return false;
