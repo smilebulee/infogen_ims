@@ -39,6 +39,7 @@
         *   srchAcptHistBtn 버튼 클릭 이벤트 - 근무결재요청 내역 조회
         *********************************************************************/
         $('#srchAcptHistBtn').click(function() {
+            initApvlAcptDetl();
             srchApvlAcptHist();
         });
 
@@ -84,12 +85,12 @@
                 wrkApvlTable += '<td class="pt-3-half">' + wrkDtm               + '</td>';
                 wrkApvlTable += '<td class="pt-3-half">' + data[i].APVL_REQ_NM  + '</td>';
                 wrkApvlTable += '<td class="pt-3-half">' + data[i].EMP_NAME     +'</td>';
-                wrkApvlTable += '<td class="pt-3-half" style="display: none;">' + data[i].WRK_DT + ";" + data[i].JOB_STRT_TM + ";" + data[i].JOB_END_TM + ";" + data[i].WRK_REQ_RSN + ";" + data[i].EMP_EMAL_ADDR + '</td>';
+                wrkApvlTable += '<td class="pt-3-half" style="display: none;">' + data[i].WRK_DT + ";" + data[i].JOB_STRT_TM + ";" + data[i].JOB_END_TM + ";" + data[i].WRK_REQ_RSN + ";" + data[i].EMP_EMAL_ADDR  + ';' + data[i].TH1_APRV_STUS + '</td>';
                 wrkApvlTable += '</tr>';
             }
         } else {
-                wrkApvlTable += '<tr id ="grd_wrkApvlAcpt'+i+'">';
-                wrkApvlTable += '<td colspan="4" class="pt-3-half">결재 승인 요청 내역이 없습니다.</td>';
+                wrkApvlTable += '<tr>';
+                wrkApvlTable += '<td colspan="5" class="pt-3-half">결재 요청 내역이 없습니다.</td>';
                 wrkApvlTable += '</tr>';
 
 
@@ -124,9 +125,24 @@
 
     }
 
+
+    // 결재 요청 상세 값 초기화
+    function initApvlAcptDetl() {
+        $('#ipt_reqAcptWrkDt').val('')
+        $('#ipt_reqAcptJobStrtTm').val('')
+        $('#ipt_reqAcptJobEndTm').val('')
+        $('#ipt_reqAcptEmpEmalAddr').val('')
+        $('#ipt_reqAcptTh1AprvStus').val('')
+        $('#txa_reqAcptRsn').val('')
+    }
+
+
     // 승인, 반려 버튼 클릭 시 로직
     function btnReqEvt(thisId) {
+        debugger;
         var apvlAcptStus = '';
+        var msg = $('#' + thisId).html();
+
         if(thisId == 'btn_acpt') {
             //승인 버튼을 선택할 경우
             apvlAcptStus = '02';
@@ -134,11 +150,26 @@
             apvlAcptStus = '03';
         }
 
-        cf_dialog.confirm('저장하시겠습니까?', function(){
+        if($("#ipt_reqAcptTh1AprvStus").val() == '') {
+            alertMsg(msg + "하실 결재건을 선택하세요!");
+            return;
+
+        } else if($("#ipt_reqAcptTh1AprvStus").val() != '' && $("#ipt_reqAcptTh1AprvStus").val() != '01') {
+            //결재 진행 상태가 미승인이 아닌 경우, 승인, 반려 버튼 선택 불가 처리
+            alertMsg("결재 진행 상태가 '미승인'인 경우에만 " + msg + " 가능합니다!");
+            return;
+        }
+
+        cf_dialog.confirm(msg + '하시겠습니까?', function(){
             if(this.key == 'ok'){
+                var inptStrtTm = $("#ipt_reqAcptJobStrtTm").val().substring(0,2) + "" + $("#ipt_reqAcptJobStrtTm").val().substring(3,5) +"00";
+                var inptEndTm  = $("#ipt_reqAcptJobEndTm").val().substring(0,2) + "" + $("#ipt_reqAcptJobEndTm").val().substring(3,5) +"00";
+
                 var param = {
                     "email"         : $("#ipt_reqAcptEmpEmalAddr").val(),   //기안자 아이디
                     "wrkDt"         : $("#ipt_reqAcptWrkDt").val(),         //근무일자
+                    "jobStrtTm"     : inptStrtTm,                           //근무 시작 시간
+                    "jobEndTm"      : inptEndTm,                            //근무 종료 시간
                     "th1AprvStus"   : apvlAcptStus,                         //01: 미승인, 02: 승인, 03: 반려
                     //"th1AprvNm"     : sessionStorage.getItem("email"),    //결재자 : 로그인한 사용자 아이디
                 }
@@ -153,9 +184,9 @@
                      'data' : JSON.stringify(param),
                      'async' : false,
                      'callbackFn' : function(data){
-                        g_toast.push('저장 되었습니다.');
+                        g_toast.push(msg + '되었습니다.');
                         //$('#exitApvlAcptModalBtn').click();
-                        //$('#srchAcptHistBtn').click();
+                        initApvlAcptDetl();
                         srchApvlAcptHist();
                      }
                 });
@@ -165,30 +196,36 @@
 
 
     function onApvlAcptClickEvt(trId) {
-    var table = document.getElementById("tblWrkApvlAcpt");
-    var tr = table.getElementsByTagName("tr");
+        var table = document.getElementById("tblWrkApvlAcpt");
+        var tr = table.getElementsByTagName("tr");
 
-    for(var i=0; i<tr.length; i++){
-        tr[i].style.background = "white";
-    }
-    document.getElementById(trId.id).style.backgroundColor = "lightgrey";
+        for(var i=0; i<tr.length; i++){
+            tr[i].style.background = "white";
+        }
+        document.getElementById(trId.id).style.backgroundColor = "lightgrey";
 
-    var arrWrkDt = $('#'+trId.id).children().eq(5).html().split(';')
-    $("#ipt_reqAcptWrkDt").val(arrWrkDt[0]);
-    $("#ipt_reqAcptJobStrtTm").val(arrWrkDt[1]);
-    $("#ipt_reqAcptJobEndTm").val(arrWrkDt[2]);
-    $("#txa_reqAcptRsn").val(arrWrkDt[3]);
-    $("#ipt_reqAcptEmpEmalAddr").val(arrWrkDt[4]);
-/*
-    if($('#'+trId.id).children().eq(2).text() == "") {
-        $("#sbx_type option[value='00']").attr("selected", true);
-    } else if($('#'+trId.id).children().eq(2).text() == "휴일근무") {
-        $("#sbx_type option[value='01']").attr("selected", true);
-    } else if($('#'+trId.id).children().eq(2).text() == "야간근무") {
-        $("#sbx_type option[value='02']").attr("selected", true);
+        var arrWrkDt = $('#'+trId.id).children().eq(5).html().split(';');
+        $("#ipt_reqAcptWrkDt").val(arrWrkDt[0]);
+        $("#ipt_reqAcptJobStrtTm").val(arrWrkDt[1]);
+        $("#ipt_reqAcptJobEndTm").val(arrWrkDt[2]);
+        $("#txa_reqAcptRsn").val(arrWrkDt[3]);
+        $("#ipt_reqAcptEmpEmalAddr").val(arrWrkDt[4]);
+
+        $("#ipt_reqAcptTh1AprvStus").val(arrWrkDt[5]);
+
+        /* 임시주석 윤상은 disabled 상태가 눈에 안띔 => 알림창으로 처리 변경
+        if(arrWrkDt[5] != '01') {
+            //결재 진행 상태가 미승인이 아닌 경우, 승인, 반려 버튼 disabled 처리
+            $("#btn_acpt").prop('disabled', true);
+            $("#btn_rjt").prop('disabled', true);
+        } else {
+            $("#btn_acpt").prop('disabled', false);
+            $("#btn_rjt").prop('disabled', false);
+        }
+        */
     }
-*/
-}
+
+
 </script>
 
 <div class="row">
@@ -220,7 +257,7 @@
                                     <div class="p-0" id="head_wrkApvlAcpt">
                                         <!-- Body -->
                                         <div class="flex-height d-flex m-0 p-2">
-                                            <div class="align-self-center mr-5">
+                                            <div class="align-self-center mr-5" style="font-weight:bold">
                                                 <span>구분&nbsp;</span>
                                             </div>
                                             <div class="align-self-center mr-5">
@@ -234,7 +271,7 @@
                                         </div>
 
                                         <div style="position: relative;" id="grid-parent">
-                                            <div id="grd_wrkApvlAcpt">grid</div>
+                                            <div id="grd_wrkApvlAcpt" style="overflow:auto; max-height:300px;">grid</div>
                                         </div>
 
                                         <div class="flex-height d-flex m-0 p-2">
@@ -253,11 +290,12 @@
                                                     <input type="time" class="align-self-start align-self-center mr-1 form-control"  id="ipt_reqAcptJobEndTm"    name="ipt_reqAcptJobEndTm" />
                                                 </div>
                                                 <input type="hidden"                                                                 id="ipt_reqAcptEmpEmalAddr" name="ipt_reqAcptEmpEmalAddr" />
+                                                <input type="hidden"                                                                 id="ipt_reqAcptTh1AprvStus"        name="ipt_reqAcptTh1AprvStus" />
                                             </div>
                                         </div>
 
                                         <div class="flex-height d-flex m-0 p-2">
-                                            <div class="align-self-start align-self-center mr-3">근무 사유</div>
+                                            <div class="align-self-start align-self-center mr-3" style="font-weight:bold">근무 사유</div>
                                             <div class="align-self-center mr-7">
                                                 <textarea id="txa_reqAcptRsn" name="txa_reqAcptRsn" maxlength="500" style="resize: none; width:440px;height:70px;" placeholder="사유를 입력해주세요."></textarea>
                                             </div>
