@@ -270,11 +270,14 @@
     *********************************************************************/
     function setApvlStusChg(apvlStus){
         if(apvlStus.length > 0){
-            if(apvlStus[0].APVL_REQ_DT != "N/A" && apvlStus[0].APVL_LAST_APRV_DT == "N/A"){
+            if(apvlStus[0].TH1_APRV_STUS == "01"){
                 $('#pop_apvlStus').text("진행중");
             }
-            if(apvlStus[0].APVL_REQ_DT != "N/A" && apvlStus[0].APVL_LAST_APRV_DT != "N/A"){
+            if(apvlStus[0].TH1_APRV_STUS == "02"){
                 $('#pop_apvlStus').text("완료");
+            }
+            if(apvlStus[0].TH1_APRV_STUS == "03"){
+                $('#pop_apvlStus').text("반려");
             }
         }
     }

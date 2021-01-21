@@ -350,6 +350,7 @@ class weekGridData(Resource): # Mariadb 연결 진행
                     + "       ,NVL(B.APVL_REQ_DIVS, 'N/A') AS APVL_REQ_DIVS " \
                     + "       ,NVL(B.APVL_REQ_DT, 'N/A') AS APVL_REQ_DT "\
                     + "       ,NVL(B.APVL_LAST_APRV_DT, 'N/A') AS APVL_LAST_APRV_DT "\
+                    + "       ,NVL(B.TH1_APRV_STUS, 'N/A') AS TH1_APRV_STUS"\
                     + "   FROM TB_WRK_TM_MGMT_M A "\
                     + "        LEFT OUTER JOIN TB_APVL_REQ_MGMT_M B"\
                     + "   ON A.WRK_DT = B.WRK_DT "\
@@ -390,6 +391,7 @@ class apvlInfo(Resource): # Mariadb 연결 진행
                 #쿼리문 실행
                 sql = "SELECT  NVL(APVL_REQ_DT, 'N/A') AS APVL_REQ_DT "\
                     + "       ,NVL(APVL_LAST_APRV_DT, 'N/A') AS APVL_LAST_APRV_DT "\
+                    + "       ,NVL(TH1_APRV_STUS, 'N/A') AS TH1_APRV_STUS "\
                     + "     FROM TB_APVL_REQ_MGMT_M "\
                     + "   WHERE EMP_EMAL_ADDR = '" + data["email"] + "' "\
                     + "   AND WRK_DT = '" + data["dt"] + "'"
