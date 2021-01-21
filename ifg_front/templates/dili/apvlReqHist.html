@@ -16,7 +16,7 @@
             "email" : sessionStorage.getItem("email"),
             "authId" : sessionStorage.getItem("authId")
         }
-        console.log("###########SessionSettingInfo::", param);
+        //console.log("###########SessionSettingInfo::", param);
 
 
         // 사용자 조회 > 이메일 : SessionSetting email로 설정
@@ -47,7 +47,7 @@
 
         /*
         $('#ipt_apvlSearchNamePop').change(function() {
-            console.log("ipt_apvlSearchNamePop변화 => change 이벤트 안되어 click 이벤트로 임시 사용 중 추후 테스트 필요");
+            //console.log("ipt_apvlSearchNamePop변화 => change 이벤트 안되어 click 이벤트로 임시 사용 중 추후 테스트 필요");
             $('#ipt_apvlSearchName').val($('#ipt_apvlSearchNamePop').val());
         });
         */
@@ -80,7 +80,7 @@
                 "email" : $("#ipt_apvlSearchEmail").val() || sessionStorage.getItem("email"),   //사용자 조회  > 이메일 값
                 "apvlStusDivs" : $("#sbx_type option:selected").val(),                          //TB_APVL_REQ_MGMT_M APVL_STUS 값 => 01,02: 승인, 승인반려 NULL: 미승인
             }
-            console.log("###########params::", params);
+            //console.log("###########params::", params);
             var url = "{% url 'dili_api:getApvlReqHist' %}";
 
             submissionCallList( params, 'GET', url, apvlReqHistGrd );

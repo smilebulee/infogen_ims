@@ -57,6 +57,7 @@
             wrkApvlTable += '<tr>';
             wrkApvlTable += '<th class="text-center">순번</th>';
             wrkApvlTable += '<th class="text-center">결재 요청일</th>';
+            wrkApvlTable += '<th class="text-center">근무일자</th>';
             wrkApvlTable += '<th class="text-center">구분</th>';
             wrkApvlTable += '<th class="text-center">기안자</th>';
             wrkApvlTable += '</tr>';
@@ -75,15 +76,16 @@
                     }
                 }
             */
+                var wrkDtm = data[i].WRK_DT + " " + data[i].JOB_STRT_TM + " ~ " + data[i].JOB_END_TM;
 
                 wrkApvlTable += '<tr id ="grd_wrkApvlAcpt'+i+'" onclick="onApvlAcptClickEvt(this)">';
-                wrkApvlTable += '<td class="pt-3-half">'+(i+1)+'</td>';
-                wrkApvlTable += '<td class="pt-3-half">'+data[i].APVL_REQ_DT+'</td>';
-                wrkApvlTable += '<td class="pt-3-half">'+data[i].APVL_REQ_NM+'</td>';
-                wrkApvlTable += '<td class="pt-3-half">'+data[i].EMP_NAME+'</td>';
+                wrkApvlTable += '<td class="pt-3-half">' + (i+1)                + '</td>';
+                wrkApvlTable += '<td class="pt-3-half">' + data[i].APVL_REQ_DT  + '</td>';
+                wrkApvlTable += '<td class="pt-3-half">' + wrkDtm               + '</td>';
+                wrkApvlTable += '<td class="pt-3-half">' + data[i].APVL_REQ_NM  + '</td>';
+                wrkApvlTable += '<td class="pt-3-half">' + data[i].EMP_NAME     +'</td>';
                 wrkApvlTable += '<td class="pt-3-half" style="display: none;">' + data[i].WRK_DT + ";" + data[i].JOB_STRT_TM + ";" + data[i].JOB_END_TM + ";" + data[i].WRK_REQ_RSN + ";" + data[i].EMP_EMAL_ADDR + '</td>';
                 wrkApvlTable += '</tr>';
-
             }
         } else {
                 wrkApvlTable += '<tr id ="grd_wrkApvlAcpt'+i+'">';
@@ -107,7 +109,7 @@
             "email"        : sessionStorage.getItem("email"),   // 세션 값
             "apvlStusDivs" : $('#sbx_aprvStusNm').val()         // 결재 승인 상태
         }
-        console.log("##srchApvlAcptHist param::", param);
+        //console.log("##srchApvlAcptHist param::", param);
 
         $.ajaxCall( param, {
              'method' : 'GET',
@@ -142,7 +144,7 @@
                 }
 
                 //param["th1AprvStus"] = thisId == 'btn_acpt' ? '02' : '03';
-                console.log("###param", param);
+                //console.log("###param", param);
 
                 $.ajaxCall( param, {
                      method : 'POST',
@@ -171,7 +173,7 @@
     }
     document.getElementById(trId.id).style.backgroundColor = "lightgrey";
 
-    var arrWrkDt = $('#'+trId.id).children().eq(4).text().split(';')
+    var arrWrkDt = $('#'+trId.id).children().eq(5).html().split(';')
     $("#ipt_reqAcptWrkDt").val(arrWrkDt[0]);
     $("#ipt_reqAcptJobStrtTm").val(arrWrkDt[1]);
     $("#ipt_reqAcptJobEndTm").val(arrWrkDt[2]);
@@ -236,14 +238,21 @@
                                         </div>
 
                                         <div class="flex-height d-flex m-0 p-2">
-                                            <div class="align-self-start align-self-center mr-3">근무 일자</div>
-                                            <div class="align-self-center mr-5">
-                                                <!--<input type="text" class="form-control" id="ipt_reqAcptWrkDt" name="ipt_reqAcptWrkDt" placeholder="" maxlength="24" readonly/>-->
-                                                <input type="date" class="align-self-start align-self-center mr-1" id="ipt_reqAcptWrkDt"       name="ipt_reqAcptWrkDt" />
-                                                <input type="time" class="align-self-start align-self-center"      id="ipt_reqAcptJobStrtTm"   name="ipt_reqAcptJobStrtTm" />
-                                                <span              class="align-self-start align-self-center">&nbsp;&nbsp;~&nbsp;&nbsp;</span>
-                                                <input type="time" class="align-self-start align-self-center mr-1" id="ipt_reqAcptJobEndTm"    name="ipt_reqAcptJobEndTm" />
-                                                <input type="hidden"                                               id="ipt_reqAcptEmpEmalAddr" name="ipt_reqAcptEmpEmalAddr" />
+                                            <div class="align-self-start align-self-center mr-3" style="font-weight:bold">근무 일자</div>
+                                            <div class="align-self-center mr-1">
+                                                <div style="float: left;">
+                                                     <input type="date" class="align-self-start align-self-center mr-1 form-control" id="ipt_reqAcptWrkDt"       name="ipt_reqAcptWrkDt" />
+                                                </div>
+                                                <div style="float: left;">
+                                                   <input type="time" class="align-self-start align-self-center form-control"        id="ipt_reqAcptJobStrtTm"   name="ipt_reqAcptJobStrtTm" />
+                                                </div>
+                                                <div style="float: left;">
+                                                    <span class="align-self-start align-self-center">&nbsp;~&nbsp;</span>
+                                                </div>
+                                                <div style="float: left;">
+                                                    <input type="time" class="align-self-start align-self-center mr-1 form-control"  id="ipt_reqAcptJobEndTm"    name="ipt_reqAcptJobEndTm" />
+                                                </div>
+                                                <input type="hidden"                                                                 id="ipt_reqAcptEmpEmalAddr" name="ipt_reqAcptEmpEmalAddr" />
                                             </div>
                                         </div>
 
