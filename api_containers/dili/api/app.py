@@ -579,19 +579,19 @@ class saveApvlReq(Resource): # Mariadb 연결 진행
                                                       "`TH1_APRV_NM`," \
                                                       "`REF_NM`," \
                                                       "`APVL_LAST_APRV_DT`)" \
-                                                      "VALUES( '" + email \
-                                                         + "', '" + apvlDivs\
-                                                         + "', '" + apvlReqDivs \
-                                                         + "', '" + wrkDt \
-                                                         + "', '" + jobStrtTm \
-                                                         + "', '" + jobEndTm \
-                                                         + "', '" + wrkTme \
-                                                         + "', '" + wrkReqRsn \
-                                                         + "',      NOW()" \
-                                                           ", '"  + th1AprvStus\
-                                                         + "', '" + th1AprvNm \
-                                                         + "', '" + refNm \
-                                                         + "',      NOW())"
+                                            " VALUES (   '" + email + "'"\
+                                                      ", '" + apvlDivs + "'"\
+                                                      ", '" + apvlReqDivs + "'"\
+                                                      ", '" + wrkDt + "'"\
+                                                      ", '" + jobStrtTm + "'"\
+                                                      ", '" + jobEndTm + "'"\
+                                                      ", '" + wrkTme + "'"\
+                                                      ", '" + wrkReqRsn + "'"\
+                                                      ",      NOW()" \
+                                                      ", '" + th1AprvStus + "'"\
+                                                      ", '" + th1AprvNm + "'"\
+                                                      ", '" + refNm + "'"\
+                                                      ",      NOW())"
 
                 logger.info(sql)
                 cursor.execute(sql)
@@ -621,6 +621,8 @@ class saveApvlAcpt(Resource): # Mariadb 연결 진행
 
         email = request.form['email']
         wrkDt = request.form['wrkDt']
+        jobStrtTm = request.form['jobStrtTm']
+        jobEndTm = request.form['jobEndTm']
         th1AprvStus = request.form['th1AprvStus']
 
         #requirements pymysql import 후 커넥트 사용
@@ -630,9 +632,12 @@ class saveApvlAcpt(Resource): # Mariadb 연결 진행
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 #쿼리문 실행
                 sql = " UPDATE TB_APVL_REQ_MGMT_M " \
-                      "    SET TH1_APRV_STUS = '" + th1AprvStus + "', APVL_LAST_APRV_DT = NOW() " \
-                      "  WHERE EMP_EMAL_ADDR = '" + email + "' " \
-                      "    AND WRK_DT = '" + wrkDt + "' "
+                      "    SET TH1_APRV_STUS     = '" + th1AprvStus + "'" \
+                      "      , APVL_LAST_APRV_DT = NOW() " \
+                      "  WHERE EMP_EMAL_ADDR     = '" + email + "' " \
+                      "    AND WRK_DT            = '" + wrkDt + "' " \
+                      "    AND JOB_STRT_TM       = '" + jobStrtTm + "' " \
+                      "    AND JOB_END_TM        = '" + jobEndTm + "' "
 
                 logger.info(sql)
                 cursor.execute(sql)
@@ -660,9 +665,9 @@ class apvlReqHist(Resource): # Mariadb 연결 진행
         apvlStusDivs = data["apvlStusDivs"]
 
         logging.debug('--------------- app.py apvlReqHist data ---------------')
-        logging.debug('email : ' + email)
+        logging.debug('email        : ' + email)
         logging.debug('apvlStusDivs : ' + apvlStusDivs)
-        logging.debug('------------------------------------')
+        logging.debug('-------------------------------------------------------')
 
         #requirements pymysql import 후 커넥트 사용
         mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
@@ -672,81 +677,56 @@ class apvlReqHist(Resource): # Mariadb 연결 진행
                 # 쿼리문 실행
                 if apvlStusDivs == "00":
                     #전체
-                    sql = "SELECT B.EMP_NAME" \
-                          "      ,DATE_FORMAT(NVL(A.WRK_DT,''), '%Y-%m-%d') AS WRK_DT" \
-                          "      ,CASE WHEN A.APVL_REQ_DIVS = '01' THEN NVL(A.WRK_TME,'') " \
+                    sql = "SELECT B.EMP_NAME " \
+                          "     , A.EMP_EMAL_ADDR " \
+                          "     , A.TH1_APRV_NM " \
+                          "     , NVL(A.WRK_DT,'') WRK_DT " \
+                          "     , NVL(A.JOB_STRT_TM, '') JOB_STRT_TM " \
+                          "     , NVL(A.JOB_END_TM, '') JOB_END_TM " \
+                          "     , CASE WHEN A.APVL_REQ_DIVS = '01' THEN NVL(A.WRK_TME,'') " \
                           "            WHEN A.APVL_REQ_DIVS = '02' THEN NVL(A.WRK_TME,'') " \
                           "            ELSE '' END WRK_TME  " \
-                          "      ,CASE WHEN A.APVL_REQ_DIVS = '01' THEN '휴일근무' " \
-                          "            WHEN A.APVL_REQ_DIVS = '02' THEN '야간근무' " \
+                          "     , CASE WHEN A.APVL_REQ_DIVS = '01' THEN '야간근무' " \
+                          "            WHEN A.APVL_REQ_DIVS = '02' THEN '휴일근무' " \
                           "            WHEN A.APVL_REQ_DIVS = '03' THEN '연차결재'  " \
                           "            ELSE '' END APVL_REQ_NM  " \
-                          "      ,CASE WHEN A.TH1_APRV_STUS = '01' THEN '미승인'" \
+                          "     , CASE WHEN A.TH1_APRV_STUS = '01' THEN '미승인'" \
                           "            WHEN A.TH1_APRV_STUS = '02' THEN '승인'" \
                           "            ELSE '반려' END APRV_STUS_NM" \
+                          "     , A.TH1_APRV_STUS" \
                           "  FROM TB_APVL_REQ_MGMT_M A, TB_EMP_MGMT B" \
                           " WHERE A.EMP_EMAL_ADDR = B.EMP_EMAIL" \
-                          "   AND A.EMP_EMAL_ADDR = '" + email + "'"
+                          "   AND A.EMP_EMAL_ADDR = '" + email + "' " \
+                          " ORDER BY A.APVL_REQ_DT DESC "
+
                     logging.debug("apvlReqHist SQL문" + sql)
                     cursor.execute(sql)
-                if apvlStusDivs == "01":
-                    #미승인
-                    sql = "SELECT B.EMP_NAME" \
-                          "      ,DATE_FORMAT(NVL(A.WRK_DT,''), '%Y-%m-%d') AS WRK_DT" \
-                          "      ,CASE WHEN A.APVL_REQ_DIVS = '01' THEN NVL(A.WRK_TME,'') " \
+
+                if apvlStusDivs != "00":
+                    #미승인, 승인, 반려
+                    sql = "SELECT B.EMP_NAME " \
+                          "     , A.EMP_EMAL_ADDR " \
+                          "     , A.TH1_APRV_NM " \
+                          "     , NVL(A.WRK_DT,'') WRK_DT " \
+                          "     , NVL(A.JOB_STRT_TM, '') JOB_STRT_TM " \
+                          "     , NVL(A.JOB_END_TM, '') JOB_END_TM " \
+                          "     , CASE WHEN A.APVL_REQ_DIVS = '01' THEN NVL(A.WRK_TME,'') " \
                           "            WHEN A.APVL_REQ_DIVS = '02' THEN NVL(A.WRK_TME,'') " \
                           "            ELSE '' END WRK_TME  " \
-                          "      ,CASE WHEN A.APVL_REQ_DIVS = '01' THEN '휴일근무' " \
-                          "            WHEN A.APVL_REQ_DIVS = '02' THEN '야간근무' " \
+                          "     , CASE WHEN A.APVL_REQ_DIVS = '01' THEN '야간근무' " \
+                          "            WHEN A.APVL_REQ_DIVS = '02' THEN '휴일근무' " \
                           "            WHEN A.APVL_REQ_DIVS = '03' THEN '연차결재'  " \
                           "            ELSE '' END APVL_REQ_NM  " \
-                          "      ,CASE WHEN A.TH1_APRV_STUS = '01' THEN '미승인'" \
+                          "     , CASE WHEN A.TH1_APRV_STUS = '01' THEN '미승인'" \
                           "            WHEN A.TH1_APRV_STUS = '02' THEN '승인'" \
                           "            ELSE '반려' END APRV_STUS_NM" \
+                          "     , A.TH1_APRV_STUS" \
                           "  FROM TB_APVL_REQ_MGMT_M A, TB_EMP_MGMT B" \
                           " WHERE A.EMP_EMAL_ADDR = B.EMP_EMAIL" \
-                          "   AND A.EMP_EMAL_ADDR = '" + email + "'"\
-                          "   AND (NVL(A.TH1_APRV_STUS,'') IN ('01'))"
-                    logging.debug("apvlReqHist SQL문" + sql)
-                    cursor.execute(sql)
-                if apvlStusDivs == "02":
-                    #승인
-                    sql = "SELECT B.EMP_NAME" \
-                          "      ,DATE_FORMAT(NVL(A.WRK_DT,''), '%Y-%m-%d') AS WRK_DT" \
-                          "      ,CASE WHEN A.APVL_REQ_DIVS = '01' THEN NVL(A.WRK_TME,'') " \
-                          "            WHEN A.APVL_REQ_DIVS = '02' THEN NVL(A.WRK_TME,'') " \
-                          "            ELSE '' END WRK_TME  " \
-                          "      ,CASE WHEN A.APVL_REQ_DIVS = '01' THEN '휴일근무' " \
-                          "            WHEN A.APVL_REQ_DIVS = '02' THEN '야간근무' " \
-                          "            WHEN A.APVL_REQ_DIVS = '03' THEN '연차결재'  " \
-                          "            ELSE '' END APVL_REQ_NM  " \
-                          "      ,CASE WHEN A.TH1_APRV_STUS = '01' THEN '미승인'" \
-                          "            WHEN A.TH1_APRV_STUS = '02' THEN '승인'" \
-                          "            ELSE '반려' END APRV_STUS_NM" \
-                          "  FROM TB_APVL_REQ_MGMT_M A, TB_EMP_MGMT B" \
-                          " WHERE A.EMP_EMAL_ADDR = B.EMP_EMAIL" \
-                          "   AND A.EMP_EMAL_ADDR = '" + email + "'"\
-                          "   AND (NVL(A.TH1_APRV_STUS,'') IN ('02'))"
-                    logging.debug("apvlReqHist SQL문" + sql)
-                    cursor.execute(sql)
-                if apvlStusDivs == "03":
-                    #반려
-                    sql = "SELECT B.EMP_NAME" \
-                          "      ,DATE_FORMAT(NVL(A.WRK_DT,''), '%Y-%m-%d') AS WRK_DT" \
-                          "      ,CASE WHEN A.APVL_REQ_DIVS = '01' THEN NVL(A.WRK_TME,'') " \
-                          "            WHEN A.APVL_REQ_DIVS = '02' THEN NVL(A.WRK_TME,'') " \
-                          "            ELSE '' END WRK_TME  " \
-                          "      ,CASE WHEN A.APVL_REQ_DIVS = '01' THEN '휴일근무' " \
-                          "            WHEN A.APVL_REQ_DIVS = '02' THEN '야간근무' " \
-                          "            WHEN A.APVL_REQ_DIVS = '03' THEN '연차결재'  " \
-                          "            ELSE '' END APVL_REQ_NM  " \
-                          "      ,CASE WHEN A.TH1_APRV_STUS = '01' THEN '미승인'" \
-                          "            WHEN A.TH1_APRV_STUS = '02' THEN '승인'" \
-                          "            ELSE '반려' END APRV_STUS_NM" \
-                          "  FROM TB_APVL_REQ_MGMT_M A, TB_EMP_MGMT B" \
-                          " WHERE A.EMP_EMAL_ADDR = B.EMP_EMAIL" \
-                          "   AND A.EMP_EMAL_ADDR = '" + email + "'"\
-                          "   AND (NVL(A.TH1_APRV_STUS,'') IN ('03'))"
+                          "   AND A.EMP_EMAL_ADDR = '" + email + "' " \
+                          "   AND A.TH1_APRV_STUS = '" + apvlStusDivs + "' " \
+                          " ORDER BY A.APVL_REQ_DT DESC "
+
                     logging.debug("apvlReqHist SQL문" + sql)
                     cursor.execute(sql)
 
@@ -773,7 +753,7 @@ class apvlAcptHist(Resource):  # Mariadb 연결 진행
         email = data["email"]
         apvlStusDivs = data["apvlStusDivs"]
 
-        logging.debug('--------------- app.py apvlReqHist data ---------------')
+        logging.debug('--------------- app.py apvlAcptHist data ---------------')
         logging.debug('email : '        + email)
         logging.debug('apvlStusDivs : ' + apvlStusDivs)
         logging.debug('------------------------------------')
@@ -797,15 +777,18 @@ class apvlAcptHist(Resource):  # Mariadb 연결 진행
                           "            ELSE '반려' END APRV_STUS_NM " \
                           "     , NVL(A.APVL_REQ_DT, '') APVL_REQ_DT " \
                           "     , NVL(A.WRK_REQ_RSN, '') WRK_REQ_RSN " \
+                          "     , A.TH1_APRV_STUS" \
                           "  FROM TB_APVL_REQ_MGMT_M A, TB_EMP_MGMT B, TB_EMP_MGMT C " \
                           " WHERE A.EMP_EMAL_ADDR = C.EMP_EMAIL  " \
                           "   AND A.TH1_APRV_NM = B.EMP_EMAIL  " \
-                          "   AND A.TH1_APRV_NM = '" + email + "' "
+                          "   AND A.TH1_APRV_NM = '" + email + "' " \
+                          " ORDER BY APVL_REQ_DT DESC "
 
-                    logging.debug("apvlReqHist SQL문" + sql)
+                    logging.debug("apvlAcptHist SQL문" + sql)
                     cursor.execute(sql)
-                if apvlStusDivs == "01":
-                    # 미승인
+
+                if apvlStusDivs != "00":
+                    # 미승인, 승인, 반려
                     sql = "SELECT A.EMP_EMAL_ADDR, C.EMP_NAME " \
                           "     , NVL(A.WRK_DT,'') WRK_DT " \
                           "     , NVL(A.JOB_STRT_TM, '') JOB_STRT_TM " \
@@ -817,55 +800,15 @@ class apvlAcptHist(Resource):  # Mariadb 연결 진행
                           "            ELSE '반려' END APRV_STUS_NM " \
                           "     , NVL(A.APVL_REQ_DT, '') APVL_REQ_DT " \
                           "     , NVL(A.WRK_REQ_RSN, '') WRK_REQ_RSN " \
+                          "     , A.TH1_APRV_STUS" \
                           "  FROM TB_APVL_REQ_MGMT_M A, TB_EMP_MGMT B, TB_EMP_MGMT C " \
                           " WHERE A.EMP_EMAL_ADDR = C.EMP_EMAIL  " \
                           "   AND A.TH1_APRV_NM = B.EMP_EMAIL  " \
                           "   AND A.TH1_APRV_NM = '" + email + "' " \
-                          "   AND A.TH1_APRV_STUS = '" + apvlStusDivs + "'"
+                          "   AND A.TH1_APRV_STUS = '" + apvlStusDivs + "' " \
+                          " ORDER BY APVL_REQ_DT DESC "
 
-                    logging.debug("apvlReqHist SQL문" + sql)
-                    cursor.execute(sql)
-                if apvlStusDivs == "02":
-                    # 승인
-                    sql = "SELECT A.EMP_EMAL_ADDR, C.EMP_NAME " \
-                          "     , NVL(A.WRK_DT,'') WRK_DT " \
-                          "     , NVL(A.JOB_STRT_TM, '') JOB_STRT_TM " \
-                          "     , NVL(A.JOB_END_TM, '') JOB_END_TM " \
-                          "     , CASE WHEN A.APVL_REQ_DIVS = '01' THEN NVL(A.WRK_TME,'') WHEN A.APVL_REQ_DIVS = '02' THEN NVL(A.WRK_TME,'') ELSE '' END WRK_TME  " \
-                          "     , CASE WHEN A.APVL_REQ_DIVS = '01' THEN '야간근무' WHEN A.APVL_REQ_DIVS = '02' THEN '휴일근무' WHEN A.APVL_REQ_DIVS = '03' THEN '연차결재' ELSE '' END APVL_REQ_NM  " \
-                           "     , CASE WHEN A.TH1_APRV_STUS = '01' THEN '미승인'  " \
-                          "       	   WHEN A.TH1_APRV_STUS = '02' THEN '승인'  " \
-                          "            ELSE '반려' END APRV_STUS_NM " \
-                          "     , NVL(A.APVL_REQ_DT, '') APVL_REQ_DT " \
-                          "     , NVL(A.WRK_REQ_RSN, '') WRK_REQ_RSN " \
-                          "  FROM TB_APVL_REQ_MGMT_M A, TB_EMP_MGMT B, TB_EMP_MGMT C " \
-                          " WHERE A.EMP_EMAL_ADDR = C.EMP_EMAIL  " \
-                          "   AND A.TH1_APRV_NM = B.EMP_EMAIL  " \
-                          "   AND A.TH1_APRV_NM = '" + email + "' " \
-                          "   AND A.TH1_APRV_STUS = '" + apvlStusDivs + "'"
-
-                    logging.debug("apvlReqHist SQL문" + sql)
-                    cursor.execute(sql)
-                if apvlStusDivs == "03":
-                    # 반려
-                    sql = "SELECT A.EMP_EMAL_ADDR, C.EMP_NAME " \
-                          "     , NVL(A.WRK_DT,'') WRK_DT " \
-                          "     , NVL(A.JOB_STRT_TM, '') JOB_STRT_TM " \
-                          "     , NVL(A.JOB_END_TM, '') JOB_END_TM " \
-                          "     , CASE WHEN A.APVL_REQ_DIVS = '01' THEN NVL(A.WRK_TME,'') WHEN A.APVL_REQ_DIVS = '02' THEN NVL(A.WRK_TME,'') ELSE '' END WRK_TME  " \
-                          "     , CASE WHEN A.APVL_REQ_DIVS = '01' THEN '야간근무' WHEN A.APVL_REQ_DIVS = '02' THEN '휴일근무' WHEN A.APVL_REQ_DIVS = '03' THEN '연차결재' ELSE '' END APVL_REQ_NM  " \
-                           "     , CASE WHEN A.TH1_APRV_STUS = '01' THEN '미승인'  " \
-                          "       	   WHEN A.TH1_APRV_STUS = '02' THEN '승인'  " \
-                          "            ELSE '반려' END APRV_STUS_NM " \
-                          "     , NVL(A.APVL_REQ_DT, '') APVL_REQ_DT " \
-                          "     , NVL(A.WRK_REQ_RSN, '') WRK_REQ_RSN " \
-                          "  FROM TB_APVL_REQ_MGMT_M A, TB_EMP_MGMT B, TB_EMP_MGMT C " \
-                          " WHERE A.EMP_EMAL_ADDR = C.EMP_EMAIL  " \
-                          "   AND A.TH1_APRV_NM = B.EMP_EMAIL  " \
-                          "   AND A.TH1_APRV_NM = '" + email + "' " \
-                          "   AND A.TH1_APRV_STUS = '" + apvlStusDivs + "'"
-
-                    logging.debug("apvlReqHist SQL문" + sql)
+                    logging.debug("apvlAcptHist SQL문" + sql)
                     cursor.execute(sql)
 
         finally:
@@ -1010,7 +953,7 @@ class duplApvlReqCnt(Resource): # Mariadb 연결 진행
                       "  FROM TB_APVL_REQ_MGMT_M " \
                       " WHERE EMP_EMAL_ADDR = '" + data["email"] + "' " \
                       "   AND WRK_DT = '" + data["wrkDt"] + "' "
-                logging.debug("apvlReqHistDetl SQL문" + sql)
+                logging.debug("duplApvlReqCnt SQL문" + sql)
                 cursor.execute(sql)
 
         finally:
@@ -1037,14 +980,21 @@ class apvlReqHistDetl(Resource): # Mariadb 연결 진행
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 # 쿼리문 실행
-                sql = "SELECT NVL(B.EMP_NAME,'') TH1_APRV_NM" \
-                      "      , CASE WHEN A.TH1_APRV_STUS = '02' THEN '승인'" \
-                      "            ELSE '미승인' END TH1_APRV_STUS_NM" \
-                      "      , A.APVL_REQ_DT" \
-                      "   FROM TB_APVL_REQ_MGMT_M A, TB_EMP_MGMT B " \
-                      "  WHERE A.TH1_APRV_NM = B.EMP_EMAIL" \
-                      "   AND A.EMP_EMAL_ADDR = '" + data["email"] + "'" \
-                      "   AND A.WRK_DT = '" + data["wrkDt"] + "'"
+                sql = "            SELECT NVL(B.EMP_NAME,'') TH1_APRV_NM" \
+                      "                 , CASE WHEN A.TH1_APRV_STUS = '01' THEN '미승인'" \
+                      "                        WHEN A.TH1_APRV_STUS = '02' THEN '승인'" \
+                      "                        ELSE '반려' END TH1_APRV_STUS_NM" \
+                      "                 , A.APVL_REQ_DT" \
+                      "                 , NVL(C.EMP_NAME,'') REF_NM" \
+                      "              FROM TB_APVL_REQ_MGMT_M A " \
+                      "   LEFT OUTER JOIN TB_EMP_MGMT B " \
+                      "                ON A.TH1_APRV_NM = B.EMP_EMAIL " \
+                      "   LEFT OUTER JOIN TB_EMP_MGMT C " \
+                      "                ON A.REF_NM = C.EMP_EMAIL " \
+                      "             WHERE A.EMP_EMAL_ADDR = '" + data["email"]     + "'" \
+                      "               AND A.WRK_DT = '"        + data["wrkDt"]     + "'" \
+                      "               AND A.JOB_STRT_TM = '"   + data["jobStrtTm"] + "'" \
+                      "               AND A.JOB_END_TM = '"    + data["jobEndTm"]  + "'"
                 logging.debug("apvlReqHistDetl SQL문" + sql)
                 cursor.execute(sql)
 
@@ -1686,7 +1636,7 @@ class yryUseDays(Resource): # Mariadb 연결 진행
                       "            ELSE 'Y' END USE_YRY_YN  " \
                       "  FROM TB_YRY_MGMT_M" \
                       " WHERE EMP_EMAL_ADDR = '" + data["email"] + "'"
-                logging.debug("apvlReqHist SQL문" + sql)
+                logging.debug("yryUseDays SQL문" + sql)
                 cursor.execute(sql)
 
         finally:
@@ -2113,16 +2063,16 @@ api.add_resource(Retrieve, '/retrieve')
 api.add_resource(Save, '/save')
 
 api.add_resource(mariatestDB,'/mariatestDB') #api 선언
-api.add_resource(wrkTimeInfoByEml,'/wrkTimeInfoByEml') #api 선언
-api.add_resource(yryMgmt,'/yryMgmt') #api 선언
-api.add_resource(hldyMgmt,'/hldyMgmt') #api 선언
-api.add_resource(wrkApvlReq,'/wrkApvlReq') #api 선언
-api.add_resource(saveApvlReq,'/saveApvlReq') #api 선언
-api.add_resource(saveApvlAcpt,'/saveApvlAcpt') #api 선언
-api.add_resource(apvlReqHist,'/apvlReqHist') #api 선언
-api.add_resource(duplApvlReqCnt,'/duplApvlReqCnt') #api 선언
-api.add_resource(apvlReqHistDetl,'/apvlReqHistDetl') #api 선언
-api.add_resource(apvlAcptHist,'/apvlAcptHist') #api 선언
+api.add_resource(wrkTimeInfoByEml,'/wrkTimeInfoByEml')      #_
+api.add_resource(yryMgmt,'/yryMgmt')                        #_
+api.add_resource(hldyMgmt,'/hldyMgmt')                      #_
+api.add_resource(wrkApvlReq,'/wrkApvlReq')                  #_
+api.add_resource(saveApvlReq,'/saveApvlReq')                #근무 결재 요청 저장
+api.add_resource(saveApvlAcpt,'/saveApvlAcpt')              #근무 결재 승인 저장
+api.add_resource(apvlReqHist,'/apvlReqHist')                #근무 결재 요청 내역 조회
+api.add_resource(duplApvlReqCnt,'/duplApvlReqCnt')          #동일 일자 근무 결재 요청 내역 건수 조회
+api.add_resource(apvlReqHistDetl,'/apvlReqHistDetl')        #근무 결재 요청 상세 조회
+api.add_resource(apvlAcptHist,'/apvlAcptHist')              #근무 결재 승인 내역 조회
 api.add_resource(calendarData,'/calendarData') #api 선언
 api.add_resource(noticeLst,'/noticeLst') #api 선언
 api.add_resource(noticePopCnt,'/noticePopCnt') #api 선언
@@ -2134,14 +2084,14 @@ api.add_resource(noticeDelete,'/noticeDelete') #api 선언
 api.add_resource(empList,'/empList') #api 선언
 api.add_resource(empInfo,'/empInfo') #api 선언
 api.add_resource(empName,'/empName') #api 선언
-api.add_resource(saveYryApvlReq,'/saveYryApvlReq') #api 선언
+api.add_resource(saveYryApvlReq,'/saveYryApvlReq')          #_
 api.add_resource(weekGridData,'/weekGridData') #api 선언
 api.add_resource(apvlInfo,'/apvlInfo') #api 선언
 api.add_resource(monthGridData,'/monthGridData') #api 선언
 api.add_resource(insertStrtTm,'/insertStrtTm') #api 선언
 api.add_resource(updateEndTm,'/updateEndTm') #api 선언
 api.add_resource(yryUseDays,'/yryUseDays') #api 선언
-api.add_resource(retrieveCmmCd,'/retrieveCmmCd') #api 선언
+api.add_resource(retrieveCmmCd,'/retrieveCmmCd')            #공통 코드 조회
 api.add_resource(scheduleStatLst,'/scheduleStatLst') #api 선언
 api.add_resource(totalWrktm,'/totalWrktm') #api 선언
 api.add_resource(empMgmtRegSubmit,'/empMgmtRegSubmit') #api 선언

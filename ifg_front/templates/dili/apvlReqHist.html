@@ -68,6 +68,7 @@
             //결재 상세 테이블 초기화
             $("#thApvlReqDt").text("");
             $("#thAprvNm1").text("");
+            $("#thAprvRefNm").text("");
             $("#thAprvStus1").text("");
             // 결재 상세 테이블 숨김
             $('#grd_apvlReqHistDetl').css('display', 'none');
@@ -87,6 +88,10 @@
 
 
         });
+
+
+        // 화면 진입 시, 로그인한 사용자 기준으로 결재요청이력 조회
+        $("#searchBtn").click();
 
 
         // 직원 조회 시, 결재자 input 세팅
@@ -154,6 +159,7 @@
         // 결재 상세 input 값 초기화
         $("#thApvlReqDt").text("");
         $("#thAprvNm1").text("");
+        $("#thAprvRefNm").text("");
         $("#thAprvStus1").text("");
 
         var apvlReqHistTable =  '<table class="table table-bordered table-hover text-center">';
@@ -173,24 +179,29 @@
 
                 var wrkDtm = "";
                 if(data[i].WRK_DT != "") {
-                    if(data[i].WRK_TME != "") {
-                        wrkDtm = data[i].WRK_DT + " " + data[i].WRK_TME.substring(0,2) +":"+ data[i].WRK_TME.substring(2,4) +":"+ data[i].WRK_TME.substring(4,6)
-                    } else {
-                        wrkDtm = data[i].WRK_DT
+                    wrkDtm = data[i].WRK_DT + " " + data[i].JOB_STRT_TM.substring(0,5) + " ~ " + data[i].JOB_END_TM.substring(0,5) + " ";
+                    if(data[i].WRK_TME != "" && data[i].WRK_TME != "000000") {
+                        wrkDtm += '( ';
+                        wrkDtm += data[i].WRK_TME.substring(0,2) != '00' ? parseInt(data[i].WRK_TME.substring(0,2)) + '시간 ' : '';
+                        wrkDtm += data[i].WRK_TME.substring(2,4) != '00' ? parseInt(data[i].WRK_TME.substring(2,4)) + '분 ' : '';
+                        //wrkDtm += data[i].WRK_TME.substring(4,6) != '00' ? parseInt(data[i].WRK_TME.substring(4,6)) + '초 ' : '';
+                        wrkDtm += ')';
                     }
                 }
 
                 apvlReqHistTable += '<tr onclick="onclickEvt(this)">';
                 apvlReqHistTable += '<td id="no'+i+'" class="pt-3-half">'+(i+1)+'</td>';
-                apvlReqHistTable += '<td id="empName" class="pt-3-half">'+data[i].EMP_NAME+'</td>';
-                apvlReqHistTable += '<td id="wrkDt" class="pt-3-half">'+wrkDtm+'</td>';
-                apvlReqHistTable += '<td id="apvlReqNm" class="pt-3-half">'+data[i].APVL_REQ_NM+'</td>';
-                apvlReqHistTable += '<td id="aprvStusNm" class="pt-3-half">'+data[i].APRV_STUS_NM+'</td>';
+                apvlReqHistTable += '<td class="pt-3-half">'+data[i].EMP_NAME+'</td>';
+                apvlReqHistTable += '<td class="pt-3-half">'+wrkDtm+'</td>';
+                apvlReqHistTable += '<td class="pt-3-half">'+data[i].APVL_REQ_NM+'</td>';
+                apvlReqHistTable += '<td class="pt-3-half">'+data[i].APRV_STUS_NM+'</td>';
+                //apvlReqHistTable += '<td class="pt-3-half" style="display: none;">' + data[i].TH1_APRV_NM + ';' + data[i].TH1_APRV_STUS + '</td>';
+                apvlReqHistTable += '<td class="pt-3-half" style="display: none;">' + data[i].EMP_EMAL_ADDR + ";" + data[i].WRK_DT + ";" + data[i].JOB_STRT_TM + ";" + data[i].JOB_END_TM + ";" + data[i].TH1_APRV_STUS + '</td>';
                 apvlReqHistTable += '</tr>';
 
             }
         } else {
-            apvlReqHistTable += '<tr">';
+            apvlReqHistTable += '<tr>';
             apvlReqHistTable += '<td colspan="5" class="pt-3-half">결재 요청 내역이 없습니다.</td>';
             apvlReqHistTable += '</tr>';
 
@@ -214,10 +225,15 @@
         $(trId).nextAll().css("background-color","");
         $(trId).css("background-color","lightGrey");
 
+        // 결재 요청 정보 PK
+        var arrWrkDt =$(trId).children().eq(5).html().split(';');
+
         // 트랜잭션
         var params = {
-            "email" : sessionStorage.getItem("email"),
-            "wrkDt" : $(trId).children().eq(2).text().substring(0,10)   //ex. 2020-11-03 날짜
+            "email"      : arrWrkDt[0],     // 기안자
+            "wrkDt"      : arrWrkDt[1],     // 근무일자
+            "jobStrtTm"  : arrWrkDt[2],     // 근무 시작 시간
+            "jobEndTm"   : arrWrkDt[3],     // 근무 종료 시간
         }
 
         submissionCallList( params, "GET", "{% url 'dili_api:getApvlReqHistDetl' %}", function(data){
@@ -237,6 +253,7 @@
             // 결재 상세 input 값 초기화
             $("#thApvlReqDt").text("");
             $("#thAprvNm1").text("");
+            $("#thAprvRefNm").text("");
             $("#thAprvStus1").text("");
         } else {
             // 결재 상세 테이블 보임
@@ -244,6 +261,7 @@
             // 결재 상세 input 값 초기화
             $("#thApvlReqDt").text(data[0].APVL_REQ_DT);
             $("#thAprvNm1").text(data[0].TH1_APRV_NM);
+            $("#thAprvRefNm").text(data[0].REF_NM);
             $("#thAprvStus1").text(data[0].TH1_APRV_STUS_NM);
         }
     }
@@ -375,6 +393,7 @@
                                         <!--<th class="text-center">결재 차수</th>-->
                                         <th class="text-center">결재 요청일</th>
                                         <th class="text-center">결재자</th>
+                                        <th class="text-center">참조자</th>
                                         <th class="text-center">결재상태</th>
                                     </tr>
                                 </thead>
@@ -383,6 +402,7 @@
                                        <!--<td id="apvlTh1" class="pt-3-half">1</td>-->
                                        <td id="thApvlReqDt" class="pt-3-half"></td>
                                        <td id="thAprvNm1" class="pt-3-half"></td>
+                                       <td id="thAprvRefNm" class="pt-3-half"></td>
                                        <td id="thAprvStus1" class="pt-3-half"></td>
                                     </tr>
                                 </tbody>

@@ -121,9 +121,11 @@
 
     //선결재 저장
     function saveApvlReq() {
+        var inptWrkDt = $("#ipt_wrkDt").val();
         var inptStrtTm = $("#ipt_jobStrtTm").val().substring(0,2) +""+ $("#ipt_jobStrtTm").val().substring(3,5) +"00";
         var inptEndTm  = $("#ipt_jobEndTm").val().substring(0,2) +""+ $("#ipt_jobEndTm").val().substring(3,5) +"00";
         var inptWrkReqRsn = $("#txa_reqBfrRsn").val().trim();
+        var wrkTme = getTimeDiff($("#ipt_wrkDt").val() + ' ' +  $("#ipt_jobStrtTm").val() + ':00', $("#ipt_wrkDt").val() + ' ' +  $("#ipt_jobEndTm").val() + ':00');
 
         param = {
             "email"         : sessionStorage.getItem("email"),      //로그인한 사용자 아이디
@@ -132,7 +134,7 @@
             "wrkDt"         : $("#ipt_wrkDt").val(),                //근무일자
             "jobStrtTm"     : inptStrtTm,                           //근무 시작 시간
             "jobEndTm"      : inptEndTm,                            //근무 종료 시간
-            "wrkTme"        : '000000',                             //$("#ipt_wrkDt").val().substring(11,13) +""+ $("#ipt_wrkDt").val().substring(14,16) +"" + $("#ipt_wrkDt").val().substring(17,19),
+            "wrkTme"        : wrkTme || '000000',                   //$("#ipt_wrkDt").val().substring(11,13) +""+ $("#ipt_wrkDt").val().substring(14,16) +"" + $("#ipt_wrkDt").val().substring(17,19),
             "wrkReqRsn"     : inptWrkReqRsn,                        //근무 사유
             "th1AprvStus"   : "01",                                 //01: 미승인
             "th1AprvNm"     : $("#ipt_apvlLnSearchEmailPop").val(), //결재자
