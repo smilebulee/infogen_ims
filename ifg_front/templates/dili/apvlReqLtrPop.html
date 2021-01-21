@@ -34,19 +34,32 @@
             //$("#txa_reqLtrRsn").val(data[0].);
         }
 
-
-
         // 결재자 검색 - 직원조회 모달 오픈
         $("#ipt_apvlLnSearchNamePop").click(function(){
+            //자식창에서 여는 결재자 조회 팝업임을 표시
+            $('#apvlReqIptFlagHidden').text("apvlLnReqBfrPop");
+
             openEmpMgmtPop();
         });
 
+
+        // 참조자 검색 - 직원조회 모달 오픈
+        $("#ipt_refSearchNamePop").click(function(){
+            //자식창에서 여는 참조자 조회 팝업임을 표시
+            $('#apvlReqIptFlagHidden').text("refReqBfrPop");
+
+            openEmpMgmtPop();
+        });
+
+
         // 직원 조회 모달 팝업 오픈
         function openEmpMgmtPop(ipt_id) {
+            /*
             // 전달할 직원명 param 세팅
             if(ipt_id != null && ipt_id != '') {
                 $('#ipt_searchNamePop').val($('#' + ipt_id).val());
             }
+            */
 
             // 팝업 오픈
             var url = "{% url 'dili_api:empMgmtPop' %}" ;
@@ -85,7 +98,7 @@
                 return;
             }
 
-            //근무 사유 유효성 검증
+            //결재자 유효성 검증
             if($("#ipt_apvlLnSearchNamePop").val().trim() == "" || $("#ipt_apvlLnSearchEmailPop").val().trim() == "") {
                 alertMsg("결재자를 선택해주세요.");
                 return;
@@ -130,7 +143,8 @@
                         "wrkTme"        : $("#ipt_allWrkTm").val(),             //$("#ipt_wrkDt").val().substring(11,13) +""+ $("#ipt_wrkDt").val().substring(14,16) +"" + $("#ipt_wrkDt").val().substring(17,19),
                         "wrkReqRsn"     : inptWrkReqRsn,                        //근무 사유
                         "th1AprvStus"   : "01",                                 //01: 미승인
-                        "th1AprvNm"     : $("#ipt_apvlLnSearchEmailPop").val()  //결재자
+                        "th1AprvNm"     : $("#ipt_apvlLnSearchEmailPop").val(), //결재자
+                        "refNm"         : $('#ipt_refSearchEmailPop').val()     //참조자
                     }
 
                     $.ajaxCall( param, {
@@ -153,14 +167,21 @@
     });
 
     // 직원 조회 시, 결재자 input 세팅
-    $(document).on("click","#ipt_apvlSearchNamePop",function(){
-        $('#ipt_apvlLnSearchEmailPop').val($('#ipt_apvlSearchEmailPop').val());
-        $('#ipt_apvlLnSearchNamePop').val($('#ipt_apvlSearchNamePop').val());
-        //$('#apvlReqIptFlagHidden').text('')
-        //$("#apvlEmpEmailHidden").text('')
+    //$(document).on("click","#ipt_apvlSearchNamePop",function(){
+    $('#ipt_apvlSearchNamePop').click(function() {
+
+        if($('#apvlReqIptFlagHidden').text() == 'apvlLnReqBfrPop') {
+            //자식창에서 연 경우, 결재자 조회 > 이름, 이메일 세팅
+            $('#ipt_apvlLnSearchNamePop').val($('#ipt_apvlSearchNamePop').val());
+            $('#ipt_apvlLnSearchEmailPop').val($('#ipt_apvlSearchEmailPop').val());
+            $('#apvlReqIptFlagHidden').text('')
+        } else if($('#apvlReqIptFlagHidden').text() == 'refReqBfrPop') {
+            //자식창에서 연 경우, 참조자 조회 > 이름, 이메일 세팅
+            $('#ipt_refSearchNamePop').val($('#ipt_apvlSearchNamePop').val());
+            $('#ipt_refSearchEmailPop').val($('#ipt_apvlSearchEmailPop').val());
+            $('#apvlReqIptFlagHidden').text('')
+        }
     });
-
-
 </script>
 
 
@@ -226,19 +247,34 @@
                                         <!-- 결재선 지정 영역 -->
                                         <div class="card-body flex-height d-flex m-0 p-2">
                                             <!-- 결재자 -->
-                                            <div class="align-self-center mr-5">
+                                            <div class="align-self-center mr-5" style="font-weight:bold">
                                                 <span>결재&nbsp;</span>
                                             </div>
 
                                             <div class="align-self-center mr-3">
                                                 <div class="align-self-center mr-3">
-                                                    <input type="text" class="align-self-start align-self-center mr-1" id="ipt_apvlLnSearchNamePop" name="ipt_apvlLnSearchNamePop" placeholder="이름을 입력해주세요." maxlength="10" readonly/>
-                                                    <input type="text" class="align-self-start align-self-center mr-1" id="ipt_apvlLnSearchEmailPop" name="ipt_apvlLnSearchEmailPop" style="width:235px" readonly/>
+                                                    <input type="text" class="align-self-start align-self-center mr-1 form-control" id="ipt_apvlLnSearchNamePop" name="ipt_apvlLnSearchNamePop" placeholder="이름을 입력해주세요." maxlength="10" readonly/>
+                                                    <input type="text" class="align-self-start align-self-center mr-1 form-control" id="ipt_apvlLnSearchEmailPop" name="ipt_apvlLnSearchEmailPop" style="width:235px; display:none;" readonly/>
                                                     <input type="hidden" class="form-control" id="ipt_apvlSearchNamePop" name="ipt_apvlSearchNamePop" readonly/>
                                                     <input type="hidden" class="form-control" id="ipt_apvlSearchEmailPop" name="ipt_apvlSearchEmailPop" readonly/>
                                                     <span id="apvlReqHidden" style="display:none;" >apvlReq</span>
                                                     <span id="apvlEmpEmailHidden" style="display:none;" ></span>
                                                     <span id="apvlReqIptFlagHidden" style="display:none;" ></span>
+                                                </div>
+                                            </div>
+
+                                        </div>
+
+                                        <div class="card-body flex-height d-flex m-0 p-2">
+                                            <!-- 결재자 -->
+                                            <div class="align-self-center mr-5 " style="font-weight:bold">
+                                                <span>참조&nbsp;</span>
+                                            </div>
+
+                                            <div class="align-self-center mr-3">
+                                                <div class="align-self-center mr-3">
+                                                    <input type="text" class="align-self-start align-self-center mr-1 form-control" id="ipt_refSearchNamePop" name="ipt_refSearchNamePop" placeholder="이름을 입력해주세요." maxlength="10" readonly/>
+                                                    <input type="text" class="align-self-start align-self-center mr-1 form-control" id="ipt_refSearchEmailPop" name="ipt_refSearchEmailPop" style="width:235px; display:none;" readonly/>
                                                 </div>
                                             </div>
 
