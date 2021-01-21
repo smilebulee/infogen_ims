@@ -97,7 +97,6 @@ var nRow;
 
 /* 선택버튼 클릭 이벤트 */
 function onClickselectBtn() {
-debugger;
     console.log($("#apvlReqHidden").text());
     if($("#apvlReqHidden").text() == "apvlReq" ) {
         if($("#apvlEmpEmailHidden").text() == null || $("#apvlEmpEmailHidden").text() == ""){
@@ -241,7 +240,6 @@ function onClickEvt(i) {
     nRow = i;
 
 //    $('#ipt_apvlSearchNamePop').change();
-debugger;
     if($("#apvlReqHidden").text() == "scheduleStat") {
         $('#ipt_searchOcemEmailPop').val(email);
         $('#apvlEmpEmailHidden').text(email);
@@ -349,7 +347,6 @@ function onClickSearchBtn(ipt_searchName) {
 /* 직원목록 엔터 조회 */
 $('#ipt_searchName').keydown(function(e){
         //엔터키 입력 + 이름컬럼에 값이 있는 경우.
-        debugger;
         if ( e.keyCode == 13 && $('#ipt_searchName').val() != 'undefined' ) {
             var param = {
                 name : $('#ipt_searchName').val()
