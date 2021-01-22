@@ -119,6 +119,33 @@
 
     });
 
+
+    /* 자리수만큼 0 채우기 (근무 시간 형식 지정) */
+    function fillZero(width, str){
+        return str.length >= width ? str:new Array(width-str.length+1).join('0')+str;
+        //남는 길이만큼 0으로 채움
+    }
+
+
+    /* 시간 차이 구하기 (근무 시간) */
+    function getTimeDiff(fromDtm, toDtm) {
+        var dt1 = new Date(fromDtm);
+        var dt2 = new Date(toDtm);
+
+        var tDiff = dt2 - dt1; //밀리초 단위 시간차 반환
+
+        var hh = Math.floor((tDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        var mi = Math.floor((tDiff % (1000 * 60 * 60)) / (1000 * 60));
+        var ss = Math.floor((tDiff % (1000 * 60)) / 1000);
+
+        //시간 차 9시간 이상인 경우, 식사 시간 1시간 제외
+        if(hh >= 9) {
+            hh = hh - 1;
+        }
+
+        return fillZero(2, hh + '') + fillZero(2, mi + '') + fillZero(2, ss + '');
+    }
+
     //선결재 저장
     function saveApvlReq() {
         var inptWrkDt = $("#ipt_wrkDt").val();
@@ -150,7 +177,7 @@
                             'callbackFn' : function(data){
                                 g_toast.push('결재 요청이 완료되었습니다.');
                                 $('#exitApvlReqModalBtn').click();
-                                //$('#searchBtn').click();
+                                $('#searchBtn').click();
                             }
         });
     }

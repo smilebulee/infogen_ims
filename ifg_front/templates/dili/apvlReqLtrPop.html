@@ -141,7 +141,8 @@
                         "wrkDt"         : inptWrkDt,                            // 근무일자
                         "jobStrtTm"     : inptStrtTm,                           // 근무 시작 시간
                         "jobEndTm"      : inptEndTm,                            // 근무 종료 시간
-                        "wrkTme"        : wrkTme,                               // 총 근무 시간 $("#ipt_wrkDt").val().substring(11,13) +""+ $("#ipt_wrkDt").val().substring(14,16) +"" + $("#ipt_wrkDt").val().substring(17,19),
+                        //"wrkTme"        : wrkTme,                               // 총 근무 시간 $("#ipt_wrkDt").val().substring(11,13) +""+ $("#ipt_wrkDt").val().substring(14,16) +"" + $("#ipt_wrkDt").val().substring(17,19),
+                        "wrkTme"        : $("#ipt_allWrkTm").val(),             // 총 근무 시간 $("#ipt_wrkDt").val().substring(11,13) +""+ $("#ipt_wrkDt").val().substring(14,16) +"" + $("#ipt_wrkDt").val().substring(17,19),
                         "wrkReqRsn"     : inptWrkReqRsn,                        // 근무 사유
                         "th1AprvStus"   : "01",                                 // 01: 미승인
                         "th1AprvNm"     : $("#ipt_apvlLnSearchEmailPop").val(), // 결재자
@@ -167,6 +168,33 @@
 
         });
     });
+
+
+    /* 자리수만큼 0 채우기 (근무 시간 형식 지정) */
+    function fillZero(width, str){
+        return str.length >= width ? str:new Array(width-str.length+1).join('0')+str;
+        //남는 길이만큼 0으로 채움
+    }
+
+
+    /* 시간 차이 구하기 (근무 시간) */
+    function getTimeDiff(fromDtm, toDtm) {
+        var dt1 = new Date(fromDtm);
+        var dt2 = new Date(toDtm);
+
+        var tDiff = dt2 - dt1; //밀리초 단위 시간차 반환
+
+        var hh = Math.floor((tDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        var mi = Math.floor((tDiff % (1000 * 60 * 60)) / (1000 * 60));
+        var ss = Math.floor((tDiff % (1000 * 60)) / 1000);
+
+        //시간 차 9시간 이상인 경우, 식사 시간 1시간 제외
+        if(hh >= 9) {
+            hh = hh - 1;
+        }
+
+        return fillZero(2, hh + '') + fillZero(2, mi + '') + fillZero(2, ss + '');
+    }
 
     // 직원 조회 시, 결재자 input 세팅
     //$(document).on("click","#ipt_apvlSearchNamePop",function(){
