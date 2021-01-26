@@ -94,25 +94,32 @@
         var ipt_empDept = $('[name="sbx_empDept"] option:selected').val();
 
         if( ipt_empId == "" || ipt_empId == null ){
-            alert("직원 아이디를 입력해 주세요.");
+            alertMsg("직원 ID를 입력해 주세요.");
+            $('#ipt_empId').focus();
             return false;
         } else if (ipt_empPw == "" || ipt_empPw == null ){
-            alert("직원 비밀번호를 입력해 주세요.");
+            alertMsg("직원 비밀번호를 입력해 주세요.");
+            $('#ipt_empPw').focus();
             return false;
         } else if(ipt_empPw.length < 4 || ipt_empPw.length > 12 ) {
-            alert("직원 비밀번호는 4 ~ 12자로 입력해주세요.");
+            alertMsg("직원 비밀번호는 4 ~ 12자로 입력해주세요.");
+            $('#ipt_empPw').focus();
             return false;
         } else if (ipt_empAuthId == "none" || ipt_empAuthId == null ){
-            alert("직원 권한을 선택해 주세요.");
+            alertMsg("직원 권한을 선택해 주세요.");
+            $('#ipt_empAuthId').focus();
             return false;
         } else if (ipt_empNm == "" || ipt_empNm == null ){
-            alert("직원 이름을 입력해 주세요.");
+            alertMsg("직원 성명을 입력해 주세요.");
+            $('#ipt_empNm').focus();
             return false;
         } else if (ipt_empDept == "00" || ipt_empDept == null ){
-            alert("직원 부서를 선택해 주세요.");
+            alertMsg("직원 부서를 선택해 주세요.");
+            $('#ipt_empDept').focus();
             return false;
         } else if (ipt_empNm.length < 2){
-            alert("직원 이름은 두 글자 이상 입력해 주세요.");
+            alertMsg("직원 성명은 두 글자 이상 입력해 주세요.");
+            $('#ipt_empNm').focus();
             return false;
         }
 
@@ -137,20 +144,20 @@
                                  url = "{% url 'dili_api:empMgmt' %}";
                                  $('#grd_empListTable').load(url);
                                  $('#exitEmpModalBtn').click();
-                                 g_toast.push("성공적으로 수정되었습니다.");
+                                 alertMsg("성공적으로 수정되었습니다.");
                                  console.log("수정되었습니다.");
 
                                 //sFlag = true;
                                 //fileSave();
                             } else{
-                                g_toast.push("수정에 실패하였습니다.");
+                                alertMsg("수정에 실패하였습니다.");
                                 console.log("수정에 실패하였습니다.");
                                 location.reload();
                             }
                         }
                    });
                 }else{     //취소클릭시
-                    g_toast.push("취소하였습니다.");
+                    alertMsg("취소하였습니다.");
                     console.log("취소하였습니다.");
                     //location.reload();
                 }
@@ -186,20 +193,20 @@
                                  url = "{% url 'dili_api:empMgmt' %}";
                                  $('#grd_empListTable').load(url);
                                  $('#exitEmpModalBtn').click();
-                                 g_toast.push("성공적으로 삭제되었습니다.");
+                                 alertMsg("성공적으로 삭제되었습니다.");
                                  console.log("삭제되었습니다.");
 
                                 //sFlag = true;
                                 //fileSave();
                             } else{
-                                g_toast.push("삭제에 실패하였습니다.");
+                                alertMsg("삭제에 실패하였습니다.");
                                 console.log("삭제에 실패하였습니다.");
                                 location.reload();
                             }
                         }
                    });
                 }else{     //취소클릭시
-                    g_toast.push("취소하였습니다.");
+                    alertMsg("취소하였습니다.");
                     console.log("취소하였습니다.");
                     //location.reload();
                 }
@@ -222,9 +229,9 @@
     </div>
     <div class="flex-height d-flex m-0">
         <form method="post" id="submitEmp" action="">
-                <!-- 아이디 -->
+                <!-- ID -->
                 <div class="flex-height d-flex mb-2">
-                    <div class="align-self-start align-self-center mr-4"><label for="ipt_empId">아이디&nbsp;&nbsp;</label></div>
+                    <div class="align-self-start align-self-center mr-5"><label for="ipt_empId">ID &nbsp;&nbsp;&nbsp;</label></div>
                     <div class="align-self-center mr-2">
                         <input type="text" class="form-control" id="ipt_empId" name="ipt_empId" placeholder="ID" maxlength="30" readonly/>
                     </div>
@@ -236,6 +243,13 @@
                         <input type="password" class="form-control" id="ipt_empPw" name="ipt_empPw" placeholder="PASSWORD" maxlength="10"/>
                     </div>
                 </div>
+                <!-- 성명 -->
+                <div class="flex-height d-flex mb-2">
+                    <div class="align-self-start align-self-center mr-5"><label for="ipt_empNm">성명</label></div>
+                    <div class="align-self-center mr-5">
+                        <input type="text" class="form-control" id="ipt_empNm" name="ipt_empNm" placeholder="NAME" maxlength="10"/>
+                    </div>
+                </div>
                 <!-- 권한 -->
                 <div class="flex-height d-flex mb-2">
                     <div class="align-self-start align-self-center mr-5"><label for="sbx_empAuthId">권한</label></div>
@@ -243,13 +257,6 @@
                         <select id="sbx_empAuthId" name="sbx_empAuthId" class="form-control">
                             <option value="none">선택</option>
                         </select>
-                    </div>
-                </div>
-                <!-- 성명 -->
-                <div class="flex-height d-flex mb-2">
-                    <div class="align-self-start align-self-center mr-5"><label for="ipt_empNm">성명</label></div>
-                    <div class="align-self-center mr-5">
-                        <input type="text" class="form-control" id="ipt_empNm" name="ipt_empNm" placeholder="NAME" maxlength="10"/>
                     </div>
                 </div>
                 <!-- 부서 -->
@@ -267,7 +274,7 @@
                 <div class="flex-height d-flex mb-2">
                     <div class="align-self-center mr-5">
                         <button class="button" id="editBtn" type="button" onclick="onClickEditBtn()">수정</button>
-                        <button class="button" id="resetBtn" type="button" onclick="onClickResetBtn()">초기화</button>
+                        <button class="button" id="resetBtn" type="button" onclick="onClickResetBtn()">재조회</button>
                         <button class="button" id="deleteBtn" type="button" onclick="onClickDeleteBtn()">삭제</button>
                         <button class="button" id="closeBtn" type="button" onclick="onClickCloseBtn()">닫기</button>
                     </div>

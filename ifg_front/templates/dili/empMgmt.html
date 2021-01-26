@@ -102,9 +102,8 @@ function empListGrd(data){
     var empListTable = '<table class="table table-bordered text-center">';
     empListTable += '<thead>';
     empListTable += '<tr>';
-    empListTable += '<th class="text-center">순번</th>';
-    empListTable += '<th class="text-center">아이디</th>';
-    empListTable += '<th class="text-center">이름</th>';
+    empListTable += '<th class="text-center">ID</th>';
+    empListTable += '<th class="text-center">성명</th>';
     empListTable += '<th class="text-center">권한</th>';
     empListTable += '<th class="text-center">부서</th>';
     empListTable += '</tr>';
@@ -119,11 +118,10 @@ function empListGrd(data){
         for(var i = 0; i < size; i++){
 
             if(param.authId == "ADMIN") { /* 관리자일 경우 더블클릭 이벤트 */
-                empListTable += '<tr id ="grd_empList" ondblclick="onDblClickEvt(\''+data[i].EMP_EMAIL+'\')">';
+                empListTable += '<tr id ="grd_empList" onclick="onClickEvt(\''+data[i].EMP_EMAIL+'\')">';
             }else{
                 empListTable += '<tr id ="grd_empList")>';
             }
-            empListTable += '<td id="no" class="pt-3-half">'+(i+1)+'</td>';
             empListTable += '<td id="empName" class="pt-3-half">'+data[i].EMP_ID+'</td>';
             empListTable += '<td id="empName" class="pt-3-half">'+data[i].EMP_NAME+'</td>';
             empListTable += '<td id="empEmail" class="pt-3-half">'+data[i].AUTH_VAL+'</td>';
@@ -144,8 +142,8 @@ function empListGrd(data){
     });
 };
 
-/* 그리드 더블클릭 이벤트 (직원정보 수정 팝업) */
-function onDblClickEvt(i) {
+/* 그리드 클릭 이벤트 (직원정보 수정 팝업) */
+function onClickEvt(i) {
     var email = i;
     $('#hidden_selectMail').val(email);
 
@@ -173,6 +171,13 @@ $("#empMgmtRegBtn").click(function(){
     $('#empModal').load(url);
 });
 
+//한글만 입력가능체크
+function isKorean(){
+ if((event.keyCode < 12592) || (event.keyCode > 12687)){
+  event.returnValue = false
+ }
+}
+
 
 </script>
 <!--직원등록, 수정 모달 영역 -->
@@ -199,18 +204,26 @@ $("#empMgmtRegBtn").click(function(){
                 <b>직원관리</b>
             </h5>
         </div>
-
         <div class="accordion mb-4" id="grp_search">
             <div class="card">
-
+                <div class="card-header p-0" id="head_search">
+                    <h2 class="mb-0">
+                        <button class="btn btn-link btn-block text-left text-dark" type="button" data-toggle="collapse" data-target="#col_search" aria-expanded="true" aria-controls="collapseOne">
+                            <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-caret-down-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z"/>
+                            </svg>
+                            직원조회
+                        </button>
+                    </h2>
+                </div>
                 <div id="col_search" class="collapse show" aria-labelledby="head_search" data-parent="#grp_search">
                     <div class="card-body flex-height d-flex m-0 p-2">
-                        <div class="align-self-start align-self-center mr-3">성함</div>
+                        <div class="align-self-start align-self-center mr-3">성명</div>
                         <div class="align-self-center mr-3">
-                            <input type="text" class="form-control" id="ipt_searchName" name="ipt_searchName" placeholder="이름을 입력해주세요." maxlength="10"/>
+                            <input type="text" class="form-control" id="ipt_searchName" name="ipt_searchName" placeholder="이름을 입력해주세요." maxlength="5" onKeyPress="isKorean();"/>
                         </div>
                         <div class="align-self-center mr-3">
-                            <button class="button" id="searchBtn" type="button">검색</button>
+                            <button class="button" id="searchBtn" type="button">조회</button>
                         </div>
                         <div class="align-self-end align-self-center mr-3">
                             <input type="text" class="form-control" id="hidden_selectMail" name="hidden_selectMail" maxlength="30" readonly hidden/>
@@ -220,6 +233,7 @@ $("#empMgmtRegBtn").click(function(){
                 </div>
             </div>
         </div>
+
         <center>
             <div id="grd_empListTable" style="overflow:auto; height:600px;"></div>
 

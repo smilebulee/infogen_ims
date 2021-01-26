@@ -100,7 +100,7 @@ function onClickselectBtn() {
     console.log($("#apvlReqHidden").text());
     if($("#apvlReqHidden").text() == "apvlReq" ) {
         if($("#apvlEmpEmailHidden").text() == null || $("#apvlEmpEmailHidden").text() == ""){
-            alert("직원을 선택해 주세요.");
+            alertMsg("직원을 선택해 주세요.");
         }else{
             var email = $(nRow).children().eq(1).text(); // 그리드에서 선택한 email 값
             var name = $(nRow).children().eq(0).text(); // 그리드에서 선택한 name 값
@@ -114,7 +114,7 @@ function onClickselectBtn() {
         }
     } else if($("#apvlReqHidden").text() == "scheduleStat" ) {
         if($("#apvlEmpEmailHidden").text() == null || $("#apvlEmpEmailHidden").text() == ""){
-            alert("직원을 선택해 주세요.");
+            alertMsg("직원을 선택해 주세요.");
         }else{
             var email = $(nRow).children().eq(1).text(); // 그리드에서 선택한 email 값
             var name = $(nRow).children().eq(0).text(); // 그리드에서 선택한 name 값
@@ -128,7 +128,7 @@ function onClickselectBtn() {
         }
     } else {
         if($("#empEmailHidden").val() == null || $("#empEmailHidden").val() == ""){
-            alert("직원을 선택해 주세요.");
+            alertMsg("직원을 선택해 주세요.");
         }else{
             if( $("#empEmailHidden").val() != null && $("#empEmailHidden").val() != "" ){
                 dataCustomArray = new Array();
@@ -163,7 +163,7 @@ function onDblClickEvt(i){
     console.log($("#apvlReqHidden").text());
     if($("#apvlReqHidden").text() == "apvlReq" ) {
         if($("#apvlEmpEmailHidden").text() == null || $("#apvlEmpEmailHidden").text() == ""){
-            alert("직원을 선택해 주세요.");
+            alertMsg("직원을 선택해 주세요.");
         }else{
             var email = $(i).children().eq(1).text(); // 그리드에서 선택한 email 값
             var name = $(i).children().eq(0).text(); // 그리드에서 선택한 name 값
@@ -178,7 +178,7 @@ function onDblClickEvt(i){
         }
     } else if($("#apvlReqHidden").text() == "scheduleStat" ) {
         if($("#apvlEmpEmailHidden").text() == null || $("#apvlEmpEmailHidden").text() == ""){
-            alert("직원을 선택해 주세요.");
+            alertMsg("직원을 선택해 주세요.");
         }else{
             var email = $(i).children().eq(1).text(); // 그리드에서 선택한 email 값
             var name = $(i).children().eq(0).text(); // 그리드에서 선택한 name 값
@@ -193,7 +193,7 @@ function onDblClickEvt(i){
         }
     } else {
         if($("#empEmailHidden").val() == null || $("#empEmailHidden").val() == ""){
-            alert("직원을 선택해 주세요.");
+            alertMsg("직원을 선택해 주세요.");
         }else{
             if( $("#empEmailHidden").val() != null && $("#empEmailHidden").val() != "" ){
                 dataCustomArray = new Array();
@@ -260,9 +260,9 @@ function onClickSearchBtn(ipt_searchName) {
     }
 
     if( $('#ipt_searchName').val() == "" || $('#ipt_searchName').val() == null ){
-        alert("직원 이름을 입력해 주세요.");
+        alertMsg("직원 이름을 입력해 주세요.");
     } else if ($('#ipt_searchName').val().length < 2){
-        alert("직원 이름은 두 글자 이상 입력해 주세요.");
+        alertMsg("직원 이름은 두 글자 이상 입력해 주세요.");
     } else {
         /* 목록조회 */
         $.ajaxCall( param, {
@@ -352,9 +352,9 @@ $('#ipt_searchName').keydown(function(e){
                 name : $('#ipt_searchName').val()
             }
             if( $('#ipt_searchName').val() == "" || $('#ipt_searchName').val() == null ){
-                alert("직원 이름을 입력해 주세요.");
+                alertMsg("직원 이름을 입력해 주세요.");
             } else if ($('#ipt_searchName').val().length < 2){
-                alert("직원 이름은 두 글자 이상 입력해 주세요.");
+                alertMsg("직원 이름은 두 글자 이상 입력해 주세요.");
             } else {
                 //목록조회
                 $.ajaxCall( param, {
@@ -448,7 +448,7 @@ function empListGrd(data){
     if(size > 0) {
         empListTable += '<tr>';
         empListTable += '<th class="text-center">이름</th>';
-        empListTable += '<th class="text-center">아이디</th>';
+        empListTable += '<th class="text-center">ID</th>';
         empListTable += '<th class="text-center">부서</th>';
         empListTable += '<th class="text-center" style="display:none;">체크박스</th>';
         empListTable += '</tr>';
