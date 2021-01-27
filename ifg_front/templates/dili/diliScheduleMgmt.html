@@ -370,10 +370,6 @@
                 setLabel(calendar);
             });
 
-
-
-
-
             /*********************************************************************
             *   my_modal 영역 닫기 버튼 클릭이벤트
             *********************************************************************/
@@ -646,6 +642,7 @@
                         }
                     }
                 }
+
                 weekTable += '<tr id ="grd_week'+tempSetWeek+'" onclick="onclickWeekEvt(this)">';
                 weekTable += '<td class="pt-3-half" contenteditable="false">'+tdDate+'</td>';
                 weekTable += '<td class="pt-3-half" contenteditable="false">'+jobStrtTm+'</td>';
@@ -789,12 +786,14 @@
         *   onclickWeekEvt 날짜 가져오기
         *********************************************************************/
        function onclickWeekEvt(trId) {
+
             var wClickDt = trId.id.replace('grd_week','');
             weekDate = setWeek(wClickDt);                                   // 선택된 일이 포함된 주의 Start,End Date 조회
             //getWrkTimeByIml(null, weekDate.strtDate, weekDate.endDate);     // Session Email 을 기준으로 시작~종료일에 대한 근무시간 조회.
             $('#'+trId.id).prevAll().css("background-color","");
             $('#'+trId.id).nextAll().css("background-color","");
             $('#'+trId.id).css("background-color","#8A8C8F");
+
             if($('#clickDate').val() == wClickDt){
                 modal('my_modal');
                 $('#my_modal2').load("{% url 'dili_api:scheduleMgmtPop' %}");
@@ -829,6 +828,7 @@
         *   onclickMonthEvt 날짜 가져오기
         *********************************************************************/
        function onclickMonthEvt(trId) {
+
             var mClickDt = trId.id.replace('grd_month','');
 
             weekDate = setWeek(mClickDt);                                   // 선택된 일이 포함된 주의 Start,End Date 조회
@@ -1082,6 +1082,7 @@
 
             calendar.on('clickSchedule', function(event) {
                 /*작업중*/
+
                 $('.tui-full-calendar-month-guide-block').remove();
                 console.log("asdsad"+event.schedule.end.getFullYear()+"-"+(event.schedule.end.getMonth()+1)+"-"+event.schedule.end.getDate());
 
@@ -1135,7 +1136,6 @@
                   category: scheduleData.isAllDay ? 'allday' : 'time',
                   location: scheduleData.location             // 장소 정보
                 };
-
 
 
                 console.log("asdsad"+schedule.end.getFullYear()+"-"+(schedule.end.getMonth()+1)+"-"+schedule.end.getDate());
@@ -1344,6 +1344,7 @@
             }
             getWrkTimeByIml(null, dt);
         }
+
         /*********************************************************************
         *   월그리드 그래프세팅
         *********************************************************************/
@@ -1357,7 +1358,69 @@
             getWrkTimeByIml(null, dt);
         }
 
+        /*********************************************************************
+        *   출근버튼 클릭
+        *********************************************************************/
+        function onclickStrtTmMain() {
 
+            var email = sessionStorage.getItem("email");
+            var dt = getCurrentDate();
+            var tm = getCurrentTime();
+            setStrtTmMain(email, dt, tm);
+            $('#tmpPopStrtTm').text(tm);
+
+        }
+
+        /*********************************************************************
+        *  출근 INSERT
+        *********************************************************************/
+        function setStrtTmMain(email, dt, tm ){
+            var param = {
+                "email"  : email,
+                "dt"     : dt,
+                "tm"     : tm
+            }
+
+            $.ajaxCall( param, {
+                 'method' : 'POST',
+                 'url' : "{% url 'dili_api:saveStrtTm' %}",
+                 'dataType' : 'json',
+                 'data' : JSON.stringify(param),
+                 'async' : false,
+                 'callbackFn' : function(data){
+                    alertMsg('저장 되었습니다.');
+                    $('#exitSchdModal').click();
+                 }
+            });
+        }
+
+        function onclickLvocPop() {
+            var today = new Date();
+            var tmp = today.getFullYear()+"-"+(today.getMonth()+1)+"-"+today.getDate();
+            var tmpDtbase = setWeek(tmp).baseDate;
+            weekDate = setWeek(tmp);                                   // 선택된 일이 포함된 주의 Start,End Date 조회
+
+            var tempSrhClickData = tmpDtbase.split('-')
+            var srhClickData = new Date(tempSrhClickData[0], Number(tempSrhClickData[1])-1, tempSrhClickData[2]);
+
+            //날짜 세팅
+            var srhClickYear = today.getFullYear(); // 년도
+            var srhClickMonth = today.getMonth();  // 월 (today.getMonth()는 0~11로 출력)
+            var srhClickDate = today.getDate();  // 날짜
+            var srhClickDay = today.getDay();  // 요일 (0~6으로 출력, 0:일요일, 1:월요일, 6:토요일)
+            crteTodayShow(srhClickYear, srhClickMonth, srhClickDate, srhClickDay);
+            $('#btn_showGrd').trigger('click');
+            $('#btn_showWeek').trigger('click');
+
+            $('#txt_mmYy').text(tempSrhClickData[0]);
+            $('#txt_mmMm').text(tempSrhClickData[1]);
+            setMonthGridData();
+            var dte = "grd_week" + tmpDtbase;
+            var dteJson = {id : dte};
+
+            $('#clickDate').val(tmpDtbase);
+            onclickWeekEvt(dteJson);
+        }
 
     </script>
         <input type="hidden" id="grapDt"/>
@@ -1433,7 +1496,7 @@
                         </div>
                         <div id="col_search" class="collapse show" aria-labelledby="head_search" data-parent="#grp_search">
                             <div class="card-body flex-height d-flex m-0 p-2">
-                                <div class="align-self-start align-self-center mr-3">사원 Email</div>
+                                <div class="align-self-start align-self-center mr-3">ID</div>
                                 <div class="align-self-center mr-3">
                                     <input type="text" class="form-control" id="ipt_searchName" name="ipt_searchName"  maxlength="10" disabled/>
                                 </div>
@@ -1498,6 +1561,9 @@
                         <button type="button" class="btn btn-outline-primary btn-sm calendar-btnAction" id="today">Today</button>
                         <button type="button" class="btn btn-outline-secondary btn-sm calendar-btnAction" id="next">다음달</button>
                         <button type="button" class="btn btn-outline-secondary btn-sm calendar-btnAction" id="prev">이전달</button>
+                        &nbsp;
+                        <button type="button" class="btn btn-outline-secondary btn-sm calendar-btnAction button" id="btn_lvoc" onclick="onclickLvocPop()">퇴근</button>
+                        <button type="button" class="btn btn-outline-secondary btn-sm calendar-btnAction button" id="btn_atnd" onclick="onclickStrtTmMain()">출근</button>
                     </div>
                 </div>
 
