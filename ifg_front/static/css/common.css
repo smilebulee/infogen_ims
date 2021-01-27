@@ -21,3 +21,13 @@
 .cnclButton:hover {
     background-color: #545454;
 }
+
+.requiredTag {
+    color: #EC1F27;
+}
+
+.requiredText {
+    color: #EC1F27;
+    font-size: x-small;
+    float: right;
+}

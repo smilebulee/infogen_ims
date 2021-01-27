@@ -1,190 +1,206 @@
 <script type="text/javascript">
-    /*********************************************************************
-    *   Dialog Setting
-    *********************************************************************/
-    var n_dialog = new ax5.ui.dialog();
-    var n_title =  '<span style="color:#fd7e14;font-size:20px;"><i class="fa fa-check-circle"></i></span> CHECK';
+/*********************************************************************
+*   Dialog Setting
+*********************************************************************/
+var n_dialog = new ax5.ui.dialog();
+var n_title =  '<span style="color:#fd7e14;font-size:20px;"><i class="fa fa-check-circle"></i></span> CHECK';
 
-    n_dialog.setConfig({
-        title: n_title,
-        theme : 'info',
-        lang:{
-            "ok": "확인", "cancel": "취소"
-        }
-    });
+n_dialog.setConfig({
+    title: n_title,
+    theme : 'info',
+    lang:{
+        "ok": "확인", "cancel": "취소"
+    }
+});
 
-    $(document).ready(function(){
-        // 공통 코드 조회 - '부서 조회'
-        retrieveCmmCd('sbx_empDept', 'SLIN_BZDP');
+$(document).ready(function(){
+    // 공통 코드 조회 - '부서 조회'
+    retrieveCmmCd('sbx_empDept', 'SLIN_BZDP');
 
-        // 공통 코드 조회 - '권한 조회'
-        retrieveCmmCd('sbx_empAuthId', 'AUTH_CD');
+    // 공통 코드 조회 - '권한 조회'
+    retrieveCmmCd('sbx_empAuthId', 'AUTH_CD');
 
-    });
+});
 
-    /* 중복확인 버튼 클릭 이벤트 */
-    function onClickIsExistBtn() {
-        var email = $('#ipt_empId').val();
-        if( email == "" || email == null){
-            alertMsg("ID를 입력해주세요");
-        }else{
-            var param = {
-                "email" : email
-            }
-
-            /* 정보 조회 */
-            $.ajaxCall( param, {
-                 'method' : 'GET',
-                 'url' : "{% url 'dili_api:getEditEmpInfo' %}",
-                 'dataType' : 'json',
-                 'data' : JSON.stringify(param),
-                 'async' : false,
-                 'callbackFn' : function(data){
-                    // 로그
-                    console.log("data : ",data);
-                    // 리턴
-                    isExistResult(data);
-                 }
-            });
+/* ID 중복확인 버튼 클릭 이벤트 */
+function onClickIsExistBtn() {
+    var email = $('#ipt_empId').val();
+    if( email == "" || email == null){
+        alertMsg("ID를 입력해주세요");
+    }else{
+        var param = {
+            "email" : email
         }
 
-    };
+        /* 정보 조회 */
+        $.ajaxCall( param, {
+             'method' : 'GET',
+             'url' : "{% url 'dili_api:getEditEmpInfo' %}",
+             'dataType' : 'json',
+             'data' : JSON.stringify(param),
+             'async' : false,
+             'callbackFn' : function(data){
+                // 로그
+                console.log("data : ",data);
+                // 리턴
+                isExistResult(data);
+             }
+        });
+    }
 
-    /* ID 중복체크 결과 */
-    function isExistResult(data){
-        console.log("Start")
-        console.log(data)
-        console.log(typeof(data))
-        if(data.length > 0){
-            alertMsg("이미 사용중인 ID입니다.");
-            console.log("ID 중복체크 > 등록 불가능");
-            $('#ipt_empId').val("");
-            $('#ipt_empId').focus();
+};
 
-        }else{
-            alertMsg("사용 가능한 ID입니다.");
-            console.log("ID 중복체크 > 등록가능");
-            $('#ipt_empId').attr('readonly', true);
-            $('#reIsExistBtn').attr('hidden', false);
-            $('#isExistBtn').attr('hidden', true);
-        }
-    };
-
-
-    /* ID 재설정 클릭 이벤트 */
-    function onClickReIsExistBtn(){
-        $('#ipt_empId').attr('readonly', false);
+/* ID 중복체크 결과 */
+function isExistResult(data){
+    console.log("Start")
+    console.log(data)
+    console.log(typeof(data))
+    if(data.length > 0){
+        alertMsg("이미 사용중인 ID입니다.");
+        console.log("ID 중복체크 > 등록 불가능");
         $('#ipt_empId').val("");
         $('#ipt_empId').focus();
-        $('#reIsExistBtn').attr('hidden', true);
-        $('#isExistBtn').attr('hidden', false);
+
+    }else{
+        alertMsg("사용 가능한 ID입니다.");
+        console.log("ID 중복체크 > 등록가능");
+        $('#ipt_empId').attr('readonly', true);
+        $('#reIsExistBtn').attr('hidden', false);
+        $('#isExistBtn').attr('hidden', true);
+    }
+};
+
+
+/* ID 재설정 클릭 이벤트 */
+function onClickReIsExistBtn(){
+    $('#ipt_empId').attr('readonly', false);
+    $('#ipt_empId').val("");
+    $('#ipt_empId').focus();
+    $('#reIsExistBtn').attr('hidden', true);
+    $('#isExistBtn').attr('hidden', false);
+}
+
+
+/* 등록버튼 클릭 이벤트 */
+function onClickSubmitBtn() {
+    var ipt_empId = $('[name="ipt_empId"]').val();
+    var ipt_empPw = $('[name="ipt_empPw"]').val();
+    var ipt_empAuthId = $('[name="sbx_empAuthId"] option:selected').val();
+    var ipt_empNm = $('[name="ipt_empNm"]').val();
+    var ipt_empDept = $('[name="sbx_empDept"] option:selected').val();
+
+
+    if( ipt_empId == "" || ipt_empId == null ){
+        alertMsg("직원 ID를 입력해 주세요.");
+        $('#ipt_empId').focus();
+        return false;
+    } else if(ipt_empId.length < 4 || ipt_empId.length > 12 ) {
+        alertMsg("직원 ID는 4 ~ 12자로 입력해주세요.");
+        $('#ipt_empId').focus();
+        return false;
+    } else if($('#reIsExistBtn').is(":hidden")) {
+        alertMsg("직원 ID 중복여부 체크해 주세요.");
+        $('#ipt_empId').focus();
+        return false;
+    } else if (ipt_empPw == "" || ipt_empPw == null ){
+        alertMsg("직원 비밀번호를 입력해 주세요.");
+        $('#ipt_empPw').focus();
+        return false;
+    } else if(ipt_empPw.length < 4 || ipt_empPw.length > 12 ) {
+        alertMsg("직원 비밀번호는 4 ~ 12자로 입력해주세요.");
+        $('#ipt_empPw').focus();
+        return false;
+    } else if (ipt_empNm == "" || ipt_empNm == null ){
+        alertMsg("직원 성명을 입력해 주세요.");
+        $('#ipt_empNm').focus();
+        return false;
+    } else if (ipt_empNm.length < 2){
+        alertMsg("직원 성명은 두 글자 이상 입력해 주세요.");
+        $('#ipt_empNm').focus();
+        return false;
+    } else if (ipt_empAuthId == "none" || ipt_empAuthId == null ){
+        alertMsg("직원 권한을 선택해 주세요.");
+        $('#ipt_empAuthId').focus();
+        return false;
+    } else if (ipt_empDept == "00" || ipt_empDept == null ){
+        alertMsg("직원 부서를 선택해 주세요.");
+        $('#ipt_empDept').focus();
+        return false;
     }
 
 
-    /* 등록버튼 클릭 이벤트 */
-    function onClickSubmitBtn() {
-        var ipt_empId = $('[name="ipt_empId"]').val();
-        var ipt_empPw = $('[name="ipt_empPw"]').val();
-        var ipt_empAuthId = $('[name="sbx_empAuthId"] option:selected').val();
-        var ipt_empNm = $('[name="ipt_empNm"]').val();
-        var ipt_empDept = $('[name="sbx_empDept"] option:selected').val();
+    var param = {
+        "ipt_empId"     : ipt_empId,
+        "ipt_empPw"     : ipt_empPw,
+        "ipt_empAuthId" : ipt_empAuthId,
+        "ipt_empNm"     : ipt_empNm,
+        "ipt_empDept"   : ipt_empDept,
+        "sessionId"         : sessionStorage.getItem("email")      //로그인한 사용자 아이디
+    }
 
+    n_dialog.confirm('등록하시겠습니까?',function(){
+            if(this.key == 'ok'){       //확인클릭시
+                $.ajaxCall( param, {
+                    method:'POST',
+                    url : "{% url 'dili_api:empMgmtReg' %}",
+                    dataType:'json',
+                    data:JSON.stringify(param),
+                    callbackFn:function(data){
+                        if(data){
+                            // 리턴
+                             //location.href = "{% url 'dili_api:empMgmt' %}";
+                             url = "{% url 'dili_api:empMgmt' %}";
+                             $('#grd_empListTable').load(url);
+                             $('#exitEmpModalBtn').click();
+                             alertMsg("성공적으로 등록되었습니다.");
+                             console.log("등록되었습니다.");
 
-        if( ipt_empId == "" || ipt_empId == null ){
-            alertMsg("직원 ID를 입력해 주세요.");
-            $('#ipt_empId').focus();
-            return false;
-        } else if(ipt_empId.length < 4 || ipt_empId.length > 12 ) {
-            alertMsg("직원 ID는 4 ~ 12자로 입력해주세요.");
-            $('#ipt_empId').focus();
-            return false;
-        } else if($('#reIsExistBtn').is(":hidden")) {
-            alertMsg("직원 ID 중복여부 체크해 주세요.");
-            $('#ipt_empId').focus();
-            return false;
-        } else if (ipt_empPw == "" || ipt_empPw == null ){
-            alertMsg("직원 비밀번호를 입력해 주세요.");
-            $('#ipt_empPw').focus();
-            return false;
-        } else if(ipt_empPw.length < 4 || ipt_empPw.length > 12 ) {
-            alertMsg("직원 비밀번호는 4 ~ 12자로 입력해주세요.");
-            $('#ipt_empPw').focus();
-            return false;
-        } else if (ipt_empNm == "" || ipt_empNm == null ){
-            alertMsg("직원 성명을 입력해 주세요.");
-            $('#ipt_empNm').focus();
-            return false;
-        } else if (ipt_empNm.length < 2){
-            alertMsg("직원 성명은 두 글자 이상 입력해 주세요.");
-            $('#ipt_empNm').focus();
-            return false;
-        } else if (ipt_empAuthId == "none" || ipt_empAuthId == null ){
-            alertMsg("직원 권한을 선택해 주세요.");
-            $('#ipt_empAuthId').focus();
-            return false;
-        } else if (ipt_empDept == "00" || ipt_empDept == null ){
-            alertMsg("직원 부서를 선택해 주세요.");
-            $('#ipt_empDept').focus();
-            return false;
-        }
-
-
-        var param = {
-            "ipt_empId" : ipt_empId,
-            "ipt_empPw" : ipt_empPw,
-            "ipt_empAuthId" : ipt_empAuthId,
-            "ipt_empNm" : ipt_empNm,
-            "ipt_empDept" : ipt_empDept
-        }
-
-        n_dialog.confirm('등록하시겠습니까?',function(){
-                if(this.key == 'ok'){       //확인클릭시
-                    $.ajaxCall( param, {
-                        method:'POST',
-                        url : "{% url 'dili_api:empMgmtReg' %}",
-                        dataType:'json',
-                        data:JSON.stringify(param),
-                        callbackFn:function(data){
-                            if(data){
-                                // 리턴
-                                 //location.href = "{% url 'dili_api:empMgmt' %}";
-                                 url = "{% url 'dili_api:empMgmt' %}";
-                                 $('#grd_empListTable').load(url);
-                                 $('#exitEmpModalBtn').click();
-                                 alertMsg("성공적으로 등록되었습니다.");
-                                 console.log("등록되었습니다.");
-
-                                //sFlag = true;
-                                //fileSave();
-                            } else{
-                                alertMsg("등록에 실패하였습니다.");
-                                console.log("등록에 실패하였습니다.");
-                                location.reload();
-                            }
+                            //sFlag = true;
+                            //fileSave();
+                        } else{
+                            alertMsg("등록에 실패하였습니다.");
+                            console.log("등록에 실패하였습니다.");
+                            location.reload();
                         }
-                   });
-                }else{     //취소클릭시
-                    alertMsg("취소하였습니다.");
-                    console.log("취소하였습니다.");
-                    //location.reload();
-                }
+                    }
+               });
+            }else{     //취소클릭시
+                alertMsg("취소하였습니다.");
+                console.log("취소하였습니다.");
+                //location.reload();
+            }
 
-            });
+        });
 
-    };
+};
 
-    /* 닫기 버튼 클릭 이벤트 */
-    function onClickCloseBtn() {
-        $('#exitEmpModalBtn').click();
-    };
+/* 닫기 버튼 클릭 이벤트 */
+function onClickCloseBtn() {
+    $('#exitEmpModalBtn').click();
+};
 
-    /* 리셋 버튼 클릭 이벤트 */
-    function onClickResetBtn() {
-        $('#ipt_empId').attr('readonly', false);
-        $('#reIsExistBtn').attr('hidden', true);
-        /*$('#ipt_empId').attr('style', 'width:200px');*/
-        $('#isExistBtn').attr('hidden', false);
-    };
+/* 리셋 버튼 클릭 이벤트 */
+function onClickResetBtn() {
+    $('#ipt_empId').attr('readonly', false);
+    $('#reIsExistBtn').attr('hidden', true);
+    /*$('#ipt_empId').attr('style', 'width:200px');*/
+    $('#isExistBtn').attr('hidden', false);
+};
+
+//영문 + 숫자만 입력가능체크
+function valueCheck(){
+
+      if (!(event.keyCode >=37 && event.keyCode<=40)) {
+        var inputVal = $(this).val();
+        $(this).val(inputVal.replace(/[^a-z0-9]/gi,''));
+      }
+}
+//한글제외 입력가능체크
+function isNotKorean(){
+ if(!((event.keyCode < 12592) || (event.keyCode > 12687))){
+  event.returnValue = false
+ }
+}
 
 </script>
 <div style="width :450px;">
@@ -195,65 +211,130 @@
     </div>
     <div class="flex-height d-flex m-0">
         <form method="post" id="submitEmp" action="">
-            <!-- ID -->
-            <div class="flex-height d-flex mb-2">
-                <div class="align-self-start align-self-center mr-5"><label for="ipt_empId">ID &nbsp;&nbsp;&nbsp;</label></div>
-                <div class="align-self-center mr-2">
-                    <input type="text" class="form-control" id="ipt_empId" name="ipt_empId" placeholder="ID" maxlength="30" />
-                </div>
-                <div class="align-self-center mr-2">
-                    <button class="button" id="reIsExistBtn" type="button" onclick="onClickReIsExistBtn()" hidden="hidden">ID 재설정</button>
-                    <button class="button" id="isExistBtn" type="button" onclick="onClickIsExistBtn()">중복확인</button>
-                </div>
-            </div>
-            <!-- 비밀번호 -->
-            <div class="flex-height d-flex mb-2">
-                <div class="align-self-start align-self-center mr-3"><label for="ipt_empPw">비밀번호</label></div>
-                <div class="align-self-center mr-3">
-                    <input type="password" class="form-control" id="ipt_empPw" name="ipt_empPw" placeholder="PASSWORD" maxlength="10" />
-                </div>
-            </div>
-            <!-- 성명 -->
-            <div class="flex-height d-flex mb-2">
-                <div class="align-self-start align-self-center mr-5"><label for="ipt_empNm">성명</label></div>
-                <div class="align-self-center mr-2">
-                    <input type="text" class="form-control" id="ipt_empNm" name="ipt_empNm" placeholder="NAME" maxlength="10" />
-                </div>
-                <div class="align-self-center mr-2">
-                    <button class="button" id="reIsExistNmBtn" type="button" onclick="onClickReIsExistNmBtn()" hidden="hidden">성명 재설정</button>
-                    <button class="button" id="isExistNmBtn" type="button" onclick="onClickIsExistNmBtn()">중복확인</button>
-                </div>
-            </div>
-            <!-- 권한 -->
-            <div class="flex-height d-flex mb-2">
-                <div class="align-self-start align-self-center mr-5"><label for="sbx_empAuthId">권한</label></div>
-                <div class="align-self-center mr-5">
-                    <select id="sbx_empAuthId" name="sbx_empAuthId" class="form-control">
-                        <option value="none" selected>선택</option>
-                    </select>
-                </div>
-            </div>
-            <!-- 부서 -->
-            <div class="flex-height d-flex mb-3">
-                <div class="align-self-start align-self-center mr-5"><label for="sbx_empDept">부서</label></div>
-                <div class="align-self-center mr-5">
-                    <select id="sbx_empDept" name="sbx_empDept" class="form-control">
-                        <option value="00" selected>선택</option>
-                    </select>
-                    <!-- 중복체크 여부 hidden -->
-                    <input type="text" class="form-control" id="hidden_existChk" name="hidden_existChk" maxlength="30" style="" readonly hidden/>
-                </div>
-            </div>
-            <!-- 버튼 -->
-            <div class="flex-height d-flex mb-2">
-                <div class="align-self-center mr-5">
-                    <button class="button" id="submitBtn" type="button" onclick="onClickSubmitBtn()">등록</button>
-                    <input class="button" id="resetBtn" type="reset" onclick="onClickResetBtn()" />
-                    <button class="button" id="closeBtn" type="button" onclick="onClickCloseBtn()" >닫기</button>
-                </div>
+            <table>
+                <tr>
+                    <td>
 
-            </div>
-
+                    </td>
+                    <td colspan="2">
+                         <div class="flex-height mb-4">
+                            <span class="requiredText">* 표시항목은 필수입력항목입니다.</span>
+                         </div>
+                    </td>
+                </tr>
+                <!-- ID -->
+                <tr>
+                    <td>
+                        <div class="align-self-start align-self-center mr-5"><span class="requiredTag mr-1">*</span><label for="ipt_empId">ID &nbsp;&nbsp;&nbsp;</label></div>
+                    </td>
+                    <td>
+                        <div class="align-self-center mr-2">
+                        <input type="text" class="form-control" id="ipt_empId" name="ipt_empId" placeholder="ID" maxlength="12" onkeypress="isNotKorean();"/>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="align-self-center mr-2">
+                            <button class="button" id="reIsExistBtn" type="button" onclick="onClickReIsExistBtn()" hidden="hidden">ID 재설정</button>
+                            <button class="button" id="isExistBtn" type="button" onclick="onClickIsExistBtn()">중복확인</button>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td colspan="2">
+                        <div class="flex-height d-flex mb-2">
+                            <span class="requiredText">> ID는 영문, 숫자로 4~12자로 입력해주세요.</span>
+                        </div>
+                    </td>
+                </tr>
+                <!-- 비밀번호 -->
+                <tr>
+                    <td>
+                        <div class="align-self-start align-self-center mr-3"><span class="requiredTag mr-1">*</span><label for="ipt_empPw">비밀번호</label></div>
+                    </td>
+                    <td>
+                        <div class="align-self-center mr-3">
+                            <input type="password" class="form-control" id="ipt_empPw" name="ipt_empPw" placeholder="PASSWORD" maxlength="12" />
+                        </div>
+                    </td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td colspan="2">
+                        <div class="flex-height d-flex mb-2">
+                            <span class="requiredText">> 비밀번호는 영문, 숫자로 4~12자로 입력해주세요.</span>
+                        </div>
+                    </td>
+                </tr>
+                <!-- 성명 -->
+                <tr>
+                    <td>
+                        <div class="align-self-start align-self-center mr-5"><span class="requiredTag mr-1">*</span><label for="ipt_empNm">성명</label></div>
+                    </td>
+                    <td>
+                        <div class="align-self-center mr-2">
+                            <input type="text" class="form-control" id="ipt_empNm" name="ipt_empNm" placeholder="NAME" maxlength="5" />
+                        </div>
+                    </td>
+                    <td>
+                        <div class="align-self-center mr-2">
+                            <button class="button" id="reIsExistNmBtn" type="button" onclick="onClickReIsExistNmBtn()" hidden="hidden">성명 재설정</button>
+                            <button class="button" id="isExistNmBtn" type="button" onclick="onClickIsExistNmBtn()">중복확인</button>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td colspan="2">
+                        <div class="flex-height d-flex mb-2">
+                            <span class="requiredText">> 동일한 성명이 선등록되어있을 경우 성명+숫자로 입력해주세요.<br>&nbsp;(예: 홍길동1, 홍길동2)</span>
+                        </div>
+                    </td>
+                </tr>
+                <!-- 권한 -->
+                <tr>
+                    <td>
+                        <div class="align-self-start align-self-center mr-5"><span class="requiredTag mr-1">*</span><label for="sbx_empAuthId">권한</label></div>
+                    </td>
+                    <td>
+                        <div class="align-self-center mr-5  pb-2">
+                            <select id="sbx_empAuthId" name="sbx_empAuthId" class="form-control">
+                                <option value="none" selected>선택</option>
+                            </select>
+                        </div>
+                    </td>
+                    <td></td>
+                </tr>
+                <!-- 부서 -->
+                <tr>
+                    <td>
+                        <div class="align-self-start align-self-center mr-5"><span class="requiredTag mr-1">*</span><label for="sbx_empDept">부서</label></div>
+                    </td>
+                    <td>
+                        <div class="align-self-center mr-5 pb-2">
+                            <select id="sbx_empDept" name="sbx_empDept" class="form-control">
+                                <option value="00" selected>선택</option>
+                            </select>
+                        </div>
+                    </td>
+                    <td></td>
+                </tr>
+                <!-- 버튼 -->
+                <tr>
+                    <td>
+                        <!-- 중복체크 여부 hidden -->
+                        <input type="text" class="form-control" id="hidden_existChk" name="hidden_existChk" maxlength="30" style="" readonly hidden/>
+                    </td>
+                    <td colspan="2">
+                        <div class="flex-height mt-4" style="float:right;">
+                            <button class="button" id="submitBtn" type="button" onclick="onClickSubmitBtn()">등록</button>
+                            <input class="button" id="resetBtn" type="reset" onclick="onClickResetBtn()" />
+                            <button class="button" id="closeBtn" type="button" onclick="onClickCloseBtn()" >닫기</button>
+                        </div>
+                    </td>
+                </tr>
+            </table>
         </form>
     </div>
 </div>

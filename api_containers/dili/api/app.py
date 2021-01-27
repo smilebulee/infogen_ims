@@ -885,7 +885,7 @@ class empInfo(Resource): # Mariadb 연결 진행
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 #쿼리문 실행
-                sql = "SELECT SEQ_NO, EMP_NAME, EMP_EMAIL, EMP_ID, AUTH_ID, C.CMM_CD_NAME AUTH_VAL, DEPT_CD, DEPT_NAME " \
+                sql = "SELECT SEQ_NO, EMP_NAME, EMP_EMAIL, EMP_ID, AUTH_ID, C.CMM_CD_NAME AUTH_VAL, DEPT_CD, DEPT_NAME, WORK_YN " \
                       "FROM TB_EMP_MGMT E, TB_CMM_CD_DETL C " \
                       "WHERE EMP_NAME LIKE '%" + data["name"] + "%' " \
                                                                 "AND E.AUTH_ID = C.CMM_CD " \
@@ -1860,6 +1860,7 @@ class empMgmtRegSubmit(Resource):
         ipt_empAuthId = request.form['ipt_empAuthId']
         ipt_empNm = request.form['ipt_empNm']
         ipt_empDept = request.form['ipt_empDept']
+        sessionId = request.form['sessionId']
         ipt_empEmail = ipt_empId;
 
 
@@ -1871,6 +1872,7 @@ class empMgmtRegSubmit(Resource):
         logging.debug("ipt_empAuthId = " + ipt_empAuthId)
         logging.debug("ipt_empNm = " + ipt_empNm)
         logging.debug("ipt_empDept = " + ipt_empDept)
+        logging.debug("sessionId = " + sessionId)
 
 
         logging.debug("=====================")
@@ -1890,6 +1892,9 @@ class empMgmtRegSubmit(Resource):
                                                 "EMP_PW, " \
                                                 "EMP_NAME, " \
                                                 "AUTH_ID, " \
+                                                "REG_DTM, " \
+                                                "REG_USER, " \
+                                                "WORK_YN, " \
                                                 "DEPT_CD, " \
                                                 "DEPT_NAME) " \
                                     "VALUES('" + ipt_empId + "', " \
@@ -1897,6 +1902,9 @@ class empMgmtRegSubmit(Resource):
                                             "'" + ipt_empPw + "', " \
                                             "'" + ipt_empNm + "', " \
                                             "'" + ipt_empAuthId + "', " \
+                                            "now(), " \
+                                            "'" + sessionId + "', " \
+                                            "'Y', " \
                                             "'" + ipt_empDept + "', " \
                                             "(SELECT CMM_CD_NAME DEPT_VAL FROM TB_CMM_CD_DETL WHERE CMM_CD_GRP_ID = 'SLIN_BZDP' AND CMM_CD = " \
                                             "'" + ipt_empDept + "'))"\
@@ -1970,6 +1978,7 @@ class empMgmtEditSubmit(Resource):
         ipt_empAuthId = request.form['ipt_empAuthId']
         ipt_empNm = request.form['ipt_empNm']
         ipt_empDept = request.form['ipt_empDept']
+        sessionId = request.form['sessionId']
         ipt_empEmail = ipt_empId;
 
 
@@ -1981,7 +1990,7 @@ class empMgmtEditSubmit(Resource):
         logging.debug("ipt_empAuthId = " + ipt_empAuthId)
         logging.debug("ipt_empNm = " + ipt_empNm)
         logging.debug("ipt_empDept = " + ipt_empDept)
-
+        logging.debug("sessionId = " + sessionId)
 
         logging.debug("=====================")
 
@@ -1999,6 +2008,8 @@ class empMgmtEditSubmit(Resource):
                                                 "EMP_NAME = '"+ipt_empNm+"', " \
                                                 "AUTH_ID = '"+ipt_empAuthId+"', " \
                                                 "DEPT_CD = '"+ipt_empDept+"', " \
+                                                "UPD_DTM = now(), " \
+                                                "UPD_USER = '"+sessionId+"', " \
                                                 "DEPT_NAME = (SELECT CMM_CD_NAME DEPT_VAL FROM TB_CMM_CD_DETL WHERE CMM_CD_GRP_ID = 'SLIN_BZDP' AND CMM_CD = '" + ipt_empDept + "') " \
                                                 "WHERE EMP_ID = '"+ipt_empId+"'" \
 
@@ -2044,7 +2055,10 @@ class empMgmtDelSubmit(Resource):
 
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
-                sql= "DELETE FROM TB_EMP_MGMT WHERE EMP_ID = '"+ipt_empId+"'"
+                sql= "UPDATE TB_EMP_MGMT SET WORK_YN ='N', " \
+                                            "UPD_DTM = now(), " \
+                                            "UPD_USER = '"+sessionId+"' " \
+                                            "WHERE EMP_ID = '"+ipt_empId+"'"
 
                 logger.info(sql)
                 cursor.execute(sql)

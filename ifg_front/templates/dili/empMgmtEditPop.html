@@ -124,11 +124,12 @@
         }
 
         var param = {
-            "ipt_empId" : ipt_empId,
-            "ipt_empPw" : ipt_empPw,
+            "ipt_empId"     : ipt_empId,
+            "ipt_empPw"     : ipt_empPw,
             "ipt_empAuthId" : ipt_empAuthId,
-            "ipt_empNm" : ipt_empNm,
-            "ipt_empDept" : ipt_empDept
+            "ipt_empNm"     : ipt_empNm,
+            "ipt_empDept"   : ipt_empDept,
+            "sessionId"     : sessionStorage.getItem("email")      //로그인한 사용자 아이디
         }
 
         n_dialog.confirm('수정하시겠습니까?',function(){
@@ -176,8 +177,10 @@
     /* 삭제 버튼 클릭 이벤트 */
     function onClickDeleteBtn() {
         var ipt_empId = $('[name="ipt_empId"]').val();
+
         var param = {
-            "ipt_empId" : ipt_empId
+            "ipt_empId"     : ipt_empId,
+            "sessionId"     : sessionStorage.getItem("email")      //로그인한 사용자 아이디
         }
         n_dialog.confirm('삭제하시겠습니까?',function(){
                 if(this.key == 'ok'){       //확인클릭시
@@ -231,28 +234,28 @@
         <form method="post" id="submitEmp" action="">
                 <!-- ID -->
                 <div class="flex-height d-flex mb-2">
-                    <div class="align-self-start align-self-center mr-5"><label for="ipt_empId">ID &nbsp;&nbsp;&nbsp;</label></div>
+                    <div class="align-self-start align-self-center mr-5"><span class="requiredTag mr-1">*</span><label for="ipt_empId">ID &nbsp;&nbsp;&nbsp;</label></div>
                     <div class="align-self-center mr-2">
                         <input type="text" class="form-control" id="ipt_empId" name="ipt_empId" placeholder="ID" maxlength="30" readonly/>
                     </div>
                 </div>
                 <!-- 비밀번호 -->
                 <div class="flex-height d-flex mb-2">
-                    <div class="align-self-start align-self-center mr-3"><label for="ipt_empPw">비밀번호</label></div>
+                    <div class="align-self-start align-self-center mr-3"><span class="requiredTag mr-1">*</span><label for="ipt_empPw">비밀번호</label></div>
                     <div class="align-self-center mr-5">
                         <input type="password" class="form-control" id="ipt_empPw" name="ipt_empPw" placeholder="PASSWORD" maxlength="10"/>
                     </div>
                 </div>
                 <!-- 성명 -->
                 <div class="flex-height d-flex mb-2">
-                    <div class="align-self-start align-self-center mr-5"><label for="ipt_empNm">성명</label></div>
+                    <div class="align-self-start align-self-center mr-5"><span class="requiredTag mr-1">*</span><label for="ipt_empNm">성명</label></div>
                     <div class="align-self-center mr-5">
                         <input type="text" class="form-control" id="ipt_empNm" name="ipt_empNm" placeholder="NAME" maxlength="10"/>
                     </div>
                 </div>
                 <!-- 권한 -->
                 <div class="flex-height d-flex mb-2">
-                    <div class="align-self-start align-self-center mr-5"><label for="sbx_empAuthId">권한</label></div>
+                    <div class="align-self-start align-self-center mr-5"><span class="requiredTag mr-1">*</span><label for="sbx_empAuthId">권한</label></div>
                     <div class="align-self-center mr-5">
                         <select id="sbx_empAuthId" name="sbx_empAuthId" class="form-control">
                             <option value="none">선택</option>
@@ -261,7 +264,7 @@
                 </div>
                 <!-- 부서 -->
                 <div class="flex-height d-flex mb-3">
-                    <div class="align-self-start align-self-center mr-5"><label for="sbx_empDept">부서</label></div>
+                    <div class="align-self-start align-self-center mr-5"><span class="requiredTag mr-1">*</span><label for="sbx_empDept">부서</label></div>
                     <div class="align-self-center mr-5">
                         <select id="sbx_empDept" name="sbx_empDept" class="form-control">
                             <option value="00">선택</option>
