@@ -1963,6 +1963,45 @@ class empOneInfo(Resource): # Mariadb 연결 진행
 
         return json.dumps(result2, indent=4, cls=DateTimeEncoder)
 
+class isExistEmpNm(Resource): # Mariadb 연결 진행
+    def get(self):
+
+        data = request.get_json()
+
+        logging.debug('================== App Start ==================')
+        logging.debug(data)
+        logging.debug(data["name"])
+        logging.debug(request.args.get('name'))
+        logging.debug(request.args.get('param'))
+        logging.debug('================== App End ==================')
+
+        #requirements pymysql import 후 커넥트 사용
+        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
+                                        charset='utf8', autocommit=False)
+        try:
+            with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+                #쿼리문 실행
+                sql = "SELECT EMP_ID, EMP_PW, AUTH_ID, EMP_NAME, DEPT_CD FROM TB_EMP_MGMT WHERE EMP_NAME = '" + data["name"] + "'"
+
+                logging.debug(sql)
+                cursor.execute(sql)
+                logging.debug('getEditEmpInfo SUCCESS')
+
+        finally:
+            mysql_con.close()
+            logging.debug('getEditEmpInfo CLOSE')
+
+
+
+        result2 = cursor.fetchall()
+        for row in result2:
+            logging.debug('====== row====')
+            logging.debug(row)
+            logging.debug('===============')
+        array = list(result2)  # 결과를 리스트로
+
+        return json.dumps(result2, indent=4, cls=DateTimeEncoder)
+
 class empMgmtEditSubmit(Resource):
     def post(self):
         logger.info('========app.py empMgmtEditSubmit=========')
@@ -2112,6 +2151,7 @@ api.add_resource(retrieveCmmCd,'/retrieveCmmCd')            #공통 코드 조�
 api.add_resource(scheduleStatLst,'/scheduleStatLst') #api 선언
 api.add_resource(totalWrktm,'/totalWrktm') #api 선언
 api.add_resource(empMgmtRegSubmit,'/empMgmtRegSubmit') #api 선언
+api.add_resource(isExistEmpNm,'/isExistEmpNm') #api 선언
 api.add_resource(empOneInfo,'/empOneInfo') #api 선언
 api.add_resource(empMgmtEditSubmit,'/empMgmtEditSubmit') #api 선언
 api.add_resource(empMgmtDelSubmit,'/empMgmtDelSubmit') #api 선언

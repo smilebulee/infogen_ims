@@ -27,6 +27,10 @@ function onClickIsExistBtn() {
     var email = $('#ipt_empId').val();
     if( email == "" || email == null){
         alertMsg("ID를 입력해주세요");
+    }else if(email.length < 4 || email.length > 12 ) {
+        alertMsg("직원 ID는 4 ~ 12자로 입력해주세요.", function() {
+            $('#ipt_empId').focus();
+        });
     }else{
         var param = {
             "email" : email
@@ -56,17 +60,20 @@ function isExistResult(data){
     console.log(data)
     console.log(typeof(data))
     if(data.length > 0){
-        alertMsg("이미 사용중인 ID입니다.");
-        console.log("ID 중복체크 > 등록 불가능");
-        $('#ipt_empId').val("");
-        $('#ipt_empId').focus();
+        alertMsg("이미 사용중인 ID입니다.", function() {
+            console.log("ID 중복체크 > 등록 불가능");
+            $('#ipt_empId').val("");
+            $('#ipt_empId').focus();
+        });
+
 
     }else{
-        alertMsg("사용 가능한 ID입니다.");
-        console.log("ID 중복체크 > 등록가능");
-        $('#ipt_empId').attr('readonly', true);
-        $('#reIsExistBtn').attr('hidden', false);
-        $('#isExistBtn').attr('hidden', true);
+        alertMsg("사용 가능한 ID입니다.", function() {
+            console.log("ID 중복체크 > 등록가능");
+            $('#ipt_empId').attr('readonly', true);
+            $('#reIsExistBtn').attr('hidden', false);
+            $('#isExistBtn').attr('hidden', true);
+        });
     }
 };
 
@@ -80,6 +87,69 @@ function onClickReIsExistBtn(){
     $('#isExistBtn').attr('hidden', false);
 }
 
+/* 성명 중복확인 버튼 클릭 이벤트 */
+function onClickIsExistNmBtn() {
+    var name = $('#ipt_empNm').val();
+    if( name == "" || name == null){
+        alertMsg("성명을 입력해주세요");
+    } else if (name.length < 2){
+        alertMsg("직원 성명은 두 글자 이상 입력해 주세요.", function() {
+            $('#ipt_empNm').focus();
+        });
+    }else{
+        var param = {
+            "name" : name
+        }
+
+        /* 정보 조회 */
+        $.ajaxCall( param, {
+             'method' : 'GET',
+             'url' : "{% url 'dili_api:isExistEmpNm' %}",
+             'dataType' : 'json',
+             'data' : JSON.stringify(param),
+             'async' : false,
+             'callbackFn' : function(data){
+                // 로그
+                console.log("data : ",data);
+                // 리턴
+                isExistNmResult(data);
+             }
+        });
+    }
+
+};
+
+/* 성명 중복체크 결과 */
+function isExistNmResult(data){
+    console.log("Start")
+    console.log(data)
+    console.log(typeof(data))
+    if(data.length > 0){
+        alertMsg("이미 사용중인 성명입니다.<br>성명+숫자로 재입력해주세요.<br>(예: 홍길동1, 홍길동2)", function() {
+            console.log("성명 중복체크 > 등록 불가능");
+            $('#ipt_empNm').val("");
+            $('#ipt_empNm').focus();
+        });
+
+    }else{
+        alertMsg("사용 가능한 성명입니다.", function() {
+            console.log("성명 중복체크 > 등록가능");
+            $('#ipt_empNm').attr('readonly', true);
+            $('#reIsExistNmBtn').attr('hidden', false);
+            $('#isExistNmBtn').attr('hidden', true);
+        });
+    }
+};
+
+
+/* 성명 재설정 클릭 이벤트 */
+function onClickReIsExistNmBtn(){
+    $('#ipt_empNm').attr('readonly', false);
+    $('#ipt_empNm').val("");
+    $('#ipt_empNm').focus();
+    $('#reIsExistNmBtn').attr('hidden', true);
+    $('#isExistNmBtn').attr('hidden', false);
+}
 
 /* 등록버튼 클릭 이벤트 */
 function onClickSubmitBtn() {
@@ -91,40 +161,54 @@ function onClickSubmitBtn() {
 
 
     if( ipt_empId == "" || ipt_empId == null ){
-        alertMsg("직원 ID를 입력해 주세요.");
-        $('#ipt_empId').focus();
+        alertMsg("직원 ID를 입력해 주세요.", function() {
+            $('#ipt_empId').focus();
+        });
         return false;
     } else if(ipt_empId.length < 4 || ipt_empId.length > 12 ) {
-        alertMsg("직원 ID는 4 ~ 12자로 입력해주세요.");
-        $('#ipt_empId').focus();
+        alertMsg("직원 ID는 4 ~ 12자로 입력해주세요.", function() {
+            $('#ipt_empId').focus();
+        });
         return false;
     } else if($('#reIsExistBtn').is(":hidden")) {
-        alertMsg("직원 ID 중복여부 체크해 주세요.");
-        $('#ipt_empId').focus();
+        alertMsg("직원 ID 중복여부 체크해 주세요.", function() {
+            $('#ipt_empId').focus();
+        });
         return false;
     } else if (ipt_empPw == "" || ipt_empPw == null ){
-        alertMsg("직원 비밀번호를 입력해 주세요.");
-        $('#ipt_empPw').focus();
+        alertMsg("직원 비밀번호를 입력해 주세요.", function() {
+            $('#ipt_empPw').focus();
+        });
         return false;
     } else if(ipt_empPw.length < 4 || ipt_empPw.length > 12 ) {
-        alertMsg("직원 비밀번호는 4 ~ 12자로 입력해주세요.");
-        $('#ipt_empPw').focus();
+        alertMsg("직원 비밀번호는 4 ~ 12자로 입력해주세요.", function() {
+            $('#ipt_empPw').focus();
+        });
         return false;
     } else if (ipt_empNm == "" || ipt_empNm == null ){
-        alertMsg("직원 성명을 입력해 주세요.");
-        $('#ipt_empNm').focus();
+        alertMsg("직원 성명을 입력해 주세요.", function() {
+            $('#ipt_empNm').focus();
+        });
         return false;
     } else if (ipt_empNm.length < 2){
-        alertMsg("직원 성명은 두 글자 이상 입력해 주세요.");
-        $('#ipt_empNm').focus();
+        alertMsg("직원 성명은 두 글자 이상 입력해 주세요.", function() {
+            $('#ipt_empNm').focus();
+        });
+        return false;
+    } else if($('#reIsExistNmBtn').is(":hidden")) {
+        alertMsg("직원 성명 중복여부 체크해 주세요.", function() {
+            $('#ipt_empNm').focus();
+        });
         return false;
     } else if (ipt_empAuthId == "none" || ipt_empAuthId == null ){
-        alertMsg("직원 권한을 선택해 주세요.");
-        $('#ipt_empAuthId').focus();
+        alertMsg("직원 권한을 선택해 주세요.", function() {
+            $('#ipt_empAuthId').focus();
+        });
         return false;
     } else if (ipt_empDept == "00" || ipt_empDept == null ){
-        alertMsg("직원 부서를 선택해 주세요.");
-        $('#ipt_empDept').focus();
+        alertMsg("직원 부서를 선택해 주세요.", function() {
+            $('#ipt_empDept').focus();
+        });
         return false;
     }
 
@@ -187,20 +271,19 @@ function onClickResetBtn() {
     $('#isExistBtn').attr('hidden', false);
 };
 
-//영문 + 숫자만 입력가능체크
-function valueCheck(){
 
-      if (!(event.keyCode >=37 && event.keyCode<=40)) {
-        var inputVal = $(this).val();
-        $(this).val(inputVal.replace(/[^a-z0-9]/gi,''));
-      }
+/* 영문, 숫자만 입력가능체크 */
+function validChk(){
+    debugger;
+     if(((event.keyCode >= 48) && (event.keyCode <= 57)) ||
+         ((event.keyCode >= 65) && (event.keyCode <= 90)) ||
+         ((event.keyCode >= 97) && (event.keyCode <= 122))){
+        event.returnValue = true
+     }else{
+        event.returnValue = false
+     }
 }
-//한글제외 입력가능체크
-function isNotKorean(){
- if(!((event.keyCode < 12592) || (event.keyCode > 12687))){
-  event.returnValue = false
- }
-}
+
 
 </script>
 <div style="width :450px;">
@@ -213,9 +296,7 @@ function isNotKorean(){
         <form method="post" id="submitEmp" action="">
             <table>
                 <tr>
-                    <td>
-
-                    </td>
+                    <td></td>
                     <td colspan="2">
                          <div class="flex-height mb-4">
                             <span class="requiredText">* 표시항목은 필수입력항목입니다.</span>
@@ -229,7 +310,7 @@ function isNotKorean(){
                     </td>
                     <td>
                         <div class="align-self-center mr-2">
-                        <input type="text" class="form-control" id="ipt_empId" name="ipt_empId" placeholder="ID" maxlength="12" onkeypress="isNotKorean();"/>
+                            <input type="text" class="form-control" id="ipt_empId" name="ipt_empId" placeholder="ID" maxlength="12" onkeyup="validChk();"/>
                         </div>
                     </td>
                     <td>
@@ -254,7 +335,7 @@ function isNotKorean(){
                     </td>
                     <td>
                         <div class="align-self-center mr-3">
-                            <input type="password" class="form-control" id="ipt_empPw" name="ipt_empPw" placeholder="PASSWORD" maxlength="12" />
+                            <input type="password" class="form-control" id="ipt_empPw" name="ipt_empPw" placeholder="PASSWORD" maxlength="12" onkeyup="validChk()"/>
                         </div>
                     </td>
                     <td></td>
@@ -274,7 +355,7 @@ function isNotKorean(){
                     </td>
                     <td>
                         <div class="align-self-center mr-2">
-                            <input type="text" class="form-control" id="ipt_empNm" name="ipt_empNm" placeholder="NAME" maxlength="5" />
+                            <input type="text" class="form-control" id="ipt_empNm" name="ipt_empNm" placeholder="NAME" maxlength="5" onkeydown="validChk()" />
                         </div>
                     </td>
                     <td>
