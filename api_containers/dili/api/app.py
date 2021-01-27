@@ -885,7 +885,7 @@ class empInfo(Resource): # Mariadb 연결 진행
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 #쿼리문 실행
-                sql = "SELECT SEQ_NO, EMP_NAME, EMP_EMAIL, EMP_ID, AUTH_ID, C.CMM_CD_NAME AUTH_VAL, DEPT_CD, DEPT_NAME " \
+                sql = "SELECT SEQ_NO, EMP_NAME, EMP_EMAIL, EMP_ID, AUTH_ID, C.CMM_CD_NAME AUTH_VAL, DEPT_CD, DEPT_NAME, WORK_YN " \
                       "FROM TB_EMP_MGMT E, TB_CMM_CD_DETL C " \
                       "WHERE EMP_NAME LIKE '%" + data["name"] + "%' " \
                                                                 "AND E.AUTH_ID = C.CMM_CD " \
@@ -1860,6 +1860,7 @@ class empMgmtRegSubmit(Resource):
         ipt_empAuthId = request.form['ipt_empAuthId']
         ipt_empNm = request.form['ipt_empNm']
         ipt_empDept = request.form['ipt_empDept']
+        sessionId = request.form['sessionId']
         ipt_empEmail = ipt_empId;
 
 
@@ -1871,6 +1872,7 @@ class empMgmtRegSubmit(Resource):
         logging.debug("ipt_empAuthId = " + ipt_empAuthId)
         logging.debug("ipt_empNm = " + ipt_empNm)
         logging.debug("ipt_empDept = " + ipt_empDept)
+        logging.debug("sessionId = " + sessionId)
 
 
         logging.debug("=====================")
@@ -1890,6 +1892,9 @@ class empMgmtRegSubmit(Resource):
                                                 "EMP_PW, " \
                                                 "EMP_NAME, " \
                                                 "AUTH_ID, " \
+                                                "REG_DTM, " \
+                                                "REG_USER, " \
+                                                "WORK_YN, " \
                                                 "DEPT_CD, " \
                                                 "DEPT_NAME) " \
                                     "VALUES('" + ipt_empId + "', " \
@@ -1897,6 +1902,9 @@ class empMgmtRegSubmit(Resource):
                                             "'" + ipt_empPw + "', " \
                                             "'" + ipt_empNm + "', " \
                                             "'" + ipt_empAuthId + "', " \
+                                            "now(), " \
+                                            "'" + sessionId + "', " \
+                                            "'Y', " \
                                             "'" + ipt_empDept + "', " \
                                             "(SELECT CMM_CD_NAME DEPT_VAL FROM TB_CMM_CD_DETL WHERE CMM_CD_GRP_ID = 'SLIN_BZDP' AND CMM_CD = " \
                                             "'" + ipt_empDept + "'))"\
@@ -1955,6 +1963,45 @@ class empOneInfo(Resource): # Mariadb 연결 진행
 
         return json.dumps(result2, indent=4, cls=DateTimeEncoder)
 
+class isExistEmpNm(Resource): # Mariadb 연결 진행
+    def get(self):
+
+        data = request.get_json()
+
+        logging.debug('================== App Start ==================')
+        logging.debug(data)
+        logging.debug(data["name"])
+        logging.debug(request.args.get('name'))
+        logging.debug(request.args.get('param'))
+        logging.debug('================== App End ==================')
+
+        #requirements pymysql import 후 커넥트 사용
+        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
+                                        charset='utf8', autocommit=False)
+        try:
+            with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+                #쿼리문 실행
+                sql = "SELECT EMP_ID, EMP_PW, AUTH_ID, EMP_NAME, DEPT_CD FROM TB_EMP_MGMT WHERE EMP_NAME = '" + data["name"] + "'"
+
+                logging.debug(sql)
+                cursor.execute(sql)
+                logging.debug('getEditEmpInfo SUCCESS')
+
+        finally:
+            mysql_con.close()
+            logging.debug('getEditEmpInfo CLOSE')
+
+
+
+        result2 = cursor.fetchall()
+        for row in result2:
+            logging.debug('====== row====')
+            logging.debug(row)
+            logging.debug('===============')
+        array = list(result2)  # 결과를 리스트로
+
+        return json.dumps(result2, indent=4, cls=DateTimeEncoder)
+
 class empMgmtEditSubmit(Resource):
     def post(self):
         logger.info('========app.py empMgmtEditSubmit=========')
@@ -1970,6 +2017,7 @@ class empMgmtEditSubmit(Resource):
         ipt_empAuthId = request.form['ipt_empAuthId']
         ipt_empNm = request.form['ipt_empNm']
         ipt_empDept = request.form['ipt_empDept']
+        sessionId = request.form['sessionId']
         ipt_empEmail = ipt_empId;
 
 
@@ -1981,7 +2029,7 @@ class empMgmtEditSubmit(Resource):
         logging.debug("ipt_empAuthId = " + ipt_empAuthId)
         logging.debug("ipt_empNm = " + ipt_empNm)
         logging.debug("ipt_empDept = " + ipt_empDept)
-
+        logging.debug("sessionId = " + sessionId)
 
         logging.debug("=====================")
 
@@ -1999,6 +2047,8 @@ class empMgmtEditSubmit(Resource):
                                                 "EMP_NAME = '"+ipt_empNm+"', " \
                                                 "AUTH_ID = '"+ipt_empAuthId+"', " \
                                                 "DEPT_CD = '"+ipt_empDept+"', " \
+                                                "UPD_DTM = now(), " \
+                                                "UPD_USER = '"+sessionId+"', " \
                                                 "DEPT_NAME = (SELECT CMM_CD_NAME DEPT_VAL FROM TB_CMM_CD_DETL WHERE CMM_CD_GRP_ID = 'SLIN_BZDP' AND CMM_CD = '" + ipt_empDept + "') " \
                                                 "WHERE EMP_ID = '"+ipt_empId+"'" \
 
@@ -2044,7 +2094,10 @@ class empMgmtDelSubmit(Resource):
 
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
-                sql= "DELETE FROM TB_EMP_MGMT WHERE EMP_ID = '"+ipt_empId+"'"
+                sql= "UPDATE TB_EMP_MGMT SET WORK_YN ='N', " \
+                                            "UPD_DTM = now(), " \
+                                            "UPD_USER = '"+sessionId+"' " \
+                                            "WHERE EMP_ID = '"+ipt_empId+"'"
 
                 logger.info(sql)
                 cursor.execute(sql)
@@ -2098,6 +2151,7 @@ api.add_resource(retrieveCmmCd,'/retrieveCmmCd')            #공통 코드 조�
 api.add_resource(scheduleStatLst,'/scheduleStatLst') #api 선언
 api.add_resource(totalWrktm,'/totalWrktm') #api 선언
 api.add_resource(empMgmtRegSubmit,'/empMgmtRegSubmit') #api 선언
+api.add_resource(isExistEmpNm,'/isExistEmpNm') #api 선언
 api.add_resource(empOneInfo,'/empOneInfo') #api 선언
 api.add_resource(empMgmtEditSubmit,'/empMgmtEditSubmit') #api 선언
 api.add_resource(empMgmtDelSubmit,'/empMgmtDelSubmit') #api 선언

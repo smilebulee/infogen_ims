@@ -61,6 +61,7 @@ urlpatterns = [
     url(r'^empMgmtEdit/post', views.empMgmtEdit, name='empMgmtEdit'),
     url(r'^getEditEmpInfo/', views.getEditEmpInfo, name='getEditEmpInfo'),
     url(r'^empMgmtDel/post', views.empMgmtDel, name='empMgmtDel'),
+    url(r'^isExistEmpNm/', views.isExistEmpNm, name='isExistEmpNm'),
 
     url(r'^getTotalWrktm/', views.getTotalWrktm, name='getTotalWrktm'),
 
