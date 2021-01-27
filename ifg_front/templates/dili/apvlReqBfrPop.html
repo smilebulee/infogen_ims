@@ -1,5 +1,8 @@
 <script type="text/javascript">
     $(document).ready(function(){
+        //TO DO : h5_apvlReqBfrTit 등록/수정/상세 제목 변경
+        //TO DO : btn_apvlBfrReq 저장/수정 버튼 변경
+
         // 결재자 검색 - 직원조회 모달 오픈
         $("#ipt_apvlLnSearchNamePop").click(function(){
             //자식창에서 여는 결재자 조회 팝업임을 표시
@@ -45,7 +48,7 @@
         //공란 여부 검증
         //근무일자 유효성 검증
         if($("#ipt_wrkDt").val() == "") {
-            alertMsg("근무 일자를 선택해주세요.");
+            alertMsg("근무요청일시를 선택해주세요.");
             return;
         }
         //근무 시작 시간 유효성 검증
@@ -59,9 +62,9 @@
             return;
         }
 
-        //근무 사유 유효성 검증
+        //근무요청사유 유효성 검증
         if($("#txa_reqBfrRsn").val().trim() == "") {
-            alertMsg("근무 사유를 입력해주세요.");
+            alertMsg("근무요청사유를 입력해주세요.");
             return;
         }
 
@@ -72,24 +75,32 @@
         }
 
         //입력받은 데이터 유효성 검증
-        //근무 일자 및 근무 시간
+        //근무요청일시
         var currDt = new Date();
-        var inptDt = new Date($('#ipt_wrkDt').val())
-
-        //현재 날짜가 결재 요청 일자 이후인 경우,
-        if( currDt > inptDt ) {
-            alertMsg("근무 일자는 현재 일자 이후로 선택해주세요.");
+        var inptDt = new Date($('#ipt_wrkDt').val());
+        var inptStrtDtTm = new Date($('#ipt_wrkDt').val() + " " +  $("#ipt_jobStrtTm").val());
+        var inptEndDtTm  = new Date($('#ipt_wrkDt').val() + " " +  $("#ipt_jobEndTm").val());
+        var currDtTm  = new Date(currDt.getFullYear() + "-" + fillZero(2, (currDt.getMonth() + 1)) + "-" + currDt.getDate()
+                                 + " " + currDt.getHours() + ":" + currDt.getMinutes());
+        var strCurrDt = currDt.getFullYear() + "-" + fillZero(2, (currDt.getMonth() + 1)) + "-" + currDt.getDate();
+        var strInptDt = inptDt.getFullYear() + "-" + fillZero(2, (inptDt.getMonth() + 1)) + "-" + inptDt.getDate();
+        if( strCurrDt == strInptDt && currDtTm > inptStrtDtTm) {
+            alertMsg("근무 시간은 현재 시각 이후로 선택해주세요.");
             return;
-        }
+        } else {
+            //현재 날짜가 결재 요청 일자 이후인 경우,
+            if( strCurrDt > strInptDt ) {
+                alertMsg("근무 일자는 현재 일자 이후로 선택해주세요.");
+                return;
+            }
 
-        //현재 날짜가 결재 요청 일자 이후인 경우,
-        var inptStrtDtTm = new Date($('#ipt_wrkDt').val() + " " +  $("#ipt_jobStrtTm").val())
-        var inptEndDtTm  = new Date($('#ipt_wrkDt').val() + " " +  $("#ipt_jobEndTm").val())
-        if( inptStrtDtTm > inptEndDtTm ) {
-            alertMsg("근무 시작 시간은 근무 종료 시간 이전으로 선택해주세요.");
-            return;
-        }
+            //현재 날짜가 결재 요청 일자 이후인 경우,
+            if( inptStrtDtTm > inptEndDtTm ) {
+                alertMsg("근무 시작 시간은 근무 종료 시간 이전으로 선택해주세요.");
+                return;
+            }
 
+        }
         //동일 일자 결재 진행건 유효성 검증
         var param = {
             "email"         : sessionStorage.getItem("email"),      //로그인한 사용자 아이디
@@ -120,8 +131,9 @@
     });
 
 
-    /* 자리수만큼 0 채우기 (근무 시간 형식 지정) */
+    /* 문자열 앞에 자리수만큼 0 채우기 (근무 시간 형식 지정) */
     function fillZero(width, str){
+        str = str + '';
         return str.length >= width ? str:new Array(width-str.length+1).join('0')+str;
         //남는 길이만큼 0으로 채움
     }
@@ -143,7 +155,7 @@
             hh = hh - 1;
         }
 
-        return fillZero(2, hh + '') + fillZero(2, mi + '') + fillZero(2, ss + '');
+        return fillZero(2, hh) + fillZero(2, mi) + fillZero(2, ss);
     }
 
     //선결재 저장
@@ -162,7 +174,7 @@
             "jobStrtTm"     : inptStrtTm,                           //근무 시작 시간
             "jobEndTm"      : inptEndTm,                            //근무 종료 시간
             "wrkTme"        : wrkTme || '000000',                   //$("#ipt_wrkDt").val().substring(11,13) +""+ $("#ipt_wrkDt").val().substring(14,16) +"" + $("#ipt_wrkDt").val().substring(17,19),
-            "wrkReqRsn"     : inptWrkReqRsn,                        //근무 사유
+            "wrkReqRsn"     : inptWrkReqRsn,                        //근무요청사유
             "th1AprvStus"   : "01",                                 //01: 미승인
             "th1AprvNm"     : $("#ipt_apvlLnSearchEmailPop").val(), //결재자
             "refNm"         : $('#ipt_refSearchEmailPop').val()     //참조자
@@ -181,18 +193,48 @@
                             }
         });
     }
+
+    /* input, textArea 글자수 체크 */
+    function chkLength(obj, maxByte) {
+        var strValue = obj.value;
+        var strLen = strValue.length;
+        var totalByte = 0;
+        var len = 0;
+        var oneChar = "";
+        var str2 = "";
+        for (var i = 0; i < strLen; i++) {
+            oneChar = strValue.charAt(i);
+            if (escape(oneChar).length > 4) {
+                totalByte += 2;
+            } else {
+                totalByte++;
+            }
+            // 입력한 문자 길이보다 넘치면 잘라내기 위해 저
+            if (totalByte <= maxByte) {
+                len = i + 1;
+            }
+        }
+        // 넘어가는 글자는 자른다.
+        if (totalByte > maxByte) {
+            alertMsg(maxByte + "자를 초과 입력 할 수 없습니다.");
+            str2 = strValue.substr(0, len);
+            obj.value = str2;
+            chkLength(obj, 4000);
+        }
+    }
+
 </script>
 
 
 <div class="row">
     <div class="col-sm-12">
         <div class="mb-4" role="alert">
-            <h5>
-                <b>야간 근무</b>
+            <h5 id="h5_apvlReqBfrTit">
+                <b>근무결재요청 등록</b>
             </h5>
         </div>
 
-        <div class="accordion mb-4" id="grp_apvlReqBfr">
+        <!--<div class="accordion mb-4" id="grp_apvlReqBfr">
             <div class="card">
                 <div class="card-header p-0" id="head_apvlReqBfr">
                     <h2 class="mb-0">
@@ -208,10 +250,10 @@
                 <div id="col_wrkApvlReq" class="collapse show" aria-labelledby="head_wrkApvlReq" data-parent="#grp_wrkApvlReq">
                     <div id="apvlAcptDiv" class="card-body flex-height d-flex">
                         <div class="row" style="width :640px;">
-                            <div class="col-sm-12">
-                                <div class="mb-4" role="alert">
-                                    <h6>
-                                        <b>결재 요청</b>
+                            <div class="col-sm-12">-->
+                                <div role="alert">
+                                    <h6 style="text-align: right">
+                                        <b>* 는 필수 입력 항목입니다.</b>
                                     </h6>
                                 </div>
                                 <div class="accordion mb-4" id="grp_wrkApvlReq">
@@ -227,10 +269,10 @@
                                         -->
 
                                         <div class="flex-height d-flex m-0 p-2">
-                                            <div class="align-self-start align-self-center mr-3" style="font-weight:bold">근무 일자</div>
+                                            <div class="align-self-start align-self-center mr-3" style="font-weight:bold"><span>*</span>근무요청일시</div>
                                             <div class="align-self-center mr-1">
                                                 <div style="float: left;">
-                                                     <input type="date" class="align-self-start align-self-center mr-1 form-control" id="ipt_wrkDt"       name="ipt_wrkDt" />
+                                                     <input type="date" class="align-self-start align-self-center mr-1 form-control" id="ipt_wrkDt"       name="ipt_wrkDt"      max="9999-12-31" />
                                                 </div>
                                                 <div style="float: left;">
                                                    <input type="time" class="align-self-start align-self-center form-control"        id="ipt_jobStrtTm"   name="ipt_jobStrtTm" />
@@ -245,9 +287,9 @@
                                         </div>
 
                                         <div class="flex-height d-flex m-0 p-2">
-                                            <div class="align-self-start align-self-center mr-3" style="font-weight:bold">근무 사유</div>
+                                            <div class="align-self-start align-self-center mr-3" style="font-weight:bold"><span>*</span>근무요청사유</div>
                                             <div class="align-self-center mr-7">
-                                                <textarea id="txa_reqBfrRsn" class="form-control" name="reqRsn" maxlength="500" style="resize: none; width:440px;height:70px;" placeholder="사유를 입력해주세요."></textarea>
+                                                <textarea id="txa_reqBfrRsn" class="form-control" name="reqRsn" maxlength="210" style="resize: none; width:440px;height:70px;" placeholder="사유를 입력해주세요.(200자 이하)" onkeyup="chkLength(this, 200)"></textarea>
                                             </div>
                                         </div>
 
@@ -255,7 +297,7 @@
                                         <div class="card-body flex-height d-flex m-0 p-2">
                                             <!-- 결재자 -->
                                             <div class="align-self-center mr-5 " style="font-weight:bold">
-                                                <span>결재&nbsp;</span>
+                                                <span class="mr-4">*결재자</span>
                                             </div>
 
                                             <div class="align-self-center mr-3">
@@ -270,7 +312,7 @@
                                         <div class="card-body flex-height d-flex m-0 p-2">
                                             <!-- 결재자 -->
                                             <div class="align-self-center mr-5 " style="font-weight:bold">
-                                                <span>참조&nbsp;</span>
+                                                <span class="mr-4">참조자&nbsp;</span>
                                             </div>
 
                                             <div class="align-self-center mr-3">
@@ -286,17 +328,17 @@
                                         <div class="flex-height d-flex m-0 p-2">
                                             <div class="align-self-start align-self-center mr-3"></div>
                                             <div class="align-self-center mr-7">
-                                                <button class="button" id="btn_apvlBfrReq">요청</button>
+                                                <button class="button" id="btn_apvlBfrReq">저장</button>
                                             </div>
                                         </div>
 
                                     </div>
                                 </div>
-                            </div>
+                            <!--</div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </div>-->
     </div>
 </div>
