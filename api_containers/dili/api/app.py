@@ -871,6 +871,7 @@ class empInfo(Resource): # Mariadb 연결 진행
 
         # get data
         #name = data["name"]
+        workChk = data["workChk"]
 
         logging.debug('================== App Start ==================')
         logging.debug(data)
@@ -885,11 +886,22 @@ class empInfo(Resource): # Mariadb 연결 진행
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 #쿼리문 실행
-                sql = "SELECT SEQ_NO, EMP_NAME, EMP_EMAIL, EMP_ID, AUTH_ID, C.CMM_CD_NAME AUTH_VAL, DEPT_CD, DEPT_NAME, WORK_YN " \
-                      "FROM TB_EMP_MGMT E, TB_CMM_CD_DETL C " \
-                      "WHERE EMP_NAME LIKE '%" + data["name"] + "%' " \
-                                                                "AND E.AUTH_ID = C.CMM_CD " \
-                                                                "ORDER BY SEQ_NO"
+                if workChk == 'Y':
+                    #현재 재직중인 직원 조회
+                    sql = "SELECT SEQ_NO, EMP_NAME, EMP_EMAIL, EMP_ID, AUTH_ID, C.CMM_CD_NAME AUTH_VAL, DEPT_CD, DEPT_NAME, WORK_YN " \
+                          "FROM TB_EMP_MGMT E, TB_CMM_CD_DETL C " \
+                          "WHERE EMP_NAME LIKE '%" + data["name"] + "%' " \
+                          "AND E.AUTH_ID = C.CMM_CD " \
+                          "AND E.WORK_YN = 'Y' " \
+                          "ORDER BY SEQ_NO"
+
+                else:
+                    # 전체 직원 조회
+                    sql = "SELECT SEQ_NO, EMP_NAME, EMP_EMAIL, EMP_ID, AUTH_ID, C.CMM_CD_NAME AUTH_VAL, DEPT_CD, DEPT_NAME, WORK_YN " \
+                          "FROM TB_EMP_MGMT E, TB_CMM_CD_DETL C " \
+                          "WHERE EMP_NAME LIKE '%" + data["name"] + "%' " \
+                          "AND E.AUTH_ID = C.CMM_CD " \
+                          "ORDER BY SEQ_NO"
                 logging.debug(sql)
                 cursor.execute(sql)
 

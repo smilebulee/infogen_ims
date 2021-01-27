@@ -2,6 +2,7 @@
 /* 메인 화면에서 받는 이메일 파라미터 */
 var param = {
     "name" : '',
+    "workChk" : 'N',
     "authId" : sessionStorage.getItem("authId")
 }
 
@@ -32,7 +33,8 @@ $(document).ready(function(){
             //엔터키 입력 + 이름컬럼에 값이 있는 경우.
             if ( e.keyCode == 13 && $('#ipt_searchName').val() != 'undefined' ) {
                 var param = {
-                    name : $('#ipt_searchName').val()
+                    name : $('#ipt_searchName').val(),
+                    "workChk" : 'N'
                 }
 
                 //목록조회
@@ -75,7 +77,8 @@ $(document).ready(function(){
 /* 직원 검색 기능 */
 function onClickSearchBtn(ipt_searchName) {
     var param = {
-        "name" : $('[name="ipt_searchName"]').val()
+        "name" : $('[name="ipt_searchName"]').val(),
+        "workChk" : 'N'
     }
 
     /* 목록조회 */

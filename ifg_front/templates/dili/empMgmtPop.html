@@ -22,7 +22,8 @@ var nRow;
         $('#ipt_searchName').val(name);
 
         var param = {
-            name : name
+            name : name,
+            workChk : "Y"
         }
 
         /* 목록조회 */
@@ -256,7 +257,8 @@ function onClickEvt(i) {
 /* 검색버튼 클릭 이벤트 */
 function onClickSearchBtn(ipt_searchName) {
     var param = {
-        "name" : $('[name="ipt_searchName"]').val()
+        "name" : $('[name="ipt_searchName"]').val(),
+        "workChk" : "Y"
     }
 
     if( $('#ipt_searchName').val() == "" || $('#ipt_searchName').val() == null ){
@@ -349,7 +351,8 @@ $('#ipt_searchName').keydown(function(e){
         //엔터키 입력 + 이름컬럼에 값이 있는 경우.
         if ( e.keyCode == 13 && $('#ipt_searchName').val() != 'undefined' ) {
             var param = {
-                name : $('#ipt_searchName').val()
+                name : $('#ipt_searchName').val(),
+                workChk : "Y"
             }
             if( $('#ipt_searchName').val() == "" || $('#ipt_searchName').val() == null ){
                 alertMsg("직원 이름을 입력해 주세요.");

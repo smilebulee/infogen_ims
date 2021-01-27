@@ -274,12 +274,14 @@ function onClickResetBtn() {
 
 /* 영문, 숫자만 입력가능체크 */
 function validChk(){
-    debugger;
-     if(((event.keyCode >= 48) && (event.keyCode <= 57)) ||
-         ((event.keyCode >= 65) && (event.keyCode <= 90)) ||
-         ((event.keyCode >= 97) && (event.keyCode <= 122))){
+     if(((event.keyCode >= 48) && (event.keyCode <= 57)) || ((event.keyCode >= 65) && (event.keyCode <= 90)) || ((event.keyCode >= 97) && (event.keyCode <= 122))){
+        event.returnValue = true
+     }else if( event.keyCode == undefined){
         event.returnValue = true
      }else{
+        var inputId = $('#ipt_empId').val();
+        $('#ipt_empId').val(inputId.substring( 0, (inputId.length)-1 ));
+        $('#ipt_empId').focus();
         event.returnValue = false
      }
 }
@@ -355,7 +357,7 @@ function validChk(){
                     </td>
                     <td>
                         <div class="align-self-center mr-2">
-                            <input type="text" class="form-control" id="ipt_empNm" name="ipt_empNm" placeholder="NAME" maxlength="5" onkeydown="validChk()" />
+                            <input type="text" class="form-control" id="ipt_empNm" name="ipt_empNm" placeholder="NAME" maxlength="5" />
                         </div>
                     </td>
                     <td>
