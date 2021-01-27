@@ -252,16 +252,15 @@
                         </button>
                     </h2>
                 </div>-->
-
-                <div id="col_wrkApvlReq" class="collapse show" aria-labelledby="head_wrkApvlReq" data-parent="#grp_wrkApvlReq">
+                <div role="alert">
+                    <h6 style="text-align: right">
+                        <b>* 는 필수 입력 항목입니다.</b>
+                    </h6>
+                </div>
+                <!--<div id="col_wrkApvlReq" class="collapse show" aria-labelledby="head_wrkApvlReq" data-parent="#grp_wrkApvlReq">
                     <div id="apvlAcptDiv" class="card-body flex-height d-flex">
                         <div class="row">
-                            <div class="col-sm-12">
-                                <div role="alert">
-                                    <h6 style="text-align: right">
-                                        <b>* 는 필수 입력 항목입니다.</b>
-                                    </h6>
-                                </div>
+                            <div class="col-sm-12">-->
                                 <div class="accordion mb-4" id="grp_wrkApvlAcpt">
                                     <div class="p-0" id="head_wrkApvlAcpt">
                                         <!-- Body -->
@@ -298,13 +297,13 @@
                                                 <div style="float: left;">
                                                     <input type="time" class="align-self-start align-self-center mr-1 form-control"  id="ipt_reqAcptJobEndTm"    name="ipt_reqAcptJobEndTm" disabled/>
                                                 </div>
-                                                <input type="hidden"                                                                 id="ipt_reqAcptEmpEmalAddr" name="ipt_reqAcptEmpEmalAddr" />
-                                                <input type="hidden"                                                                 id="ipt_reqAcptTh1AprvStus"        name="ipt_reqAcptTh1AprvStus" />
                                             </div>
                                         </div>-->
+                                        <input type="hidden"                                                                 id="ipt_reqAcptEmpEmalAddr" name="ipt_reqAcptEmpEmalAddr" />
+                                        <input type="hidden"                                                                 id="ipt_reqAcptTh1AprvStus"        name="ipt_reqAcptTh1AprvStus" />
 
                                         <div class="flex-height d-flex m-0 p-2">
-                                            <div class="align-self-start align-self-center mr-3" style="font-weight:bold">근무요청사유&nbsp;</div>
+                                            <div class="align-self-start align-self-center mr-3" style="font-weight:bold">근무요청사유&nbsp;&nbsp;</div>
                                             <div class="align-self-center mr-7">
                                                 <textarea id="txa_reqAcptRsn" name="txa_reqAcptRsn" maxlength="500" style="resize: none; width:440px;height:70px;" placeholder="사유를 입력해주세요." disabled></textarea>
                                             </div>
@@ -328,10 +327,10 @@
 
                                     </div>
                                 </div>
-                            </div>
+                            <!--</div>
                          </div>
                     </div>
-                </div>
+                </div>-->
             <!--</div>-->
         </div>
     </div>
