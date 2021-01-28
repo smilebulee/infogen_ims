@@ -2,6 +2,39 @@
     $(document).ready(function(){
         //TO DO : h5_apvlReqBfrTit 등록/수정/상세 제목 변경
         //TO DO : btn_apvlBfrReq 저장/수정 버튼 변경
+        if($('#currReqPopStts').val() == "register") {
+            $('#h5_apvlReqBfrTit').html("<b>근무결재요청 등록</b>");
+            $('#btn_apvlBfrReq').text("저장");
+        } else {
+            $('#h5_apvlReqBfrTit').html("<b>근무결재요청 수정</b>");
+            $('#btn_apvlBfrReq').text("수정");
+            alertMsg("수정팝업 개발 진행 중입니다.");
+            return;
+            // 결재 요청 정보 PK
+            //var arrWrkDt =$(trId).children().eq(6).html().split(';');
+            //var arrWrkDt =$('#currReqPopInfoArr').val().split(';');
+
+            // 트랜잭션
+            var params = {
+                "email"      : arrWrkDt[0],     // 기안자
+                "wrkDt"      : arrWrkDt[1],     // 근무요청일시
+                "jobStrtTm"  : arrWrkDt[2],     // 근무 시작 시간
+                "jobEndTm"   : arrWrkDt[3],     // 근무 종료 시간
+            }
+
+            //submissionCallList( params, "GET", "{% url 'dili_api:getApvlReqHistDetl' %}", function(data){
+            //    debugger;
+            //    setApvlReqHistDetl2(data);
+            //});
+
+
+
+
+
+
+        }
+
+
 
         // 결재자 검색 - 직원조회 모달 오픈
         $("#ipt_apvlLnSearchNamePop").click(function(){
@@ -112,12 +145,15 @@
         submissionCallList( param, 'GET', url, function(data) {
             if(data.length > 0 && data[0].APVL_REQ_CNT > 0) {
                 //동일 날짜에 결재요청건이 있는 경우
-                var msg = '일자 : ' + param.wrkDt + '\n결재요청건이 ' + data[0].APVL_REQ_CNT + '건 있습니다.\n 결재 요청하시겠습니까?';
+                /*var msg = '일자 : ' + param.wrkDt + '\n결재요청건이 ' + data[0].APVL_REQ_CNT + '건 있습니다.\n 결재 요청하시겠습니까?';
                 cf_dialog.confirm(msg, function(){
                     if(this.key == 'ok'){
                         saveApvlReq();
                     }
-                });
+                });*/
+                var msg = '일자 : ' + param.wrkDt + '\n결재요청건이 ' + data[0].APVL_REQ_CNT + '건 있습니다! \n결재 수정하십시오.';
+                alertMsg(msg);
+                return;
             } else {
                 //동일 날짜에 결재요청건이 없는 경우
                 cf_dialog.confirm('근무 결재를 요청하시겠습니까?', function(){
@@ -318,6 +354,7 @@
                                             <div class="align-self-center mr-3">
                                                 <div class="align-self-center mr-3">
                                                     <input type="text" class="align-self-start align-self-center mr-1 form-control" id="ipt_refSearchNamePop" name="ipt_refSearchNamePop" placeholder="이름을 입력해주세요." maxlength="10" readonly/>
+                                                    <!--<a>삭제</a>-->
                                                     <input type="text" class="align-self-start align-self-center mr-1 form-control" id="ipt_refSearchEmailPop" name="ipt_refSearchEmailPop" style="width:235px; display:none;" readonly/>
                                                 </div>
                                             </div>

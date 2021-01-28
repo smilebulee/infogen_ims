@@ -134,7 +134,7 @@
         // 결재등록 모달 오픈
         $("#apvlReqBtn").click(function(){
             var url = "{% url 'dili_api:apvlReqBfrPop' %}" ;
-
+            $('#currReqPopStts').val("register");
             modal('apvlReqModalDiv');
             $('#apvlReqModal').load(url);
         });
@@ -165,11 +165,14 @@
         var apvlReqHistTable =  '<table class="table table-bordered table-hover text-center">';
             apvlReqHistTable += '<thead>';
             apvlReqHistTable += '<tr>';
-            apvlReqHistTable += '<th class="text-center">순번</th>';
-            apvlReqHistTable += '<th class="text-center">성명</th>';
-            apvlReqHistTable += '<th class="text-center">근무요청일시</th>';
-            apvlReqHistTable += '<th class="text-center">구분</th>';
-            apvlReqHistTable += '<th class="text-center">승인상태</th>';
+            //apvlReqHistTable += '<th class="text-center">순번</th>';
+            apvlReqHistTable += '<th class="text-center">결재요청일자</th>';
+            apvlReqHistTable += '<th class="text-center">기안자</th>';
+            apvlReqHistTable += '<th class="text-center">근무요청일시 출근시각 ~ 퇴근시각 (총 근무시간)</th>';
+            //apvlReqHistTable += '<th class="text-center">구분</th>';
+            apvlReqHistTable += '<th class="text-center">결재상태</th>';
+            apvlReqHistTable += '<th class="text-center">결재자</th>';
+            apvlReqHistTable += '<th class="text-center">근무요청사유</th>';
             apvlReqHistTable += '</tr>';
             apvlReqHistTable += '</thead>';
             apvlReqHistTable += '<tbody>';
@@ -189,12 +192,16 @@
                     }
                 }
 
-                apvlReqHistTable += '<tr onclick="onclickEvt(this)">';
-                apvlReqHistTable += '<td id="no'+i+'" class="pt-3-half">'+(i+1)+'</td>';
+                //apvlReqHistTable += '<tr onclick="onclickEvt(this)">';
+                apvlReqHistTable += '<tr onclick="onclickEvt2(this)">';
+                //apvlReqHistTable += '<td id="no'+i+'" class="pt-3-half">'+(i+1)+'</td>';
+                apvlReqHistTable += '<td class="pt-3-half">'+data[i].APVL_REQ_DT+'</td>';
                 apvlReqHistTable += '<td class="pt-3-half">'+data[i].EMP_NAME+'</td>';
                 apvlReqHistTable += '<td class="pt-3-half">'+wrkDtm+'</td>';
-                apvlReqHistTable += '<td class="pt-3-half">'+data[i].APVL_REQ_NM+'</td>';
+                //apvlReqHistTable += '<td class="pt-3-half">'+data[i].APVL_REQ_NM+'</td>';
                 apvlReqHistTable += '<td class="pt-3-half">'+data[i].APRV_STUS_NM+'</td>';
+                apvlReqHistTable += '<td class="pt-3-half">'+data[i].REF_NM+'</td>';
+                apvlReqHistTable += '<td class="pt-3-half">'+data[i].WRK_REQ_RSN+'</td>';
                 //apvlReqHistTable += '<td class="pt-3-half" style="display: none;">' + data[i].TH1_APRV_NM + ';' + data[i].TH1_APRV_STUS + '</td>';
                 apvlReqHistTable += '<td class="pt-3-half" style="display: none;">' + data[i].EMP_EMAL_ADDR + ";" + data[i].WRK_DT + ";" + data[i].JOB_STRT_TM + ";" + data[i].JOB_END_TM + ";" + data[i].TH1_APRV_STUS + '</td>';
                 apvlReqHistTable += '</tr>';
@@ -266,6 +273,52 @@
         }
     }
 
+    /*********************************************************************
+    *   Grid 클릭 이벤트 처리 - 배경색 지정, 상세보기 트랜잭션
+    *********************************************************************/
+    function onclickEvt2(trId) {
+        // 결재 상세 모달 오픈
+        var url = "{% url 'dili_api:apvlReqBfrPop' %}" ;
+        $('#currReqPopStts').val("modify");
+        $('#currReqPopInfoArr').val($(trId).children().eq(6).html());
+
+        modal('apvlReqModalDiv');
+        $('#apvlReqModal').load(url);
+
+        //선택한 행에 대해 backgroundColor 지정
+        $(trId).prevAll().css("background-color","");
+        $(trId).nextAll().css("background-color","");
+        $(trId).css("background-color","lightGrey");
+
+    }
+
+    /*********************************************************************
+    *   Grid 선택한 행에 따라 상세보기
+    *********************************************************************/
+    function setApvlReqHistDetl2(data) {
+        if(data == undefined || data == null || data.length == 0) {
+            // 결재 상세 input 값 초기화
+            //$("#ipt_wrkDt").val("");
+            //$("#ipt_jobStrtTm").val("");
+            //$("#ipt_jobEndTm").val("");
+            //$("#reqRsn").val("");
+            //$("#ipt_apvlLnSearchNamePop").val("");
+            //$("#ipt_apvlLnSearchEmailPop").val("");
+            //$("#ipt_refSearchNamePop").val("");
+            //$("#ipt_refSearchEmailPop").val("");
+        } else {
+            // 결재 상세 input 값 초기화
+            $("#ipt_wrkDt").val(data[0].WRK_DT);
+            $("#ipt_jobStrtTm").val(data[0].JOB_STRT_TM);
+            $("#ipt_jobEndTm").val(data[0].JOB_END_TM);
+            $("#reqRsn").val(data[0].WRK_REQ_RSN);
+            $("#ipt_apvlLnSearchNamePop").val(data[0].TH1_APRV_NAME);
+            $("#ipt_apvlLnSearchEmailPop").val(data[0].TH1_APRV_NM);
+            $("#ipt_refSearchNamePop").val(data[0].REF_NAME);
+            $("#ipt_refSearchEmailPop").val(data[0].REF_NM);
+        }
+    }
+
 
 </script>
 
@@ -296,6 +349,8 @@
            M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
            <path fill-rule="evenodd" d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
         </svg>
+        <input type="hidden" id="currReqPopStts" value="01"></input>
+        <input type="hidden" id="currReqPopInfoArr" value="01"></input>
     </a>
 </div>
 
@@ -358,6 +413,7 @@
                         <div class="align-self-center mr-3">
                             <button class="button" id="apvlReqBtn">결재등록</button>
                             <input type="hidden" id="currReqMthd" value="01"></input>
+                            <!--<input type="hidden" id="currReqPopStts" value="01"></input>-->
                         </div>
                         <div class="align-self-end align-self-center">
                             <button class="button" id="apvlAcptBtn">결재승인</button>

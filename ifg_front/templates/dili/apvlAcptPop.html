@@ -57,10 +57,10 @@
         var wrkApvlTable =  '<table class="table table-bordered table-hover text-center"  id="tblWrkApvlAcpt" >';
             wrkApvlTable += '<thead>';
             wrkApvlTable += '<tr>';
-            wrkApvlTable += '<th class="text-center">순번</th>';
-            wrkApvlTable += '<th class="text-center">결재 요청일</th>';
-            wrkApvlTable += '<th class="text-center">근무요청일시</th>';
-            wrkApvlTable += '<th class="text-center">구분</th>';
+            //wrkApvlTable += '<th class="text-center">순번</th>';
+            wrkApvlTable += '<th class="text-center">결재요청일자</th>';
+            wrkApvlTable += '<th class="text-center">근무요청일시 출근시각 ~ 퇴근시각</th>';
+            //wrkApvlTable += '<th class="text-center">구분</th>';
             wrkApvlTable += '<th class="text-center">기안자</th>';
             wrkApvlTable += '</tr>';
             wrkApvlTable += '</thead>';
@@ -81,10 +81,10 @@
                 var wrkDtm = data[i].WRK_DT + " " + data[i].JOB_STRT_TM + " ~ " + data[i].JOB_END_TM;
 
                 wrkApvlTable += '<tr id ="grd_wrkApvlAcpt'+i+'" onclick="onApvlAcptClickEvt(this)">';
-                wrkApvlTable += '<td class="pt-3-half">' + (i+1)                + '</td>';
+                //wrkApvlTable += '<td class="pt-3-half">' + (i+1)                + '</td>';
                 wrkApvlTable += '<td class="pt-3-half">' + data[i].APVL_REQ_DT  + '</td>';
                 wrkApvlTable += '<td class="pt-3-half">' + wrkDtm               + '</td>';
-                wrkApvlTable += '<td class="pt-3-half">' + data[i].APVL_REQ_NM  + '</td>';
+                //wrkApvlTable += '<td class="pt-3-half">' + data[i].APVL_REQ_NM  + '</td>';
                 wrkApvlTable += '<td class="pt-3-half">' + data[i].EMP_NAME     +'</td>';
                 wrkApvlTable += '<td class="pt-3-half" style="display: none;">' + data[i].WRK_DT + ";" + data[i].JOB_STRT_TM + ";" + data[i].JOB_END_TM + ";" + data[i].WRK_REQ_RSN + ";" + data[i].EMP_EMAL_ADDR  + ';' + data[i].TH1_APRV_STUS + '</td>';
                 wrkApvlTable += '</tr>';
@@ -174,6 +174,7 @@
                     "jobStrtTm"     : inptStrtTm,                           //근무 시작 시간
                     "jobEndTm"      : inptEndTm,                            //근무 종료 시간
                     "th1AprvStus"   : apvlAcptStus,                         //01: 미승인, 02: 승인, 03: 반려
+                    "th1AprvRsn"    : $("#txa_reqAcptRsnAcpt").val(),       //근무승인사유
                     //"th1AprvNm"     : sessionStorage.getItem("email"),    //결재자 : 로그인한 사용자 아이디
                 }
 
@@ -188,6 +189,7 @@
                      'async' : false,
                      'callbackFn' : function(data){
                         g_toast.push(msg + '되었습니다.');
+                        $("#txa_reqAcptRsnAcpt").val('');
                         //$('#exitApvlAcptModalBtn').click();
                         initApvlAcptDetl();
                         srchApvlAcptHist();
@@ -208,10 +210,10 @@
         //document.getElementById(trId.id).style.backgroundColor = "lightgrey";
         trId.css('backgroundColor', 'lightgrey');
 
-        var arrWrkDt = trId.children().eq(5).html().split(';');
-        //$("#ipt_reqAcptWrkDt").val(arrWrkDt[0]);
-        //$("#ipt_reqAcptJobStrtTm").val(arrWrkDt[1]);
-        //$("#ipt_reqAcptJobEndTm").val(arrWrkDt[2]);
+        var arrWrkDt = trId.children().eq(3).html().split(';');
+        $("#ipt_reqAcptWrkDt").val(arrWrkDt[0]);
+        $("#ipt_reqAcptJobStrtTm").val(arrWrkDt[1]);
+        $("#ipt_reqAcptJobEndTm").val(arrWrkDt[2]);
         $("#txa_reqAcptRsn").val(arrWrkDt[3]);
         $("#ipt_reqAcptEmpEmalAddr").val(arrWrkDt[4]);
 
@@ -229,7 +231,34 @@
         */
     }
 
-
+    /* input, textArea 글자수 체크 */
+    function chkLength(obj, maxByte) {
+        var strValue = obj.value;
+        var strLen = strValue.length;
+        var totalByte = 0;
+        var len = 0;
+        var oneChar = "";
+        var str2 = "";
+        for (var i = 0; i < strLen; i++) {
+            oneChar = strValue.charAt(i);
+            if (escape(oneChar).length > 4) {
+                totalByte += 2;
+            } else {
+                totalByte++;
+            }
+            // 입력한 문자 길이보다 넘치면 잘라내기 위해 저
+            if (totalByte <= maxByte) {
+                len = i + 1;
+            }
+        }
+        // 넘어가는 글자는 자른다.
+        if (totalByte > maxByte) {
+            alertMsg(maxByte + "자를 초과 입력 할 수 없습니다.");
+            str2 = strValue.substr(0, len);
+            obj.value = str2;
+            chkLength(obj, 4000);
+        }
+    }
 </script>
 
 <div class="row">
@@ -299,8 +328,11 @@
                                                 </div>
                                             </div>
                                         </div>-->
-                                        <input type="hidden"                                                                 id="ipt_reqAcptEmpEmalAddr" name="ipt_reqAcptEmpEmalAddr" />
-                                        <input type="hidden"                                                                 id="ipt_reqAcptTh1AprvStus"        name="ipt_reqAcptTh1AprvStus" />
+                                        <input type="hidden" id="ipt_reqAcptWrkDt"       name="ipt_reqAcptWrkDt" />
+                                        <input type="hidden" id="ipt_reqAcptJobStrtTm"   name="ipt_reqAcptJobStrtTm" />
+                                        <input type="hidden" id="ipt_reqAcptJobEndTm"    name="ipt_reqAcptJobEndTm" />
+                                        <input type="hidden" id="ipt_reqAcptEmpEmalAddr" name="ipt_reqAcptEmpEmalAddr" />
+                                        <input type="hidden" id="ipt_reqAcptTh1AprvStus" name="ipt_reqAcptTh1AprvStus" />
 
                                         <div class="flex-height d-flex m-0 p-2">
                                             <div class="align-self-start align-self-center mr-3" style="font-weight:bold">근무요청사유&nbsp;&nbsp;</div>
@@ -312,7 +344,7 @@
                                         <div class="flex-height d-flex m-0 p-2">
                                             <div class="align-self-start align-self-center mr-3" style="font-weight:bold">*근무승인사유</div>
                                             <div class="align-self-center mr-7">
-                                                <textarea id="txa_reqAcptRsnAcpt" name="txa_reqAcptRsnAcpt" maxlength="210" style="resize: none; width:440px;height:70px;" placeholder="사유를 입력해주세요.(200자 이하) - 아직 개발 시작 안함. 컴포넌트만 생성하였음"></textarea>
+                                                <textarea id="txa_reqAcptRsnAcpt" name="txa_reqAcptRsnAcpt" maxlength="210" style="resize: none; width:440px;height:70px;" placeholder="사유를 입력해주세요.(200자 이하)" onkeyup="chkLength(this, 200)"></textarea>
                                             </div>
                                         </div>
 

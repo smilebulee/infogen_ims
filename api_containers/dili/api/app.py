@@ -626,6 +626,7 @@ class saveApvlAcpt(Resource): # Mariadb 연결 진행
         jobStrtTm = request.form['jobStrtTm']
         jobEndTm = request.form['jobEndTm']
         th1AprvStus = request.form['th1AprvStus']
+        th1AprvRsn = request.form['th1AprvRsn']
 
         #requirements pymysql import 후 커넥트 사용
         mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
@@ -635,6 +636,7 @@ class saveApvlAcpt(Resource): # Mariadb 연결 진행
                 #쿼리문 실행
                 sql = " UPDATE TB_APVL_REQ_MGMT_M " \
                       "    SET TH1_APRV_STUS     = '" + th1AprvStus + "'" \
+                      "      , TH1_APRV_RSN      = '" + th1AprvRsn + "'" \
                       "      , APVL_LAST_APRV_DT = NOW() " \
                       "  WHERE EMP_EMAL_ADDR     = '" + email + "' " \
                       "    AND WRK_DT            = '" + wrkDt + "' " \
@@ -696,8 +698,12 @@ class apvlReqHist(Resource): # Mariadb 연결 진행
                           "            WHEN A.TH1_APRV_STUS = '02' THEN '승인'" \
                           "            ELSE '반려' END APRV_STUS_NM" \
                           "     , A.TH1_APRV_STUS" \
-                          "  FROM TB_APVL_REQ_MGMT_M A, TB_EMP_MGMT B" \
+                          "     , C.EMP_NAME AS REF_NM" \
+                          "     , A.APVL_REQ_DT" \
+                          "     , A.WRK_REQ_RSN" \
+                          "  FROM TB_APVL_REQ_MGMT_M A, TB_EMP_MGMT B, TB_EMP_MGMT C" \
                           " WHERE A.EMP_EMAL_ADDR = B.EMP_EMAIL" \
+                          "   AND A.TH1_APRV_NM = C.EMP_EMAIL " \
                           "   AND A.EMP_EMAL_ADDR = '" + email + "' " \
                           " ORDER BY A.APVL_REQ_DT DESC "
 
@@ -723,8 +729,12 @@ class apvlReqHist(Resource): # Mariadb 연결 진행
                           "            WHEN A.TH1_APRV_STUS = '02' THEN '승인'" \
                           "            ELSE '반려' END APRV_STUS_NM" \
                           "     , A.TH1_APRV_STUS" \
-                          "  FROM TB_APVL_REQ_MGMT_M A, TB_EMP_MGMT B" \
+                          "     , C.EMP_NAME AS REF_NM" \
+                          "     , A.APVL_REQ_DT" \
+                          "     , A.WRK_REQ_RSN" \
+                          "  FROM TB_APVL_REQ_MGMT_M A, TB_EMP_MGMT B, TB_EMP_MGMT C" \
                           " WHERE A.EMP_EMAL_ADDR = B.EMP_EMAIL" \
+                          "   AND A.TH1_APRV_NM = C.EMP_EMAIL " \
                           "   AND A.EMP_EMAL_ADDR = '" + email + "' " \
                           "   AND A.TH1_APRV_STUS = '" + apvlStusDivs + "' " \
                           " ORDER BY A.APVL_REQ_DT DESC "
@@ -784,7 +794,7 @@ class apvlAcptHist(Resource):  # Mariadb 연결 진행
                           " WHERE A.EMP_EMAL_ADDR = C.EMP_EMAIL  " \
                           "   AND A.TH1_APRV_NM = B.EMP_EMAIL  " \
                           "   AND A.TH1_APRV_NM = '" + email + "' " \
-                          " ORDER BY APVL_REQ_DT DESC "
+                          " ORDER BY APVL_REQ_DT ASC "
 
                     logging.debug("apvlAcptHist SQL문" + sql)
                     cursor.execute(sql)
@@ -808,7 +818,7 @@ class apvlAcptHist(Resource):  # Mariadb 연결 진행
                           "   AND A.TH1_APRV_NM = B.EMP_EMAIL  " \
                           "   AND A.TH1_APRV_NM = '" + email + "' " \
                           "   AND A.TH1_APRV_STUS = '" + apvlStusDivs + "' " \
-                          " ORDER BY APVL_REQ_DT DESC "
+                          " ORDER BY APVL_REQ_DT ASC "
 
                     logging.debug("apvlAcptHist SQL문" + sql)
                     cursor.execute(sql)
@@ -994,12 +1004,18 @@ class apvlReqHistDetl(Resource): # Mariadb 연결 진행
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 # 쿼리문 실행
-                sql = "            SELECT NVL(B.EMP_NAME,'') TH1_APRV_NM" \
+                sql = "            SELECT NVL(B.EMP_NAME,'') TH1_APRV_NAME" \
+                      "                 , A.TH1_APRV_NM " \
                       "                 , CASE WHEN A.TH1_APRV_STUS = '01' THEN '미승인'" \
                       "                        WHEN A.TH1_APRV_STUS = '02' THEN '승인'" \
                       "                        ELSE '반려' END TH1_APRV_STUS_NM" \
                       "                 , A.APVL_REQ_DT" \
-                      "                 , NVL(C.EMP_NAME,'') REF_NM" \
+                      "                 , A.WRK_DT" \
+                      "                 , A.JOB_STRT_TM" \
+                      "                 , A.JOB_END_TM" \
+                      "                 , A.WRK_REQ_RSN" \
+                      "                 , A.REF_NM" \
+                      "                 , NVL(C.EMP_NAME,'') REF_NAME" \
                       "              FROM TB_APVL_REQ_MGMT_M A " \
                       "   LEFT OUTER JOIN TB_EMP_MGMT B " \
                       "                ON A.TH1_APRV_NM = B.EMP_EMAIL " \
