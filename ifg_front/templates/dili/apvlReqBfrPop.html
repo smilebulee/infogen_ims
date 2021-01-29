@@ -5,9 +5,11 @@
         if($('#currReqPopStts').val() == "register") {
             $('#h5_apvlReqBfrTit').html("<b>근무결재요청 등록</b>");
             $('#btn_apvlBfrReq').text("저장");
+            $('#ipt_wrkDt').prop('readonly', false);
         } else {
             $('#h5_apvlReqBfrTit').html("<b>근무결재요청 수정</b>");
             $('#btn_apvlBfrReq').text("수정");
+            $('#ipt_wrkDt').prop('readonly', true);
             alertMsg("수정팝업 개발 진행 중입니다.");
             return;
             // 결재 요청 정보 PK
