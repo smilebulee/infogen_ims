@@ -31,3 +31,9 @@
     font-size: x-small;
     float: right;
 }
+
+.delInptButton {
+    background-color: transparent;
+    border: none;
+    font-weight: 500;
+}

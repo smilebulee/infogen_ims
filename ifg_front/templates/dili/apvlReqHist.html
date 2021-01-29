@@ -8,9 +8,6 @@
             location.href = "{% url 'main:login_form' %}";
         }
 
-        // 공통 코드 조회 - '결재 승인 상태 구분'
-        retrieveCmmCd('sbx_type', 'APVL_STTS_CD');
-
         // SessionSetting 정보 가져오기
         var param = {
             "email" : sessionStorage.getItem("email"),
@@ -18,9 +15,10 @@
         }
         //console.log("###########SessionSettingInfo::", param);
 
-
         // 사용자 조회 > 이메일 : SessionSetting email로 설정
         $('#ipt_apvlSearchEmailPop').val(param.email);
+        $("#ipt_apvlSearchEmail").val(param.email);
+
         // 사용자 조회 > 이름 : SessionSetting email로 이름 조회하여 설정
         retrieveEmpNmByEmail(param.email, function(data) {
             $('#ipt_apvlSearchNamePop').val(data[0].EMP_NAME);
@@ -29,21 +27,57 @@
             $('#ipt_apvlSearchEmail').val(param.email);
         });
 
+        // 로그인한 사용자 부서 정보 조회
+        var strDeptCd = '00';
+        retrieveEmpDeptByEmail(param.email, function(data) {
+            if(data.length > 0) {
+                strDeptCd = data[0].DEPT_CD;
+            }
+        });
 
+        // 공통 코드 조회 - '부서'
+        retrieveCmmCd('sbx_slinBzdp', 'SLIN_BZDP', function(data) {
+            // 부서 기본 값 : 로그인한 사용자 부서
+            $('[name="SLIN_BZDP"]').val(strDeptCd);
+            $('[name="SLIN_BZDP"]').prepend('<option value="00">전체</option>')
+        });
+
+        // 공통 코드 조회 - '결재 상태'
+        retrieveCmmCd('sbx_apvlSttsCd', 'APVL_STTS_CD');
+
+        // 결재요청월 > 접속 월로 설정
+        var todayDt = new Date();
+        var strTodayDt = todayDt.getFullYear() + '-' + fillZero(2, (todayDt.getMonth() + 1) + '');
+        $('#ipt_apvlSearchYyyyMm').val(strTodayDt)
+
+
+        //TODO : 관리자, 사업부장 권한 나뉘며 로직 엉킴. 수정 필요
         // 결재승인 버튼 및 직원조회 기능 권한 처리
         if(param.authId != "ADMIN") {
-            $('#apvlAcptBtn').css("display", 'none');
+            //$('#apvlAcptBtn').css("display", 'none');
             //$('#ipt_apvlSearchNamePop").attr('readonly' true);
             //$("#ipt_apvlSearchNamePop").attr('onclick','').unbind('click');
+
+            //$('#sbx_slinBzdp').prop('readonly', true);
+            $('#sbx_slinBzdp').prop('disabled', true);
+            //$('#ipt_apvlSearchNamePop').prop('readonly', false);
         }
 
+        // 결재승인 버튼 및 직원조회 기능 권한 처리 ( 성명 공란 검색 )
+        if(param.authId == "USER") {
+            $('#apvlAcptBtn').css("display", 'none');
+            $('#btn_delApvlSearchName').css("display", 'none');
+        }
+
+        /*
         $('#apvlAcptBtn').click(function(){
-            if(param.authId != "ADMIN") {
+            var strAuthId = sessionStorage.getItem("authId");
+            if(strAuthId != "ADMIN" || strAuthId != "GM") {
                 alertMsg('결재 승인 권한이 없습니다.');
                 return false;
             }
         });
-
+        */
 
         /*
         $('#ipt_apvlSearchNamePop').change(function() {
@@ -58,12 +92,51 @@
             $('#grd_apvlReqHistDetl').css('display', 'none');
         }
 
+        // 결재요청월 focusout 이벤트
+        /*
+        $('#ipt_apvlSearchYyyyMm').blur(function() {
+            if($("#ipt_apvlSearchYyyyMm").val() == "" || $("#ipt_apvlSearchYyyyMm").val().length != 7) {
+                alertMsg("결재요청월을 선택해주세요.", function() {
+                    $('#ipt_apvlSearchYyyyMm').focus();
+                });
+                return;
+            }
+        });*/
 
         /*********************************************************************
         *   이벤트 바인딩 및 함수 선언
         *********************************************************************/
         //조회 버튼 클릭 이벤트
         $("#searchBtn").click(function(){
+            //결재요청월 유효성 검증
+            if($("#ipt_apvlSearchYyyyMm").val() == "" || $("#ipt_apvlSearchYyyyMm").val().length != 7) {
+                alertMsg("결재요청월을 선택해주세요.", function() {
+                    $('#ipt_apvlSearchYyyyMm').focus();
+                });
+                return;
+            }
+
+            //결재요청월 유효성 검증
+            var nowDt = new Date();
+            var strNowDt = nowDt.getFullYear() + '-' + fillZero(2, (nowDt.getMonth() + 1) + '');
+            var inptDt = new Date($("#ipt_apvlSearchYyyyMm").val());
+            var todayDt = new Date(strNowDt);
+            if(inptDt > todayDt) {
+                alertMsg("결재요청월은 현재월, 현재월 이전으로 선택해주세요.", function() {
+                    $('#ipt_apvlSearchYyyyMm').val(strNowDt).focus();
+                });
+                return;
+            }
+
+            //부서, 성명 유효성 검증
+            if($("#sbx_slinBzdp").val() == "00" && $("#ipt_apvlSearchName").val() == "") {
+                alertMsg("전체 부서 조회 시 이름은 필수 입력 항목입니다.", function() {
+                    $('#ipt_apvlSearchName').focus();
+                });
+                return;
+            }
+
+
             /*
             //결재 상세 테이블 초기화
             $("#thApvlReqDt").text("");
@@ -77,9 +150,26 @@
             /*********************************************************************
             *   Session Email 값 기준 근무 결재요청 리스트 조회
             *********************************************************************/
+            //권한 따라 부서 세팅
+            /*
+            var strDeptCd = "";
+            if(param.authId == "ADMIN") {       //관리자
+                strDeptCd = $("#sbx_slinBzdp option:selected").val();
+            } else if(param.authId == "GM") {   //사업부장
+                retrieveEmpDeptByEmail(param.email, function(data) {
+                    if(data.length > 0) {
+                        strDeptCd = data[0].DEPT_CD;
+                    }
+                });
+            }
+            */
+
             var params = {
-                "email" : $("#ipt_apvlSearchEmail").val() || sessionStorage.getItem("email"),   //사용자 조회  > 이메일 값
-                "apvlStusDivs" : $("#sbx_type option:selected").val(),                          //TB_APVL_REQ_MGMT_M APVL_STUS 값 => 01,02: 승인, 승인반려 NULL: 미승인
+                "apvlReqDtYm"  : $("#ipt_apvlSearchYyyyMm").val(),                                     // 결재요청월
+                //"deptCd"       : strDeptCd,                                                            // 부서
+                "deptCd"       : $("#sbx_slinBzdp option:selected").val(),                             // 부서
+                "email"        : $("#ipt_apvlSearchEmail").val(),// || sessionStorage.getItem("email"),//사용자 조회  > 이메일 값
+                "apvlStusDivs" : $("#sbx_apvlSttsCd option:selected").val(),                           //TB_APVL_REQ_MGMT_M APVL_STUS 값 => 01,02: 승인, 승인반려 NULL: 미승인
             }
             //console.log("###########params::", params);
             var url = "{% url 'dili_api:getApvlReqHist' %}";
@@ -91,8 +181,13 @@
 
 
         // 화면 진입 시, 로그인한 사용자 기준으로 결재요청이력 조회
-        $("#searchBtn").click();
-
+        $("#sbx_slinBzdp").change(function(){
+            if(cnt == 0) {
+                $("#searchBtn").click();
+                cnt++;
+            }
+            //$("#sbx_slinBzdp").unbind();
+        });
 
         // 직원 조회 시, 결재자 input 세팅
         //$(document).on("click","#ipt_apvlSearchNamePop",function(){
@@ -118,7 +213,7 @@
 
 
         // 직원조회 권한 처리 및 모달 오픈
-        if(param.authId == "ADMIN") {
+        if(param.authId == "ADMIN" || param.authId == "GM") {
             $("#ipt_apvlSearchName").click(function(){
                 //부모창에서 여는 직원 조회 팝업임을 표시
                 $('#apvlReqIptFlagHidden').text("apvlReqHist");
@@ -148,8 +243,27 @@
             $('#apvlAcptModal').load(url);
         });
 
-    });
 
+        // 부서값 변경 이벤트
+        /*
+        $("#sbx_slinBzdp").change(function(){
+            //alertMsg();
+        });*/
+
+
+        // 성명 삭제 버튼 클릭 이벤트
+        $('#btn_delApvlSearchName').click(function(){
+            $('#ipt_apvlSearchName').val('');
+        });
+
+        /* 자리수만큼 0 채우기 (근무 시간 형식 지정) */
+        function fillZero(width, str){
+            str = str + '';
+            return str.length >= width ? str:new Array(width-str.length+1).join('0')+str;
+            //남는 길이만큼 0으로 채움
+        }
+    });
+    var cnt = 0;
     /*********************************************************************
     *   근무결재요청내역 Grid 생성
     *********************************************************************/
@@ -217,7 +331,6 @@
         apvlReqHistTable += '</tbody>';
         apvlReqHistTable += '</table>';
 
-//        document.getElementById('grd_apvlReqHist').innerHTML = apvlReqHistTable;
         $('#grd_apvlReqHist').html(apvlReqHistTable);
 
     }
@@ -393,16 +506,28 @@
                 </div>
                 <div id="col_search" class="collapse show" aria-labelledby="head_search" data-parent="#grp_search">
                     <div class="card-body flex-height d-flex m-0 p-2">
-                        <div class="align-self-start align-self-center mr-3">성명</div>
-                        <div class="align-self-center mr-3">
+                        <div class="align-self-start align-self-center mr-3">*결재요청월</div>
+                        <div class="align-self-center mr-5">
+                            <input type="month" class="align-self-start align-self-center mr-1 form-control" id="ipt_apvlSearchYyyyMm" name="ipt_apvlSearchYyyyMm" max="9999-12"/>
+                        </div>
+                        <div class="align-self-start align-self-center mr-3">*부서</div>
+                        <div class="align-self-center mr-5">
+                            <select id="sbx_slinBzdp" name="SLIN_BZDP" class="form-control">
+                            </select>
+                        </div>
+                        <div class="align-self-start align-self-center mr-3">*성명</div>
+                        <div class="align-self-center mr-1">
                             <input type="text" class="align-self-start align-self-center mr-1 form-control" id="ipt_apvlSearchName" name="ipt_apvlSearchName" placeholder="이름을 입력해주세요." maxlength="10" readonly />
                             <input type="hidden" class="form-control" id="ipt_apvlSearchEmail" name="ipt_apvlSearchEmail" readonly/>
                             <input type="hidden" class="form-control" id="ipt_apvlSearchNamePop" name="ipt_apvlSearchNamePop" readonly/>
                             <input type="hidden" class="form-control" id="ipt_apvlSearchEmailPop" name="ipt_apvlSearchEmailPop" readonly/>
                         </div>
-                        <div class="align-self-start align-self-center mr-3">결재상태</div>
                         <div class="align-self-center mr-5">
-                            <select id="sbx_type" name="sbx_type" class="form-control">
+                            <button type="button" id="btn_delApvlSearchName" class="delInptButton">x</button>
+                        </div>
+                        <div class="align-self-start align-self-center mr-3">*결재상태</div>
+                        <div class="align-self-center mr-5">
+                            <select id="sbx_apvlSttsCd" name="APVL_STTS_CD" class="form-control">
                                 <option value="00" selected>전체</option>
                             </select>
                         </div>

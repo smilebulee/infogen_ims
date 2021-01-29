@@ -123,8 +123,34 @@ function retrieveEmpNmByEmail(empEmail, callBackFunc) { // 추후 콜백 functio
 }
 
 
+/* 이메일 주소로 사용자 부서 조회 */
+function retrieveEmpDeptByEmail(empEmail, callBackFunc) {
+
+    var param = {
+        "email" : empEmail
+    }
+
+    $.ajaxCall( param, {
+        'method' : 'GET',
+        'url' : '/dili/getEmpDept/',
+        'dataType' : 'json',
+        'data' : JSON.stringify(param),
+        'async' : false,
+        'callbackFn' : function(data){
+            //empNm = data[0].EMP_NAME;
+            if(callBackFunc) {
+                if(typeof callBackFunc == 'function') {
+                    callBackFunc(data);
+                } else if(typeof callBackFunc == 'string') {
+                    window[callBackFunc](data);
+                }
+            }
+        }
+    });
+}
 /* 자리수만큼 0 채우기 (근무 시간 형식 지정)
 function fillZero(width, str){
+    str = str + '';
     return str.length >= width ? str:new Array(width-str.length+1).join('0')+str;
     //남는 길이만큼 0으로 채움
 } */
@@ -146,7 +172,7 @@ function getTimeDiff(fromDtm, toDtm) {
         hh = hh - 1;
     }
 
-    return fillZero(2, hh + '') + fillZero(2, mi + '') + fillZero(2, ss + '');
+    return fillZero(2, hh) + fillZero(2, mi) + fillZero(2, ss);
 } */
 
 

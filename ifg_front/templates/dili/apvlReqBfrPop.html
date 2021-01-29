@@ -6,6 +6,16 @@
             $('#h5_apvlReqBfrTit').html("<b>근무결재요청 등록</b>");
             $('#btn_apvlBfrReq').text("저장");
             $('#ipt_wrkDt').prop('readonly', false);
+
+            // 기안자
+            retrieveEmpNmByEmail(sessionStorage.getItem("email"), function(data) {
+                $('#ipt_reqName').text(data[0].EMP_NAME);
+            });
+            // 기안일
+            var nowDt = new Date();
+            var strNowDt = nowDt.getFullYear() + '-' + fillZero(2, (nowDt.getMonth() + 1) + '') + '-' + fillZero(2, nowDt.getDate() + '');
+            $('#ipt_reqDt').text(strNowDt);
+
         } else {
             $('#h5_apvlReqBfrTit').html("<b>근무결재요청 수정</b>");
             $('#btn_apvlBfrReq').text("수정");
@@ -73,6 +83,11 @@
             $('#empModalDiv').css("z-index", 15);
         }
 
+        // 성명 삭제 버튼 클릭 이벤트
+        $('#btn_delRefSearchNamePop').click(function(){
+            $('#ipt_refSearchNamePop').val('');
+            $('#ipt_refSearchEmailPop').val('');
+        });
 
     });
 
@@ -353,11 +368,43 @@
                                                 <span class="mr-3">참조자&nbsp;&nbsp;</span>
                                             </div>
 
+                                            <div class="align-self-center mr-1">
+                                                <div class="align-self-center mr-1">
+                                                    <input type="text" class="align-self-start align-self-center mr-1 form-control" id="ipt_refSearchNamePop" name="ipt_refSearchNamePop" placeholder="이름을 입력해주세요." maxlength="10" readonly/>
+                                                    <input type="text" class="align-self-start align-self-center mr-1 form-control" id="ipt_refSearchEmailPop" name="ipt_refSearchEmailPop" style="width:235px; display:none;" readonly/>
+                                                </div>
+                                            </div>
+                                            <div class="align-self-center mr-5">
+                                                <button type="button" id="btn_delRefSearchNamePop" class="delInptButton">x</button>
+                                            </div>
+                                        </div>
+
+                                        <div class="card-body flex-height d-flex m-0 p-2">
+                                            <!-- 기안자 -->
+                                            <div class="align-self-center mr-5 " style="font-weight:bold">
+                                                <span class="mr-3">기안자&nbsp;&nbsp;</span>
+                                            </div>
+
                                             <div class="align-self-center mr-3">
                                                 <div class="align-self-center mr-3">
-                                                    <input type="text" class="align-self-start align-self-center mr-1 form-control" id="ipt_refSearchNamePop" name="ipt_refSearchNamePop" placeholder="이름을 입력해주세요." maxlength="10" readonly/>
-                                                    <!--<a>삭제</a>-->
-                                                    <input type="text" class="align-self-start align-self-center mr-1 form-control" id="ipt_refSearchEmailPop" name="ipt_refSearchEmailPop" style="width:235px; display:none;" readonly/>
+                                                    <span id="ipt_reqName"></span>
+                                                    <!--<input type="text" class="align-self-start align-self-center mr-1 form-control" id="ipt_reqName" name="ipt_reqName" maxlength="10" readonly/>-->
+                                                    <input type="text" class="align-self-start align-self-center mr-1 form-control" id="ipt_reqEmail" name="ipt_reqEmail" style="width:235px; display:none;" readonly/>
+                                                </div>
+                                            </div>
+
+                                        </div>
+
+                                        <div class="card-body flex-height d-flex m-0 p-2">
+                                            <!-- 기안자 -->
+                                            <div class="align-self-center mr-5 " style="font-weight:bold">
+                                                <span class="mr-3">기안일&nbsp;&nbsp;</span>
+                                            </div>
+
+                                            <div class="align-self-center mr-3">
+                                                <div class="align-self-center mr-3">
+                                                    <span id="ipt_reqDt"></span>
+                                                    <!--<input type="text" class="align-self-start align-self-center mr-1 form-control" id="ipt_reqDt" name="ipt_reqName" maxlength="10" readonly/>-->
                                                 </div>
                                             </div>
 
