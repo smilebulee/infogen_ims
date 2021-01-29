@@ -306,7 +306,7 @@
                             <div class="col-sm-12">-->
                                 <div role="alert">
                                     <h6 style="text-align: right">
-                                        <b>* 는 필수 입력 항목입니다.</b>
+                                        <span class="requiredText"><b>* 는 필수 입력 항목입니다.</b></span>
                                     </h6>
                                 </div>
                                 <div class="accordion mb-4" id="grp_wrkApvlReq">
@@ -322,7 +322,7 @@
                                         -->
 
                                         <div class="flex-height d-flex m-0 p-2">
-                                            <div class="align-self-start align-self-center mr-3" style="font-weight:bold"><span>*</span>근무요청일시</div>
+                                            <div class="align-self-start align-self-center mr-3" style="font-weight:bold"><span class="requiredTag mr-1">*</span>근무요청일시</div>
                                             <div class="align-self-center mr-1">
                                                 <div style="float: left;">
                                                      <input type="date" class="align-self-start align-self-center mr-1 form-control" id="ipt_wrkDt"       name="ipt_wrkDt"      max="9999-12-31" />
@@ -340,7 +340,7 @@
                                         </div>
 
                                         <div class="flex-height d-flex m-0 p-2">
-                                            <div class="align-self-start align-self-center mr-3" style="font-weight:bold"><span>*</span>근무요청사유</div>
+                                            <div class="align-self-start align-self-center mr-3" style="font-weight:bold"><span class="requiredTag mr-1">*</span>근무요청사유</div>
                                             <div class="align-self-center mr-7">
                                                 <textarea id="txa_reqBfrRsn" class="form-control" name="reqRsn" maxlength="210" style="resize: none; width:440px;height:70px;" placeholder="사유를 입력해주세요.(200자 이하)" onkeyup="chkLength(this, 200)"></textarea>
                                             </div>
@@ -350,7 +350,7 @@
                                         <div class="card-body flex-height d-flex m-0 p-2">
                                             <!-- 결재자 -->
                                             <div class="align-self-center mr-5 " style="font-weight:bold">
-                                                <span class="mr-3">*결재자</span>
+                                                <span class="mr-3"><span class="requiredTag mr-1">*</span>결재자</span>
                                             </div>
 
                                             <div class="align-self-center mr-3">
