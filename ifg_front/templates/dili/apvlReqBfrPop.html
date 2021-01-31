@@ -32,7 +32,9 @@
             var arrWrkDt =$('#currReqPopParamArr').val().split(';');
             // 결재상태가 승인, 반려상태일 때, 혹은 결재상태가 미승인 + 작성자가 sessionSetting Email 값과 다를 때
             if(arrWrkDt[4] != '01' || (arrWrkDt[4] == '01' && arrWrkDt[0] != sessionStorage.getItem("email"))) {
-                $('#apvlReqAcptDiv').addClass('d-block');
+                if(arrWrkDt[4] != '01') {
+                    $('#apvlReqAcptDiv').addClass('d-block');
+                }
 
                 var strApvlStts = arrWrkDt[4] == '02' ? '승인' : '반려';
                 $('#sp_apvlStts').html(strApvlStts);
