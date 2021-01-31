@@ -549,6 +549,7 @@ class saveApvlReq(Resource): # Mariadb 연결 진행
             logger.info(row + ':' + request.form[row])
             globals()[row] = request.form[row]
 
+        currReqPopStts = request.form['currReqPopStts']
         email = request.form['email']
         apvlDivs = request.form['apvlDivs']
         apvlReqDivs = request.form['apvlReqDivs']
@@ -567,33 +568,44 @@ class saveApvlReq(Resource): # Mariadb 연결 진행
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 #쿼리문 실행
-                sql = "INSERT INTO TB_APVL_REQ_MGMT_M (" \
-                                                      "`EMP_EMAL_ADDR`," \
-                                                      "`APVL_DIVS`," \
-                                                      "`APVL_REQ_DIVS`," \
-                                                      "`WRK_DT`," \
-                                                      "`JOB_STRT_TM`," \
-                                                      "`JOB_END_TM`," \
-                                                      "`WRK_TME`," \
-                                                      "`WRK_REQ_RSN`," \
-                                                      "`APVL_REQ_DT`," \
-                                                      "`TH1_APRV_STUS`," \
-                                                      "`TH1_APRV_NM`," \
-                                                      "`REF_NM`," \
-                                                      "`APVL_LAST_APRV_DT`)" \
-                                            " VALUES (   '" + email + "'"\
-                                                      ", '" + apvlDivs + "'"\
-                                                      ", '" + apvlReqDivs + "'"\
-                                                      ", '" + wrkDt + "'"\
-                                                      ", '" + jobStrtTm + "'"\
-                                                      ", '" + jobEndTm + "'"\
-                                                      ", '" + wrkTme + "'"\
-                                                      ", '" + wrkReqRsn + "'"\
-                                                      ",      NOW()" \
-                                                      ", '" + th1AprvStus + "'"\
-                                                      ", '" + th1AprvNm + "'"\
-                                                      ", '" + refNm + "'"\
-                                                      ",      NOW())"
+                if currReqPopStts == "register":
+                    sql = "INSERT INTO TB_APVL_REQ_MGMT_M (" \
+                                                          "`EMP_EMAL_ADDR`," \
+                                                          "`APVL_DIVS`," \
+                                                          "`APVL_REQ_DIVS`," \
+                                                          "`WRK_DT`," \
+                                                          "`JOB_STRT_TM`," \
+                                                          "`JOB_END_TM`," \
+                                                          "`WRK_TME`," \
+                                                          "`WRK_REQ_RSN`," \
+                                                          "`APVL_REQ_DT`," \
+                                                          "`TH1_APRV_STUS`," \
+                                                          "`TH1_APRV_NM`," \
+                                                          "`REF_NM`," \
+                                                          "`APVL_LAST_APRV_DT`)" \
+                                                " VALUES (   '" + email + "'"\
+                                                          ", '" + apvlDivs + "'"\
+                                                          ", '" + apvlReqDivs + "'"\
+                                                          ", '" + wrkDt + "'"\
+                                                          ", '" + jobStrtTm + "'"\
+                                                          ", '" + jobEndTm + "'"\
+                                                          ", '" + wrkTme + "'"\
+                                                          ", '" + wrkReqRsn + "'"\
+                                                          ",      NOW()" \
+                                                          ", '" + th1AprvStus + "'"\
+                                                          ", '" + th1AprvNm + "'"\
+                                                          ", '" + refNm + "'"\
+                                                          ",      NOW())"
+                if currReqPopStts == "modify":
+                    sql = "UPDATE TB_APVL_REQ_MGMT_M " \
+                          "   SET JOB_STRT_TM   = '" + jobStrtTm + "' " \
+                          "     , JOB_END_TM    = '" + jobEndTm + "' " \
+                          "     , WRK_REQ_RSN   = '" + wrkReqRsn + "' " \
+                          "     , TH1_APRV_NM   = '" + th1AprvNm + "' " \
+                          "     , REF_NM        = '" + refNm + "' " \
+                          "     , APVL_UPD_DT   = NOW() " \
+                          " WHERE EMP_EMAL_ADDR = '" + email + "' " \
+                          "   AND WRK_DT        = '" + wrkDt + "' "
 
                 logger.info(sql)
                 cursor.execute(sql)
@@ -637,6 +649,7 @@ class saveApvlAcpt(Resource): # Mariadb 연결 진행
                 sql = " UPDATE TB_APVL_REQ_MGMT_M " \
                       "    SET TH1_APRV_STUS     = '" + th1AprvStus + "'" \
                       "      , TH1_APRV_RSN      = '" + th1AprvRsn + "'" \
+                      "      , TH1_APRV_DT       = NOW() " \
                       "      , APVL_LAST_APRV_DT = NOW() " \
                       "  WHERE EMP_EMAL_ADDR     = '" + email + "' " \
                       "    AND WRK_DT            = '" + wrkDt + "' " \
@@ -1025,27 +1038,29 @@ class apvlReqHistDetl(Resource): # Mariadb 연결 진행
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 # 쿼리문 실행
-                sql = "            SELECT NVL(B.EMP_NAME,'') TH1_APRV_NAME" \
-                      "                 , A.TH1_APRV_NM " \
-                      "                 , CASE WHEN A.TH1_APRV_STUS = '01' THEN '미승인'" \
-                      "                        WHEN A.TH1_APRV_STUS = '02' THEN '승인'" \
-                      "                        ELSE '반려' END TH1_APRV_STUS_NM" \
-                      "                 , A.APVL_REQ_DT" \
-                      "                 , A.WRK_DT" \
-                      "                 , A.JOB_STRT_TM" \
-                      "                 , A.JOB_END_TM" \
-                      "                 , A.WRK_REQ_RSN" \
-                      "                 , A.REF_NM" \
+                sql = "            SELECT NVL(A.EMP_EMAL_ADDR,'') EMP_EMAIL " \
+                      "                 , NVL(D.EMP_NAME,'') EMP_NAME " \
+                      "                 , A.TH1_APRV_NM TH1_APRV_NM " \
+                      "                 , NVL(B.EMP_NAME,'') TH1_APRV_NAME " \
+                      "                 , NVL(C.EMP_EMAIL,'') REF_NM" \
                       "                 , NVL(C.EMP_NAME,'') REF_NAME" \
+                      "                 , DATE_FORMAT(A.APVL_REQ_DT, '%Y-%m-%d') APVL_REQ_DT" \
+                      "                 , DATE_FORMAT(A.WRK_DT, '%Y-%m-%d') WRK_DT" \
+                      "                 , DATE_FORMAT(A.JOB_STRT_TM, '%H:%i:%s') JOB_STRT_TM" \
+                      "                 , DATE_FORMAT(A.JOB_END_TM, '%H:%i:%s') JOB_END_TM" \
+                      "                 , A.WRK_REQ_RSN" \
+                      "                 , NVL(DATE_FORMAT(A.APVL_UPD_DT, '%Y-%m-%d'), '') APVL_UPD_DT" \
+                      "                 , NVL(A.TH1_APRV_RSN,'') TH1_APRV_RSN " \
+                      "                 , NVL(DATE_FORMAT(A.TH1_APRV_DT, '%Y-%m-%d'), '') TH1_APRV_DT" \
                       "              FROM TB_APVL_REQ_MGMT_M A " \
                       "   LEFT OUTER JOIN TB_EMP_MGMT B " \
                       "                ON A.TH1_APRV_NM = B.EMP_EMAIL " \
                       "   LEFT OUTER JOIN TB_EMP_MGMT C " \
                       "                ON A.REF_NM = C.EMP_EMAIL " \
+                      "   LEFT OUTER JOIN TB_EMP_MGMT D " \
+                      "                ON A.EMP_EMAL_ADDR = D.EMP_EMAIL " \
                       "             WHERE A.EMP_EMAL_ADDR = '" + data["email"]     + "'" \
-                      "               AND A.WRK_DT = '"        + data["wrkDt"]     + "'" \
-                      "               AND A.JOB_STRT_TM = '"   + data["jobStrtTm"] + "'" \
-                      "               AND A.JOB_END_TM = '"    + data["jobEndTm"]  + "'"
+                      "               AND A.WRK_DT = '"        + data["wrkDt"]     + "'"
                 logging.debug("apvlReqHistDetl SQL문" + sql)
                 cursor.execute(sql)
 

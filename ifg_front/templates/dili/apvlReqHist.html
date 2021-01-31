@@ -32,15 +32,19 @@
         retrieveEmpDeptByEmail(param.email, function(data) {
             if(data.length > 0) {
                 strDeptCd = data[0].DEPT_CD;
+
+                // 공통 코드 조회 - '부서'
+                retrieveCmmCd('sbx_slinBzdp', 'SLIN_BZDP', function(data) {
+                    // 부서 기본 값 : 로그인한 사용자 부서
+                    $('[name="SLIN_BZDP"]').val(strDeptCd);
+                    $("#apvlHistSearchBtn").click();
+                    $('[name="SLIN_BZDP"]').prepend('<option value="00">전체</option>')
+                });
+
             }
         });
 
-        // 공통 코드 조회 - '부서'
-        retrieveCmmCd('sbx_slinBzdp', 'SLIN_BZDP', function(data) {
-            // 부서 기본 값 : 로그인한 사용자 부서
-            $('[name="SLIN_BZDP"]').val(strDeptCd);
-            $('[name="SLIN_BZDP"]').prepend('<option value="00">전체</option>')
-        });
+
 
         // 공통 코드 조회 - '결재 상태'
         retrieveCmmCd('sbx_apvlSttsCd', 'APVL_STTS_CD');
@@ -107,7 +111,7 @@
         *   이벤트 바인딩 및 함수 선언
         *********************************************************************/
         //조회 버튼 클릭 이벤트
-        $("#searchBtn").click(function(){
+        $("#apvlHistSearchBtn").click(function(){
             //결재요청월 유효성 검증
             if($("#ipt_apvlSearchYyyyMm").val() == "" || $("#ipt_apvlSearchYyyyMm").val().length != 7) {
                 alertMsg("결재요청월을 선택해주세요.", function() {
@@ -171,7 +175,7 @@
                 "email"        : $("#ipt_apvlSearchEmail").val(),// || sessionStorage.getItem("email"),//사용자 조회  > 이메일 값
                 "apvlStusDivs" : $("#sbx_apvlSttsCd option:selected").val(),                           //TB_APVL_REQ_MGMT_M APVL_STUS 값 => 01,02: 승인, 승인반려 NULL: 미승인
             }
-            //console.log("###########params::", params);
+            console.log("###########params::", params);
             var url = "{% url 'dili_api:getApvlReqHist' %}";
 
             submissionCallList( params, 'GET', url, apvlReqHistGrd );
@@ -181,13 +185,15 @@
 
 
         // 화면 진입 시, 로그인한 사용자 기준으로 결재요청이력 조회
+        /*
         $("#sbx_slinBzdp").change(function(){
             if(cnt == 0) {
-                $("#searchBtn").click();
+                $("#apvlHistSearchBtn").click();
                 cnt++;
             }
             //$("#sbx_slinBzdp").unbind();
         });
+        */
 
         // 직원 조회 시, 결재자 input 세팅
         //$(document).on("click","#ipt_apvlSearchNamePop",function(){
@@ -259,12 +265,6 @@
             $('#ipt_apvlSearchEmailPop').val('');
         });
 
-        /* 자리수만큼 0 채우기 (근무 시간 형식 지정) */
-        function fillZero(width, str){
-            str = str + '';
-            return str.length >= width ? str:new Array(width-str.length+1).join('0')+str;
-            //남는 길이만큼 0으로 채움
-        }
     });
     var cnt = 0;
     /*********************************************************************
@@ -283,7 +283,7 @@
             apvlReqHistTable += '<thead>';
             apvlReqHistTable += '<tr>';
             //apvlReqHistTable += '<th class="text-center">순번</th>';
-            apvlReqHistTable += '<th class="text-center">결재요청일자</th>';
+            apvlReqHistTable += '<th class="text-center">기안일</th>';
             apvlReqHistTable += '<th class="text-center">기안자</th>';
             apvlReqHistTable += '<th class="text-center">근무요청일시 출근시각 ~ 퇴근시각 (총 근무시간)</th>';
             //apvlReqHistTable += '<th class="text-center">구분</th>';
@@ -318,6 +318,7 @@
                 //apvlReqHistTable += '<td class="pt-3-half">'+data[i].APVL_REQ_NM+'</td>';
                 apvlReqHistTable += '<td class="pt-3-half">'+data[i].APRV_STUS_NM+'</td>';
                 apvlReqHistTable += '<td class="pt-3-half">'+data[i].REF_NM+'</td>';
+                data[i].WRK_REQ_RSN = data[i].WRK_REQ_RSN.length >= 30 ? data[i].WRK_REQ_RSN.substring(0, 30) + '...' : data[i].WRK_REQ_RSN ;
                 apvlReqHistTable += '<td class="pt-3-half">'+data[i].WRK_REQ_RSN+'</td>';
                 //apvlReqHistTable += '<td class="pt-3-half" style="display: none;">' + data[i].TH1_APRV_NM + ';' + data[i].TH1_APRV_STUS + '</td>';
                 apvlReqHistTable += '<td class="pt-3-half" style="display: none;">' + data[i].EMP_EMAL_ADDR + ";" + data[i].WRK_DT + ";" + data[i].JOB_STRT_TM + ";" + data[i].JOB_END_TM + ";" + data[i].TH1_APRV_STUS + '</td>';
@@ -393,19 +394,18 @@
     *   Grid 클릭 이벤트 처리 - 배경색 지정, 상세보기 트랜잭션
     *********************************************************************/
     function onclickEvt2(trId) {
-        // 결재 상세 모달 오픈
-        var url = "{% url 'dili_api:apvlReqBfrPop' %}" ;
-        $('#currReqPopStts').val("modify");
-        $('#currReqPopInfoArr').val($(trId).children().eq(6).html());
-
-        modal('apvlReqModalDiv');
-        $('#apvlReqModal').load(url);
-
         //선택한 행에 대해 backgroundColor 지정
         $(trId).prevAll().css("background-color","");
         $(trId).nextAll().css("background-color","");
         $(trId).css("background-color","lightGrey");
 
+        // 결재 상세 모달 오픈
+        var url = "{% url 'dili_api:apvlReqBfrPop' %}" ;
+        $('#currReqPopStts').val("modify");
+        $('#currReqPopParamArr').val($(trId).children().eq(6).html());
+
+        modal('apvlReqModalDiv');
+        $('#apvlReqModal').load(url);
     }
 
     /*********************************************************************
@@ -414,24 +414,28 @@
     function setApvlReqHistDetl2(data) {
         if(data == undefined || data == null || data.length == 0) {
             // 결재 상세 input 값 초기화
-            //$("#ipt_wrkDt").val("");
-            //$("#ipt_jobStrtTm").val("");
-            //$("#ipt_jobEndTm").val("");
-            //$("#reqRsn").val("");
-            //$("#ipt_apvlLnSearchNamePop").val("");
-            //$("#ipt_apvlLnSearchEmailPop").val("");
-            //$("#ipt_refSearchNamePop").val("");
-            //$("#ipt_refSearchEmailPop").val("");
+            g_toast.push('서버 에러로 팝업창을 닫습니다. 다시 선택해주십시오.');
+            $('#exitApvlReqModalBtn').click();
         } else {
             // 결재 상세 input 값 초기화
             $("#ipt_wrkDt").val(data[0].WRK_DT);
             $("#ipt_jobStrtTm").val(data[0].JOB_STRT_TM);
             $("#ipt_jobEndTm").val(data[0].JOB_END_TM);
-            $("#reqRsn").val(data[0].WRK_REQ_RSN);
+            $("#txa_reqBfrRsn").val(data[0].WRK_REQ_RSN);
             $("#ipt_apvlLnSearchNamePop").val(data[0].TH1_APRV_NAME);
             $("#ipt_apvlLnSearchEmailPop").val(data[0].TH1_APRV_NM);
             $("#ipt_refSearchNamePop").val(data[0].REF_NAME);
             $("#ipt_refSearchEmailPop").val(data[0].REF_NM);
+            $("#sp_apvlReqName").text(data[0].EMP_NAME);
+            $("#ipt_apvlReqEmail").val(data[0].EMP_EMAIL);
+            $("#sp_reqDt").text(data[0].APVL_REQ_DT);
+            data[0].APVL_UPD_DT = data[0].APVL_UPD_DT == '' ? '-' : data[0].APVL_UPD_DT;
+            data[0].TH1_APRV_RSN = data[0].TH1_APRV_RSN == '' ? '' : data[0].TH1_APRV_RSN;
+            data[0].TH1_APRV_DT = data[0].TH1_APRV_DT == '' ? '-' : data[0].TH1_APRV_DT;
+            $("#sp_updDt").text(data[0].APVL_UPD_DT);
+            $("#txa_reqAcptRsnR").val(data[0].TH1_APRV_RSN);
+            $("#sp_acptDt").text(data[0].TH1_APRV_DT);
+            $('#currReqPopInfoArr').val(JSON.stringify(data[0]));
         }
     }
 
@@ -466,6 +470,7 @@
            <path fill-rule="evenodd" d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
         </svg>
         <input type="hidden" id="currReqPopStts" value="01"></input>
+        <input type="hidden" id="currReqPopParamArr" value="01"></input>
         <input type="hidden" id="currReqPopInfoArr" value="01"></input>
     </a>
 </div>
@@ -504,21 +509,24 @@
                                 <path d="M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z"/>
                             </svg>
                             결재요청조회
+                            <h6 style="float: right">
+                                <span class="requiredText"><b>* 는 필수 입력 항목입니다.</b></span>
+                            </h6>
                         </button>
                     </h2>
                 </div>
                 <div id="col_search" class="collapse show" aria-labelledby="head_search" data-parent="#grp_search">
                     <div class="card-body flex-height d-flex m-0 p-2">
-                        <div class="align-self-start align-self-center mr-3">*결재요청월</div>
+                        <div class="align-self-start align-self-center mr-3"><span class="requiredTag mr-1">*</span>기안일(월별)</div>
                         <div class="align-self-center mr-5">
                             <input type="month" class="align-self-start align-self-center mr-1 form-control" id="ipt_apvlSearchYyyyMm" name="ipt_apvlSearchYyyyMm" max="9999-12"/>
                         </div>
-                        <div class="align-self-start align-self-center mr-3">*부서</div>
+                        <div class="align-self-start align-self-center mr-3"><span class="requiredTag mr-1">*</span>부서</div>
                         <div class="align-self-center mr-5">
                             <select id="sbx_slinBzdp" name="SLIN_BZDP" class="form-control">
                             </select>
                         </div>
-                        <div class="align-self-start align-self-center mr-3">*성명</div>
+                        <div class="align-self-start align-self-center mr-3"><span class="requiredTag mr-1">*</span>성명</div>
                         <div class="align-self-center mr-1">
                             <input type="text" class="align-self-start align-self-center mr-1 form-control" id="ipt_apvlSearchName" name="ipt_apvlSearchName" placeholder="이름을 입력해주세요." maxlength="10" readonly />
                             <input type="hidden" class="form-control" id="ipt_apvlSearchEmail" name="ipt_apvlSearchEmail" readonly/>
@@ -528,14 +536,14 @@
                         <div class="align-self-center mr-5">
                             <button type="button" id="btn_delApvlSearchName" class="delInptButton">x</button>
                         </div>
-                        <div class="align-self-start align-self-center mr-3">*결재상태</div>
+                        <div class="align-self-start align-self-center mr-3"><span class="requiredTag mr-1">*</span>결재상태</div>
                         <div class="align-self-center mr-5">
                             <select id="sbx_apvlSttsCd" name="APVL_STTS_CD" class="form-control">
                                 <option value="00" selected>전체</option>
                             </select>
                         </div>
                         <div class="align-self-end align-self-center mr-3">
-                            <button class="button" id="searchBtn">조회</button>
+                            <button class="button" id="apvlHistSearchBtn">조회</button>
                         </div>
 
                         <div class="align-self-center mr-3">
@@ -546,6 +554,8 @@
                         <div class="align-self-end align-self-center">
                             <button class="button" id="apvlAcptBtn">결재승인</button>
                         </div>
+
+
                     </div>
                 </div>
             </div>
@@ -566,7 +576,7 @@
 
                 <div id="col_apvlReqHist" class="collapse show" aria-labelledby="head_wrkApvlReq" data-parent="#grp_apvlReqHist">
                     <div style="position: relative;" id="grid-parent">
-                        <div id="grd_apvlReqHist" style="overflow:auto; height:600px;"></div>
+                        <div id="grd_apvlReqHist" style="overflow:auto; height:616px;"></div>
                     </div>
 
                     <div style="position: relative;" id="grid-parent2">

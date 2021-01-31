@@ -64,7 +64,7 @@
             wrkApvlTable += '<thead>';
             wrkApvlTable += '<tr>';
             //wrkApvlTable += '<th class="text-center">순번</th>';
-            wrkApvlTable += '<th class="text-center">결재요청일자</th>';
+            wrkApvlTable += '<th class="text-center">기안일</th>';
             wrkApvlTable += '<th class="text-center">근무요청일시 출근시각 ~ 퇴근시각</th>';
             //wrkApvlTable += '<th class="text-center">구분</th>';
             wrkApvlTable += '<th class="text-center">기안자</th>';
@@ -84,7 +84,7 @@
                     }
                 }
             */
-                var wrkDtm = data[i].WRK_DT + " " + data[i].JOB_STRT_TM + " ~ " + data[i].JOB_END_TM;
+                var wrkDtm = data[i].WRK_DT + " " + data[i].JOB_STRT_TM.substring(0,5) + " ~ " + data[i].JOB_END_TM.substring(0,5);
 
                 wrkApvlTable += '<tr id ="grd_wrkApvlAcpt'+i+'" onclick="onApvlAcptClickEvt(this)">';
                 //wrkApvlTable += '<td class="pt-3-half">' + (i+1)                + '</td>';
@@ -163,7 +163,17 @@
             alertMsg(msg + "하실 결재건을 선택하세요!");
             return;
 
-        } else if($("#ipt_reqAcptTh1AprvStus").val() != '' && $("#ipt_reqAcptTh1AprvStus").val() != '01') {
+        }
+
+        //결재/승인사유 유효성 검증
+        if($("#txa_reqAcptRsnAcpt").val().trim() == "") {
+            alertMsg("근무요청 " + msg + " 사유를 입력해주세요.", function() {
+                $("#txa_reqAcptRsnAcpt").focus();
+            });
+            return;
+        }
+
+        if($("#ipt_reqAcptTh1AprvStus").val() != '' && $("#ipt_reqAcptTh1AprvStus").val() != '01') {
             //결재 진행 상태가 미승인이 아닌 경우, 승인, 반려 버튼 선택 불가 처리
             alertMsg("결재 진행 상태가 '미승인'인 경우에만 " + msg + " 가능합니다!");
             return;
@@ -259,10 +269,13 @@
         }
         // 넘어가는 글자는 자른다.
         if (totalByte > maxByte) {
-            alertMsg(maxByte + "자를 초과 입력 할 수 없습니다.");
-            str2 = strValue.substr(0, len);
-            obj.value = str2;
-            chkLength(obj, 4000);
+            alertMsg(maxByte + "자를 초과 입력 할 수 없습니다.", function() {
+                $("#txa_reqAcptRsnAcpt").focus();
+                str2 = strValue.substr(0, len);
+                obj.value = str2;
+                //chkLength(obj, 4000);
+            });
+            return;
         }
     }
 </script>
@@ -350,7 +363,7 @@
                                         <input type="hidden" id="ipt_reqAcptTh1AprvStus" name="ipt_reqAcptTh1AprvStus" />
 
                                         <div class="flex-height d-flex m-0 p-2">
-                                            <div class="align-self-start align-self-center mr-3" style="font-weight:bold">근무요청사유&nbsp;&nbsp;&nbsp;</div>
+                                            <div class="align-self-start align-self-center mr-3" style="font-weight:bold">근무요청사유&nbsp;&nbsp;&nbsp;&nbsp;</div>
                                             <div class="align-self-center mr-7">
                                                 <textarea id="txa_reqAcptRsn" name="txa_reqAcptRsn" maxlength="500" style="resize: none; width:440px;height:70px;" placeholder="사유를 입력해주세요.(200자 이하)" disabled></textarea>
                                             </div>

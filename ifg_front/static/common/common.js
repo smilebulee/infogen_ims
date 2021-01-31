@@ -53,7 +53,6 @@ function retrieveCmmCdTest(sbx_id, grp_id){
 /* 공통코드 조회 및 radio, select 컴포넌트 등록 */
 function retrieveCmmCd(cmp_id, grp_id, callBackFunc){
     var param = {
-        "cmp_id" : cmp_id,
         "grp_id" : grp_id
     }
 
@@ -65,21 +64,23 @@ function retrieveCmmCd(cmp_id, grp_id, callBackFunc){
             'async' : false,
             'callbackFn' : function(data){
                 for(var i = 0; i < data.length; i++) {
-                    if($('#' + cmp_id).attr('type') == 'radio') {
-                        var strRadio ="<label><input type='radio' name='" + data[i].CMM_CD_GRP_ID  + "' value='" + data[i].CMM_CD;
+                    if(cmp_id != null && cmp_id != '') {
+                        if($('#' + cmp_id).attr('type') == 'radio') {
+                            var strRadio ="<label><input type='radio' name='" + data[i].CMM_CD_GRP_ID  + "' value='" + data[i].CMM_CD;
 
-                        if(i == 0) {
-                            strRadio += "' checked>&nbsp;" + data[i].CMM_CD_NAME + "&nbsp;&nbsp;&nbsp;</label>";
+                            if(i == 0) {
+                                strRadio += "' checked>&nbsp;" + data[i].CMM_CD_NAME + "&nbsp;&nbsp;&nbsp;</label>";
+                            } else {
+                                strRadio += "'>&nbsp;" + data[i].CMM_CD_NAME + "&nbsp;&nbsp;&nbsp;</label>";
+                            }
+
+                            //var radio = ${strRadio);
+                            $('#' + cmp_id).parent().append($(strRadio));
+
                         } else {
-                            strRadio += "'>&nbsp;" + data[i].CMM_CD_NAME + "&nbsp;&nbsp;&nbsp;</label>";
+                            var option = $("<option value = "+data[i].CMM_CD+">"+data[i].CMM_CD_NAME+"</option>");
+                            $('#' + cmp_id).append(option);
                         }
-
-                        //var radio = ${strRadio);
-                        $('#' + cmp_id).parent().append($(strRadio));
-
-                    } else {
-                        var option = $("<option value = "+data[i].CMM_CD+">"+data[i].CMM_CD_NAME+"</option>");
-                        $('#' + cmp_id).append(option);
                     }
                 }
 
@@ -148,15 +149,15 @@ function retrieveEmpDeptByEmail(empEmail, callBackFunc) {
         }
     });
 }
-/* 자리수만큼 0 채우기 (근무 시간 형식 지정)
+/* 자리수만큼 0 채우기 (근무 시간 형식 지정) */
 function fillZero(width, str){
     str = str + '';
     return str.length >= width ? str:new Array(width-str.length+1).join('0')+str;
     //남는 길이만큼 0으로 채움
-} */
+}
 
 
-/* 시간 차이 구하기 (근무 시간)
+/* 시간 차이 구하기 (근무 시간) */
 function getTimeDiff(fromDtm, toDtm) {
     var dt1 = new Date(fromDtm);
     var dt2 = new Date(toDtm);
@@ -173,7 +174,7 @@ function getTimeDiff(fromDtm, toDtm) {
     }
 
     return fillZero(2, hh) + fillZero(2, mi) + fillZero(2, ss);
-} */
+}
 
 
 /* url로 넘긴 param 받기
