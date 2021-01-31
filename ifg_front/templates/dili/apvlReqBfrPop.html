@@ -87,7 +87,7 @@
         */
 
         // 참조자 검색 - 직원조회 모달 오픈
-        if($('#currReqPopStts').val() == "modify") {
+        if($('#currReqPopStts').val() == "register" || $('#currReqPopStts').val() == "modify") {
             $("#ipt_refSearchNamePop").click(function(){
                 //자식창에서 여는 참조자 조회 팝업임을 표시
                 $('#apvlReqIptFlagHidden').text("refReqBfrPop");
