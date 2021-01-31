@@ -36,7 +36,7 @@
                     $('#apvlReqAcptDiv').addClass('d-block');
                 }
 
-                var strApvlStts = arrWrkDt[4] == '02' ? '승인' : '반려';
+                var strApvlStts = arrWrkDt[4] == '01' ? '미승인' : arrWrkDt[4] == '02' ? '승인' : '반려' ;
                 $('#sp_apvlStts').html(strApvlStts);
                 $('#reqAcptRsnTit').html('근무' + strApvlStts + '사유');
                 $('#acptDtTit').html(strApvlStts + '일&nbsp;&nbsp;');
