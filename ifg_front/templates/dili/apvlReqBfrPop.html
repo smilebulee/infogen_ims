@@ -36,9 +36,9 @@
         } else if($('#currReqPopStts').val() == "modify") {
             var arrWrkDt =$('#currReqPopParamArr').val().split(';');
             if(arrWrkDt[4] != '01') {
-                $('#apvlReqUpdDtDiv').addClass('d-block');
+                $('#apvlReqAcptDiv').addClass('d-block');
             } else {
-                $('#apvlReqUpdDtDiv').addClass('d-none');
+                $('#apvlReqAcptDiv').addClass('d-none');
             }
 
             // 결재상태가 승인, 반려상태일 때, 혹은 결재상태가 미승인 + 작성자가 sessionSetting Email 값과 다를 때
