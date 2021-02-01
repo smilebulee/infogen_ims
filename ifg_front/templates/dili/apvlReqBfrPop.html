@@ -34,9 +34,13 @@
             $('#sp_reqDt').text(strNowDt);
 
         } else if($('#currReqPopStts').val() == "modify") {
-            $('#apvlReqUpdDtDiv').addClass('d-block');
-
             var arrWrkDt =$('#currReqPopParamArr').val().split(';');
+            if(arrWrkDt[4] != '01') {
+                $('#apvlReqUpdDtDiv').addClass('d-block');
+            } else {
+                $('#apvlReqUpdDtDiv').addClass('d-none');
+            }
+
             // 결재상태가 승인, 반려상태일 때, 혹은 결재상태가 미승인 + 작성자가 sessionSetting Email 값과 다를 때
             if(arrWrkDt[4] != '01' || (arrWrkDt[4] == '01' && arrWrkDt[0] != sessionStorage.getItem("email"))) {
                 if(arrWrkDt[4] != '01' && arrWrkDt[0] == sessionStorage.getItem("email")) {
@@ -414,7 +418,7 @@
                                         <div class="flex-height d-flex m-0 p-2">
                                             <div class="align-self-start align-self-center mr-3" style="font-weight:bold"><span class="requiredTag mr-1">*</span>근무요청사유</div>
                                             <div class="align-self-center mr-7">
-                                                <textarea id="txa_reqBfrRsn" class="form-control" name="reqRsn" maxlength="210" style="max-width:440px; height:70px;" placeholder="사유를 입력해주세요.(200자 이하)" onkeyup="chkLength(this, 200)"></textarea>
+                                                <textarea id="txa_reqBfrRsn" class="form-control" name="reqRsn" maxlength="210" style="resize: none; width:440px; height:70px;" placeholder="사유를 입력해주세요.(200자 이하)" onkeyup="chkLength(this, 200)"></textarea>
                                             </div>
                                         </div>
 
