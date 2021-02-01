@@ -9,6 +9,15 @@
             $('#apvlReqUpdDtDiv').addClass('d-none');
             $('#apvlReqAcptDiv').addClass('d-none');
 
+            var nowDt = new Date();
+            var strNowDt = nowDt.getFullYear() + '-' + fillZero(2, (nowDt.getMonth() + 1) + '') + '-' + fillZero(2, nowDt.getDate() + '');
+            var strNowTm = fillZero(2, nowDt.getHours()) + ':' + fillZero(2, nowDt.getMinutes());
+
+            //기본 선택 날짜 접속일, 접속시간으로 설정
+            $("#ipt_wrkDt").val(strNowDt);
+            $("#ipt_jobStrtTm").val(strNowTm);
+            $("#ipt_jobEndTm").val(strNowTm);
+
             // 로그인한 사용자 소속 사업부장 이름, 이메일 조회 후 값 세팅
             retrieveEmpDeptByEmail(sessionStorage.getItem("email"), function(data) {
                 if(data.length > 0) {
@@ -22,8 +31,6 @@
                 $('#sp_apvlReqName').text(data[0].EMP_NAME);
             });
             // 기안일
-            var nowDt = new Date();
-            var strNowDt = nowDt.getFullYear() + '-' + fillZero(2, (nowDt.getMonth() + 1) + '') + '-' + fillZero(2, nowDt.getDate() + '');
             $('#sp_reqDt').text(strNowDt);
 
         } else if($('#currReqPopStts').val() == "modify") {
@@ -32,8 +39,11 @@
             var arrWrkDt =$('#currReqPopParamArr').val().split(';');
             // 결재상태가 승인, 반려상태일 때, 혹은 결재상태가 미승인 + 작성자가 sessionSetting Email 값과 다를 때
             if(arrWrkDt[4] != '01' || (arrWrkDt[4] == '01' && arrWrkDt[0] != sessionStorage.getItem("email"))) {
-                if(arrWrkDt[4] != '01') {
+                if(arrWrkDt[4] != '01' && arrWrkDt[0] == sessionStorage.getItem("email")) {
                     $('#apvlReqAcptDiv').addClass('d-block');
+                    $('#sp_apvlReqBfr').html("<b>근무결재요청 수정은 '미승인' 상태에서만 가능합니다.</b>");
+                } else {
+                    $('#sp_apvlReqBfr').html("<b>근무결재요청 수정은 본인만 가능합니다.</b>");
                 }
 
                 var strApvlStts = arrWrkDt[4] == '01' ? '미승인' : arrWrkDt[4] == '02' ? '승인' : '반려' ;
@@ -44,7 +54,6 @@
                 $('#currReqPopStts').val("detail")
 
                 $('#h5_apvlReqBfrTit').html("<b>근무결재요청 상세</b>");
-                $('#sp_apvlReqBfr').html("<b>근무결재요청 수정은 '미승인' 상태에서면 가능합니다.</b>");
                 $('#btn_apvlBfrReq').text("");
                 $('#btn_apvlBfrReq').css('display', 'none');
                 $('#ipt_refSearchNamePop').prop('placeholder', '')
@@ -405,7 +414,7 @@
                                         <div class="flex-height d-flex m-0 p-2">
                                             <div class="align-self-start align-self-center mr-3" style="font-weight:bold"><span class="requiredTag mr-1">*</span>근무요청사유</div>
                                             <div class="align-self-center mr-7">
-                                                <textarea id="txa_reqBfrRsn" class="form-control" name="reqRsn" maxlength="210" style="resize: none; width:440px;height:70px;" placeholder="사유를 입력해주세요.(200자 이하)" onkeyup="chkLength(this, 200)"></textarea>
+                                                <textarea id="txa_reqBfrRsn" class="form-control" name="reqRsn" maxlength="210" style="max-width:440px; height:70px;" placeholder="사유를 입력해주세요.(200자 이하)" onkeyup="chkLength(this, 200)"></textarea>
                                             </div>
                                         </div>
 
