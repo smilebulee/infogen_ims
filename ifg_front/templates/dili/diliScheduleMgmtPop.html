@@ -178,11 +178,11 @@
     function onclickEndTm() {
         $('#pop_endJob').text("퇴근 등록 중...");
         var email = sessionStorage.getItem("email");
-        var dt = dateConverting2(getCurrentDate());
-        var tm = dateConverting2(getCurrentTime());
+        var dt = getCurrentDate();
+        var tm = getCurrentTime();
         var strtTm = $('#pop_strtJob').text();
-        var allWrkTm = allWrkTmCall(dt, strtTm, tm);
-        var overWrkTm = overWrkTmCall(dt, allWrkTm);
+        var allWrkTm = allWrkTmCall(dateConverting2(dt), strtTm, tm);
+        var overWrkTm = overWrkTmCall(dateConverting2(dt), allWrkTm);
         var normWrkTm = "";
 
         if($('#hldyDivsCd').val() != "01" || $('#dowDivsCd').val() == "01" || $('#dowDivsCd').val() == "07"){
@@ -254,7 +254,7 @@
             "overWrkTm" : overWrkTm,
             "allWrkTm"  : allWrkTm
         }
-
+        alert(email + ":" + dt + ":" + tm + ":" + normWrkTm + ":" + overWrkTm + ":" + allWrkTm)
         $.ajaxCall( param, {
              'method' : 'POST',
              'url' : "{% url 'dili_api:saveEndTm' %}",
