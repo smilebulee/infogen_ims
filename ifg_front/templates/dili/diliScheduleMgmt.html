@@ -220,7 +220,7 @@
                 calendar.clear();
                 calendar.setDate(weekBtnNowDay);
                 getCalendarSessionDate();
-                alert("calendar" + calendar);
+                alert("calendar" + calendar.getDate().getFullYear() + "." + (calendar.getDate().getMonth()+1));
                 setLabel(calendar);
             });
             /*********************************************************************
