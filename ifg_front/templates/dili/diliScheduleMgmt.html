@@ -388,9 +388,9 @@
                 var dfrEndDate = new Date(dfrWeekEndYy, dfrWeekEndMm, dfrWeekEndDd); //현재 종료 날짜 등록
                 var dfrStrtDate = new Date(dfrWeekStrtYy, dfrWeekStrtMm, dfrWeekStrtDd); //현재 시작 날짜 등록
                 calendar.clear();
-                alert("?" + $('#calendarLabel').text());
-                alert("!" + new Date($('#calendarLabel').text()));
-                calendar.setDate(new Date($('#calendarLabel').text()));
+                var tempCalData = $('#calendarLabel').text().split('/');
+                calendar.setDate(new Date(tempCalData[0],tempCalData[1]-1));
+
                 getCalendarSessionDate();
                 debugger;
                 alert("1 " + calendar.getDate().getFullYear() + "." + (calendar.getDate().getMonth()+1));
@@ -1316,7 +1316,7 @@
 
         function setLabel(calendar){
           var dt;
-          $("#calendarLabel").text(calendar.getDate().getFullYear() + "," + (calendar.getDate().getMonth()+1));
+          $("#calendarLabel").text(calendar.getDate().getFullYear() + "/" + (calendar.getDate().getMonth()+1));
           if((calendar.getDate().getMonth()+1).toString().length == 1){
               dt = calendar.getDate().getFullYear() + "-" + "0" + (calendar.getDate().getMonth()+1);
           } else {
