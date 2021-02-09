@@ -1081,7 +1081,7 @@
                  */
             });
 
-            
+
             calendar.on('clickSchedule', function(event) {
                 /*작업중*/
 
@@ -1156,6 +1156,7 @@
                 console.log("asdsad"+schedule.end.getFullYear()+"-"+(schedule.end.getMonth()+1)+"-"+schedule.end.getDate());
                 var tmp = schedule.end.getFullYear()+","+(schedule.end.getMonth()+1)+","+schedule.end.getDate();
                 debugger;
+                alert("tmp" + tmp);
                 var tmpDtbase = setWeek(tmp).baseDate;
                 weekDate = setWeek(tmp);                                   // 선택된 일이 포함된 주의 Start,End Date 조회
                 //getWrkTimeByIml(null, weekDate.strtDate, weekDate.endDate);     // Session Email 을 기준으로 시작~종료일에 대한 근무시간 조회.
