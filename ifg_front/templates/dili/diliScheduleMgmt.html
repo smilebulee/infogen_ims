@@ -390,7 +390,7 @@
                 calendar.clear();
                 calendar.setDate(new Date($('#calendarLabel').text()));
                 getCalendarSessionDate();
-                alert("calendar" + calendar);
+                alert("1 " + calendar.getDate().getFullYear() + "." + (calendar.getDate().getMonth()+1));
                 setLabel(calendar);
 
                 tempStrtDt = setWeek(dfrStrtDate).baseDate;
