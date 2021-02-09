@@ -214,7 +214,7 @@
                 $('#grp_calendar').show('');
                 $('.grid-btnAction').css("display","none");
                 $('.calendar-btnAction').css("display","");
-
+                alert($('#txt_mmYy').text(), Number($('#txt_mmMm').text())-1, 1);
                 var weekBtnNowDay = new Date($('#txt_mmYy').text(), Number($('#txt_mmMm').text())-1, 1);
 
                 calendar.clear();
