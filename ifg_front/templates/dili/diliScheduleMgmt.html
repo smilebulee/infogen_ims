@@ -543,7 +543,7 @@
             } else {
                 monthChk = $('#txt_mmMm').text()
             }
-            var setMDt = $('#txt_mmYy').text() + "-" + monthChk
+            var setMDt = $('#txt_mmYy').text() + "," + monthChk
             var gridParam = {
                 "email"     : email,
                 "mDt" : setMDt
@@ -593,12 +593,12 @@
                 tdDate = weekGridStrtDate.getDate();
                 tempSetWeek = setWeek(weekGridStrtDate).baseDate;
 
-                var jobStrtTm = "-";
-                var jobEndTm = "-";
-                var allWrkTm = "-";
-                var normWrkTm = "-";
-                var overWrkTm = "-";
-                var apvlStus = "-"
+                var jobStrtTm = ",";
+                var jobEndTm = ",";
+                var allWrkTm = ",";
+                var normWrkTm = ",";
+                var overWrkTm = ",";
+                var apvlStus = ","
                 var chckHldy = 0;
 
                 if(schdData.length > 0){
@@ -702,12 +702,12 @@
 
                 mTdDate = monthGridStrtDate.getDate();
                 tempSetMonth = setWeek(monthGridStrtDate).baseDate;
-				var jobStrtTm = "-";
-                var jobEndTm = "-";
-                var allWrkTm = "-";
-                var normWrkTm = "-";
-                var overWrkTm = "-";
-                var apvlStus = "-"
+				var jobStrtTm = ",";
+                var jobEndTm = ",";
+                var allWrkTm = ",";
+                var normWrkTm = ",";
+                var overWrkTm = ",";
+                var apvlStus = ","
                 var chckHldy = 0;
 
 				if(schdData.length > 0){
@@ -803,9 +803,9 @@
                 $('#tmpPopStrtTm').text($('#'+trId.id).children().eq(1).text());
                 $('#tmpPopEndTm').text($('#'+trId.id).children().eq(2).text());
                 var detlSchd = $('#'+trId.id).children().eq(4).text();
-                var normWrkTm = "-";
-                var overWrkTm = "-";
-                var holi = "-";
+                var normWrkTm = ",";
+                var overWrkTm = ",";
+                var holi = ",";
                 if(detlSchd != "휴가"){
 
                     normWrkTm = detlSchd.split('/')[0].replace('정상근무 : ','').trim();
@@ -846,9 +846,9 @@
                 $('#tmpPopStrtTm').text($('#'+trId.id).children().eq(1).text());
                 $('#tmpPopEndTm').text($('#'+trId.id).children().eq(2).text());
                 var detlSchd = $('#'+trId.id).children().eq(4).text();
-                var normWrkTm = "-";
-                var overWrkTm = "-";
-                var holi = "-";
+                var normWrkTm = ",";
+                var overWrkTm = ",";
+                var holi = ",";
                 if(detlSchd != "휴가"){
 
                     normWrkTm = detlSchd.split('/')[0].replace('정상근무 : ','').trim();
@@ -1085,9 +1085,9 @@
                 /*작업중*/
 
                 $('.tui-full-calendar-month-guide-block').remove();
-                console.log("asdsad"+event.schedule.end.getFullYear()+"-"+(event.schedule.end.getMonth()+1)+"-"+event.schedule.end.getDate());
+                console.log("asdsad"+event.schedule.end.getFullYear()+","+(event.schedule.end.getMonth()+1)+","+event.schedule.end.getDate());
 
-                var tmp = event.schedule.end.getFullYear()+"-"+(event.schedule.end.getMonth()+1)+"-"+event.schedule.end.getDate();
+                var tmp = event.schedule.end.getFullYear()+","+(event.schedule.end.getMonth()+1)+","+event.schedule.end.getDate();
                 var tmpDtbase = setWeek(tmp).baseDate;
 
                 weekDate = setWeek(tmp);                                   // 선택된 일이 포함된 주의 Start,End Date 조회
@@ -1139,8 +1139,8 @@
                 };
 
 
-                console.log("asdsad"+schedule.end.getFullYear()+"-"+(schedule.end.getMonth()+1)+"-"+schedule.end.getDate());
-                var tmp = schedule.end.getFullYear()+"-"+(schedule.end.getMonth()+1)+"-"+schedule.end.getDate();
+                console.log("asdsad"+schedule.end.getFullYear()+","+(schedule.end.getMonth()+1)+","+schedule.end.getDate());
+                var tmp = schedule.end.getFullYear()+","+(schedule.end.getMonth()+1)+","+schedule.end.getDate();
                 alert("tmp" + tmp);
                 var tmpDtbase = setWeek(tmp).baseDate;
                 weekDate = setWeek(tmp);                                   // 선택된 일이 포함된 주의 Start,End Date 조회
@@ -1178,14 +1178,14 @@ m
         *********************************************************************/
         function getCalendarSessionDate() {
             var email = "";
-            console.log("캘런더 현재날짜 가져오기 : ",calendar.getDate().getFullYear() + "-" + (calendar.getDate().getMonth()+1));
+            console.log("캘런더 현재날짜 가져오기 : ",calendar.getDate().getFullYear() + "," + (calendar.getDate().getMonth()+1));
 
             var monthChk = calendar.getDate().getMonth()+1;
             if(monthChk.toString().length == 1){
                 monthChk = "0"+monthChk;
             }
 
-            var dt = calendar.getDate().getFullYear() + "-" + monthChk;
+            var dt = calendar.getDate().getFullYear() + "," + monthChk;
 
             if ($('#empEmailHidden').val() == null || $('#empEmailHidden').val() == "") {
                 email = sessionStorage.getItem("email");
@@ -1236,7 +1236,7 @@ m
                 var statTmTitle = "시작시간: " + statTm;
                 var endTmTitle = "종료시간: " + endTm;
 
-                if(statTm == "-" && endTm == "-" && apvlReqDivs == "03"){
+                if(statTm == "," && endTm == "," && apvlReqDivs == "03"){
                     statTmTitle = "휴가";
                     statTm = "00:00:00"
                 }
@@ -1259,7 +1259,7 @@ m
                     apvlStus = "반려"
                 }
                 var dataCustom;
-                if(statTm != "-"){
+                if(statTm != ","){
                     dataCustom = {
                         calendarId: wrkDt+"/"+"start",
                         id: String(Math.random() * 100000000000000000),
@@ -1275,7 +1275,7 @@ m
                     };
                     dataCustomArray.push(dataCustom);
                 }
-                if(endTm != "-"){
+                if(endTm != ","){
                     dataCustom = {
                         calendarId: wrkDt+"/"+"end",
                         id: String(Math.random() * 100000000000000000),
@@ -1302,9 +1302,9 @@ m
           var dt;
           $("#calendarLabel").text(calendar.getDate().getFullYear() + "." + (calendar.getDate().getMonth()+1));
           if((calendar.getDate().getMonth()+1).toString().length == 1){
-              dt = calendar.getDate().getFullYear() + "-" + "0" + (calendar.getDate().getMonth()+1);
+              dt = calendar.getDate().getFullYear() + "," + "0" + (calendar.getDate().getMonth()+1);
           } else {
-              dt = calendar.getDate().getFullYear() + "-" + (calendar.getDate().getMonth()+1);
+              dt = calendar.getDate().getFullYear() + "," + (calendar.getDate().getMonth()+1);
           }
           getWrkTimeByIml(null, dt);
 
@@ -1342,9 +1342,9 @@ m
         function weekClickCrteGrap(){
             var dt;
             if($('#txt_weekEndMm').text().length == 1){
-                dt = $('#txt_weekEndYy').text() + "-" + "0" + $('#txt_weekEndMm').text();
+                dt = $('#txt_weekEndYy').text() + "," + "0" + $('#txt_weekEndMm').text();
             } else {
-                dt = $('#txt_weekEndYy').text() + "-" + $('#txt_weekEndMm').text();
+                dt = $('#txt_weekEndYy').text() + "," + $('#txt_weekEndMm').text();
             }
             getWrkTimeByIml(null, dt);
         }
@@ -1355,9 +1355,9 @@ m
         function monthClickCrteGrap(){
             var dt;
             if($('#txt_mmMm').text().length == 1){
-                dt = $('#txt_mmYy').text() + "-" + "0" + $('#txt_mmMm').text();
+                dt = $('#txt_mmYy').text() + "," + "0" + $('#txt_mmMm').text();
             } else {
-                dt = $('#txt_mmYy').text() + "-" + $('#txt_mmMm').text();
+                dt = $('#txt_mmYy').text() + "," + $('#txt_mmMm').text();
             }
             getWrkTimeByIml(null, dt);
         }
@@ -1400,7 +1400,7 @@ m
 
         function onclickLvocPop() {
             var today = new Date();
-            var tmp = today.getFullYear()+"-"+(today.getMonth()+1)+"-"+today.getDate();
+            var tmp = today.getFullYear()+","+(today.getMonth()+1)+","+today.getDate();
             var tmpDtbase = setWeek(tmp).baseDate;
             weekDate = setWeek(tmp);                                   // 선택된 일이 포함된 주의 Start,End Date 조회
 
