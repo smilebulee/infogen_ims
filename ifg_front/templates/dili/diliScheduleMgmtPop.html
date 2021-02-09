@@ -178,8 +178,8 @@
     function onclickEndTm() {
         $('#pop_endJob').text("퇴근 등록 중...");
         var email = sessionStorage.getItem("email");
-        var dt = getCurrentDate();
-        var tm = getCurrentTime();
+        var dt = dateConverting2(getCurrentDate());
+        var tm = dateConverting2(getCurrentTime());
         var strtTm = $('#pop_strtJob').text();
         var allWrkTm = allWrkTmCall(dt, strtTm, tm);
         var overWrkTm = overWrkTmCall(dt, allWrkTm);
@@ -261,16 +261,7 @@
         alert("overWrkTm" + overWrkTm);
         alert("allWrkTm" + allWrkTm);
 
-        $.ajaxCall( param, {
-             'method' : 'POST',
-             'url' : "{% url 'dili_api:saveEndTm' %}",
-             'dataType' : 'json',
-             'data' : JSON.stringify(param),
-             'async' : false,
-             'callbackFn' : function(data){
-                alertMsg('저장 되었습니다.');
-             }
-        });
+
     }
     /*********************************************************************
     *   결재상태변경
