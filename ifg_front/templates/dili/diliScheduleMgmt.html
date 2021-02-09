@@ -1081,14 +1081,25 @@
                  */
             });
 
-
+            
             calendar.on('clickSchedule', function(event) {
                 /*작업중*/
 
                 $('.tui-full-calendar-month-guide-block').remove();
-                console.log("asdsad"+event.schedule.end.getFullYear()+"-"+(event.schedule.end.getMonth()+1)+"-"+event.schedule.end.getDate());
+                var schedule = {
+                  calendarId: event.calendarId,
+                  id: String(Math.random() * 100000000000000000),
+                  title: event.title,
+                  isAllDay: event.isAllDay,
+                  start: event.start,
+                  end: event.end,
+                  category: event.isAllDay ? 'allday' : 'time',
+                  location: event.location             // 장소 정보
+                };
+
+                console.log("asdsad"+schedule.end.getFullYear()+"-"+(schedule.end.getMonth()+1)+"-"+schedule.end.getDate());
                 alert("!!!!!!!!");
-                var tmp = event.schedule.end.getFullYear()+","+(event.schedule.end.getMonth()+1)+","+event.schedule.end.getDate();
+                var tmp = schedule.end.getFullYear()+","+(schedule.end.getMonth()+1)+","+schedule.end.getDate();
                 var tmpDtbase = setWeek(tmp).baseDate;
                 alert("tmpDtbase1" + tmpDtbase)
                 weekDate = setWeek(tmp);                                   // 선택된 일이 포함된 주의 Start,End Date 조회
@@ -1100,10 +1111,10 @@
                 alert("tempSrhClickData[1!]" + tempSrhClickData[1])
                 alert("tempSrhClickData[2!]" + tempSrhClickData[2])
                 //날짜 세팅
-                var srhClickYear = event.schedule.end.getFullYear(); // 년도
-                var srhClickMonth = event.schedule.end.getMonth();  // 월 (today.getMonth()는 0~11로 출력)
-                var srhClickDate = event.schedule.end.getDate();  // 날짜
-                var srhClickDay = event.schedule.end.getDay();  // 요일 (0~6으로 출력, 0:일요일, 1:월요일, 6:토요일)
+                var srhClickYear = schedule.end.getFullYear(); // 년도
+                var srhClickMonth = schedule.end.getMonth();  // 월 (today.getMonth()는 0~11로 출력)
+                var srhClickDate = schedule.end.getDate();  // 날짜
+                var srhClickDay = schedule.end.getDay();  // 요일 (0~6으로 출력, 0:일요일, 1:월요일, 6:토요일)
                 crteTodayShow(srhClickYear, srhClickMonth, srhClickDate, srhClickDay);
 
                 $('#txt_mmYy').text(tempSrhClickData[0]);
