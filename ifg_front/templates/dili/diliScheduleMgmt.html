@@ -1316,7 +1316,7 @@
 
         function setLabel(calendar){
           var dt;
-          $("#calendarLabel").text(calendar.getDate().getFullYear() + "/" + (calendar.getDate().getMonth()+1));
+          $("#calendarLabel").text(calendar.getDate().getFullYear() + "," + (calendar.getDate().getMonth()+1));
           if((calendar.getDate().getMonth()+1).toString().length == 1){
               dt = calendar.getDate().getFullYear() + "-" + "0" + (calendar.getDate().getMonth()+1);
           } else {
