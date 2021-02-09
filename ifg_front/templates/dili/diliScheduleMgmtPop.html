@@ -200,7 +200,7 @@
                 normWrkTm = "08:00:00";
             }
         }
-
+        alert("normWrkTm" + normWrkTm);
         setEndTm(email, dt, tm, normWrkTm.replaceAll(':',''), overWrkTm.replaceAll(':',''), allWrkTm.replaceAll(':','') );
         $('#pop_endJob').text(tm);
         document.getElementById('pop_schdDetlTm').innerHTML = '정상근무 : '+normWrkTm+' / 초과근무 : '+overWrkTm;
@@ -254,6 +254,12 @@
             "overWrkTm" : overWrkTm,
             "allWrkTm"  : allWrkTm
         }
+        alert("email" + email);
+        alert("dt" + dt);
+        alert("tm" + tm);
+        alert("normWrkTm" + normWrkTm);
+        alert("overWrkTm" + overWrkTm);
+        alert("allWrkTm" + allWrkTm);
 
         $.ajaxCall( param, {
              'method' : 'POST',
