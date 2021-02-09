@@ -388,6 +388,8 @@
                 var dfrEndDate = new Date(dfrWeekEndYy, dfrWeekEndMm, dfrWeekEndDd); //현재 종료 날짜 등록
                 var dfrStrtDate = new Date(dfrWeekStrtYy, dfrWeekStrtMm, dfrWeekStrtDd); //현재 시작 날짜 등록
                 calendar.clear();
+                alert("?" + $('#calendarLabel').text());
+                alert("!" + new Date($('#calendarLabel').text()));
                 calendar.setDate(new Date($('#calendarLabel').text()));
                 getCalendarSessionDate();
                 debugger;
