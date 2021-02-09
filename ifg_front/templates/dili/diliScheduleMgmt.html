@@ -352,7 +352,7 @@
 
                 var tempMonthpickerData = $('#monthpickerData').val().split('-');
                 var selectMonthpickerData = new Date(tempMonthpickerData[0], Number(tempMonthpickerData[1])-1, 1);
-
+                debugger;
                 $('#txt_mmYy').text(selectMonthpickerData.getFullYear()); //그리드 월tab 년도 값 입력
                 $('#txt_mmMm').text(selectMonthpickerData.getMonth() + 1); //그리드 월tab 월 값 입력
                 setMonthGridData();
@@ -1156,7 +1156,9 @@
                 crteTodayShow(srhClickYear, srhClickMonth, srhClickDate, srhClickDay);
                 $('#btn_showGrd').trigger('click');
                 $('#btn_showWeek').trigger('click');
-
+                alert("tempSrhClickData[0]" + tempSrhClickData[0]);
+                alert("tempSrhClickData[1]" + tempSrhClickData[1]);
+                alert("tempSrhClickData[2]" + tempSrhClickData[2]);
                 $('#txt_mmYy').text(tempSrhClickData[0]);
                 $('#txt_mmMm').text(tempSrhClickData[1]);
                 setMonthGridData();
