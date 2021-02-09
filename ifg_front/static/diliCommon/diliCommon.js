@@ -135,3 +135,13 @@ function overWrkTmCall(date, allTmData){
 
     return overTmChk
 }
+
+function dateConverting1(date) {
+
+    return date.replaceAll("/","-");
+}
+
+function dateConverting2(date) {
+
+    return date.replaceAll("-","/");
+}
