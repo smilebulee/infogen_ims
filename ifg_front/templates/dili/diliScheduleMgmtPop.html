@@ -254,7 +254,7 @@
             "overWrkTm" : overWrkTm,
             "allWrkTm"  : allWrkTm
         }
-        alert(email + ":" + dt + ":" + tm + ":" + normWrkTm + ":" + overWrkTm + ":" + allWrkTm)
+
         $.ajaxCall( param, {
              'method' : 'POST',
              'url' : "{% url 'dili_api:saveEndTm' %}",
