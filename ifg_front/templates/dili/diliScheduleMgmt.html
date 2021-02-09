@@ -1087,16 +1087,18 @@
 
                 $('.tui-full-calendar-month-guide-block').remove();
                 console.log("asdsad"+event.schedule.end.getFullYear()+"-"+(event.schedule.end.getMonth()+1)+"-"+event.schedule.end.getDate());
-
+                alert("!!!!!!!!");
                 var tmp = event.schedule.end.getFullYear()+","+(event.schedule.end.getMonth()+1)+","+event.schedule.end.getDate();
                 var tmpDtbase = setWeek(tmp).baseDate;
-
+                alert("tmpDtbase1" + tmpDtbase)
                 weekDate = setWeek(tmp);                                   // 선택된 일이 포함된 주의 Start,End Date 조회
                 //getWrkTimeByIml(null, weekDate.strtDate, weekDate.endDate);     // Session Email 을 기준으로 시작~종료일에 대한 근무시간 조회.
 
                 var tempSrhClickData = tmpDtbase.split('-')
                 var srhClickData = new Date(tempSrhClickData[0], Number(tempSrhClickData[1])-1, tempSrhClickData[2]);
-
+                alert("tempSrhClickData[0!]" + tempSrhClickData[0])
+                alert("tempSrhClickData[1!]" + tempSrhClickData[1])
+                alert("tempSrhClickData[2!]" + tempSrhClickData[2])
                 //날짜 세팅
                 var srhClickYear = event.schedule.end.getFullYear(); // 년도
                 var srhClickMonth = event.schedule.end.getMonth();  // 월 (today.getMonth()는 0~11로 출력)
