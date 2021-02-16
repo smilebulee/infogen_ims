@@ -201,7 +201,7 @@
             }
         }
 
-        setEndTm(email, dt, tm, normWrkTm.replaceAll(':',''), overWrkTm.replaceAll(':',''), allWrkTm.replaceAll(':','') );
+        setEndTm(email, dt, tm, normWrkTm.replace(/:/gi,''), overWrkTm.replace(/:/gi,''), allWrkTm.replace(/:/gi,'') );
         $('#pop_endJob').text(tm);
         document.getElementById('pop_schdDetlTm').innerHTML = '정상근무 : '+normWrkTm+' / 초과근무 : '+overWrkTm;
         $('#pop_schdDetlAllTm').text(allWrkTm);

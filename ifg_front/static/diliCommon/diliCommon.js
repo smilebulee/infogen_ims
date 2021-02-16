@@ -138,10 +138,10 @@ function overWrkTmCall(date, allTmData){
 
 function dateConverting1(date) {
 
-    return date.replaceAll("/","-");
+    return date.replace(/\//gi,"-");
 }
 
 function dateConverting2(date) {
 
-    return date.replaceAll("-","/");
+    return date.replace(/-/gi,"/");
 }
