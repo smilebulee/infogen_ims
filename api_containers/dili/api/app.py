@@ -360,7 +360,7 @@ class weekGridData(Resource): # Mariadb 연결 진행
                     + "  AND A.WRK_DT >= '" + data["strtDt"] + "' "\
                     + "  AND A.WRK_DT <= '" + data["endDt"] + "' "\
                     + "  ORDER BY A.WRK_DT"
-                logging.debug(sql)
+                logging.debug(sql + "!!!")
                 cursor.execute(sql)
         finally:
             mysql_con.close()
@@ -439,11 +439,11 @@ class monthGridData(Resource): # Mariadb 연결 진행
                     + "        LEFT OUTER JOIN TB_APVL_REQ_MGMT_M B"\
                     + "   ON A.WRK_DT = B.WRK_DT "\
                     + "   AND A.EMP_EMAL_ADDR = B.EMP_EMAL_ADDR "\
-                    + "  WHERE 1 = 1 "\
+                    + "  WHERE 1 = 1 " \
                     + "  AND A.EMP_EMAL_ADDR = '" + data["email"] + "' "\
                     + "  AND A.WRK_DT like '"+data["mDt"]+"%' "\
                     + "  ORDER BY A.WRK_DT"
-                logging.debug(sql)
+                logging.debug(sql + "???????")
                 cursor.execute(sql)
         finally:
             mysql_con.close()
@@ -479,6 +479,7 @@ class wrkTimeInfoByEml(Resource): # Mariadb 연결 진행
                     + "      ,DATE_FORMAT(SEC_TO_TIME(SUM(TIME_TO_SEC(STR_TO_DATE( CONCAT(SUBSTRING(IFNULL(B.WRK_TME,'000000'),1,2),':',SUBSTRING(IFNULL(B.WRK_TME,'000000'),3,2),':',SUBSTRING(IFNULL(B.WRK_TME,'000000'),5,2)) ,'%H:%i:%S')))),'%H.%i') APRV_OVER_WRK_TM" \
                     + "  FROM TB_WRK_TM_MGMT_M A LEFT OUTER JOIN TB_APVL_REQ_MGMT_M B ON A.EMP_EMAL_ADDR = B.EMP_EMAL_ADDR AND A.WRK_DT = B.WRK_DT AND B.APVL_REQ_DIVS IN ('01','02')" \
                     + " WHERE A.EMP_EMAL_ADDR = '" +data["email"] + "'" \
+                    + "  AND B.APVL_DIVS = '02'" \
                     + "   AND A.WRK_DT LIKE '" + data["dt"] + "%'" \
                     + " GROUP BY A.EMP_EMAL_ADDR"
                 logging.debug(sql)
@@ -1646,6 +1647,7 @@ class updateEndTm(Resource):  # Mariadb 연결 진행
         normWrkTm = params['normWrkTm']
         overWrkTm = params['overWrkTm']
         allWrkTm = params['allWrkTm']
+        restTm = params['restTm']
 
 
         # requirements pymysql import 후 커넥트 사용
@@ -1659,10 +1661,11 @@ class updateEndTm(Resource):  # Mariadb 연결 진행
                           "   SET JOB_END_TM  = %s " \
                           "      ,HLDY_WRK_TM = %s " \
                           "      ,ALL_WRK_TM  = %s " \
+                          "      ,REST_TM  = %s " \
                           "   WHERE EMP_EMAL_ADDR = %s " \
                           "   AND WRK_DT = %s "
                     logger.info(sql)
-                    cursor.execute(sql, (tm, overWrkTm, allWrkTm, email, dt))
+                    cursor.execute(sql, (tm, overWrkTm, allWrkTm, email, dt, restTm))
                     mysql_con.commit()
                 else:
                     # 쿼리문 실행
@@ -1671,10 +1674,11 @@ class updateEndTm(Resource):  # Mariadb 연결 진행
                           "      ,NORM_WRK_TM = %s " \
                           "      ,NGHT_WRK_TM = %s " \
                           "      ,ALL_WRK_TM  = %s " \
+                          "      ,REST_TM  = %s " \
                           "   WHERE EMP_EMAL_ADDR = %s " \
                           "   AND WRK_DT = %s "
                     logger.info(sql)
-                    cursor.execute(sql, (tm, normWrkTm, overWrkTm, allWrkTm, email, dt))
+                    cursor.execute(sql, (tm, normWrkTm, overWrkTm, allWrkTm, email, dt, restTm))
                     mysql_con.commit()
 
         finally:

@@ -90,7 +90,7 @@ function getCurrentTime() {
 /*********************************************************************
 *   전체근무시간 호출
 *********************************************************************/
-function allWrkTmCall(date, strtTm, endTm){
+function allWrkTmCall(date, strtTm, endTm, restTm){
 
     var tmpStrtDate = date+" "+strtTm;
     var tmpEndDate = date+" "+endTm;
@@ -101,7 +101,7 @@ function allWrkTmCall(date, strtTm, endTm){
     var tmpSubtractTm = endDate - strtDate;
     var hour = Math.floor((tmpSubtractTm % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
     if(hour > 4){
-        hour -= 1
+        hour -= restTm
     }
     var minute = Math.floor((tmpSubtractTm % (1000 * 60 * 60)) / (1000 * 60));
     var second = Math.floor((tmpSubtractTm % (1000 * 60)) / 1000);
