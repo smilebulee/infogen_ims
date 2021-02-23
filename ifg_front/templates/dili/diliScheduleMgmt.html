@@ -578,6 +578,7 @@
             weekTable += '<th class="text-center">일자</th>';
             weekTable += '<th class="text-center">업무시작시간</th>';
             weekTable += '<th class="text-center">업무종료시간</th>';
+            weekTable += '<th class="text-center">휴게시간</th>';
             weekTable += '<th class="text-center">총근무시간</th>';
             weekTable += '<th class="text-center">근무시간상세</th>';
             weekTable += '<th class="text-center">결재상태</th>';
@@ -605,6 +606,7 @@
                 var overWrkTm = "-";
                 var apvlStus = "-"
                 var chckHldy = 0;
+                var restTm = 0;
 
                 if(schdData.length > 0){
                     for(var j = 0; j < schdData.length; j++){
@@ -645,6 +647,8 @@
                             if(schdData[j].TH1_APRV_STUS == "03"){
                                 apvlStus = "반려"
                             }
+
+                            restTm = schdData[j].REST_TM;
                         }
                     }
                 }
@@ -653,6 +657,7 @@
                 weekTable += '<td class="pt-3-half" contenteditable="false">'+tdDate+'</td>';
                 weekTable += '<td class="pt-3-half" contenteditable="false">'+jobStrtTm+'</td>';
                 weekTable += '<td class="pt-3-half" contenteditable="false">'+jobEndTm+'</td>';
+                weekTable += '<td class="pt-3-half" contenteditable="false">'+restTm+'</td>';
                 weekTable += '<td class="pt-3-half" contenteditable="false">'+allWrkTm+'</td>';
 
                 if(chckHldy == 0){
@@ -686,6 +691,7 @@
             monthTable += '<th class="text-center">일자</th>';
             monthTable += '<th class="text-center">업무시작시간</th>';
             monthTable += '<th class="text-center">업무종료시간</th>';
+            monthTable += '<th class="text-center">휴게시간</th>';
             monthTable += '<th class="text-center">총근무시간</th>';
             monthTable += '<th class="text-center">근무시간상세</th>';
             monthTable += '<th class="text-center">결재상태</th>';
@@ -714,6 +720,7 @@
                 var overWrkTm = "-";
                 var apvlStus = "-"
                 var chckHldy = 0;
+                var restTm = 0;
 
 				if(schdData.length > 0){
                     for(var j = 0; j < schdData.length; j++){
@@ -757,7 +764,10 @@
                             if(schdData[j].TH1_APRV_STUS == "03"){
                                 apvlStus = "반려"
                             }
+
+                            restTm = schdData[j].REST_TM;
                         }
+
                     }
                 }
 
@@ -766,6 +776,7 @@
                 monthTable += '<td class="pt-3-half" contenteditable="false">'+mTdDate+'</td>';
                 monthTable += '<td class="pt-3-half" contenteditable="false">'+jobStrtTm+'</td>';
                 monthTable += '<td class="pt-3-half" contenteditable="false">'+jobEndTm+'</td>';
+                monthTable += '<td class="pt-3-half" contenteditable="false">'+restTm+'</td>';
                 monthTable += '<td class="pt-3-half" contenteditable="false">'+allWrkTm+'</td>';
 
                 if(chckHldy == 0){
@@ -799,7 +810,7 @@
             $('#'+trId.id).prevAll().css("background-color","");
             $('#'+trId.id).nextAll().css("background-color","");
             $('#'+trId.id).css("background-color","#8A8C8F");
-            debugger;
+
             if($('#clickDate').val() == wClickDt){
                 modal('my_modal');
                 $('#my_modal2').load("{% url 'dili_api:scheduleMgmtPop' %}");
@@ -807,7 +818,8 @@
                 $('#tmpPopDt').text(trId.id.replace('grd_week',''));
                 $('#tmpPopStrtTm').text($('#'+trId.id).children().eq(1).text());
                 $('#tmpPopEndTm').text($('#'+trId.id).children().eq(2).text());
-                var detlSchd = $('#'+trId.id).children().eq(4).text();
+                $('#tmpRestTm').text($('#'+trId.id).children().eq(3).text());
+                var detlSchd = $('#'+trId.id).children().eq(5).text();
                 var normWrkTm = "-";
                 var overWrkTm = "-";
                 var holi = "-";
@@ -822,8 +834,8 @@
                 $('#tmpNormWrkTm').text(normWrkTm);
                 $('#tmpOverWrkTm').text(overWrkTm);
                 $('#tmpHoli').text(holi);
-                $('#tmpPopAllTm').text($('#'+trId.id).children().eq(3).text());
-                $('#tmpPopApvlStus').text($('#'+trId.id).children().eq(5).text());
+                $('#tmpPopAllTm').text($('#'+trId.id).children().eq(4).text());
+                $('#tmpPopApvlStus').text($('#'+trId.id).children().eq(6).text());
             }
             $('#clickDate').val(wClickDt);
 
@@ -850,7 +862,8 @@
                 $('#tmpPopDt').text(trId.id.replace('grd_month',''));
                 $('#tmpPopStrtTm').text($('#'+trId.id).children().eq(1).text());
                 $('#tmpPopEndTm').text($('#'+trId.id).children().eq(2).text());
-                var detlSchd = $('#'+trId.id).children().eq(4).text();
+                $('#tmpRestTm').text($('#'+trId.id).children().eq(3).text());
+                var detlSchd = $('#'+trId.id).children().eq(5).text();
                 var normWrkTm = "-";
                 var overWrkTm = "-";
                 var holi = "-";
@@ -865,8 +878,8 @@
                 $('#tmpNormWrkTm').text(normWrkTm);
                 $('#tmpOverWrkTm').text(overWrkTm);
                 $('#tmpHoli').text(holi);
-                $('#tmpPopAllTm').text($('#'+trId.id).children().eq(3).text());
-                $('#tmpPopApvlStus').text($('#'+trId.id).children().eq(5).text());
+                $('#tmpPopAllTm').text($('#'+trId.id).children().eq(4).text());
+                $('#tmpPopApvlStus').text($('#'+trId.id).children().eq(6).text());
             }
             $('#clickDate').val(mClickDt);
 

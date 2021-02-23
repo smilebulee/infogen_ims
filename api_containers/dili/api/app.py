@@ -351,6 +351,7 @@ class weekGridData(Resource): # Mariadb 연결 진행
                     + "       ,NVL(B.APVL_REQ_DT, 'N/A') AS APVL_REQ_DT "\
                     + "       ,NVL(B.APVL_LAST_APRV_DT, 'N/A') AS APVL_LAST_APRV_DT "\
                     + "       ,NVL(B.TH1_APRV_STUS, 'N/A') AS TH1_APRV_STUS"\
+                    + "       ,NVL(A.REST_TM,'') AS REST_TM"\
                     + "   FROM TB_WRK_TM_MGMT_M A "\
                     + "        LEFT OUTER JOIN TB_APVL_REQ_MGMT_M B"\
                     + "   ON A.WRK_DT = B.WRK_DT "\
@@ -435,6 +436,7 @@ class monthGridData(Resource): # Mariadb 연결 진행
                     + "       ,NVL(B.APVL_REQ_DIVS, 'N/A') AS APVL_REQ_DIVS "\
                     + "       ,NVL(B.APVL_REQ_DT, 'N/A') AS APVL_REQ_DT "\
                     + "       ,NVL(B.APVL_LAST_APRV_DT, 'N/A') AS APVL_LAST_APRV_DT "\
+                    + "       ,NVL(A.REST_TM,'') AS REST_TM "\
                     + "   FROM TB_WRK_TM_MGMT_M A "\
                     + "        LEFT OUTER JOIN TB_APVL_REQ_MGMT_M B"\
                     + "   ON A.WRK_DT = B.WRK_DT "\
@@ -1665,7 +1667,7 @@ class updateEndTm(Resource):  # Mariadb 연결 진행
                           "   WHERE EMP_EMAL_ADDR = %s " \
                           "   AND WRK_DT = %s "
                     logger.info(sql)
-                    cursor.execute(sql, (tm, overWrkTm, allWrkTm, email, dt, restTm))
+                    cursor.execute(sql, (tm, overWrkTm, allWrkTm, restTm, email, dt))
                     mysql_con.commit()
                 else:
                     # 쿼리문 실행
@@ -1678,7 +1680,7 @@ class updateEndTm(Resource):  # Mariadb 연결 진행
                           "   WHERE EMP_EMAL_ADDR = %s " \
                           "   AND WRK_DT = %s "
                     logger.info(sql)
-                    cursor.execute(sql, (tm, normWrkTm, overWrkTm, allWrkTm, email, dt, restTm))
+                    cursor.execute(sql, (tm, normWrkTm, overWrkTm, allWrkTm, restTm, email, dt))
                     mysql_con.commit()
 
         finally:
