@@ -51,6 +51,7 @@ urlpatterns = [
     url(r'^getEmpInfo/', views.getEmpInfo, name='getEmpInfo'),
     url(r'^getEmpName/', views.getEmpName, name='getEmpName'),
     url(r'^getEmpDept/', views.getEmpDept, name='getEmpDept'),
+    url(r'^getEmpDeptGm/', views.getEmpDeptGm, name='getEmpDeptGm'),
     url(r'^getApvlReqHistDetl/', views.getApvlReqHistDetl, name='getApvlReqHistDetl'),
     url(r'^getCalendarData/', views.getCalendarData, name='getCalendarData'),
     url(r'^saveYryApvlReq/post', views.saveYryApvlReq, name='saveYryApvlReq'),
