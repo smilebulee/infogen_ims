@@ -896,3 +896,134 @@ def empMgmtDel(request):
     logger.info(r.json())
 
     return JsonResponse(r.json(), safe=False)
+
+class question(generic.TemplateView):
+    def get(self, request, *args, **kwargs):
+        template_name = 'dili/question.html'
+
+
+        # r = requests.get('http://dili_api:5006/hello')
+        # rr = {
+        #     "result": r.text
+        # }
+        return render(request, template_name)
+        # return render(request, template_name, rr)
+
+class questionDtl(generic.TemplateView):
+    def get(self, request, *args, **kwargs):
+        template_name = 'dili/questionDtl.html'
+
+        # r = requests.get('http://dili_api:5006/hello')
+        # rr = {
+        #     "result": r.text
+        # }
+        return render(request, template_name)
+
+def getquestionInfo(request):
+    param = json.loads(request.GET['param'])
+
+    logger.info("getquestionInfo : dili/views.py")
+    logger.info(param)
+    logger.info("Parameters Logging End")
+
+    # api 호출
+    r = requests.get('http://dili_api:5006/questionInfo', json=param)
+    logger.info(r)
+    logger.info(r.text)
+    logger.info(r.json())
+    return JsonResponse(ast.literal_eval(r.json()), safe=False)
+
+def getquestionLst(request):
+    param = json.loads(request.GET['param'])
+    logger.info("getquestionLst : dili/views.py")
+    logger.info(param)
+
+    datas = {
+        'category': param['category'],
+        'searchStr': param['searchStr']
+    }
+
+    logger.info(datas)
+
+    # api 호출
+    r = requests.get('http://dili_api:5006/question', params=datas)
+    logger.info("sql 끝")
+    paginator = Paginator(r.json(), 10)
+    logger.info("----------------")
+    logger.info(paginator)
+    logger.info(r)
+    logger.info(r.text)
+    logger.info("----------------")
+
+    result = paginator.get_page(param['page'])
+
+    logger.info(result)
+
+    data = {
+        'list': list(result.object_list),
+        'total_records': paginator.count,
+        'total_pages': paginator.num_pages,
+        'page': result.number,
+        'has_next': result.has_next(),
+        'has_prev': result.has_previous()
+    }
+
+    # return JsonResponse(r.json())
+    return JsonResponse(data)
+
+def getQnaPopCnt(request):
+    param = json.loads(request.GET['param'])
+
+    logger.info(param)
+
+    params = {
+    }
+
+    r = requests.get('http://dili_api:5006/qnaPopCnt', params=params)
+    logger.info(r)
+    logger.info(r.text)
+    logger.info(r.json())
+
+    return JsonResponse(r.json(), safe=False)
+
+def getQnaPopUp(request):
+    param = json.loads(request.GET['param'])
+
+    logger.info(param)
+
+    params = {
+    }
+
+    r = requests.get('http://dili_api:5006/qnaPopUp', params=params)
+    logger.info(r)
+    logger.info(r.text)
+    logger.info(r.json())
+
+    return JsonResponse(r.json(), safe=False)
+
+class questionWrPop(generic.TemplateView):
+    def get(self, request, *args, **kwargs):
+        template_name = 'dili/questionWrPop.html'
+
+        return render(request, template_name)
+
+def questionWr(request):
+    param = json.loads(request.POST['param'])
+
+    logger.info("Parameters Start")
+    logger.info(param)
+    logger.info("Parameters End")
+
+    datas = {
+    }
+
+    for row in param:
+        logger.info("------views.py------")
+        datas.setdefault(row, param[row])
+
+    r = requests.post('http://dili_api:5006/questionWrSubmit', data=datas)
+    logger.info(r)
+    logger.info(r.text)
+    logger.info(r.json())
+
+    return JsonResponse(r.json(), safe=False)
