@@ -904,18 +904,19 @@ class empInfo(Resource): # Mariadb 연결 진행
                           "AND E.AUTH_ID = C.CMM_CD " \
                           "ORDER BY SEQ_NO"
                 logging.debug(sql)
+                logging.debug('====================test1')
                 cursor.execute(sql)
-
+                logging.debug('====================test2')
         finally:
             mysql_con.close()
-
+            logging.debug('====================test3')
         result2 = cursor.fetchall()
         for row in result2:
             logging.debug('====== row====')
             logging.debug(row)
             logging.debug('===============')
         array = list(result2)  # 결과를 리스트로
-
+        logging.debug('====================test4')
         return json.dumps(result2, indent=4, cls=DateTimeEncoder)
 
 
@@ -2181,6 +2182,197 @@ class empMgmtDelSubmit(Resource):
 
         return jsonify(retJson)
 
+class question(Resource):  # Mariadb 연결 진행
+    def get(self):
+        logging.debug("QnA start")
+        logging.debug(request.get_json())
+
+        logging.debug('---------------QnA---------------')
+        logging.debug('------------------------------------')
+
+        # requirements pymysql import 후 커넥트 사용
+        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
+                                    charset='utf8', autocommit=False)
+        try:
+            with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+                # 쿼리문 실행
+                sql = "SELECT  COUNT(*) AS COUNT " \
+                      "FROM  TB_QNA_TEST " \
+                      "WHERE QNA_DEL_YN = 'N' " \
+                      "ORDER BY QNA_ORIGIN_NO DESC, QNA_SORTS "
+
+                logging.debug(sql)
+                cursor.execute(sql)
+
+        finally:
+            mysql_con.close()
+
+        result1 = cursor.fetchall()
+
+        return result1
+
+
+class questionInfo(Resource):  # Mariadb 연결 진행
+    def get(self):
+
+        data =request.get_json()
+
+        # get data
+        # name = data["name"]]
+
+        logging.debug('================== App Start ==================')
+        logging.debug(data)
+        logging.debug(data["name"])
+        logging.debug(request.args.get('name'))
+        logging.debug(request.args.get('param'))
+        logging.debug('================== App End ==================')
+
+        # requirements pymysql import 후 커넥트 사용
+        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
+                                    charset='utf8', autocommit=False)
+        try:
+            with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+                # 쿼리문 실행
+                # 정상
+                sql = "SELECT QNA_NO,  NVL(QNA_ORIGIN_NO,''),   QNA_TITLE,  QNA_MAIN,  QNA_WR_NM , QNA_RGS_DATE " \
+                      "FROM TB_QNA_TEST " \
+                      "WHERE QNA_DEL_YN = 'N' " \
+                      "ORDER BY QNA_ORIGIN_NO DESC, QNA_SORTS"
+
+                logging.debug(sql)
+                cursor.execute(sql)
+        finally:
+            mysql_con.close()
+
+
+        result2 = cursor.fetchall()
+        for row in result2:
+            logging.debug('====== row====')
+            logging.debug(row)
+            logging.debug('===============')
+
+        array = list(result2)  # 결과를 리스트로
+        return json.dumps(result2, indent=4, cls=DateTimeEncoder)
+
+class qnaPopCnt(Resource):  # Mariadb 연결 진행
+    def get(self):
+        logging.debug("qnaPopCnt start")
+        logging.debug(request.get_json())
+
+        logging.debug('---------------SEARCH---------------')
+        logging.debug('------------------------------------')
+
+        # requirements pymysql import 후 커넥트 사용
+        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
+                                    charset='utf8', autocommit=False)
+        try:
+            with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+                # 쿼리문 실행
+                sql = "SELECT  COUNT(*) AS COUNT " \
+                      "FROM TB_QNA_TEST " \
+                      "WHERE QNA_DEL_YN = 'N' " \
+                      "ORDER BY QNA_ORIGIN_NO DESC, QNA_SORTS"
+
+                logging.debug(sql)
+                cursor.execute(sql)
+
+        finally:
+            mysql_con.close()
+        result1 = cursor.fetchall()
+        return result1
+
+
+class qnaPopUp(Resource):  # Mariadb 연결 진행
+    def get(self):
+        logging.debug("qnaPopUp start")
+        logging.debug(request.get_json())
+
+        logging.debug('---------------SEARCH---------------')
+        logging.debug('------------------------------------')
+
+        # requirements pymysql import 후 커넥트 사용
+        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
+                                    charset='utf8', autocommit=False)
+        try:
+            with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+                # 쿼리문 실행
+                sql = "SELECT  QNA_TITLE,  QNA_WR_NM,  QNA_RGS_DATE " \
+                      "FROM TB_QNA_TEST " \
+                      "WHERE QNA_DEL_YN = 'N' " \
+                      "ORDER BY QNA_ORIGIN_NO DESC, QNA_SORTS"
+
+                logging.debug(sql)
+                logging.debug('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>q2')
+                cursor.execute(sql)
+
+        finally:
+            mysql_con.close()
+
+        result1 = cursor.fetchall()
+
+        return result1
+
+
+class questionWrSubmit(Resource):
+    def post(self):
+        logger.info('========app.py questionWrSubmit=========')
+        params = request.get_json()
+        logger.info(params)
+
+        for row in request.form:
+            logger.info(row + ':' + request.form[row])
+            globals()[row] = request.form[row]
+
+        ipt_empId = request.form['ipt_empId']
+        ipt_qnatitle = request.form['ipt_qnatitle']
+        sbx_qnaContent = request.form['sbx_qnaContent']
+        sessionId = request.form['sessionId']
+
+
+        logging.debug("====Param data====")
+
+        logging.debug("ipt_empId = " + ipt_empId)
+        logging.debug("ipt_empEmail = " + ipt_qnatitle)
+        logging.debug("ipt_empPw = " + sbx_qnaContent)
+        logging.debug("sessionId = " + sessionId)
+
+
+        logging.debug("=====================")
+
+
+
+        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
+                                    charset='utf8', autocommit=False)
+
+
+        logging.debug("save Start")
+
+        try:
+            with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+                sql= "INSERT INTO TB_QNA_TEST (QNA_WR_NM, " \
+                                                "QNA_TITLE, " \
+                                                "QNA_MAIN, " \
+                                                "QNA_RGS_DATE) " \
+                     "VALUES('" + ipt_empId + "', " \
+                                            "'" + ipt_qnatitle + "', " \
+                                            "'" + sbx_qnaContent + "', " \
+                                            "DATE_FORMAT(CURDATE(), '%Y-%m-%d')) "
+
+
+                logger.info(sql)
+                cursor.execute(sql)
+                mysql_con.commit()
+
+        finally:
+            mysql_con.close()
+
+        retJson = {
+            "status": 200,
+            "msg": "Data has been saved successfully"
+        }
+
+        return jsonify(retJson)
+
 api.add_resource(Hello, '/hello')
 api.add_resource(Register, '/register')
 api.add_resource(Retrieve, '/retrieve')
@@ -2224,6 +2416,13 @@ api.add_resource(isExistEmpNm,'/isExistEmpNm') #api 선언
 api.add_resource(empOneInfo,'/empOneInfo') #api 선언
 api.add_resource(empMgmtEditSubmit,'/empMgmtEditSubmit') #api 선언
 api.add_resource(empMgmtDelSubmit,'/empMgmtDelSubmit') #api 선언
+api.add_resource(question,'/question') #api 선언
+api.add_resource(questionInfo,'/questionInfo') #api 선언
+api.add_resource(qnaPopCnt,'/qnaPopCnt') #api 선언
+api.add_resource(qnaPopUp,'/qnaPopUp') #api 선언
+api.add_resource(questionWrSubmit,'/questionWrSubmit') #api 선언
+
+
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5006, debug=True)
