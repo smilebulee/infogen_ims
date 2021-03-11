@@ -1,0 +1,692 @@
+<!--<link href="//netdna.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">-->
+{% extends 'common/base.html' %}
+
+{% block content %}
+{% load static %}
+<head>
+    <!--Grid UI : datepicker & monthpicker import -->
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.11.4/themes/ui-lightness/jquery-ui.css" type="text/css"/>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="{% static 'js/jquery.mtz.monthpicker.js' %}"></script>
+    <!--Grid UI : datepicker & monthpicker import End-->
+
+    <!-- 달력 표출 -->
+    <script src="https://uicdn.toast.com/tui.code-snippet/v1.5.2/tui-code-snippet.min.js"></script>
+    <script src="https://uicdn.toast.com/tui.time-picker/latest/tui-time-picker.min.js"></script>
+    <script src="https://uicdn.toast.com/tui.date-picker/latest/tui-date-picker.min.js"></script>
+    <script src="https://uicdn.toast.com/tui-calendar/latest/tui-calendar.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="https://uicdn.toast.com/tui-calendar/latest/tui-calendar.css"/>
+    <!-- 달력 표출 End -->
+
+    <script type="text/javascript" xmlns:max-width="http://www.w3.org/1999/xhtml">
+
+        /*********************************************************************
+        *   Dialog Setting
+        *********************************************************************/
+        var n_dialog = new ax5.ui.dialog();
+        var n_title =  '<span style="color:#fd7e14;font-size:20px;"><i class="fa fa-check-circle"></i></span> CHECK';
+
+        n_dialog.setConfig({
+            title: n_title,
+            theme : 'info',
+            lang:{
+                "ok": "확인", "cancel": "취소"
+            }
+        });
+
+        /*********************************************************************
+        *   Session Email
+        *********************************************************************/
+        if(sessionStorage.getItem("email") == null){
+
+            location.href = "{% url 'main:login_form' %}";
+        }
+
+        console.log(sessionStorage.getItem("email"));
+
+        var params = {
+            "email" : sessionStorage.getItem("email"),
+            "authId" : sessionStorage.getItem("authId")
+        }
+
+        var tempStrtDt = "";
+        var tempEndDt = "";
+
+        /*********************************************************************
+        *   urlParam
+        *********************************************************************/
+        $.urlParam = function(name){
+            var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
+            if (results == null || results == '' ){
+                console.log("postId 없음");
+                return null;
+            } else{
+                return results[1] || 0;
+            }
+        }
+
+        var type = $.urlParam("type");     <!-- url에서 type 가져오기-->
+        console.log("type: " + type);
+
+        var postId =  $.urlParam("postId");     <!-- url에서 postId 가져오기-->
+        if(postId == '' || postId == null){
+            postId = -1;
+        }
+        console.log("postId: " + postId);
+
+        $(document).ready(function(){
+             console.log("ready");
+             console.log("params.email: " + params.email);
+
+             var url = decodeURIComponent(window.location.href);
+
+            /*********************************************************************
+             *  type에 따른 버튼 show/hide 변경
+            *********************************************************************/
+            if(type == "r"){    //공지사항 상세조회
+                console.log("상세보기");
+                getNoticeOne();
+                console.log(url);
+
+                //$('#btn_R').show();
+                //$('#btn_U').hide();
+                //$('#btn_C').hide();
+
+                $('#ipt_title').attr('readonly', true);      //수정불가
+                $('#cb_mjrYn').attr('disabled', true);      //수정불가
+                $('#cb_popOpenYn').attr('disabled', true);      //수정불가
+                $('#ipt_holiTerm1').attr('readonly', true);      //수정불가
+                $('#ipt_holiTerm2').attr('readonly', true);      //수정불가
+                $('#sbx_kdDivsCd').attr('readonly', true);      //수정불가
+                $('#ipt_cntn').attr('readonly', true);      //수정불가
+
+                $('#postId').val(postId);
+                console.log(postId);
+            } else if(type == "c"){     //글쓰기 버튼 클릭
+                console.log("새로 등록");
+                $('#btn_R').hide();
+                $('#btn_U').hide();
+                $('#btn_C').show();
+            }
+
+            /*********************************************************************
+            *   btn_datepicker1 Btn Click Event - 일달력호출
+            *********************************************************************/
+            $("#btn_datepicker1").click(function(){
+                if($('#cb_popOpenYn').is(":checked") == false) {
+                    alertMsg("공지표출(팝업)을 먼저 체크해주세요.");
+                    return;
+                }
+                $("#datepickerData1").datepicker("show");
+            });
+
+            /*********************************************************************
+            *   btn_datepicker2 Btn Click Event - 일달력호출
+            *********************************************************************/
+            $("#btn_datepicker2").click(function(){
+                if($("#ipt_holiTerm1").val() == "") {
+                    alertMsg("시작 일자를 먼저 선택해주세요.");
+                    return;
+                }
+                $("#datepickerData2").datepicker("show");
+            });
+
+            /*********************************************************************
+            *   클릭한 달력 datepickerData1에 value 값 담기
+            *********************************************************************/
+            $("#datepickerData1").datepicker({
+
+                onSelect:function(dateText, inst) {
+
+                    var tempData = $('#datepickerData1').val();
+
+                    $("#ipt_holiTerm1").val(tempData);
+                }
+            });
+
+	        /*********************************************************************
+            *   클릭한 달력 datepickerData2에 value 값 담기
+            *********************************************************************/
+            $("#datepickerData2").datepicker({
+
+                onSelect:function(dateText, inst) {
+
+                    var tempData = $('#datepickerData2').val();
+
+                    $("#ipt_holiTerm2").val(tempData);
+                    dateCalcu();
+                }
+	        });
+
+            function dateCalcu() {
+                var tempData1 = $("#ipt_holiTerm1").val().split('-');
+                var tempData2 = $("#ipt_holiTerm2").val().split('-');
+
+                var arrDate1 = new Date(tempData1[0], tempData1[1], tempData1[2]);
+                var arrDate2 = new Date(tempData2[0], tempData2[1], tempData2[2]);
+
+                var diffDate = arrDate2 - arrDate1;
+                var currDate = 24 * 60 * 60 * 1000;
+
+                if(parseInt(diffDate/currDate)+1 < 0) {
+                    alertMsg("시작일자와 종료일자를 다시 확인해주세요.");
+                    $("#ipt_holiTerm2").val("");
+                    return;
+                } else {
+                    $("#ipt_holiDays").val(parseInt(diffDate/currDate)+1);
+                }
+
+            }
+
+        });
+
+        /*********************************************************************
+         *  공지사항 상세조회
+        *********************************************************************/
+            function getQnaOne() {
+            console.log("getQnaOne: ");
+
+            var param = {
+                "postId" :  postId
+            }
+
+            var options = {
+                'method' : 'GET',
+                 'url' :
+                 'dataType' : 'json',
+                 'data' : JSON.stringify(param),
+                 'async' : false,
+                 'callbackFn' : function(data){
+                    //console.log("data: " + data);
+                    console.log("날짜 " + data[0].POP_OPEN_DTTM_FROM);
+                    $('#ipt_title').val(data[0].TIT);
+                    $('#sbx_kdDivsCd').val(data[0].KD_DIVS_CD);
+                    if( data[0].MJR_YN == 'N' ){
+                        $('#cb_mjrYn').prop("checked", false);
+                    } else{
+                        $('#cb_mjrYn').prop("checked", true);
+                    }
+
+                    if( data[0].POP_OPEN_YN == 'N' ){
+                        $('#cb_popOpenYn').prop("checked", false);
+                    }else{
+                        $('#cb_popOpenYn').prop("checked", true);
+                    }
+
+                    $('#ipt_cntn').val(data[0].CNTN);
+                    $('#ipt_holiTerm1').val(data[0].POP_OPEN_DTTM_FROM);
+                    $('#ipt_holiTerm2').val(data[0].POP_OPEN_DTTM_TO);
+
+                    //게시글 작성자랑 동일 시, 수정, 삭제 버튼 활성화
+                    if((data[0].DATA_INPT_ID) == params.email) {
+                        console.log("게시글 작성자랑 동일 시, 수정, 삭제 버튼 활성화");
+                        $('#btn_R').show();     //수정, 삭제
+                        $('#btn_U').hide();     //수정(업데이트)
+                        $('#btn_C').hide();     //취소, 등록
+                    } else {
+                        console.log("게시글 작성자랑 다름, 수정, 삭제 버튼 비활성화");
+                        $('#btn_R').hide();     //수정, 삭제
+                        $('#btn_U').hide();     //수정(업데이트)
+                        $('#btn_C').hide();     //취소, 등록
+                    }
+                 }
+            }
+
+            $.ajaxCall(param, options );
+        }
+
+        /*********************************************************************
+         *  공지사항 중요 체크한 게시물 수 체크(3개까지로 제한)
+        *********************************************************************/
+        function mjrCheck(){
+            console.log("공지사항 중요 체크한 게시물 수 체크(3개까지로 제한)");
+            var cnt;
+
+            if($('#cb_mjrYn').is(":checked") == true){
+                var param = { };
+                var option = {
+                    method: 'GET',
+                    url:'/dili/getNoticeMjrCnt/',
+                    dataType:'json',
+                    data:JSON.stringify(param),
+                    async:false,
+                    callbackFn:function(data){
+                        cnt = data[0].CNT;
+                        console.log("data[0]: " + cnt);
+                        if(cnt >= 3){
+                            console.log("중요 게시물은 3개 이하만 가능합니다.");
+                            alertMsg("중요 게시물은 3개 이하만 가능합니다.");
+                            $('#cb_mjrYn').prop("checked", false);
+                            return false;
+                        }
+                    }
+                };
+
+                $.ajaxCall(param, option);
+
+            }
+
+        }
+
+        /*************************************************************
+        *  btnSave onClick() : 저장 버튼 클릭 이벤트
+        **************************************************************/
+        function btnSave() {
+            var sFlag = false;
+            var mjrYn = "N";
+            var popOpenYn = "N";
+            console.log('저장');
+
+            //중요 체크 값 지정
+            if($('#cb_mjrYn').is(":checked") == true){
+                console.log("중요체크됨");
+                mjrYn = "Y";
+                console.log(mjrYn);
+            } else{
+                console.log("중요체크 안됨");
+                console.log(mjrYn);
+            }
+
+            /************************************************
+            * 저장 클릭시 공지팝업표출 값 지정 (default: 'N')
+            ************************************************/
+            if($('#cb_popOpenYn').is(":checked") == true){
+                console.log("공지표출 체크됨");
+                popOpenYn = "Y";
+                console.log(popOpenYn);
+            } else{
+                console.log("공지표출 체크 안됨");
+                //popOpenYn = "N";
+                console.log(popOpenYn);
+            }
+
+            /**************************************
+            * 저장 클릭시 필수입력 값 체크
+            **************************************/
+            console.log("분류: " + $('#sbx_kdDivsCd option:selected').val());
+            var title = $('#ipt_title').val();
+            var contents = $('#ipt_cntn').val();
+            var kdDivsCd = $('#sbx_kdDivsCd option:selected').val();
+
+            if(title == '' || title == null){
+                alertMsg('제목은(는) 필수 입력 사항입니다.');
+                return false;
+            } else if(contents == '' || contents == null){
+               alertMsg('내용은(는) 필수 입력 사항입니다.');
+               return false;
+            }
+
+            if( kdDivsCd == "00"){
+                alertMsg('분류는 필수 선택 사항입니다.');
+               return false;
+            }
+
+            /********************************************
+            * 저장 클릭시 공지표출 체크 했을때 날짜 입력했는지 체크
+            ********************************************/
+            if( $('#cb_popOpenYn').is(":checked") == true){
+                if( ($('#ipt_holiTerm1').val() == '' || $('#ipt_holiTerm1').val() == null ) || ( $('#ipt_holiTerm2').val() == '' || $('#ipt_holiTerm2').val() == null )) {
+                    alertMsg('공지표출 기간을(를) 입력해주세요.');
+                    return false;
+                 }
+            }
+
+            /**************************************
+            * 저장 실행
+            **************************************/
+            n_dialog.confirm('저장하시겠습니까?',function(){
+                if(this.key == 'ok'){
+                    console.log("저장 type: " + type);
+                    console.log("params.email: " + params.email);
+                    var param = {
+                        "type" : type,
+                        "postId" : postId,
+                        "tit" : $("#ipt_title").val(),
+                        "kdDivsCd" : $("#sbx_kdDivsCd").val(),
+                        "mjrYn" : mjrYn,
+                        "popOpenYn" : popOpenYn,
+                        "popOpenDttmFrom" : $("#ipt_holiTerm1").val(),
+                        "popOpenDttmTo" : $("#ipt_holiTerm2").val(),
+                        "cntn" : $("#ipt_cntn").val(),
+                        "dataInptId" : params.email,
+                        "dataInptPgmId" : "question",
+                        "dataUpdId" : params.email,
+                        "dataUpdPgmId" : "question"
+                    }
+
+                   $.ajaxCall( param, {
+                        method:'POST',
+                        url:'/dili/qnaSave/post',
+                        dataType:'json',
+                        data:JSON.stringify(param),
+                        callbackFn:function(data){
+                            if(data){
+                                // 리턴
+                                 location.href = '/dili/question';
+                                 g_toast.push("저장되었습니다.");
+                                 console.log("저장되었습니다.");
+
+                                sFlag = true;
+
+                            }
+                        }
+                   });
+                }else{
+                    g_toast.push("취소하였습니다.");
+                    console.log("취소하였습니다.");
+                }
+            });
+        }
+
+        /*************************************************************
+        *  fileSave : 파일업로드
+        **************************************************************/
+        function fileSave() {
+            console.log('aaa');
+
+            var param = {
+                    "fileFullpath" : $('#filePath').val(),
+                    //"postId" : postId,
+                    "dataInptId" : "TEST1",
+                    "dataInptPgmId" : "question"
+            }
+            console.log(param);
+        }
+
+        /*************************************************************
+        *  btnCncl onClick() : 취소 버튼 클릭 이벤트
+        **************************************************************/
+        function btnCncl() {
+            var title = $('#ipt_title').val();
+            var contents = $('#ipt_cntn').val();
+            var kdDivsCd = $('#sbx_kdDivsCd option:selected').val();
+
+            if(( title != '' && title != null) || (contents != '' && contents != null) || (kdDivsCd != "00")){
+                n_dialog.confirm('작성중인 내용이 있습니다. 취소하시겠습니까?', function(){
+                    if(this.key == 'ok'){       //확인 클릭
+                        location.href = '/dili/question';
+                        g_toast.push("취소되었습니다.");
+                    }else{          //취소
+                        console.log("그대로");
+                    }
+                });
+            } else {
+                location.href = '/dili/question';
+                g_toast.push("목록으로 이동");
+            }
+
+        }
+
+        /*************************************************************
+        *  goList onClick() : 목록 버튼 클릭 이벤트 - 목록으로 돌아가기
+        **************************************************************/
+        function goList() {
+            var title = $('#ipt_title').val();
+            var contents = $('#ipt_cntn').val();
+            var kdDivsCd = $('#sbx_kdDivsCd option:selected').val();
+
+            console.log("제목: " + title);
+            console.log("내용: " + contents);
+            console.log("분류: " + kdDivsCd);
+
+
+            if(type == 'u'){
+                if(( title != '' && title != null) || (contents != '' && contents != null) || (kdDivsCd != "00")){
+                    n_dialog.confirm('작성중인 내용이 있습니다. 취소하시겠습니까?',function(){
+                        if(this.key == 'ok'){       //확인 클릭
+                            location.href = '/dili/question';
+                            g_toast.push("취소되었습니다.");
+                        }else{          //취소
+                            console.log("그대로");
+                        }
+
+                    });
+                } else {
+                    location.href = '/dili/question';
+                    g_toast.push("목록으로 이동");
+                }
+            } else {
+                location.href = '/dili/question';
+                g_toast.push("목록으로 이동");
+            }
+
+        }
+
+        /*************************************************************
+        *  btn_Delete onClick() : 삭제 버튼 클릭 이벤트
+        **************************************************************/
+        function btnDelete(){
+            console.log("삭제 버튼 클릭 이벤트");
+
+            n_dialog.confirm({
+                msg : '삭제하시겠습니까?'
+            }, function() {
+                debugger;
+                if(this.key == 'ok') {
+                    var param = {
+                        "postId": postId,
+                    }
+
+                    $.ajaxCall( param, {
+                        method:'POST',
+                        url:'/dili/qnaDelete/post',
+                        dataType:'json',
+                        data:JSON.stringify(param),
+                        callbackFn:function(data){
+                            if(data){
+                                // 리턴
+                                 location.href = '/dili/question';
+                                 g_toast.push("성공적으로 삭제되었습니다.");
+                                 console.log("삭제되었습니다.");
+
+                                //sFlag = true;
+                                //fileSave();
+                            } else{
+                                g_toast.push("삭제에 실패하였습니다.");
+                                console.log("삭제에 실패하였습니다.");
+                                location.reload();
+                            }
+                        }
+                   });
+                }else if(this.key == 'cancel') {
+                    return;
+                }
+            });
+
+        }
+
+        /***************************************************************
+        *  btn_goUpt onClick() : 수정 버튼 클릭 이벤트 - 수정화면으로 이동
+        ****************************************************************/
+        function btnGoUpdt(){
+            console.log("수정화면으로 이동");
+            type = "u";
+
+            /*******  컴포넌트 수정 가능하게  *******/
+            $('#ipt_title').attr('readonly', false);      //수정가능
+            $('#cb_mjrYn').attr('disabled', false);      //수정가능
+            $('#cb_popOpenYn').attr('disabled', false);      //수정가능
+            $('#ipt_holiTerm1').attr('readonly', false);      //수정가능
+            $('#ipt_holiTerm2').attr('readonly', false);      //수정가능
+            $('#sbx_kdDivsCd').attr('readonly', false);      //수정가능
+            $('#ipt_cntn').attr('readonly', false);      //수정가능
+
+            console.log("수정");
+            /*******  버튼 show/hide 변경  *******/
+            $('#btn_R').hide();
+            $('#btn_U').show();
+            $('#btn_C').hide();
+        }
+
+        /***************************************************************
+        *  btn_updt onClick() : 내용 수정 (업데이트)
+        ****************************************************************/
+        function btnUpdt(){
+            console.log("내용 수정 (업데이트)");
+
+            var mjrYn = "N";
+            var popOpenYn = "N";
+
+            //중요 체크 값 지정(default: 'N')
+            if($('#cb_mjrYn').is(":checked") == true){
+                mjrYn = "Y";
+            }
+
+            // 저장 클릭시 공지팝업표출 값 지정 (default: 'N')
+            if($('#cb_popOpenYn').is(":checked") == true){
+                popOpenYn = "Y";
+
+                /********************************************
+                * 공지표출 체크 했을때 날짜 입력했는지 체크
+                ********************************************/
+                if( ($('#ipt_holiTerm1').val() == '' || $('#ipt_holiTerm1').val() == null ) || ( $('#ipt_holiTerm2').val() == '' || $('#ipt_holiTerm2').val() == null )) {
+                    alertMsg('공지표출 기간을(를) 입력해주세요.');
+                    return false;
+                 }
+            }
+
+
+            /**************************************
+            * 업데이트 실행
+            **************************************/
+            console.log("저장 type: " + type);
+            console.log("업데이트 postId: " + postId);
+            n_dialog.confirm('저장하시겠습니까?',function(){
+                if(this.key == 'ok'){       //확인클릭시
+                    var param = {
+                        "postId": postId,
+                        "type" : type,
+                        "tit" : $("#ipt_title").val(),
+                        "kdDivsCd" : $("#sbx_kdDivsCd").val(),
+                        "mjrYn" : mjrYn,
+                        "popOpenYn" : popOpenYn,
+                        "popOpenDttmFrom" : $("#ipt_holiTerm1").val(),
+                        "popOpenDttmTo" : $("#ipt_holiTerm2").val(),
+                        "cntn" : $("#ipt_cntn").val(),
+                        "dataUpdId" : params.email,
+                        "dataUpdPgmId" : "question"
+                    }
+
+                    $.ajaxCall( param, {
+                        method:'POST',
+                        url:'/dili/qnaSave/post',
+                        dataType:'json',
+                        data:JSON.stringify(param),
+                        callbackFn:function(data){
+                            if(data){
+                                // 리턴
+                                 location.href = '/dili/question';
+                                 g_toast.push("성공적으로 수정되었습니다.");
+                                 console.log("수정되었습니다.");
+
+                                //sFlag = true;
+                                //fileSave();
+                            } else{
+                                g_toast.push("저장에 실패하였습니다.");
+                                console.log("저장에 실패하였습니다.");
+                                location.reload();
+                            }
+                        }
+                   });
+                }else{     //취소클릭시
+                    g_toast.push("취소하였습니다.");
+                    console.log("취소하였습니다.");
+                    //location.reload();
+                }
+
+            });
+
+        }
+
+
+    </script>
+
+</head>
+
+<body>
+
+<div class="container">
+    <h4>QnA 등록</h4>
+    <hr>
+    <br/>
+
+    <div class="container">
+        <button type="button" class="btn btn-sm btn-primary float-left" id="btn_goList" onclick="goList()">목록</button>
+    </div>
+    <br/>
+    <hr>
+
+    <div id="noticeEnrollment">
+        <input type="hidden" name="postId" id="postId" maxlength="70" readonly/>
+
+        <form class="form-inline">
+            <h6><label for="ipt_title" class="mr-4">*제목</label></h6>
+            <input type="text" class="form-control" id="ipt_title" placeholder="제목을 입력해주세요." name="tit" size="150">
+        </form>
+
+        <div class="form-inline">
+            <h6><label>구분</label></h6>
+            <label class="col-sm-2"><input type="checkbox" class="form-control mr-2" id="cb_mjrYn" value=""
+                                           onclick="mjrCheck()">비공개</label>
+            <label class="col-sm-2"><input type="checkbox" class="form-control mr-2" id="cb_popOpenYn" value="">공지표출(팝업)</label>
+
+
+            <input type="hidden" name="date" id="datepickerData1"/>
+            <div id="btn_datepicker1" class="align-self-center mr-5">
+                <input type="text" class="form-control" id="ipt_holiTerm1" name="ipt_holiTerm" placeholder=""
+                       maxlength="24"/> ~
+            </div>
+
+            <input type="hidden" name="date" id="datepickerData2"/>
+            <div id="btn_datepicker2" class="align-self-center mr-5">
+                <input type="text" class="form-control" id="ipt_holiTerm2" name="ipt_holiTerm" placeholder=""
+                       maxlength="24"/>
+            </div>
+        </div>
+
+        <div class="form-inline">
+            <h6><label class="mr-4">*분류</label></h6>
+            <select id="sbx_kdDivsCd" class="form-control mr-4" name="kdDivsCd">
+                <option value="00" selected>선택</option>
+                <option value="01">질문</option>
+                <option value="02">댓글</option>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <h6><label for="ipt_cntn">*내용</label></h6>
+            <textarea class="form-control" rows="15" id="ipt_cntn" name="ipt_cntn" placeholder="내용을 입력해주세요."></textarea>
+
+        </div>
+        <hr>
+
+
+        <hr>
+        <div class="container" id="btn_C">
+            <button type="button" class="btn btn-sm btn-primary float-right mr-2" id="btn_cncl" onclick="btnCncl()">취소
+            </button>
+            <button type="button" class="btn btn-sm btn-primary float-right mr-2" id="btn_save" onclick="btnSave()">등록
+            </button>
+        </div>
+
+        <div class="container" id="btn_R" type="hidden">
+            <!--   (수정) 상세보기 화면에서 수정 화면으로 이동하는 버튼     -->
+            <button type="button" class="btn btn-sm btn-primary float-right mr-2" id="btn_goUpt" onclick="btnGoUpdt()">
+                수정
+            </button>
+            <button type="button" class="btn btn-sm btn-primary float-right mr-2" id="btn_delt" onclick="btnDelete()">
+                삭제
+            </button>
+        </div>
+
+
+    </div>
+</div>
+
+
+
+
+</body>
+
+{% endblock %}

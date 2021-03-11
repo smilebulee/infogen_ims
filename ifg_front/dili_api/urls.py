@@ -73,6 +73,15 @@ urlpatterns = [
     url(r'^getApvlInfo/', views.getApvlInfo, name='getApvlInfo'),
     url(r'^getYryUseDays/', views.getYryUseDays, name='getYryUseDays'),
 
+    url(r'^question/', views.question.as_view(), name='question'),
+    url(r'^questionDtl/', views.questionDtl.as_view(), name='questionDtl'),
+    url(r'^getquestionInfo/', views.getquestionInfo, name='getquestionInfo'),
+    url(r'^getquestionLst/', views.getquestionLst, name='getquestionLst'),
+    url(r'^getQnaPopCnt/', views.getQnaPopCnt, name='getQnaPopCnt'),
+    url(r'^getQnaPopUp/', views.getQnaPopUp, name='getQnaPopUp'),
+    url(r'^questionWrPop', views.questionWrPop.as_view(), name='questionWrPop'),
+    url(r'^questionWr', views.questionWr, name='questionWr'),
+
     # 공통 코드 조회
     url(r'^retrieveCmmCd/', views.retrieveCmmCd, name='retrieveCmmCd'),
 
