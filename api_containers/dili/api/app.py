@@ -2373,6 +2373,38 @@ class questionWrSubmit(Resource):
 
         return jsonify(retJson)
 
+class questiondetail(Resource): # Mariadb 연결 진행
+    def get(self):
+
+        data = request.get_json()
+
+        logging.debug('================== App Start ==================')
+        logging.debug(data)
+        logging.debug(data["number"])
+        logging.debug(request.args.get('number'))
+        logging.debug(request.args.get('param'))
+        logging.debug('================== App End ==================')
+
+        #requirements pymysql import 후 커넥트 사용
+        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
+                                        charset='utf8', autocommit=False)
+        try:
+            with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+                #쿼리문 실행
+                sql = "SELECT * FROM TB_QNA_TEST WHERE QNA_NO ='"+ data["number"] +"'"
+
+                logging.debug(sql)
+                cursor.execute(sql)
+                logging.debug('questionDtPop SUCCESS')
+
+        finally:
+            mysql_con.close()
+            logging.debug('questionDtPop CLOSE')
+
+        result1 = cursor.fetchall()
+
+        return result1
+
 api.add_resource(Hello, '/hello')
 api.add_resource(Register, '/register')
 api.add_resource(Retrieve, '/retrieve')
@@ -2421,6 +2453,7 @@ api.add_resource(questionInfo,'/questionInfo') #api 선언
 api.add_resource(qnaPopCnt,'/qnaPopCnt') #api 선언
 api.add_resource(qnaPopUp,'/qnaPopUp') #api 선언
 api.add_resource(questionWrSubmit,'/questionWrSubmit') #api 선언
+api.add_resource(questiondetail,'/questiondetail') #api 선언
 
 
 
