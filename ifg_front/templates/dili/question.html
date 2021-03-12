@@ -1,0 +1,267 @@
+<script type="text/javascript">
+
+
+var param = {
+"name" : '',
+"email" : sessionStorage.getItem("email"),
+"authId" : sessionStorage.getItem("authId")
+}
+
+
+
+
+$(document).ready(function(){
+
+    $.ajaxCall( param, {
+     'method' : 'GET',
+     'url' : "{% url 'dili_api:getquestionInfo' %}",
+     'dataType' : 'json',
+     'data' : JSON.stringify(param),
+     'async' : false,
+     'callbackFn' : function(data){
+        // 로그
+        console.log("data : ",data)
+        // 리턴
+        QnAListGrd(data);
+     }
+});
+
+/*        $('#searchBtn').click(function(){
+        onClickSearchBtn(ipt_searchName);
+        });
+
+            QnAListGrd(1);
+            getQnaPopCnt();
+*/
+            /* 로그인한 아이디가 관리자일 경우*/
+    if(param.authId == "ADMIN") {
+        /* 검색, 등록버튼 활성화 */
+        $('#ipt_searchName').attr('readonly',false);
+        $('#answerBtn').attr('disabled',false);
+        $('#writeBtn').attr('disabled',false);
+
+    }else{
+        /* 검색, 등록버튼 비활성화 */
+        $('#ipt_searchName').attr('readonly',true);
+        $('#answerBtn').attr('disabled',true);
+        $('#writeBtn').attr('disabled',false);
+
+    }
+
+    });
+
+
+       $('#answerBtn').click(function(){
+            if(param.authId != "ADMIN" ) {
+                alertMsg('글 작성 권한이 없습니다.');
+                return false;
+            }
+        });
+
+function QnAListGrd(data){
+console.log(">>>>>>>>>>>>>>>>>>>>>>>>>QnAListGrdStart")
+    var size = data.length;
+    var QnAListTable = '<table class="table table-bordered text-center">';
+    QnAListTable += '<thead>';
+    QnAListTable += '<tr>';
+    QnAListTable += '<th class="text-center">NO</th>';
+    QnAListTable += '<th class="text-center">제목</th>';
+    QnAListTable += '<th class="text-center">작성자</th>';
+    QnAListTable += '<th class="text-center">작성일시</th>';
+    QnAListTable += '</tr>';
+    QnAListTable += '</thead>';
+    QnAListTable += '<tbody>';
+
+    console.log("Start")
+    console.log(data)
+    console.log(typeof(data))
+
+    if(data.length > 0) {
+        for(var i = 0; i < size; i++){
+
+            QnAListTable += '<tr id ="grd_QnAList")>';
+            QnAListTable += '<td id="qnaOrNo" class="pt-3-half">'+(i+1)+'</td>';
+            QnAListTable += '<td id="qnaTitle" onclick="onClickEvt(\''+data[i].QNA_NO+'\')" class="pt-3-half">'+data[i].QNA_TITLE+'</td>';
+            QnAListTable += '<td id="qnaWrt" class="pt-3-half">'+data[i].QNA_WR_NM+'</td>';
+            QnAListTable += '<td id="qnaRgd" class="pt-3-half">'+data[i].QNA_RGS_DATE+'</td>';
+            QnAListTable += '</tr>';
+
+        }
+    }
+
+
+    QnAListTable += '</tbody>';
+    QnAListTable += '</table>';
+
+    document.getElementById('grd_QnAListTable').innerHTML = QnAListTable;
+
+    $("#ipt_searchName").click(function(){
+        $('[name="ipt_searchName"]').val("");
+    });
+};
+
+function onClickEvt(i) {
+    var number = i;
+    $('#hidden_selectNumber').val(number);
+
+    var url = "{% url 'dili_api:questionEditPop' %}" + "/?number=" +number ;
+
+    $('#qnaDiv').load(url);
+
+};
+
+
+
+function getQnaPopCnt(){
+    var options = {
+        method : 'get',
+        url : "{% url 'dili_api:getQnaPopCnt' %}",
+        callbackFn :  function(ret){
+            if(ret[0].COUNT > 0){
+                //debugger;
+                getCookie();
+            } else {
+                //debugger;
+            }
+        }
+    };
+
+    $.ajaxCall({ }, options);
+}
+
+function getQnaPopUp(){
+    var options = {
+        method : 'get',
+        url : "{% url 'dili_api:getQnaPopUp' %}",
+        callbackFn :  function(ret){
+            //debugger;
+            if(ret.length > 0) {
+                var str = "<tr><td><b>" + ret[0].TIT + "</b></td>"
+                        + "<td style='text-align: right;'>"+ ret[0].QNA_RGS_DATE.substr(0, 10) + "</td></tr>"
+                        + "<tr><td colspan='2'>" + ret[0].CNTN + "</td></tr>";
+                $('#not_body').html(str);
+                $('#divpop').modal("show");
+
+                //$('#not_tit').html("<b>" + ret[0].TIT + "</b>");
+                //$('#not_date').html("<span style='text-align: right;'>" + ret[0].QNA_RGS_DATE.substr(0, 10) + "</span>");
+                //$('#not_cntn').html(ret[0].CNTN);
+            }
+        }
+    };
+
+    $.ajaxCall({ }, options);
+}
+
+
+
+function makePaging(ret){
+    $('#paging_navi').makePagingNavi(ret, 'QnAListGrd');
+}
+
+
+/* 글쓰기 모달 오픈 */
+$("#questionWrBtn").click(function(){
+    var url = "{% url 'dili_api:questionWrPop' %}" ;
+
+    //$('#qnaModalDiv').css("width","70%");
+
+    //modal('qnaModalDiv');
+
+    $('#qnaDiv').load(url);
+});
+
+
+
+
+
+
+/* 한글만 입력가능체크 */
+function isKorean(){
+     if((event.keyCode < 12592) || (event.keyCode > 12687)){
+      event.returnValue = false
+     }
+}
+
+/* 이름 마스킹처리 */
+function maskingNm(strName){
+    if (strName.length > 2) {
+        var originName = strName.split('');
+        originName.forEach(function(name, i) {
+          if (i === 0 || i === originName.length - 1) return;
+          originName[i] = '*';
+        });
+        var joinName = originName.join();
+        return joinName.replace(/,/g, '');
+      } else {
+        var pattern = /.$/; // 정규식
+        return strName.replace(pattern, '*');
+      }
+}
+
+</script>
+    <input type="text" class="form-control" id="hidden_selectNumber" name="hidden_selectNumber" maxlength="30" readonly hidden/>
+
+<div id="qnaDiv">
+
+<!-- Modal Div -->
+<div id="qnaModalDiv" class="modalUi">
+    <div id="qnaModal">
+    </div>
+    <a class="modal_close_btn" id="exitqnaModalBtn">
+        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-x-circle" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+           <path fill-rule="evenodd" d="
+           M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+           <path fill-rule="evenodd" d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+        </svg>
+    </a>
+</div>
+
+
+
+
+                    <!-- Modal body -->
+<div class="row">
+    <div class="col-sm-12">
+        <div class="mb-4" role="alert">
+            <h5>
+                <b>Q&A</b>
+            </h5>
+        </div>
+        <div class="accordion mb-4" id="grp_search">
+            <div class="card">
+                <div class="card-header p-0" id="head_search">
+                    <h2 class="mb-0">
+                        <button class="btn btn-link btn-block text-left text-dark" type="button" data-toggle="collapse" data-target="#col_search" aria-expanded="true" aria-controls="collapseOne">
+                            <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-caret-down-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z"/>
+                            </svg>
+                            Q&A
+                        </button>
+                    </h2>
+                </div>
+                <div id="col_search" class="collapse show" aria-labelledby="head_search" data-parent="#grp_search">
+                    <div class="card-body flex-height d-flex m-0 p-2">
+                        <div class="align-self-start align-self-center mr-3">제목</div>
+                        <div class="align-self-center mr-3">
+                            <input type="text" class="form-control" id="ipt_searchName" name="ipt_searchName" placeholder="제목을 입력해주세요." maxlength="5" onKeyPress="isKorean();"/>
+                        </div>
+                        <div class="align-self-center mr-3">
+                            <button class="button" id="searchBtn" type="button">조회</button>
+                        </div>
+                        <div class="align-self-end align-self-center mr-3">
+                            <button class="button" id="questionWrBtn" type="button">글쓰기</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+     </div>
+</div>
+<!-- 게시글 목록 Div -->
+
+    <div style="margin:120px auto 0px auto; width:500px">
+        <div id="grd_QnAListTable" style="overflow:auto; height:600px;"></div>
+        <div id="paging_navi"></div>
+    </div>
+
+</div>

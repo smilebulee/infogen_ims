@@ -19,7 +19,7 @@
             $("#ipt_jobEndTm").val(strNowTm);
 
             // 로그인한 사용자 소속 사업부장 이름, 이메일 조회 후 값 세팅
-            retrieveEmpDeptByEmail(sessionStorage.getItem("email"), function(data) {
+            retrieveEmpDeptGmByEmail(sessionStorage.getItem("email"), function(data) {
                 if(data.length > 0) {
                     $('#ipt_apvlLnSearchNamePop').val(data[0].DEPT_GM_NAME);
                     $("#ipt_apvlLnSearchEmailPop").val(data[0].DEPT_GM_EMAIL);

@@ -149,6 +149,35 @@ function retrieveEmpDeptByEmail(empEmail, callBackFunc) {
         }
     });
 }
+
+
+/* 이메일 주소로 사용자 부서 조회 */
+function retrieveEmpDeptGmByEmail(empEmail, callBackFunc) {
+
+    var param = {
+        "email" : empEmail
+    }
+
+    $.ajaxCall( param, {
+        'method' : 'GET',
+        'url' : '/dili/getEmpDeptGm/',
+        'dataType' : 'json',
+        'data' : JSON.stringify(param),
+        'async' : false,
+        'callbackFn' : function(data){
+            //empNm = data[0].EMP_NAME;
+            if(callBackFunc) {
+                if(typeof callBackFunc == 'function') {
+                    callBackFunc(data);
+                } else if(typeof callBackFunc == 'string') {
+                    window[callBackFunc](data);
+                }
+            }
+        }
+    });
+}
+
+
 /* 자리수만큼 0 채우기 (근무 시간 형식 지정) */
 function fillZero(width, str){
     str = str + '';

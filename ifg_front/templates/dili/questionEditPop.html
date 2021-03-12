@@ -1,0 +1,152 @@
+<script type="text/javascript">
+$(document).ready(function(){
+debugger;
+    var number = $('#hidden_selectNumber').val();
+    console.log("==========> number" +number);
+    getEditQnaDetail(number);
+
+});
+
+
+function getEditQnaDetail(number){
+    var param = {
+        "number" : number
+    }
+
+    /* 정보 조회 */
+    $.ajaxCall( param, {
+         'method' : 'GET',
+         'url' : "{% url 'dili_api:questiondetail' %}",
+         'dataType' : 'json',
+         'data' : JSON.stringify(param),
+         'async' : false,
+         'callbackFn' : function(data){
+            // 로그
+            console.log("data : ",data);
+            // 리턴
+            //qnaDtSet(data);
+         }
+    });
+}
+
+function qnaDtSet(data){
+        console.log("Start")
+        console.log(data)
+        console.log(typeof(data))
+
+        var get_qnaNo = data[0].QNA_NO;
+        var get_qnaTt = data[0].QNA_TITLE;
+        var get_qnaCont = data[0].QNA_MAIN;
+        var get_qnaWrNm = data[0].QNA_WR_NM;
+        var get_qnaDt = data[0].QNA_RGS_DATE;
+        var get_qnaRwNm = data[0].QNA_REWR_NM;
+        var get_qnaRwDt = data[0].QNA_REWR_DATE;
+        var get_qnaOpen = data[0].QNA_OPEN_YN;
+        var get_qnaCnt = data[0].QNA_CNT;
+        var get_qnaPw = data[0].PASSWD;
+
+        $('#ipt_empId').val(get_qnaRwNm);
+        $('#ipt_qnatitle').val(get_qnaTt);
+        $('#sbx_qnaContent').val(get_qnaCont);
+};
+
+
+/* 닫기 버튼 클릭 이벤트 */
+function onClickCloseBtn() {
+    var url = "{% url 'dili_api:question' %}" ;
+    $('#testDiv').load(url);
+
+};
+
+/* 리셋 버튼 클릭 이벤트 */
+function onClickResetBtn() {
+    $('#ipt_empId').attr('readonly', false);
+    $('#reIsExistBtn').attr('hidden', true);
+    /*$('#ipt_empId').attr('style', 'width:200px');*/
+    $('#isExistBtn').attr('hidden', false);
+};
+
+</script>
+<div style="width :450px;">
+    <div class="mb-4" role="alert">
+        <h6>
+            <b>QnA 상세조회</b>
+        </h6>
+    </div>
+    <div class="flex-height d-flex m-0">
+        <form method="post" id="submitEmp" action="">
+            <table>
+                <tr>
+                    <td></td>
+                    <td colspan="2">
+                         <div class="flex-height mb-4">
+                            <span class="requiredText"><b>* 는 필수 입력 항목입니다.</b></span>
+                         </div>
+                    </td>
+                </tr>
+                <!-- ID -->
+                <tr>
+                    <td>
+                        <div class="align-self-start align-self-center mr-5"><span class="requiredTag mr-1">*</span><label for="ipt_empId">작성자ID &nbsp;&nbsp;&nbsp;</label></div>
+                    </td>
+                    <td>
+                        <div class="align-self-center mr-2">
+                            <input type="text" class="form-control" id="ipt_empId" name="ipt_empId" placeholder="ID" maxlength="12" onkeyup="validChk();"/>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="align-self-center mr-2">
+                            <button class="button" id="reIsExistBtn" type="button" onclick="onClickReIsExistBtn()" hidden="hidden">ID 재설정</button>
+                            <button class="button" id="isExistBtn" type="button" onclick="onClickIsExistBtn()">중복확인</button>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td colspan="2">
+                        <div class="flex-height d-flex mb-2">
+                            <span class="requiredText">> ID는 영문, 숫자로 4~12자로 입력해주세요.</span>
+                        </div>
+                    </td>
+                </tr>
+                <!-- 제목 -->
+                <tr>
+                    <td>
+                        <div class="align-self-start align-self-center mr-5"><span class="requiredTag mr-1">*</span><label for="ipt_qnatitle">제목</label></div>
+                    </td>
+                    <td>
+                        <div class="align-self-center mr-2">
+                            <input type="text" class="form-control" id="ipt_qnatitle" name="ipt_qnatitle" placeholder="TITLE" maxlength="5" />
+                        </div>
+                    </td>
+                </tr>
+                <!-- 내용 -->
+                <tr>
+                    <td>
+                        <div class="align-self-start align-self-center mr-5"><span class="requiredTag mr-1">*</span><label for="sbx_qnaContent">내용</label></div>
+                    </td>
+                    <td>
+                        <div class="align-self-center mr-2">
+                            <input type="text" class="form-control" id="sbx_qnaContent" name="sbx_qnaContent" placeholder="내용을 입력하세요" maxlength="1000" />
+                        </div>
+                    </td>
+                    <td></td>
+                </tr>
+                <!-- 버튼 -->
+                <tr>
+                    <td>
+                        <!-- 중복체크 여부 hidden -->
+                        <input type="text" class="form-control" id="hidden_existChk" name="hidden_existChk" maxlength="30" style="" readonly hidden/>
+                    </td>
+                    <td colspan="2">
+                        <div class="flex-height mt-4" style="float:right;">
+                            <button class="button" id="submitBtn" type="button" onclick="onClickSubmitBtn()">수정</button>
+                            <button class="button" id="deleteBtn" type="button" onclick="onClickDeleteBtn()">삭제</button>
+                            <button class="button" id="closeBtn" type="button" onclick="onClickCloseBtn()" >닫기</button>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </form>
+    </div>
+</div>
