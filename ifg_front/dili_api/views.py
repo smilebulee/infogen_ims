@@ -1042,3 +1042,24 @@ def questionWr(request):
     logger.info(r.json())
 
     return JsonResponse(r.json(), safe=False)
+
+def questiondetail(request):
+    param = json.loads(request.GET['param'])
+
+    logger.info("Parameters Logging Start")
+    logger.info(param)
+    logger.info("Parameters Logging End")
+
+    # api 호출
+    r = requests.get('http://dili_api:5006/questiondetail', json=param)
+    logger.info(r)
+    logger.info(r.text)
+    logger.info(r.json())
+    return JsonResponse(r.json(), safe=False)
+
+class questionEditPop(generic.TemplateView):
+    def get(self, request, *args, **kwargs):
+        template_name = 'dili/questionEditPop.html'
+
+        return render(request, template_name)
+        # return render(request, template_name, rr)
