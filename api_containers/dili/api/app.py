@@ -274,12 +274,15 @@ class totalWrktm(Resource): # Mariadb 연결 진행
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 #쿼리문 실행
-                sql = "SELECT CONCAT(COUNT(*) * 10.4) AS WRK_TOT_TM"\
-                      "    FROM TB_DT_INFO"\
-                      "   WHERE 1=1"\
-                      "   AND DT LIKE '" + data["dt"] + "%'"\
-                      "   AND HLDY_DIVS_CD = '01'"\
-                      "   AND DOW_DIVS_CD NOT IN ('01','07')"
+                sql = "SELECT (SELECT CONCAT(COUNT(*) * 8)"\
+                      "          FROM TB_DT_INFO"\
+                      "         WHERE DT LIKE '" + data["dt"] + "%'"\
+                      "           AND HLDY_DIVS_CD = '01'"\
+                      "           AND DOW_DIVS_CD NOT IN ('01','07')) AS WRK_TOT_TM" \
+                      "       ,(SELECT CONCAT(TRUNCATE((COUNT(*) / 7) * 12, 2))" \
+                      "          FROM TB_DT_INFO" \
+                      "         WHERE DT LIKE '" + data["dt"] + "%') AS EXTN_WRK_PSBL_TM"\
+                      "    FROM DUAL"
                 logging.debug(sql)
                 cursor.execute(sql)
 
@@ -481,10 +484,9 @@ class wrkTimeInfoByEml(Resource): # Mariadb 연결 진행
                     + "      ,DATE_FORMAT(SEC_TO_TIME(SUM(TIME_TO_SEC(STR_TO_DATE( CONCAT(SUBSTRING(IFNULL(B.WRK_TME,'000000'),1,2),':',SUBSTRING(IFNULL(B.WRK_TME,'000000'),3,2),':',SUBSTRING(IFNULL(B.WRK_TME,'000000'),5,2)) ,'%H:%i:%S')))),'%H.%i') APRV_OVER_WRK_TM" \
                     + "  FROM TB_WRK_TM_MGMT_M A LEFT OUTER JOIN TB_APVL_REQ_MGMT_M B ON A.EMP_EMAL_ADDR = B.EMP_EMAL_ADDR AND A.WRK_DT = B.WRK_DT AND B.APVL_REQ_DIVS IN ('01','02')" \
                     + " WHERE A.EMP_EMAL_ADDR = '" +data["email"] + "'" \
-                    + "  AND B.APVL_DIVS = '02'" \
                     + "   AND A.WRK_DT LIKE '" + data["dt"] + "%'" \
                     + " GROUP BY A.EMP_EMAL_ADDR"
-                logging.debug(sql)
+                logging.debug(sql + "#####")
                 cursor.execute(sql)
 
         finally:
@@ -1603,7 +1605,9 @@ class insertStrtTm(Resource):  # Mariadb 연결 진행
 
         params = json.loads(request.data)
         logger.info("App Parameters Start")
-        logger.info(params['email'])
+        logger.info("email" + params['email'])
+        logger.info("dt" + params['dt'])
+        logger.info("tm" + params['tm'])
         logger.info("App Parameters End")
 
         email = params['email']
@@ -1619,9 +1623,11 @@ class insertStrtTm(Resource):  # Mariadb 연결 진행
                 sql = "INSERT INTO TB_WRK_TM_MGMT_M( `EMP_EMAL_ADDR` " \
                       ",`WRK_DT` " \
                       ",`JOB_STRT_TM` " \
-                      ") VALUES( %s ,%s ,%s )"
+                      ") VALUES( %s ,%s ,%s ) " \
+                      "ON DUPLICATE KEY " \
+                      "UPDATE `JOB_STRT_TM` = %s"
                 logger.info(sql)
-                cursor.execute(sql, (email, dt, tm))
+                cursor.execute(sql, (email, dt, tm, tm))
 
                 mysql_con.commit()
 
