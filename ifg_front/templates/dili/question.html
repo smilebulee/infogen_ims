@@ -79,11 +79,9 @@ console.log(">>>>>>>>>>>>>>>>>>>>>>>>>QnAListGrdStart")
     if(data.length > 0) {
         for(var i = 0; i < size; i++){
 
-            QnAListTable +=
-
             QnAListTable += '<tr id ="grd_QnAList")>';
             QnAListTable += '<td id="qnaOrNo" class="pt-3-half">'+(i+1)+'</td>';
-            QnAListTable += '<td id="qnaTitle" class="pt-3-half">'+data[i].QNA_TITLE+'</td>';
+            QnAListTable += '<td id="qnaTitle" onclick="onClickEvt(\''+data[i].QNA_NO+'\')" class="pt-3-half">'+data[i].QNA_TITLE+'</td>';
             QnAListTable += '<td id="qnaWrt" class="pt-3-half">'+data[i].QNA_WR_NM+'</td>';
             QnAListTable += '<td id="qnaRgd" class="pt-3-half">'+data[i].QNA_RGS_DATE+'</td>';
             QnAListTable += '</tr>';
@@ -100,6 +98,16 @@ console.log(">>>>>>>>>>>>>>>>>>>>>>>>>QnAListGrdStart")
     $("#ipt_searchName").click(function(){
         $('[name="ipt_searchName"]').val("");
     });
+};
+
+function onClickEvt(i) {
+    var number = i;
+    $('#hidden_selectNumber').val(number);
+
+    var url = "{% url 'dili_api:questionEditPop' %}" + "/?number=" +number ;
+
+    $('#qnaDiv').load(url);
+
 };
 
 
@@ -159,8 +167,10 @@ $("#questionWrBtn").click(function(){
 
     //modal('qnaModalDiv');
 
-    $('#testDiv').load(url);
+    $('#qnaDiv').load(url);
 });
+
+
 
 
 
@@ -189,6 +199,9 @@ function maskingNm(strName){
 }
 
 </script>
+    <input type="text" class="form-control" id="hidden_selectNumber" name="hidden_selectNumber" maxlength="30" readonly hidden/>
+
+<div id="qnaDiv">
 
 <!-- Modal Div -->
 <div id="qnaModalDiv" class="modalUi">
@@ -236,7 +249,6 @@ function maskingNm(strName){
                             <button class="button" id="searchBtn" type="button">조회</button>
                         </div>
                         <div class="align-self-end align-self-center mr-3">
-                            <input type="text" class="form-control" id="hidden_selectMail" name="hidden_selectMail" maxlength="30" readonly hidden/>
                             <button class="button" id="questionWrBtn" type="button">글쓰기</button>
                         </div>
                     </div>
@@ -252,3 +264,4 @@ function maskingNm(strName){
         <div id="paging_navi"></div>
     </div>
 
+</div>
