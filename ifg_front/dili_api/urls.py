@@ -80,7 +80,8 @@ urlpatterns = [
     url(r'^getQnaPopUp/', views.getQnaPopUp, name='getQnaPopUp'),
     url(r'^questionWrPop', views.questionWrPop.as_view(), name='questionWrPop'),
     url(r'^questionWr', views.questionWr, name='questionWr'),
-
+    url(r'^questionEditPop', views.questionEditPop.as_view(), name='questionEditPop'),
+    url(r'^questiondetail', views.questiondetail, name='questiondetail'),
     # 공통 코드 조회
     url(r'^retrieveCmmCd/', views.retrieveCmmCd, name='retrieveCmmCd'),
 
