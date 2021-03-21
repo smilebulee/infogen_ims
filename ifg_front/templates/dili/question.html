@@ -82,8 +82,8 @@ console.log(">>>>>>>>>>>>>>>>>>>>>>>>>QnAListGrdStart")
             QnAListTable += '<tr id ="grd_QnAList")>';
             QnAListTable += '<td id="qnaOrNo" class="pt-3-half">'+(i+1)+'</td>';
             QnAListTable += '<td id="qnaTitle" onclick="onClickEvt(\''+data[i].QNA_NO+'\')" class="pt-3-half">'+data[i].QNA_TITLE+'</td>';
-            QnAListTable += '<td id="qnaWrt" class="pt-3-half">'+data[i].QNA_WR_NM+'</td>';
-            QnAListTable += '<td id="qnaRgd" class="pt-3-half">'+data[i].QNA_RGS_DATE+'</td>';
+            QnAListTable += '<td id="qnaWrt" class="pt-3-half" width="300">'+data[i].QNA_WR_NM+'</td>';
+            QnAListTable += '<td id="qnaRgd" class="pt-3-half" width="200">'+data[i].QNA_RGS_DATE+'</td>';
             QnAListTable += '</tr>';
 
         }
@@ -241,9 +241,16 @@ function maskingNm(strName){
                 </div>
                 <div id="col_search" class="collapse show" aria-labelledby="head_search" data-parent="#grp_search">
                     <div class="card-body flex-height d-flex m-0 p-2">
-                        <div class="align-self-start align-self-center mr-3">제목</div>
+                        <div class="align-self-center mr-5">
+                            <select id="sbx_apvlStatus" class="form-control" name="type">
+                                <option value = "00" selected>제목</option>
+                                <option value = "01">내용</option>
+                                <option value = "02">제목+내용</option>
+                                <option value = "03">작성자</option>
+                            </select>
+                        </div>
                         <div class="align-self-center mr-3">
-                            <input type="text" class="form-control" id="ipt_searchName" name="ipt_searchName" placeholder="제목을 입력해주세요." maxlength="5" onKeyPress="isKorean();"/>
+                            <input type="text" class="form-control" id="ipt_searchName" name="ipt_searchName" placeholder="" maxlength="5" onKeyPress="isKorean();"/>
                         </div>
                         <div class="align-self-center mr-3">
                             <button class="button" id="searchBtn" type="button">조회</button>
@@ -259,9 +266,8 @@ function maskingNm(strName){
 </div>
 <!-- 게시글 목록 Div -->
 
-    <div style="margin:120px auto 0px auto; width:500px">
+    <center>
         <div id="grd_QnAListTable" style="overflow:auto; height:600px;"></div>
-        <div id="paging_navi"></div>
-    </div>
 
+    </center>
 </div>
