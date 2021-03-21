@@ -99,15 +99,16 @@ function allWrkTmCall(date, strtTm, endTm, restTm){
     var endDate = new Date(tmpEndDate);
 
     var tmpSubtractTm = endDate - strtDate;
-    var hour = Math.floor((tmpSubtractTm % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-    if(hour > 4){
-        hour -= restTm
+    //var hour = Math.floor((tmpSubtractTm % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    var tmpMinute = tmpSubtractTm/(1000 * 60);
+
+    if(tmpMinute > 240){
+        tmpMinute -= restTm
     }
-    var minute = Math.floor((tmpSubtractTm % (1000 * 60 * 60)) / (1000 * 60));
-    var second = Math.floor((tmpSubtractTm % (1000 * 60)) / 1000);
-
-
-    var subtractTm = lpad((hour).toString(),2,"0")+":"+lpad((minute).toString(),2,"0")+":"+lpad((second).toString(),2,"0");
+    //var second = Math.floor((tmpSubtractTm % (1000 * 60)) / 1000);
+    var hour = Math.floor(tmpMinute/60);
+    var minute = Math.floor(tmpMinute%60);
+    var subtractTm = lpad((hour).toString(),2,"0")+":"+lpad((minute).toString(),2,"0")+":00";
 
     return subtractTm
 }
@@ -144,4 +145,15 @@ function dateConverting1(date) {
 function dateConverting2(date) {
 
     return date.replace(/-/gi,"/");
+}
+
+function betweenDay(weekStrt, weekEnd) {
+
+    var today = new Date();
+    if(weekStrt <= today && today <= weekEnd) {
+        return true;
+    } else {
+        return false;
+    }
+
 }
