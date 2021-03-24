@@ -1,4 +1,9 @@
 <script type="text/javascript">
+/* 메인 화면에서 받는 이메일 파라미터 */
+var param = {
+    "email"     : sessionStorage.getItem("email"),
+}
+
 /*********************************************************************
 *   Dialog Setting
 *********************************************************************/
@@ -13,88 +18,25 @@ n_dialog.setConfig({
     }
 });
 
-/* ID 중복확인 버튼 클릭 이벤트 */
-function onClickIsExistBtn() {
-    var email = $('#ipt_empId').val();
-    if( email == "" || email == null){
-        alertMsg("ID를 입력해주세요");
-    }else if(email.length < 4 || email.length > 12 ) {
-        alertMsg("직원 ID는 4 ~ 12자로 입력해주세요.", function() {
-            $('#ipt_empId').focus();
-        });
-    }else{
-        var param = {
-            "email" : email
-        }
+$(document).ready(function(){
+    $('#qs_wn').text(param.email);
+    console.log("==========> param.email :"+param.email);
 
-        /* 정보 조회 */
-        $.ajaxCall( param, {
-             'method' : 'GET',
-             'url' : "{% url 'dili_api:getEditEmpInfo' %}",
-             'dataType' : 'json',
-             'data' : JSON.stringify(param),
-             'async' : false,
-             'callbackFn' : function(data){
-                // 로그
-                console.log("data : ",data);
-                // 리턴
-                isExistResult(data);
-             }
-        });
-    }
+});
 
-};
-
-/* ID 중복체크 결과 */
-function isExistResult(data){
-    console.log("Start")
-    console.log(data)
-    console.log(typeof(data))
-    if(data.length > 0){
-        alertMsg("이미 사용중인 ID입니다.", function() {
-            console.log("ID 중복체크 > 등록 불가능");
-            $('#ipt_empId').val("");
-            $('#ipt_empId').focus();
-        });
-
-
-    }else{
-        alertMsg("사용 가능한 ID입니다.", function() {
-            console.log("ID 중복체크 > 등록가능");
-            $('#ipt_empId').attr('readonly', true);
-            $('#reIsExistBtn').attr('hidden', false);
-            $('#isExistBtn').attr('hidden', true);
-        });
-    }
-};
 
 /* 등록버튼 클릭 이벤트 */
 function onClickSubmitBtn() {
-    var ipt_empId = $('[name="ipt_empId"]').val();
-    var ipt_qnatitle = $('[name="ipt_qnatitle"]').val();
-    var sbx_qnaContent = $('[name="sbx_qnaContent"]').val();
+debugger;
+    var ipt_wrId = $('[name="qs_wn"]').val();
+    var ipt_qnatitle = $('[name="qs_title"]').val();
+    var sbx_qnaContent = $('[name="qs_content"]').val();
 
 
-    if( ipt_empId == "" || ipt_empId == null ){
-        alertMsg("직원 ID를 입력해 주세요.", function() {
-            $('#ipt_empId').focus();
-        });
-        return false;
-    } else if(ipt_empId.length < 4 || ipt_empId.length > 12 ) {
-        alertMsg("직원 ID는 4 ~ 12자로 입력해주세요.", function() {
-            $('#ipt_empId').focus();
-        });
-        return false;
-    } else if($('#reIsExistBtn').is(":hidden")) {
-        alertMsg("직원 ID 중복여부 체크해 주세요.", function() {
-            $('#ipt_empId').focus();
-        });
-        return false;
-    }
 
 
     var param = {
-        "ipt_empId"     : ipt_empId,
+        "ipt_wrId"     : ipt_wrId,
         "ipt_qnatitle"     : ipt_qnatitle,
         "sbx_qnaContent" : sbx_qnaContent,
         "sessionId"         : sessionStorage.getItem("email")      //로그인한 사용자 아이디
@@ -139,116 +81,59 @@ function onClickSubmitBtn() {
 
 
 
-/* 닫기 버튼 클릭 이벤트 */
+/* 목록 버튼 클릭 이벤트 */
 function onClickCloseBtn() {
     var url = "{% url 'dili_api:question' %}" ;
     $('#testDiv').load(url);
 
 };
 
-/* 리셋 버튼 클릭 이벤트 */
-function onClickResetBtn() {
-    $('#ipt_empId').attr('readonly', false);
-    $('#reIsExistBtn').attr('hidden', true);
-    /*$('#ipt_empId').attr('style', 'width:200px');*/
-    $('#isExistBtn').attr('hidden', false);
-};
-
-/* 영문, 숫자만 입력가능체크 */
-function validChk(){
-     if(((event.keyCode >= 48) && (event.keyCode <= 57)) || ((event.keyCode >= 65) && (event.keyCode <= 90)) || ((event.keyCode >= 97) && (event.keyCode <= 122))){
-        event.returnValue = true
-     }else if( event.keyCode == undefined){
-        event.returnValue = true
-     }else{
-        var inputId = $('#ipt_empId').val();
-        $('#ipt_empId').val(inputId.substring( 0, (inputId.length)-1 ));
-        $('#ipt_empId').focus();
-        event.returnValue = false
-     }
-}
-
 </script>
-<div style="width :450px;">
-    <div class="mb-4" role="alert">
-        <h6>
-            <b>QnA등록</b>
-        </h6>
-    </div>
-    <div class="flex-height d-flex m-0">
-        <form method="post" id="submitEmp" action="">
-            <table>
-                <tr>
-                    <td></td>
-                    <td colspan="2">
-                         <div class="flex-height mb-4">
-                            <span class="requiredText"><b>* 는 필수 입력 항목입니다.</b></span>
-                         </div>
-                    </td>
-                </tr>
-                <!-- ID -->
-                <tr>
-                    <td>
-                        <div class="align-self-start align-self-center mr-5"><span class="requiredTag mr-1">*</span><label for="ipt_empId">작성자ID &nbsp;&nbsp;&nbsp;</label></div>
-                    </td>
-                    <td>
-                        <div class="align-self-center mr-2">
-                            <input type="text" class="form-control" id="ipt_empId" name="ipt_empId" placeholder="ID" maxlength="12" onkeyup="validChk();"/>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="align-self-center mr-2">
-                            <button class="button" id="reIsExistBtn" type="button" onclick="onClickReIsExistBtn()" hidden="hidden">ID 재설정</button>
-                            <button class="button" id="isExistBtn" type="button" onclick="onClickIsExistBtn()">중복확인</button>
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td></td>
-                    <td colspan="2">
-                        <div class="flex-height d-flex mb-2">
-                            <span class="requiredText">> ID는 영문, 숫자로 4~12자로 입력해주세요.</span>
-                        </div>
-                    </td>
-                </tr>
-                <!-- 제목 -->
-                <tr>
-                    <td>
-                        <div class="align-self-start align-self-center mr-5"><span class="requiredTag mr-1">*</span><label for="ipt_qnatitle">제목</label></div>
-                    </td>
-                    <td>
-                        <div class="align-self-center mr-2">
-                            <input type="text" class="form-control" id="ipt_qnatitle" name="ipt_qnatitle" placeholder="TITLE" maxlength="5" />
-                        </div>
-                    </td>
-                </tr>
-                <!-- 내용 -->
-                <tr>
-                    <td>
-                        <div class="align-self-start align-self-center mr-5"><span class="requiredTag mr-1">*</span><label for="sbx_qnaContent">내용</label></div>
-                    </td>
-                    <td>
-                        <div class="align-self-center mr-2">
-                            <input type="text" class="form-control" id="sbx_qnaContent" name="sbx_qnaContent" placeholder="내용을 입력하세요" maxlength="1000" />
-                        </div>
-                    </td>
-                    <td></td>
-                </tr>
-                <!-- 버튼 -->
-                <tr>
-                    <td>
-                        <!-- 중복체크 여부 hidden -->
-                        <input type="text" class="form-control" id="hidden_existChk" name="hidden_existChk" maxlength="30" style="" readonly hidden/>
-                    </td>
-                    <td colspan="2">
-                        <div class="flex-height mt-4" style="float:right;">
-                            <button class="button" id="submitBtn" type="button" onclick="onClickSubmitBtn()">등록</button>
-                            <input class="button" id="resetBtn" type="reset" onclick="onClickResetBtn()" />
-                            <button class="button" id="closeBtn" type="button" onclick="onClickCloseBtn()" >닫기</button>
-                        </div>
-                    </td>
-                </tr>
-            </table>
-        </form>
+
+<div class="row">
+    <div class="col-sm-12">
+        <div class="mb-4" role="alert">
+            <h5>
+                <b>Q&A 등록</b>
+            </h5>
+        </div>
+        <center>
+            <div id="grd_QnARegTable" style="overflow:auto;">
+                <form method="post" id="submitEmp" action="">
+                    <div class="flex-height mb-2" style="float:right;">
+                        <button class="button" id="closeBtn" type="button" onclick="onClickCloseBtn()" >목록</button>
+                    </div>
+                    <table class="table">
+                        <tbody>
+                            <tr>
+                                <th style="width:200px;text-align:center;">작성자ID</th>
+                                <td><span id="qs_wn" name="qs_wn"></span></td>
+                            </tr>
+                            <tr>
+                                <th style="width:200px;text-align:center;">제목</th>
+                                <td><input type="text" id="qs_title" name="qs_title" style="width:100%;height:30px;" maxlength="495" placeholder="제목을 입력하세요"></td>
+                            </tr>
+                            <tr>
+                                <th style="width:200px;text-align:center;">내용</th>
+                                <td>
+                                    <textarea  id="qs_content" name="qs_content" style="width:100%;height:300px;overflow-y:scroll;" placeholder="내용을 입력하세요" wrap="hard" maxlength="1000"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2" style="text-align:center;font-weight:bold;">
+                                    <span>게시글을 비공개하시겠습니까?</span><br>
+                                    <input type="checkbox" id="showYN" value="비공개">&nbsp;비공개<br>
+                                    <div id="postPWdiv">비밀번호 : <input type="password" id="PostPW"></div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="flex-height mb-2" style="float:right;">
+                        <button class="button" id="submitBtn" type="button" onclick="onClickSubmitBtn()">등록</button>
+                        <input class="button" id="resetBtn" type="reset"/>
+                    </div>
+                </form>
+            </div>
+        </center>
     </div>
 </div>

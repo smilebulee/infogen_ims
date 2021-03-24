@@ -2241,7 +2241,7 @@ class question(Resource):  # Mariadb 연결 진행
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 # 쿼리문 실행
-                sql = "SELECT  COUNT(*) AS COUNT " \
+                sql = "SELECT  * " \
                       "FROM  TB_QNA_TEST " \
                       "WHERE QNA_DEL_YN = 'N' " \
                       "ORDER BY QNA_ORIGIN_NO DESC, QNA_SORTS "
@@ -2279,10 +2279,9 @@ class questionInfo(Resource):  # Mariadb 연결 진행
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 # 쿼리문 실행
                 # 정상
-                sql = "SELECT QNA_NO,  NVL(QNA_ORIGIN_NO,''),   QNA_TITLE,  QNA_MAIN,  QNA_WR_NM , QNA_RGS_DATE " \
+                sql = "SELECT QNA_NO,  QNA_ORIGIN_NO,  DATA_DEPTH, QNA_SORTS, QNA_TITLE,  QNA_MAIN,  QNA_WR_NM , QNA_RGS_DATE, QNA_DEL_YN " \
                       "FROM TB_QNA_TEST " \
-                      "WHERE QNA_DEL_YN = 'N' " \
-                      "ORDER BY QNA_ORIGIN_NO DESC, QNA_SORTS"
+                      "ORDER BY QNA_ORIGIN_NO DESC, QNA_SORTS ASC"
 
                 logging.debug(sql)
                 cursor.execute(sql)
@@ -2341,13 +2340,11 @@ class qnaPopUp(Resource):  # Mariadb 연결 진행
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 # 쿼리문 실행
-                sql = "SELECT  QNA_TITLE,  QNA_WR_NM,  QNA_RGS_DATE " \
+                sql = "SELECT  QNA_TITLE,  QNA_WR_NM,  QNA_RGS_DATE, QNA_DEL_YN" \
                       "FROM TB_QNA_TEST " \
-                      "WHERE QNA_DEL_YN = 'N' " \
                       "ORDER BY QNA_ORIGIN_NO DESC, QNA_SORTS"
 
                 logging.debug(sql)
-                logging.debug('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>q2')
                 cursor.execute(sql)
 
         finally:
@@ -2368,7 +2365,7 @@ class questionWrSubmit(Resource):
             logger.info(row + ':' + request.form[row])
             globals()[row] = request.form[row]
 
-        ipt_empId = request.form['ipt_empId']
+        ipt_wrId = request.form['ipt_wrId']
         ipt_qnatitle = request.form['ipt_qnatitle']
         sbx_qnaContent = request.form['sbx_qnaContent']
         sessionId = request.form['sessionId']
@@ -2376,7 +2373,7 @@ class questionWrSubmit(Resource):
 
         logging.debug("====Param data====")
 
-        logging.debug("ipt_empId = " + ipt_empId)
+        logging.debug("ipt_wrId = " + ipt_wrId)
         logging.debug("ipt_empEmail = " + ipt_qnatitle)
         logging.debug("ipt_empPw = " + sbx_qnaContent)
         logging.debug("sessionId = " + sessionId)
@@ -2394,14 +2391,14 @@ class questionWrSubmit(Resource):
 
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
-                sql= "INSERT INTO TB_QNA_TEST (QNA_WR_NM, " \
+                sql= "INSERT INTO TB_QNA_TEST (QNA_NO, QNA_ORIGIN_NO, DATA_DEPTH, QNA_SORTS, QNA_WR_NM, " \
                                                 "QNA_TITLE, " \
                                                 "QNA_MAIN, " \
                                                 "QNA_RGS_DATE) " \
-                     "VALUES('" + ipt_empId + "', " \
+                     "VALUES(nextval(QNA_SEQ2), lastval(QNA_SEQ2), 0, 0 , '" + sessionId + "', " \
                                             "'" + ipt_qnatitle + "', " \
                                             "'" + sbx_qnaContent + "', " \
-                                            "DATE_FORMAT(CURDATE(), '%Y-%m-%d')) "
+                                            "DATE_ADD(NOW(), INTERVAL 9 HOUR))"
 
 
                 logger.info(sql)
@@ -2436,10 +2433,18 @@ class questiondetail(Resource): # Mariadb 연결 진행
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 #쿼리문 실행
-                sql = "SELECT * FROM TB_QNA_TEST WHERE QNA_NO ='"+ data["number"] +"'"
+                if data["status"] == "R":
+                    sql1 = "UPDATE TB_QNA_TEST SET QNA_CNT = QNA_CNT+1 WHERE QNA_NO = '" + data["number"] + "'"
 
-                logging.debug(sql)
-                cursor.execute(sql)
+                    logging.debug(sql1)
+                    cursor.execute(sql1)
+                    mysql_con.commit()
+
+                sql2 = "SELECT * FROM TB_QNA_TEST WHERE QNA_NO ='"+ data["number"] +"'"
+
+                logger.debug(sql2)
+                cursor.execute(sql2)
+                
                 logging.debug('questionDtPop SUCCESS')
 
         finally:
@@ -2450,6 +2455,265 @@ class questiondetail(Resource): # Mariadb 연결 진행
 
         return result1
 
+class questionDel(Resource):
+    def post(self):
+        logger.info('========app.py questionDel=========')
+        params = request.get_json()
+        logger.info(params)
+
+        for row in request.form:
+            logger.info(row + ':' + request.form[row])
+            globals()[row] = request.form[row]
+
+        number = request.form['number']
+        sessionId = request.form['sessionId']
+
+
+        logging.debug("====Param data====")
+
+        logging.debug("number = " + number)
+        logging.debug("sessionId = " + sessionId)
+
+
+        logging.debug("=====================")
+
+
+
+        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
+                                    charset='utf8', autocommit=False)
+
+
+        logging.debug("delete Start")
+
+        try:
+            with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+                sql= "UPDATE TB_QNA_TEST SET QNA_DEL_YN = 'Y' WHERE QNA_NO = " + number
+
+                logger.info(sql)
+                cursor.execute(sql)
+                mysql_con.commit()
+
+        finally:
+            mysql_con.close()
+
+        retJson = {
+            "status": 200,
+            "msg": "Data has been deleted successfully"
+        }
+
+        return jsonify(retJson)
+
+
+class questionAw(Resource): # Mariadb 연결 진행
+    def get(self):
+
+        data = request.get_json()
+
+        logging.debug('================== App Start ==================')
+        logging.debug(data)
+        logging.debug(data["number"])
+        logging.debug(request.args.get(''))
+        logging.debug(request.args.get('param'))
+        logging.debug('================== App End ==================')
+
+        #requirements pymysql import 후 커넥트 사용
+        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
+                                        charset='utf8', autocommit=False)
+        try:
+            with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+                #쿼리문 실행
+                sql = "SELECT * FROM TB_QNA_TEST WHERE QNA_NO ='"+ data["number"] +"'"
+
+                logging.debug(sql)
+                cursor.execute(sql)
+                logging.debug('questionAw SUCCESS')
+
+        finally:
+            mysql_con.close()
+            logging.debug('questionAw CLOSE')
+
+        result1 = cursor.fetchall()
+
+        return result1
+
+class qnaAnserReg(Resource):
+    def post(self):
+        logger.info('========app.py qnaAnserReg=========')
+        params = request.get_json()
+        logger.info(params)
+
+        for row in request.form:
+            logger.info(row + ':' + request.form[row])
+            globals()[row] = request.form[row]
+
+        asWrID = request.form['asWrID']
+        asTitle = request.form['asTitle']
+        asContents = request.form['asContents']
+        originNo = request.form['originNo']
+        originDepth = request.form['originDepth']
+        originSort = request.form['originSort']
+
+
+
+        logging.debug("====Param data====")
+
+        logging.debug("asWrID = " + asWrID)
+        logging.debug("asTitle = " + asTitle)
+        logging.debug("asContents = " + asContents)
+        logging.debug("originNo = " + originNo)
+        logging.debug("originDepth = " + originDepth)
+        logging.debug("originSort = " + originSort)
+
+
+        logging.debug("=====================")
+
+
+
+        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
+                                    charset='utf8', autocommit=False)
+
+
+        logging.debug("answer save Start")
+
+        try:
+            with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+                sql1 = "UPDATE TB_QNA_TEST SET QNA_SORTS = QNA_SORTS + 1 " \
+                       "WHERE QNA_ORIGIN_NO = " + originNo + " AND " \
+                       "QNA_SORTS >= " + originSort
+
+                logger.info(sql1)
+                cursor.execute(sql1)
+
+                sql2 = "INSERT INTO TB_QNA_TEST (QNA_NO, QNA_ORIGIN_NO, " \
+                                               "DATA_DEPTH, " \
+                                               "QNA_SORTS, " \
+                                               "QNA_WR_NM, " \
+                                                "QNA_TITLE, " \
+                                                "QNA_MAIN, " \
+                                                "QNA_RGS_DATE) " \
+                     "VALUES(nextval(QNA_SEQ2), " + originNo + ", " + originDepth + ", " + originSort + ", " \
+                                            "'" + asWrID +"', " \
+                                            "'" + asTitle +"', " \
+                                            "'" + asContents +"', " \
+                                            "DATE_ADD(NOW(), INTERVAL 9 HOUR))"
+
+
+                logger.info(sql2)
+                cursor.execute(sql2)
+
+                mysql_con.commit()
+
+        finally:
+            mysql_con.close()
+
+        retJson = {
+            "status": 200,
+            "msg": "Data has been saved successfully"
+        }
+
+        return jsonify(retJson)
+
+class qnaUpdate(Resource):
+    def post(self):
+        logger.info('========app.py qnaUpdate=========')
+        params = request.get_json()
+        logger.info(params)
+
+        for row in request.form:
+            logger.info(row + ':' + request.form[row])
+            globals()[row] = request.form[row]
+
+        asWrID = request.form['asWrID']
+        asTitle = request.form['asTitle']
+        asContents = request.form['asContents']
+        number = request.form['number']
+
+
+        logging.debug("====Param data====")
+
+        logging.debug("asWrID = " + asWrID)
+        logging.debug("asTitle = " + asTitle)
+        logging.debug("asContents = " + asContents)
+        logging.debug("number = " + number)
+
+        logging.debug("=====================")
+
+
+
+        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
+                                    charset='utf8', autocommit=False)
+
+
+        logging.debug("qnaUpdate save Start")
+
+        try:
+            with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+                sql = "UPDATE TB_QNA_TEST SET " \
+                       "QNA_TITLE = '" + asTitle +"', " \
+                       "QNA_MAIN = '" + asContents +"', " \
+                       "QNA_REWR_NM = '" + asWrID + "', " \
+                       "QNA_REWR_DATE = DATE_ADD(NOW(), INTERVAL 9 HOUR) " \
+                       "WHERE QNA_NO = " + number
+
+                logger.info(sql)
+                cursor.execute(sql)
+
+                mysql_con.commit()
+
+        finally:
+            mysql_con.close()
+
+        retJson = {
+            "status": 200,
+            "msg": "Data has been saved successfully"
+        }
+
+        return jsonify(retJson)
+
+class qnaUpdateCnt(Resource):
+    def post(self):
+        logger.info('========app.py questionDel=========')
+        params = request.get_json()
+        logger.info(params)
+
+        for row in request.form:
+            logger.info(row + ':' + request.form[row])
+            globals()[row] = request.form[row]
+
+        number = request.form['number']
+        
+        logging.debug("====Param data====")
+
+        logging.debug("number = " + number)
+
+        logging.debug("=====================")
+
+
+
+        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
+                                    charset='utf8', autocommit=False)
+
+
+        logging.debug("count update Start")
+
+        try:
+            with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+                sql= "UPDATE TB_QNA_TEST SET QNA_CNT = QNA_CNT+1 WHERE QNA_NO = " + number
+
+                logger.info(sql)
+                cursor.execute(sql)
+                mysql_con.commit()
+
+        finally:
+            mysql_con.close()
+
+        retJson = {
+            "status": 200,
+            "msg": "Data has been deleted successfully"
+        }
+
+        return jsonify(retJson)
+    
 api.add_resource(Hello, '/hello')
 api.add_resource(Register, '/register')
 api.add_resource(Retrieve, '/retrieve')
@@ -2500,8 +2764,11 @@ api.add_resource(qnaPopCnt,'/qnaPopCnt') #api 선언
 api.add_resource(qnaPopUp,'/qnaPopUp') #api 선언
 api.add_resource(questionWrSubmit,'/questionWrSubmit') #api 선언
 api.add_resource(questiondetail,'/questiondetail') #api 선언
-
-
+api.add_resource(questionDel,'/questionDel') #api선언
+api.add_resource(questionAw,'/questionAw') #api선언
+api.add_resource(qnaAnserReg,'/qnaAnserReg') #api선언
+api.add_resource(qnaUpdate,'/qnaUpdate') #api선언
+api.add_resource(qnaUpdateCnt,'/qnaUpdateCnt') #api선언
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5006, debug=True)

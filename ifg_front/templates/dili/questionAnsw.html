@@ -1,0 +1,188 @@
+<script type="text/javascript">
+/* 메인 화면에서 받는 이메일 파라미터 */
+var param = {
+    "email"     : sessionStorage.getItem("email"),
+}
+
+/*********************************************************************
+*   Dialog Setting
+*********************************************************************/
+var n_dialog = new ax5.ui.dialog();
+var n_title =  '<span style="color:#fd7e14;font-size:20px;"><i class="fa fa-check-circle"></i></span> CHECK';
+
+n_dialog.setConfig({
+    title: n_title,
+    theme : 'info',
+    lang:{
+        "ok": "확인", "cancel": "취소"
+    }
+});
+
+$(document).ready(function(){
+    var number= $('#hidden_selectNumber').val();
+    console.log("==========> number" +number);
+    $('#ans_Id').text(param.email);
+    console.log("==========> param.email :"+param.email);
+    getQnAnsw(number);
+
+});
+
+/* 원글 정보 데이터 가져오기 */
+function getQnAnsw(number){
+    var param = {
+        "number" : number
+    }
+
+    /* 정보 조회 */
+    $.ajaxCall( param, {
+         'method' : 'GET',
+         'url' : "{% url 'dili_api:questionAw' %}",
+         'dataType' : 'json',
+         'data' : JSON.stringify(param),
+         'async' : false,
+         'callbackFn' : function(data){
+            // 로그
+            console.log("data : ",data);
+            // 리턴
+            qnaAnswer(data);
+         }
+    });
+}
+var originNo;
+var originDepth;
+var originSort;
+
+/* 원글 정보 데이터 셋팅 */
+function qnaAnswer(data){
+        console.log("Start")
+        console.log(data)
+        console.log(typeof(data))
+
+        originNo= data[0].QNA_ORIGIN_NO;
+        originDepth = data[0].DATA_DEPTH;
+        originSort = data[0].QNA_SORTS;
+
+        var get_qnaNo = data[0].QNA_NO;
+        var get_qnaTt = data[0].QNA_TITLE;
+        var get_qnaCont = "\n \n \n \n \n \n \n \n \n \n"
+        get_qnaCont += "▶ ----------------- Original Message ----------------- \n";
+        get_qnaCont += "▶ title : " +  data[0].QNA_TITLE + "\n";
+        get_qnaCont += "▶ writer : " +  data[0].QNA_WR_NM + "\n";
+        get_qnaCont += "▶ contents : \n" +  data[0].QNA_MAIN + "\n";
+        get_qnaCont += "\n \n \n \n \n "
+        get_qnaCont += "▶ ----------------------------------------------------- \n"
+
+        $('#ans_title').val("Re : "+ get_qnaTt);
+        $('#ans_title').attr('readonly', true);
+        $('#ans_content').text(get_qnaCont);
+
+};
+
+/* 게시글(원글) 돌아가기 버튼 클릭 이벤트 */
+function onClickBackBtn() {
+debugger;
+    /*var url = "{% url 'dili_api:question' %}" ;*/
+    var number= $('#hidden_selectNumber').val();
+    var url = "{% url 'dili_api:questionEditPop' %}" + "/?number=" +number ;
+    $('#qnaDiv').load(url);
+
+};
+
+/* 답변등록 버튼 클릭 이벤트 */
+function onClickAsSubmitBtn() {
+debugger;
+    var asWrID = $('#ans_Id').text();
+    var asTitle = $('#ans_title').val();
+    var asContents = $('#ans_content').val();
+    var number= $('#hidden_selectNumber').val();
+
+    originDepth  = parseInt(originDepth)+1;
+    originSort  = originSort+1;
+
+    var param = {
+        "asWrID"     : asWrID,
+        "asTitle"     : asTitle,
+        "asContents" : asContents,
+        "originNo"     : originNo,
+        "originDepth"   : originDepth,
+        "originSort"     : originSort
+    }
+
+    n_dialog.confirm('답변을 남기시겠습니까?',function(){
+        if(this.key == 'ok'){       //확인클릭시
+            $.ajaxCall( param, {
+                method:'POST',
+                url : "{% url 'dili_api:qnaAnserReg' %}",
+                dataType:'json',
+                data:JSON.stringify(param),
+                callbackFn:function(data){
+                    if(data){
+                        // 리턴
+                         url = "{% url 'dili_api:question' %}";
+                         $('#grd_QnAListTable').load(url);
+                         $('#closeBtn').click();
+                         alertMsg("답변이 성공적으로 등록되었습니다.");
+                         console.log("등록되었습니다..");
+
+                        //sFlag = true;
+                        //fileSave();
+                    } else{
+                        alertMsg("답변등록에 실패하였습니다.");
+                        console.log("답변등록에 실패하였습니다.");
+                        location.reload();
+                    }
+                }
+           });
+        }else{     //취소클릭시
+            alertMsg("취소하였습니다.");
+            console.log("취소하였습니다.");
+            //location.reload();
+        }
+
+    });
+
+};
+
+
+
+</script>
+<div class="row">
+    <div class="col-sm-12">
+        <div class="mb-4" role="alert">
+            <h5>
+                <b>Q&A 답변 등록</b>
+            </h5>
+        </div>
+        <center>
+            <div id="grd_QnAAnsTable" style="overflow:auto;">
+                <form method="post" id="answerQ" action="">
+                    <div class="flex-height mb-2" style="float:right;">
+                        <button class="button" id="closeBtn" type="button" onclick="onClickBackBtn()">게시글로 돌아가기</button>
+                    </div>
+                    <table class="table">
+                        <tbody>
+                            <tr>
+                                <th style="width:200px;text-align:center;">작성자ID</th>
+                                <td><span id="ans_Id" name="ans_Id"></span></td>
+                            </tr>
+                            <tr>
+                                <th style="width:200px;text-align:center;">제목</th>
+                                <td><input type="text" id="ans_title" name="ans_title" style="width:100%;height:30px;" maxlength="495"></td>
+                            </tr>
+                            <tr>
+                                <th style="width:200px;text-align:center;">내용</th>
+                                <td>
+                                    <textarea id="ans_content" name="ans_content" style="width:100%;height:300px;overflow-y:scroll;" placeholder="내용을 입력하세요" wrap="hard" maxlength="1000"/>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="flex-height mb-2" style="float:right;">
+                        <button class="button" id="submitBtn" type="button" onclick="onClickAsSubmitBtn()">답변등록</button>
+                        <input class="button" id="resetBtn" type="reset"/>
+                    </div>
+                </form>
+            </div>
+        </center>
+    </div>
+</div>

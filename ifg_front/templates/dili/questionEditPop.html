@@ -1,16 +1,49 @@
 <script type="text/javascript">
+
+var param = {
+    "email"     : sessionStorage.getItem("email"),
+    "authId" : sessionStorage.getItem("authId")
+}
+
+/*********************************************************************
+*   Dialog Setting
+*********************************************************************/
+var n_dialog = new ax5.ui.dialog();
+var n_title =  '<span style="color:#fd7e14;font-size:20px;"><i class="fa fa-check-circle"></i></span> CHECK';
+
+n_dialog.setConfig({
+    title: n_title,
+    theme : 'info',
+    lang:{
+        "ok": "확인", "cancel": "취소"
+    }
+});
+
+
 $(document).ready(function(){
-debugger;
     var number = $('#hidden_selectNumber').val();
     console.log("==========> number" +number);
+
     getEditQnaDetail(number);
+
+
+    if(param.authId == "ADMIN") {
+        $('#answerBtn').attr('disabled',false);
+    } else{
+        $('#answerBtn').attr('disabled',true);
+    };
+
 
 });
 
 
+
 function getEditQnaDetail(number){
+    console.log("==========> getEditQnaDetail");
     var param = {
-        "number" : number
+        "number" : number,
+        "status" : "R"
+
     }
 
     /* 정보 조회 */
@@ -27,7 +60,7 @@ function getEditQnaDetail(number){
             qnaDtSet(data);
          }
     });
-}
+};
 
 function qnaDtSet(data){
         console.log("Start")
@@ -39,58 +72,137 @@ function qnaDtSet(data){
         var get_qnaCont = data[0].QNA_MAIN;
         var get_qnaWrNm = data[0].QNA_WR_NM;
         var get_qnaDt = data[0].QNA_RGS_DATE;
-        var get_qnaRwNm = data[0].QNA_REWR_NM;
-        var get_qnaRwDt = data[0].QNA_REWR_DATE;
-        var get_qnaOpen = data[0].QNA_OPEN_YN;
-        var get_qnaCnt = data[0].QNA_CNT;
-        var get_qnaPw = data[0].PASSWD;
-debugger;
+        var get_qnahit = data[0].QNA_CNT;
+
         $('#ipt_qnatitle').text(get_qnaTt);
-        $('#sbx_qnaContent').text(get_qnaCont);
+        $('#qs_content').text(get_qnaCont);
         $('#ipt_wrNm').text(get_qnaWrNm);
         $('#ipt_wrDt').text(get_qnaDt);
-
+        $('#hitCount').text(get_qnahit);
 
 };
 
 
+
 /* 닫기 버튼 클릭 이벤트 */
-function onClickCloseBtn() {
+function onClickBoardBtn() {
     var url = "{% url 'dili_api:question' %}" ;
     $('#testDiv').load(url);
 
 };
 
 
+/* 삭제버튼 클릭 이벤트 */
+function onClickDeleteBtn(){
+    var number = $('#hidden_selectNumber').val();
+
+    var param = {
+        "number" : number,
+        "sessionId"         : sessionStorage.getItem("email")      //로그인한 사용자 아이디
+    }
+
+    n_dialog.confirm('삭제하시겠습니까?',function(){
+            if(this.key == 'ok'){       //확인클릭시
+                $.ajaxCall( param, {
+                    method:'POST',
+                    url : "{% url 'dili_api:questionDelete' %}",
+                    dataType:'json',
+                    data:JSON.stringify(param),
+                    callbackFn:function(data){
+                        if(data){
+                            // 리턴
+                             url = "{% url 'dili_api:question' %}";
+                             $('#qnaDiv').load(url);
+                             $('#closeBtn').click();
+                             alertMsg("성공적으로 삭제되었습니다.");
+                             console.log("삭제되었습니다.");
+
+                            //sFlag = true;
+                            //fileSave();
+                        } else{
+                            alertMsg("삭제에 실패하였습니다.");
+                            console.log("삭제에 실패하였습니다.");
+                            location.reload();
+                        }
+                    }
+               });
+            }else{     //취소클릭시
+                alertMsg("취소하였습니다.");
+                console.log("취소하였습니다.");
+                //location.reload();
+            }
+
+        });
+};
+
+function onClickUpdateBtn(){
+    var number= $('#hidden_selectNumber').val();
+    $('#hidden_originN').val(number);
+    var url= "{% url 'dili_api:questionUpdateReq' %}"+ "/?number=" +number ;
+
+    $('#qnaDiv').load(url);
+}
+
+function onClickAnswerBtn(){
+    var number= $('#hidden_selectNumber').val();
+    $('#hidden_originN').val(number);
+    var url= "{% url 'dili_api:questionAnsw' %}"+ "/?number=" +number ;
+
+    $('#qnaDiv').load(url);
+
+};
+
+
+
+
 </script>
-<div style="width :450px;">
-    <div class="flex-height d-flex m-0">
-        <form method="post" id="submitEmp" action="">
-            <table>
-                <tr>
-                    <td colspan="3" style="height:80px;font-size:200%"><h1><div id="ipt_qnatitle" name="ipt_qnatitle" readonly></div></h1></td>
-                </tr>
-                <tr>
-                    <td><b><span id="ipt_wrNm"></span></b>&nbsp; <span id="ipt_wrDt"></span></td>
-                    <td></td>
-                    <td>조회수 <b>19</b></td>
-                </tr>
-                <tr>
-                    <h2>
-                        <td colspan="3" style="height:50px;font-size:100%"><div id="sbx_qnaContent" name="sbx_qnaContent" style="width:125px;"></div></td>
-                    </h2>
-                </tr>
-                <!-- 버튼 -->
-                <tr>
-                    <td colspan="3">
-                        <div class="flex-height mt-4" style="float:right;">
-                            <button class="button" id="submitBtn" type="button" onclick="onClickSubmitBtn()">수정</button>
-                            <button class="button" id="deleteBtn" type="button" onclick="onClickDeleteBtn()">삭제</button>
-                            <button class="button" id="closeBtn" type="button" onclick="onClickCloseBtn()" >닫기</button>
-                        </div>
-                    </td>
-                </tr>
-            </table>
-        </form>
+    <input type="text" class="form-control" id="hidden_originN" name="hidden_originN" maxlength="30" readonly hidden/>
+
+
+<div class="row">
+    <div class="col-sm-12">
+        <div class="mb-4" role="alert">
+            <h5>
+                <b>Q&A 상세조회</b>
+            </h5>
+        </div>
+        <center>
+            <div style="overflow:auto;">
+                <form method="post" id="submitEmp" action="">
+                    <div class="flex-height mb-2" style="float:right;">
+                        <button class="button" id="closeBtn" type="button" onclick="onClickBoardBtn()" >목록</button>
+                    </div>
+                    <table class="table">
+                        <tr>
+                            <th  class="text-center" style="width:200px;">제목</th>
+                            <td colspan="5"><span id="ipt_qnatitle" name="ipt_qnatitle" style="font-size:big;"></span></td>
+                        </tr>
+                        <tr>
+                            <th  class="text-center" style="width:200px;">작성자</th>
+                            <td><span id="ipt_wrNm" style="text-align:center;"></span></td>
+                            <th  class="text-center" style="width:200px;">작성일시</th>
+                            <td><span id="ipt_wrDt" style="text-align:center;"></span></td>
+                            <th  class="text-center" style="width:200px;">조회수</th>
+                            <td><span id="hitCount" style="text-align:center;"></span></td>
+                        </tr>
+                        <tr>
+                            <td colspan="6">
+                                <textarea id="qs_content" name="qs_content" style="border:0px;width:100%;outline:none;min-height:300px;overflow-y:scroll;resize:none;padding:20px;" readonly></textarea>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="6">
+                                <!-- 버튼 -->
+                                <div class="flex-height mb-2" style="float:right;">
+                                    <button class="button" id="updateBtn" type="button" onclick="onClickUpdateBtn()">수정</button>
+                                    <button class="button" id="deleteBtn" type="button" onclick="onClickDeleteBtn()">삭제</button>
+                                    <button class="button" id="answerBtn" type="button" onclick="onClickAnswerBtn()">답변하기</button>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                </form>
+            </div>
+        </center>
     </div>
 </div>

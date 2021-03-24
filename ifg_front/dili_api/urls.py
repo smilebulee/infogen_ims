@@ -83,6 +83,14 @@ urlpatterns = [
     url(r'^questionWr', views.questionWr, name='questionWr'),
     url(r'^questionEditPop', views.questionEditPop.as_view(), name='questionEditPop'),
     url(r'^questiondetail', views.questiondetail, name='questiondetail'),
+    url(r'^questionDelete', views.questionDelete, name='questionDelete'),
+    url(r'^questionAnsw', views.questionAnsw.as_view(), name='questionAnsw'),
+    url(r'^questionAw', views.questionAw, name='questionAw'),
+    url(r'^qnaAnserReg', views.qnaAnserReg, name='qnaAnserReg'),
+    url(r'^questionUpdateReq', views.questionUpdateReq.as_view(), name='questionUpdateReq'),
+    url(r'^qnaUpdate', views.qnaUpdate, name='qnaUpdate'),
+    url(r'^qnaUpdateCnt', views.qnaUpdateCnt, name='qnaUpdateCnt'),
+    
     # 공통 코드 조회
     url(r'^retrieveCmmCd/', views.retrieveCmmCd, name='retrieveCmmCd'),
 
