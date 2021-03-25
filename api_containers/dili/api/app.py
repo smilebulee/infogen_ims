@@ -2280,7 +2280,7 @@ class questionInfo(Resource):  # Mariadb 연결 진행
                 # 쿼리문 실행
                 # 정상
                 sql = "SELECT QNA_NO,  QNA_ORIGIN_NO,  DATA_DEPTH, QNA_SORTS, QNA_TITLE,  QNA_MAIN,  QNA_WR_NM , QNA_RGS_DATE, QNA_DEL_YN " \
-                      "FROM TB_QNA_TEST " \
+                      "FROM TB_QNA_TEST  WHERE QNA_ORIGIN_NO NOT IN (SELECT QNA_NO FROM TB_QNA_TEST WHERE DATA_DEPTH = 0 AND QNA_DEL_YN = 'Y') " \
                       "ORDER BY QNA_ORIGIN_NO DESC, QNA_SORTS ASC"
 
                 logging.debug(sql)
@@ -2742,6 +2742,7 @@ class qnaSearch(Resource):  # Mariadb 연결 진행
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 # 쿼리문 실행
                 sql = "SELECT * FROM TB_QNA_TEST WHERE " \
+                      "QNA_ORIGIN_NO NOT IN (SELECT QNA_NO FROM TB_QNA_TEST WHERE DATA_DEPTH = 0 AND QNA_DEL_YN = 'Y') AND " \
                       "QNA_ORIGIN_NO IN(SELECT QNA_NO FROM TB_QNA_TEST WHERE DATA_DEPTH = '0' AND "
 
                 if option == "00" : #제목

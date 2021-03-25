@@ -79,16 +79,23 @@ function qnaDtSet(data){
     $('#hitCount').text(get_qnahit);
 
     /* 권한설정까지 셋팅 */
-    /* 로그인한 아이디가 관리자이고 본인글이 아닐 경우*/
-    if(param.authId == "ADMIN" && param.email != qnaWriter ) {
+    /* 로그인한 아이디가 관리자*/
+    if(param.authId == "ADMIN" && param.email != qnaWriter) {
         /* 수정 버튼 비활성화 */
         $('#updateBtn').hide();
         /* 삭제, 답변 버튼 활성화 */
         $('#deleteBtn').show();
         $('#answerBtn').show();
 
-    /* 본인글일 경우*/
-    }else if(param.email == qnaWriter){
+    /* 로그인한 아이디가 관리자이고 본인글일 경우*/
+    }else if(param.authId == "ADMIN" &&param.email == qnaWriter){
+        /* 수정, 삭제 답변 버튼 활성화 */
+        $('#updateBtn').show();
+        $('#deleteBtn').show();
+        $('#answerBtn').show();
+
+    /* 로그인한 아이디가 관리자가 아니고본인글일 경우*/
+    }else if(param.authId != "ADMIN" &&param.email == qnaWriter){
         /* 수정, 삭제 활성화 */
         $('#updateBtn').show();
         $('#deleteBtn').show();

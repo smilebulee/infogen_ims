@@ -4,6 +4,9 @@ var param = {
     "email"     : sessionStorage.getItem("email"),
 }
 
+var originTitle;
+var originContents;
+
 /*********************************************************************
 *   Dialog Setting
 *********************************************************************/
@@ -62,8 +65,10 @@ function qnaAnswer(data){
         originDepth = data[0].DATA_DEPTH;
         originSort = data[0].QNA_SORTS;
 
+
+
         var get_qnaNo = data[0].QNA_NO;
-        var get_qnaTt = data[0].QNA_TITLE;
+        var get_qnaTt = "Re : "+ data[0].QNA_TITLE;
         var get_qnaCont = "\n \n \n \n \n \n \n \n \n \n"
         get_qnaCont += "▶ ----------------- Original Message ----------------- \n";
         get_qnaCont += "▶ title : " +  data[0].QNA_TITLE + "\n";
@@ -72,9 +77,12 @@ function qnaAnswer(data){
         get_qnaCont += "\n \n \n \n \n "
         get_qnaCont += "▶ ----------------------------------------------------- \n"
 
-        $('#ans_title').val("Re : "+ get_qnaTt);
+        $('#ans_title').val(get_qnaTt);
         $('#ans_title').attr('readonly', true);
         $('#ans_content').text(get_qnaCont);
+
+        originTitle = get_qnaTt;
+        originContents = get_qnaCont;
 
 };
 
@@ -88,6 +96,11 @@ function onClickBackBtn() {
 
 };
 
+function onClickResetBtn() {
+    $('#ans_title').val(originTitle);
+    $('#ans_content').val(originContents);
+};
+
 /* 답변등록 버튼 클릭 이벤트 */
 function onClickAsSubmitBtn() {
 
@@ -99,6 +112,8 @@ function onClickAsSubmitBtn() {
     originDepth  = parseInt(originDepth)+1;
     originSort  = originSort+1;
 
+
+
     var param = {
         "asWrID"     : asWrID,
         "asTitle"     : asTitle,
@@ -108,39 +123,45 @@ function onClickAsSubmitBtn() {
         "originSort"     : originSort
     }
 
-    n_dialog.confirm('답변을 남기시겠습니까?',function(){
-        if(this.key == 'ok'){       //확인클릭시
-            $.ajaxCall( param, {
-                method:'POST',
-                url : "{% url 'dili_api:qnaAnserReg' %}",
-                dataType:'json',
-                data:JSON.stringify(param),
-                callbackFn:function(data){
-                    if(data){
-                        // 리턴
-                         url = "{% url 'dili_api:question' %}";
-                         $('#grd_QnAListTable').load(url);
-                         $('#closeBtn').click();
-                         alertMsg("답변이 성공적으로 등록되었습니다.");
-                         console.log("등록되었습니다..");
+    if( $('#ans_title').val() == "" || $('#ans_title').val() == null ){
+        alertMsg("제목을 입력해 주세요.");
+    } else if ($('#ans_content').val() == "" || $('#ans_content').val() == null){
+        alertMsg("내용을 입력해 주세요.");
+    } else {
 
-                        //sFlag = true;
-                        //fileSave();
-                    } else{
-                        alertMsg("답변등록에 실패하였습니다.");
-                        console.log("답변등록에 실패하였습니다.");
-                        location.reload();
+        n_dialog.confirm('답변을 남기시겠습니까?',function(){
+            if(this.key == 'ok'){       //확인클릭시
+                $.ajaxCall( param, {
+                    method:'POST',
+                    url : "{% url 'dili_api:qnaAnserReg' %}",
+                    dataType:'json',
+                    data:JSON.stringify(param),
+                    callbackFn:function(data){
+                        if(data){
+                            // 리턴
+                             url = "{% url 'dili_api:question' %}";
+                             $('#grd_QnAListTable').load(url);
+                             $('#closeBtn').click();
+                             alertMsg("답변이 성공적으로 등록되었습니다.");
+                             console.log("등록되었습니다..");
+
+                            //sFlag = true;
+                            //fileSave();
+                        } else{
+                            alertMsg("답변등록에 실패하였습니다.");
+                            console.log("답변등록에 실패하였습니다.");
+                            location.reload();
+                        }
                     }
-                }
-           });
-        }else{     //취소클릭시
-            alertMsg("취소하였습니다.");
-            console.log("취소하였습니다.");
-            //location.reload();
-        }
+               });
+            }else{     //취소클릭시
+                alertMsg("취소하였습니다.");
+                console.log("취소하였습니다.");
+                //location.reload();
+            }
 
-    });
-
+        });
+    }
 };
 
 
@@ -156,9 +177,6 @@ function onClickAsSubmitBtn() {
         <center>
             <div id="grd_QnAAnsTable" style="overflow:auto;">
                 <form method="post" id="answerQ" action="">
-                    <div class="flex-height mb-2" style="float:right;">
-                        <button class="button" id="closeBtn" type="button" onclick="onClickBackBtn()">게시글로 돌아가기</button>
-                    </div>
                     <table class="table">
                         <tbody>
                             <tr>
@@ -179,7 +197,8 @@ function onClickAsSubmitBtn() {
                     </table>
                     <div class="flex-height mb-2" style="float:right;">
                         <button class="button" id="submitBtn" type="button" onclick="onClickAsSubmitBtn()">답변등록</button>
-                        <input class="button" id="resetBtn" type="reset"/>
+                        <button class="button" id="resetBtn" type="button" onclick="onClickResetBtn()">초기화</button>
+                        <button class="button" id="closeBtn" type="button" onclick="onClickBackBtn()">취소</button>
                     </div>
                 </form>
             </div>

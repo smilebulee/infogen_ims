@@ -51,6 +51,8 @@ function getQnAnsw(number){
 var originNo;
 var originDepth;
 var originSort;
+var originTitle;
+var originContents;
 
 /* 원글 정보 데이터 셋팅 */
 function qnaAnswer(data){
@@ -65,6 +67,8 @@ function qnaAnswer(data){
         var get_qnaNo = data[0].QNA_NO;
         var get_qnaTt = data[0].QNA_TITLE;
         var get_qnaCont = data[0].QNA_MAIN;
+        originTitle = get_qnaTt;
+        originContents = get_qnaCont;
 
         $('#ans_title').val(get_qnaTt);
         $('#ans_content').text(get_qnaCont);
@@ -73,16 +77,21 @@ function qnaAnswer(data){
 
 /* 게시글(원글) 돌아가기 버튼 클릭 이벤트 */
 function onClickBackBtn() {
-debugger;
+
     var number= $('#hidden_selectNumber').val();
     var url = "{% url 'dili_api:questionEditPop' %}" + "/?number=" +number ;
     $('#qnaDiv').load(url);
 
 };
 
+function onClickResetBtn() {
+    $('#ans_title').val(originTitle);
+    $('#ans_content').val(originContents);
+};
+
 /* 답변등록 버튼 클릭 이벤트 */
 function onClickUpdateBtn() {
-debugger;
+
     var asWrID = $('#ans_Id').text();
     var asTitle = $('#ans_title').val();
     var asContents = $('#ans_content').val();
@@ -96,39 +105,45 @@ debugger;
         "number"     : number
     }
 
-    n_dialog.confirm('수정 하시겠습니까?',function(){
-        if(this.key == 'ok'){       //확인클릭시
-            $.ajaxCall( param, {
-                method:'POST',
-                url : "{% url 'dili_api:qnaUpdate' %}",
-                dataType:'json',
-                data:JSON.stringify(param),
-                callbackFn:function(data){
-                    if(data){
-                        // 리턴
-                         url = "{% url 'dili_api:questionEditPop' %}" + "/?number=" +number ;
-                         $('#grd_QnAListTable').load(url);
-                         $('#closeBtn').click();
-                         alertMsg("성공적으로 수정되었습니다.");
-                         console.log("수정되었습니다..");
+    if( $('#ans_title').val() == "" || $('#ans_title').val() == null ){
+        alertMsg("제목을 입력해 주세요.");
+    } else if ($('#ans_content').val() == "" || $('#ans_content').val() == null){
+        alertMsg("내용을 입력해 주세요.");
+    } else {
 
-                        //sFlag = true;
-                        //fileSave();
-                    } else{
-                        alertMsg("수정에 실패하였습니다.");
-                        console.log("수정에 실패하였습니다.");
-                        location.reload();
+        n_dialog.confirm('수정 하시겠습니까?',function(){
+            if(this.key == 'ok'){       //확인클릭시
+                $.ajaxCall( param, {
+                    method:'POST',
+                    url : "{% url 'dili_api:qnaUpdate' %}",
+                    dataType:'json',
+                    data:JSON.stringify(param),
+                    callbackFn:function(data){
+                        if(data){
+                            // 리턴
+                             url = "{% url 'dili_api:questionEditPop' %}" + "/?number=" +number ;
+                             $('#grd_QnAListTable').load(url);
+                             $('#closeBtn').click();
+                             alertMsg("성공적으로 수정되었습니다.");
+                             console.log("수정되었습니다..");
+
+                            //sFlag = true;
+                            //fileSave();
+                        } else{
+                            alertMsg("수정에 실패하였습니다.");
+                            console.log("수정에 실패하였습니다.");
+                            location.reload();
+                        }
                     }
-                }
-           });
-        }else{     //취소클릭시
-            alertMsg("취소하였습니다.");
-            console.log("취소하였습니다.");
-            //location.reload();
-        }
+               });
+            }else{     //취소클릭시
+                alertMsg("취소하였습니다.");
+                console.log("취소하였습니다.");
+                //location.reload();
+            }
 
-    });
-
+        });
+    }
 };
 
 
@@ -164,7 +179,7 @@ debugger;
                     </table>
                     <div class="flex-height mb-2" style="float:right;">
                         <button class="button" id="submitBtn" type="button" onclick="onClickUpdateBtn()">수정</button>
-                        <input class="button" id="resetBtn" type="reset"/>
+                        <button class="button" id="resetBtn" type="button" onclick="onClickResetBtn()">초기화</button>
                         <button class="button" id="closeBtn" type="button" onclick="onClickBackBtn()">취소</button>
                     </div>
                 </form>

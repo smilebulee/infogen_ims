@@ -27,13 +27,9 @@ $(document).ready(function(){
 
 /* 등록버튼 클릭 이벤트 */
 function onClickSubmitBtn() {
-debugger;
     var ipt_wrId = $('[name="qs_wn"]').val();
     var ipt_qnatitle = $('[name="qs_title"]').val();
     var sbx_qnaContent = $('[name="qs_content"]').val();
-
-
-
 
     var param = {
         "ipt_wrId"     : ipt_wrId,
@@ -42,39 +38,46 @@ debugger;
         "sessionId"         : sessionStorage.getItem("email")      //로그인한 사용자 아이디
     }
 
-    n_dialog.confirm('등록하시겠습니까?',function(){
-            if(this.key == 'ok'){       //확인클릭시
-                $.ajaxCall( param, {
-                    method:'POST',
-                    url : "{% url 'dili_api:questionWr' %}",
-                    dataType:'json',
-                    data:JSON.stringify(param),
-                    callbackFn:function(data){
-                        if(data){
-                            // 리턴
-                             //location.href = "{% url 'dili_api:question' %}";
-                             url = "{% url 'dili_api:question' %}";
-                             $('#grd_QnAListTable').load(url);
-                             $('#closeBtn').click();
-                             alertMsg("성공적으로 등록되었습니다.");
-                             console.log("등록되었습니다.");
+    if( $('[name="qs_title"]').val() == "" || $('[name="qs_title"]').val() == null ){
+        alertMsg("제목을 입력해 주세요.");
+    } else if ($('[name="qs_content"]').val() == "" || $('[name="qs_content"]').val() == null){
+        alertMsg("내용을 입력해 주세요.");
+    } else {
 
-                            //sFlag = true;
-                            //fileSave();
-                        } else{
-                            alertMsg("등록에 실패하였습니다.");
-                            console.log("등록에 실패하였습니다.");
-                            location.reload();
+        n_dialog.confirm('등록하시겠습니까?',function(){
+                if(this.key == 'ok'){       //확인클릭시
+                    $.ajaxCall( param, {
+                        method:'POST',
+                        url : "{% url 'dili_api:questionWr' %}",
+                        dataType:'json',
+                        data:JSON.stringify(param),
+                        callbackFn:function(data){
+                            if(data){
+                                // 리턴
+                                 //location.href = "{% url 'dili_api:question' %}";
+                                 url = "{% url 'dili_api:question' %}";
+                                 $('#grd_QnAListTable').load(url);
+                                 $('#closeBtn').click();
+                                 alertMsg("성공적으로 등록되었습니다.");
+                                 console.log("등록되었습니다.");
+
+                                //sFlag = true;
+                                //fileSave();
+                            } else{
+                                alertMsg("등록에 실패하였습니다.");
+                                console.log("등록에 실패하였습니다.");
+                                location.reload();
+                            }
                         }
-                    }
-               });
-            }else{     //취소클릭시
-                alertMsg("취소하였습니다.");
-                console.log("취소하였습니다.");
-                //location.reload();
-            }
+                   });
+                }else{     //취소클릭시
+                    alertMsg("취소하였습니다.");
+                    console.log("취소하였습니다.");
+                    //location.reload();
+                }
 
-        });
+            });
+        }
 
 };
 
@@ -118,9 +121,6 @@ function onClickCloseBtn() {
                                 <td>
                                     <textarea  id="qs_content" name="qs_content" style="width:100%;height:300px;overflow-y:scroll;" placeholder="내용을 입력하세요" wrap="hard" maxlength="1000"/>
                                 </td>
-                            </tr>
-                            <tr>
-                                <td colspan="2" style="text-align:center;font-weight:bold;"></td>
                             </tr>
                         </tbody>
                     </table>

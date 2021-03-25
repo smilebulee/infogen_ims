@@ -92,7 +92,7 @@ function QnAListGrd(data){
                 if(data[i].QNA_SORTS != 0){
                     QnAListTable += "↳　";
                 }
-                QnAListTable += '<span style="text-decoration:line-through;">삭제된 게시글 입니다.</span></td>';
+                QnAListTable += '<span style="text-decoration:line-through;">삭제 된 답변입니다.</span></td>';
             }else{
                 QnAListTable += '<td id="qnaTitle" onclick="onClickEvt(\''+data[i].QNA_NO+'\')" class="pt-3-half" style="text-align:left;">';
 
@@ -166,6 +166,7 @@ function pagingByEllena(data, currentPage){
 
 
     var first = parseInt(currentPage/pagePerLine); // 이전 라인 ◀◀
+    if(currentPage%pagePerLine == 0){ first--;}
     var last = first+2; // 다음 라인 ▶▶
 
     var next = currentPage+1; // 다음 페이지 ▶
@@ -233,14 +234,13 @@ function pagingByEllena(data, currentPage){
 
     document.getElementById('grd_QnAListTable').innerHTML = QnAListTable;
 
-
     var QnaPaging = "";
 
     if(currentPage > 10){
-        QnaPaging += "<a id='pg_pPrev' style='color:black'>◀◀</a>";
+        QnaPaging += "<a id='pg_pPrev' onclick='onClickPage("+(((first-1)*10)+1)+")' style='color:black'>◀◀</a>";
     }
     if(currentPage > 1){
-        QnaPaging += "<a id='pg_prev' onClick='onClickPage("+prev+")' style='color:black'>◀</a>";
+        QnaPaging += "<a id='pg_prev' onclick='onClickPage("+prev+")' style='color:black'>◀</a>";
     }
 
     var tagStNo = (first*10)+1;
@@ -251,15 +251,16 @@ function pagingByEllena(data, currentPage){
             QnaPaging += "<a href='#' id='pg_"+i+"' style='font-weight:bold;color:red'> "+i+" </a>";
 
         }else{
-            QnaPaging += "<a id='pg_"+i+"' onClick='onClickPage("+i+")' style='color:black'> "+i+" </a>";
+            QnaPaging += "<a id='pg_"+i+"' onclick='onClickPage("+i+")' style='color:black'> "+i+" </a>";
         }
 
     }
     if(currentPage < totalPage){
-        QnaPaging += "<a id='pg_next' onClick='onClickPage("+next+")' style='color:black'> ▶ </a>";
+        QnaPaging += "<a id='pg_next' onclick='onClickPage("+next+")' style='color:black'> ▶ </a>";
     }
-    if((last-1) > totalLine){
-        QnaPaging += "<a id='pg_nNext' style='color:black'> ▶▶ </a>";
+
+    if(totalLine != 0 && (last-1) < totalLine){
+        QnaPaging += "<a id='pg_nNext' onclick='onClickPage("+(((last-1)*10)+1)+")'  style='color:black'> ▶▶ </a>";
     }
 
     document.getElementById('pagination').innerHTML = QnaPaging;
