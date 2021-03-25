@@ -80,7 +80,7 @@ function qnaAnswer(data){
 
 /* 게시글(원글) 돌아가기 버튼 클릭 이벤트 */
 function onClickBackBtn() {
-debugger;
+
     /*var url = "{% url 'dili_api:question' %}" ;*/
     var number= $('#hidden_selectNumber').val();
     var url = "{% url 'dili_api:questionEditPop' %}" + "/?number=" +number ;
@@ -90,7 +90,7 @@ debugger;
 
 /* 답변등록 버튼 클릭 이벤트 */
 function onClickAsSubmitBtn() {
-debugger;
+
     var asWrID = $('#ans_Id').text();
     var asTitle = $('#ans_title').val();
     var asContents = $('#ans_content').val();

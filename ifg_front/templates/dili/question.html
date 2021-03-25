@@ -7,6 +7,7 @@ var param = {
 "authId" : sessionStorage.getItem("authId")
 }
 
+var dataList;
 
 $(document).ready(function(){
 
@@ -20,38 +21,46 @@ $(document).ready(function(){
             // 로그
             console.log("data : ",data)
             // 리턴
-            QnAListGrd(data);
-            paging(data.length, 10, 5,1);
+            pagingSet(data);
+            //paging(data.length, 10, 5,1);
          }
     });
 
-    /* 로그인한 아이디가 관리자일 경우*/
-    if(param.authId == "ADMIN") {
-        /* 검색, 등록버튼 활성화 */
-        $('#ipt_searchName').attr('readonly',false);
-        $('#answerBtn').attr('disabled',false);
-        $('#writeBtn').attr('disabled',false);
 
-    }else{
-        /* 검색, 등록버튼 비활성화 */
-        $('#ipt_searchName').attr('readonly',true);
-        $('#answerBtn').attr('disabled',true);
-        $('#writeBtn').attr('disabled',false);
-
-    }
 
 });
 
 
-$('#answerBtn').click(function(){
-    if(param.authId != "ADMIN" ) {
-        alertMsg('글 작성 권한이 없습니다.');
-        return false;
+function onclickSearch(){
+    var option = $('#searchOption').val();
+    var keyword = $('#ipt_searchQna').val();
+
+    var param = {
+        "option" : option,
+        "keyword" : keyword
     }
-});
+
+
+    $.ajaxCall( param, {
+         'method' : 'GET',
+         'url' : "{% url 'dili_api:qnaSearch' %}",
+         'dataType' : 'json',
+         'data' : JSON.stringify(param),
+         'async' : false,
+         'callbackFn' : function(data){
+            var dataArr = JSON.parse(data)
+            // 로그
+            console.log("dataArr : ",dataArr)
+            // 리턴
+            pagingSet(dataArr);
+            //paging(data.length, 10, 5,1);
+         }
+    });
+
+};
 
 function QnAListGrd(data){
-debugger;
+
     var size = data.length;
     var QnAListTable = '<table class="table table-bordered text-center">';
     QnAListTable += '<thead>';
@@ -118,7 +127,7 @@ debugger;
 };
 
 function onClickEvt(i) {
-debugger;
+
     var number = i;
     $('#hidden_selectNumber').val(number);
 
@@ -136,9 +145,130 @@ function onclickNewQna() {
 
 };
 
+function onClickPage(num){
+    pagingByEllena(dataList, num);
+}
+
+function pagingSet(data){
+    dataList = data;
+    pagingByEllena(data, 1);
+
+}
+
+function pagingByEllena(data, currentPage){
+
+    var numberPerPage = 10; //한페이지당 게시글 수
+    var pagePerLine = 10; //한 라인당 페이지 수
+
+    var totalData = data.length; //조회결과 데이터 수
+    var totalPage = Math.ceil(totalData/numberPerPage); // 전체 페이지 수
+    var totalLine = Math.ceil(totalPage/pagePerLine); // 전체 라인 수
+
+
+    var first = parseInt(currentPage/pagePerLine); // 이전 라인 ◀◀
+    var last = first+2; // 다음 라인 ▶▶
+
+    var next = currentPage+1; // 다음 페이지 ▶
+    var prev = currentPage-1; // 이전 페이지 ◀
+
+
+    var QnAListTable = '<table class="table table-bordered text-center">';
+    QnAListTable += '<thead>';
+    QnAListTable += '<tr>';
+    QnAListTable += '<th class="text-center">NO</th>';
+    QnAListTable += '<th class="text-center">제목</th>';
+    QnAListTable += '<th class="text-center">작성자</th>';
+    QnAListTable += '<th class="text-center">작성일시</th>';
+    QnAListTable += '</tr>';
+    QnAListTable += '</thead>';
+    QnAListTable += '<tbody>';
+
+    var pageStNo = 10*(currentPage-1);
+    var pageEdNo = (currentPage*10)-1;
+
+    if( (totalData-1) < pageEdNo){ pageEdNo = (totalData-1);}
+
+    for(var i = pageStNo; i <= pageEdNo; i++){
+
+        QnAListTable += '<tr id ="grd_QnAList")>';
+        QnAListTable += '<td id="qnaOrNo" class="pt-3-half" style="width:110px;">'+(i+1)+'</td>';
+
+        if(data[i].QNA_DEL_YN == 'Y'){
+            QnAListTable += '<td id="qnaTitle" class="pt-3-half" style="text-align:left;color:grey;" >';
+            for(var j = 0; j < data[i].DATA_DEPTH; j++){
+                QnAListTable += "　　";
+            }
+
+            if(data[i].QNA_SORTS != 0){
+                QnAListTable += "↳　";
+            }
+            QnAListTable += '<span style="text-decoration:line-through;">삭제된 게시글 입니다.</span></td>';
+        }else{
+            QnAListTable += '<td id="qnaTitle" onclick="onClickEvt(\''+data[i].QNA_NO+'\')" class="pt-3-half" style="text-align:left;">';
+
+
+            for(var j = 0; j < data[i].DATA_DEPTH; j++){
+                QnAListTable += "　　";
+            }
+
+            if(data[i].QNA_SORTS != 0){
+                QnAListTable += "↳　";
+            }
+            QnAListTable += data[i].QNA_TITLE+'</td>';
+
+         }
+
+        QnAListTable += '<td id="qnaWrt" class="pt-3-half" width="300">'+data[i].QNA_WR_NM+'</td>';
+        QnAListTable += '<td id="qnaRgd" class="pt-3-half" width="200">'+data[i].QNA_RGS_DATE+'</td>';
+        QnAListTable += '</tr>';
+    }
+    if((pageEdNo - pageStNo) < 9){
+        for(var i = 9; i > (pageEdNo - pageStNo); i--){
+            QnAListTable += '<tr><td class="pt-3-half"></td><td>　</td><td></td><td></td></tr>';
+
+        }
+    }
+    QnAListTable += '</tbody>';
+    QnAListTable += '</table>';
+
+    document.getElementById('grd_QnAListTable').innerHTML = QnAListTable;
+
+
+    var QnaPaging = "";
+
+    if(currentPage > 10){
+        QnaPaging += "<a id='pg_pPrev' style='color:black'>◀◀</a>";
+    }
+    if(currentPage > 1){
+        QnaPaging += "<a id='pg_prev' onClick='onClickPage("+prev+")' style='color:black'>◀</a>";
+    }
+
+    var tagStNo = (first*10)+1;
+    var tagEdNo = (last -1)*10;
+    if( totalPage < tagEdNo){ tagEdNo = totalPage;}
+    for(var i=tagStNo; i <= tagEdNo; i++){
+        if( i == currentPage){
+            QnaPaging += "<a href='#' id='pg_"+i+"' style='font-weight:bold;color:red'> "+i+" </a>";
+
+        }else{
+            QnaPaging += "<a id='pg_"+i+"' onClick='onClickPage("+i+")' style='color:black'> "+i+" </a>";
+        }
+
+    }
+    if(currentPage < totalPage){
+        QnaPaging += "<a id='pg_next' onClick='onClickPage("+next+")' style='color:black'> ▶ </a>";
+    }
+    if((last-1) > totalLine){
+        QnaPaging += "<a id='pg_nNext' style='color:black'> ▶▶ </a>";
+    }
+
+    document.getElementById('pagination').innerHTML = QnaPaging;
+
+};
+
 
 function paging(totalData, dataPerPage, pageCount, currentPage){
-debugger;
+
     var totalPage= Math.ceil(totalData/dataPerPage);
     var pageGroup= Math.ceil(currentPage/pageCount);
 
@@ -235,7 +365,7 @@ debugger;
                             <input type="text" class="form-control" id="ipt_searchQna" name="ipt_searchQna" placeholder="검색어를 입력해주세요"/>
                         </div>
                         <div class="align-self-center mr-3">
-                            <button class="button" id="searchBtn" type="button">조회</button>
+                            <button class="button" id="searchBtn" onclick="onclickSearch()"  type="button">조회</button>
                         </div>
                         <div class="align-self-end align-self-center mr-3">
                             <button class="button" id="questionWrBtn" onclick="onclickNewQna()" type="button">글쓰기</button>
@@ -250,7 +380,9 @@ debugger;
 
     <center>
         <div id="grd_QnAListTable" style="overflow:auto; height:600px;"></div>
+        <div id="pagination" style="margin-top:-30px;"></div>
     </center>
+
         <div class="pagination-wrapper clearfix">
             <ul class="pagination float --right" id="paging"></ul>
         </div>

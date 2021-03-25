@@ -2466,12 +2466,14 @@ class questionDel(Resource):
             globals()[row] = request.form[row]
 
         number = request.form['number']
+        isOrigin = request.form['isOrigin']
         sessionId = request.form['sessionId']
 
 
         logging.debug("====Param data====")
 
         logging.debug("number = " + number)
+        logging.debug("isOrigin = " + isOrigin)
         logging.debug("sessionId = " + sessionId)
 
 
@@ -2487,7 +2489,10 @@ class questionDel(Resource):
 
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
-                sql= "UPDATE TB_QNA_TEST SET QNA_DEL_YN = 'Y' WHERE QNA_NO = " + number
+                if isOrigin == "0":
+                    sql = "UPDATE TB_QNA_TEST SET QNA_DEL_YN = 'Y' WHERE QNA_ORIGIN_NO = " + number
+                else :
+                    sql= "UPDATE TB_QNA_TEST SET QNA_DEL_YN = 'Y' WHERE QNA_NO = " + number
 
                 logger.info(sql)
                 cursor.execute(sql)
@@ -2713,6 +2718,60 @@ class qnaUpdateCnt(Resource):
         }
 
         return jsonify(retJson)
+
+class qnaSearch(Resource):  # Mariadb 연결 진행
+    def get(self):
+        logging.debug("qnaSearch app.py start")
+        data =request.get_json()
+
+        # get data
+        option = data["option"]
+        keyword = data["keyword"]
+
+
+        logging.debug('================== App Start ==================')
+        logging.debug(data)
+        logging.debug(data["option"])
+        logging.debug(data["keyword"])
+        logging.debug('================== App End ==================')
+
+        # requirements pymysql import 후 커넥트 사용
+        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
+                                    charset='utf8', autocommit=False)
+        try:
+            with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+                # 쿼리문 실행
+                sql = "SELECT * FROM TB_QNA_TEST WHERE " \
+                      "QNA_ORIGIN_NO IN(SELECT QNA_NO FROM TB_QNA_TEST WHERE DATA_DEPTH = '0' AND "
+
+                if option == "00" : #제목
+                    sql += "QNA_TITLE LIKE '%"+ keyword +"%'"
+                if option == "01" : #내용
+                    sql += "QNA_MAIN LIKE '%"+ keyword +"%'"
+                if option == "02" : #제목+내용
+                    sql += "QNA_TITLE LIKE '%"+ keyword +"%' OR QNA_MAIN LIKE '%"+ keyword +"%'"
+                if option == "03" : #작성자
+                    sql += "QNA_WR_NM LIKE '%"+ keyword +"%'"
+
+                sql += ")ORDER BY QNA_ORIGIN_NO DESC, QNA_SORTS ASC"
+
+                logging.debug(sql)
+                cursor.execute(sql)
+
+        finally:
+            mysql_con.close()
+
+
+        result2 = cursor.fetchall()
+        for row in result2:
+            logging.debug('====== row====')
+            logging.debug(row)
+            logging.debug('===============')
+        logging.debug('====================test1')
+        array = list(result2)  # 결과를 리스트로
+        logging.debug('====================test2')
+        return json.dumps(result2, indent=4, cls=DateTimeEncoder)
+
     
 api.add_resource(Hello, '/hello')
 api.add_resource(Register, '/register')
@@ -2769,6 +2828,7 @@ api.add_resource(questionAw,'/questionAw') #api선언
 api.add_resource(qnaAnserReg,'/qnaAnserReg') #api선언
 api.add_resource(qnaUpdate,'/qnaUpdate') #api선언
 api.add_resource(qnaUpdateCnt,'/qnaUpdateCnt') #api선언
+api.add_resource(qnaSearch,'/qnaSearch') #api선언
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5006, debug=True)

@@ -90,6 +90,7 @@ urlpatterns = [
     url(r'^questionUpdateReq', views.questionUpdateReq.as_view(), name='questionUpdateReq'),
     url(r'^qnaUpdate', views.qnaUpdate, name='qnaUpdate'),
     url(r'^qnaUpdateCnt', views.qnaUpdateCnt, name='qnaUpdateCnt'),
+    url(r'^qnaSearch', views.qnaSearch, name='qnaSearch'),
     
     # 공통 코드 조회
     url(r'^retrieveCmmCd/', views.retrieveCmmCd, name='retrieveCmmCd'),
