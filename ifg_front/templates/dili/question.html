@@ -256,6 +256,7 @@ function paging(data, currentPage){
     var tagStNo = (first*10)+1;
     var tagEdNo = (last -1)*10;
     if( totalPage < tagEdNo){ tagEdNo = totalPage;}
+    alert("!!!!"+ i);
     for(var i=tagStNo; i <= tagEdNo; i++){
         if( i == currentPage){
             QnaPaging += "<button class='button' type='button' id='pg_"+i+"' onclick='onClickPage("+i+")' style='font-weight:bold;color:red;margin-left:5px;'>"+i+"</button>";
