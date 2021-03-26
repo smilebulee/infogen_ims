@@ -246,11 +246,11 @@ function paging(data, currentPage){
     var QnaPaging = "";
 
     if(currentPage > 10){
-        QnaPaging += "<button class='buttonP' type='button' id='pg_pPrev' onclick='onClickPage("+(((first-1)*10)+1)+")' style='color:black;'>◀◀</button>";
+        QnaPaging += "<button class='button' type='button' id='pg_pPrev' onclick='onClickPage("+(((first-1)*10)+1)+")' style='color:black;'>◀◀</button>";
 
     }
     if(currentPage > 1){
-        QnaPaging += "<button class='buttonP' type='button' id='pg_prev' onclick='onClickPage("+prev+")' style='color:black;margin-left:5px;'>◀</button>";
+        QnaPaging += "<button class='button' type='button' id='pg_prev' onclick='onClickPage("+prev+")' style='color:black;margin-left:5px;'>◀</button>";
     }
 
     var tagStNo = (first*10)+1;
@@ -258,19 +258,19 @@ function paging(data, currentPage){
     if( totalPage < tagEdNo){ tagEdNo = totalPage;}
     for(var i=tagStNo; i <= tagEdNo; i++){
         if( i == currentPage){
-            QnaPaging += "<button class='buttonP' type='button' id='pg_"+i+"' onclick='onClickPage("+i+")' style='font-weight:bold;color:red;margin-left:5px;'>"+i+"</button>";
+            QnaPaging += "<button class='button' type='button' id='pg_"+i+"' onclick='onClickPage("+i+")' style='font-weight:bold;color:red;margin-left:5px;'>"+i+"</button>";
 
         }else{
-            QnaPaging += "<button class='buttonP' type='button' id='pg_"+i+"' onclick='onClickPage("+i+")' style='color:black;margin-left:5px;'>"+i+"</button>";
+            QnaPaging += "<button class='button' type='button' id='pg_"+i+"' onclick='onClickPage("+i+")' style='color:black;margin-left:5px;'>"+i+"</button>";
         }
 
     }
     if(currentPage < totalPage){
-        QnaPaging += "<button class='buttonP' type='button' id='pg_next' onclick='onClickPage("+next+")' style='color:black;margin-left:5px;'>▶</button>";
+        QnaPaging += "<button class='button' type='button' id='pg_next' onclick='onClickPage("+next+")' style='color:black;margin-left:5px;'>▶</button>";
     }
 
     if(totalLine != 0 && (last-1) < totalLine){
-        QnaPaging += "<button class='buttonP' type='button' id='pg_nNext' onclick='onClickPage("+(((last-1)*10)+1)+")' style='color:black;margin-left:5px;'>▶▶</button>";
+        QnaPaging += "<button class='button' type='button' id='pg_nNext' onclick='onClickPage("+(((last-1)*10)+1)+")' style='color:black;margin-left:5px;'>▶▶</button>";
     }
 
     // 해당 위치에 QnaPaging HTML 코드 입력=
