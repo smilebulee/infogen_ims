@@ -150,7 +150,10 @@ function onclickNewQna() {
 
 /* 페이징처리된 번호 클릭시 해당 페이지로 이동 함수 */
 function onClickPage(num){
+<<<<<<< HEAD
 
+=======
+>>>>>>> parent of 93ce432 (페이징 테스트)
     paging(dataList, num);
 }
 
@@ -267,7 +270,11 @@ function paging(data, currentPage){
 
     }
     if(currentPage < totalPage){
+<<<<<<< HEAD
         QnaPaging += "<button class='button' type='button' id='pg_next' onclick='onClickPage("+next+")' style='color:black;margin-left:5px;'>▶</button>";
+=======
+        QnaPaging += "<a id='pg_next' onclick='onClickPage("+next+")' style='color:black;padding-left:5px;cursor:pointer;'> ▶ </a>";
+>>>>>>> parent of 93ce432 (페이징 테스트)
     }
 
     if(totalLine != 0 && (last-1) < totalLine){
