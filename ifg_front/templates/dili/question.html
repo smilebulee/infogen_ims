@@ -249,7 +249,7 @@ function paging(data, currentPage){
         QnaPaging += "<a id='pg_pPrev' onclick='onClickPage("+(((first-1)*10)+1)+")' style='color:black;cursor:pointer;'>◀◀</a>";
     }
     if(currentPage > 1){
-        QnaPaging += "<a id='pg_prev' onclick='onClickPage("+prev+")' style='color:black;padding-left:5px;cursor:pointer;'>◀</a>";
+        QnaPaging += '<a id="pg_prev" onclick="onClickPage('+prev+')" style="color:black;padding-left:5px;cursor:pointer;">◀</a>';
     }
 
     var tagStNo = (first*10)+1;
@@ -260,12 +260,12 @@ function paging(data, currentPage){
             QnaPaging += "<a href='#' id='pg_"+i+"' style='font-weight:bold;color:red;padding-left:5px;'> "+i+" </a>";
 
         }else{
-            QnaPaging += "<a id='pg_"+i+"' onclick='onClickPage("+i+")' style='color:black;padding-left:5px;cursor:pointer;'> "+i+" </a>";
+            QnaPaging += "<a id='pg_"+i+"' class='test' onclick='onClickPage("+i+")' style='color:black;padding-left:5px;'> "+i+" </a>";
         }
 
     }
     if(currentPage < totalPage){
-        QnaPaging += "<span id='pg_next' onclick='onClickPage("+next+")' style='color:black;padding-left:5px;cursor:pointer;'> ▶ </span>";
+        QnaPaging += "<span id='pg_next' onclick='onClickPage("+next+")' style='color:black;padding-left:5px;'> ▶ </span>";
     }
 
     if(totalLine != 0 && (last-1) < totalLine){
@@ -281,6 +281,12 @@ function paging(data, currentPage){
 
 
 </script>
+<style>
+    .test{
+        cursor:pointer;
+    }
+
+</style>
     <input type="text" class="form-control" id="hidden_selectNumber" name="hidden_selectNumber" maxlength="30" readonly hidden/>
 
 <div id="qnaDiv">
