@@ -260,12 +260,13 @@ function paging(data, currentPage){
             QnaPaging += "<a id='pg_"+i+"'  onclick='onClickPage('"+i+"')' style='font-weight:bold;color:red;padding-left:5px;'> "+i+" </a>";
 
         }else{
-            QnaPaging += "<a id='pg_"+i+"' class='test' onclick='onClickPage("+i+")' style='color:black;padding-left:5px;'> "+i+" </a>";
+            QnaPaging += "<a id='pg_"+i+"' class='test' onclick='javascript:onClickPage("+i+")' style='color:black;padding-left:5px;cursor:pointer;'> "+i+" </a>";
         }
 
     }
     if(currentPage < totalPage){
-        QnaPaging += "<button class="button" id="pg_next" type="button" onclick='onClickPage("+next+")' >▶</button>";
+        QnaPaging += "<span id='pg_next' onclick='onClickPage("+next+")' style='color:black;padding-left:5px;'> ▶ </span>";
+        QnaPaging += "<button class='button' id='pg_next' type='button' onclick='onClickPage("+next+")' >▶</button>";
     }
 
     if(totalLine != 0 && (last-1) < totalLine){
