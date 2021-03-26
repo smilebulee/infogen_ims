@@ -249,36 +249,31 @@ function paging(data, currentPage){
     var QnaPaging = "";
 
     if(currentPage > 10){
-        QnaPaging += "<button class='button' type='button' id='pg_pPrev' onclick='onClickPage("+(((first-1)*10)+1)+")' style='color:black;'>◀◀</button>";
-
+        QnaPaging += "<a id='pg_pPrev' onclick='onClickPage("+(((first-1)*10)+1)+")' style='color:black;padding-left:5px;cursor:pointer;'> ◀◀ </a>";
     }
     if(currentPage > 1){
-        QnaPaging += "<button class='button' type='button' id='pg_prev' onclick='onClickPage("+prev+")' style='color:black;margin-left:5px;'>◀</button>";
+        QnaPaging += "<a id='pg_prev' onclick='onClickPage("+prev+")' style='color:black;padding-left:5px;cursor:pointer;'> ◀ </a>";
     }
 
     var tagStNo = (first*10)+1;
     var tagEdNo = (last -1)*10;
     if( totalPage < tagEdNo){ tagEdNo = totalPage;}
-    alert("!!!!"+ i);
+
     for(var i=tagStNo; i <= tagEdNo; i++){
         if( i == currentPage){
-            QnaPaging += "<button class='button' type='button' id='pg_"+i+"' onclick='onClickPage("+i+")' style='font-weight:bold;color:red;margin-left:5px;'>"+i+"</button>";
-
+            QnaPaging += "<a id='pg_"+i+"' onclick='onClickPage("+i+")' style='font-weight:bold;color:red;padding-left:5px;cursor:pointer;'>" +i+ "</a>";
         }else{
-            QnaPaging += "<button class='button' type='button' id='pg_"+i+"' onclick='onClickPage("+i+")' style='color:black;margin-left:5px;'>"+i+"</button>";
+            QnaPaging += "<a id='pg_"+i+"' onclick='onClickPage("+i+")' style='color:black;padding-left:5px;cursor:pointer;'>" +i+ "</a>";
         }
 
     }
     if(currentPage < totalPage){
-<<<<<<< HEAD
-        QnaPaging += "<button class='button' type='button' id='pg_next' onclick='onClickPage("+next+")' style='color:black;margin-left:5px;'>▶</button>";
-=======
         QnaPaging += "<a id='pg_next' onclick='onClickPage("+next+")' style='color:black;padding-left:5px;cursor:pointer;'> ▶ </a>";
->>>>>>> parent of 93ce432 (페이징 테스트)
+
     }
 
     if(totalLine != 0 && (last-1) < totalLine){
-        QnaPaging += "<button class='button' type='button' id='pg_nNext' onclick='onClickPage("+(((last-1)*10)+1)+")' style='color:black;margin-left:5px;'>▶▶</button>";
+        QnaPaging += "<a id='pg_nNext' onclick='onClickPage("+(((last-1)*10)+1)+")' style='color:black;padding-left:5px;cursor:pointer;'> ▶▶ </a>";
     }
 
     // 해당 위치에 QnaPaging HTML 코드 입력=
@@ -290,12 +285,7 @@ function paging(data, currentPage){
 
 
 </script>
-<style>
-    .test{
-        cursor:pointer;
-    }
 
-</style>
     <input type="text" class="form-control" id="hidden_selectNumber" name="hidden_selectNumber" maxlength="30" readonly hidden/>
 
 <div id="qnaDiv">
