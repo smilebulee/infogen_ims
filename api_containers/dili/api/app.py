@@ -908,19 +908,19 @@ class empInfo(Resource): # Mariadb 연결 진행
                           "AND E.AUTH_ID = C.CMM_CD " \
                           "ORDER BY SEQ_NO"
                 logging.debug(sql)
-                logging.debug('====================test1')
+
                 cursor.execute(sql)
-                logging.debug('====================test2')
+
         finally:
             mysql_con.close()
-            logging.debug('====================test3')
+
         result2 = cursor.fetchall()
         for row in result2:
             logging.debug('====== row====')
             logging.debug(row)
             logging.debug('===============')
         array = list(result2)  # 결과를 리스트로
-        logging.debug('====================test4')
+
         return json.dumps(result2, indent=4, cls=DateTimeEncoder)
 
 
@@ -2229,11 +2229,8 @@ class empMgmtDelSubmit(Resource):
 
 class question(Resource):  # Mariadb 연결 진행
     def get(self):
-        logging.debug("QnA start")
-        logging.debug(request.get_json())
-
         logging.debug('---------------QnA---------------')
-        logging.debug('------------------------------------')
+        logging.debug(request.get_json())
 
         # requirements pymysql import 후 커넥트 사용
         mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
@@ -2261,9 +2258,6 @@ class questionInfo(Resource):  # Mariadb 연결 진행
     def get(self):
 
         data =request.get_json()
-
-        # get data
-        # name = data["name"]]
 
         logging.debug('================== App Start ==================')
         logging.debug(data)
@@ -2300,11 +2294,7 @@ class questionInfo(Resource):  # Mariadb 연결 진행
 
 class qnaPopCnt(Resource):  # Mariadb 연결 진행
     def get(self):
-        logging.debug("qnaPopCnt start")
         logging.debug(request.get_json())
-
-        logging.debug('---------------SEARCH---------------')
-        logging.debug('------------------------------------')
 
         # requirements pymysql import 후 커넥트 사용
         mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
@@ -2331,8 +2321,6 @@ class qnaPopUp(Resource):  # Mariadb 연결 진행
         logging.debug("qnaPopUp start")
         logging.debug(request.get_json())
 
-        logging.debug('---------------SEARCH---------------')
-        logging.debug('------------------------------------')
 
         # requirements pymysql import 후 커넥트 사용
         mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
@@ -2357,7 +2345,6 @@ class qnaPopUp(Resource):  # Mariadb 연결 진행
 
 class questionWrSubmit(Resource):
     def post(self):
-        logger.info('========app.py questionWrSubmit=========')
         params = request.get_json()
         logger.info(params)
 
@@ -2440,7 +2427,11 @@ class questiondetail(Resource): # Mariadb 연결 진행
                     cursor.execute(sql1)
                     mysql_con.commit()
 
-                sql2 = "SELECT * FROM TB_QNA_TEST WHERE QNA_NO ='"+ data["number"] +"'"
+                sql2 = "SELECT A.*, B.ORIGIN_WR " \
+                        "FROM TB_QNA_TEST A, " \
+                        "(SELECT QNA_WR_NM ORIGIN_WR FROM TB_QNA_TEST A WHERE QNA_NO  = (SELECT QNA_ORIGIN_NO FROM TB_QNA_TEST WHERE QNA_NO = '"+ data["number"] +"')) B " \
+                        "WHERE QNA_NO ='"+ data["number"] +"'"
+
 
                 logger.debug(sql2)
                 cursor.execute(sql2)
@@ -2457,7 +2448,6 @@ class questiondetail(Resource): # Mariadb 연결 진행
 
 class questionDel(Resource):
     def post(self):
-        logger.info('========app.py questionDel=========')
         params = request.get_json()
         logger.info(params)
 
@@ -2620,7 +2610,6 @@ class qnaAnserReg(Resource):
 
 class qnaUpdate(Resource):
     def post(self):
-        logger.info('========app.py qnaUpdate=========')
         params = request.get_json()
         logger.info(params)
 
@@ -2677,7 +2666,6 @@ class qnaUpdate(Resource):
 
 class qnaUpdateCnt(Resource):
     def post(self):
-        logger.info('========app.py questionDel=========')
         params = request.get_json()
         logger.info(params)
 
@@ -2768,9 +2756,9 @@ class qnaSearch(Resource):  # Mariadb 연결 진행
             logging.debug('====== row====')
             logging.debug(row)
             logging.debug('===============')
-        logging.debug('====================test1')
+
         array = list(result2)  # 결과를 리스트로
-        logging.debug('====================test2')
+
         return json.dumps(result2, indent=4, cls=DateTimeEncoder)
 
     

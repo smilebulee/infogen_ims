@@ -1,11 +1,16 @@
 <script type="text/javascript">
+
 /* 메인 화면에서 받는 이메일 파라미터 */
 var param = {
     "email"     : sessionStorage.getItem("email"),
 }
 
+/* 원글 데이터 저장 변수 */
 var originTitle;
 var originContents;
+var originNo;
+var originDepth;
+var originSort;
 
 /*********************************************************************
 *   Dialog Setting
@@ -23,9 +28,7 @@ n_dialog.setConfig({
 
 $(document).ready(function(){
     var number= $('#hidden_selectNumber').val();
-    console.log("==========> number" +number);
     $('#ans_Id').text(param.email);
-    console.log("==========> param.email :"+param.email);
     getQnAnsw(number);
 
 });
@@ -51,9 +54,7 @@ function getQnAnsw(number){
          }
     });
 }
-var originNo;
-var originDepth;
-var originSort;
+
 
 /* 원글 정보 데이터 셋팅 */
 function qnaAnswer(data){
@@ -89,13 +90,13 @@ function qnaAnswer(data){
 /* 게시글(원글) 돌아가기 버튼 클릭 이벤트 */
 function onClickBackBtn() {
 
-    /*var url = "{% url 'dili_api:question' %}" ;*/
     var number= $('#hidden_selectNumber').val();
     var url = "{% url 'dili_api:questionEditPop' %}" + "/?number=" +number ;
     $('#qnaDiv').load(url);
 
 };
 
+/* 초기화 버튼 클릭 이벤트 */
 function onClickResetBtn() {
     $('#ans_title').val(originTitle);
     $('#ans_content').val(originContents);
@@ -112,8 +113,6 @@ function onClickAsSubmitBtn() {
     originDepth  = parseInt(originDepth)+1;
     originSort  = originSort+1;
 
-
-
     var param = {
         "asWrID"     : asWrID,
         "asTitle"     : asTitle,
@@ -123,9 +122,10 @@ function onClickAsSubmitBtn() {
         "originSort"     : originSort
     }
 
+    /* 유효성 검증 */
     if( $('#ans_title').val() == "" || $('#ans_title').val() == null ){
         alertMsg("제목을 입력해 주세요.");
-    } else if ($('#ans_content').val() == "" || $('#ans_content').val() == null){
+    } else if ($('#ans_content').val() == "" || $('#ans_content').val() == null || $('#ans_content').val() == originContents){
         alertMsg("내용을 입력해 주세요.");
     } else {
 
@@ -139,14 +139,11 @@ function onClickAsSubmitBtn() {
                     callbackFn:function(data){
                         if(data){
                             // 리턴
-                             url = "{% url 'dili_api:question' %}";
-                             $('#grd_QnAListTable').load(url);
-                             $('#closeBtn').click();
+                             url = "{% url 'dili_api:question' %}" ;
+                             $('#testDiv').load(url);
                              alertMsg("답변이 성공적으로 등록되었습니다.");
                              console.log("등록되었습니다..");
 
-                            //sFlag = true;
-                            //fileSave();
                         } else{
                             alertMsg("답변등록에 실패하였습니다.");
                             console.log("답변등록에 실패하였습니다.");
@@ -157,7 +154,6 @@ function onClickAsSubmitBtn() {
             }else{     //취소클릭시
                 alertMsg("취소하였습니다.");
                 console.log("취소하였습니다.");
-                //location.reload();
             }
 
         });
@@ -177,6 +173,9 @@ function onClickAsSubmitBtn() {
         <center>
             <div id="grd_QnAAnsTable" style="overflow:auto;">
                 <form method="post" id="answerQ" action="">
+                    <div >
+                        <span class="requiredText" style="float:left;margin-top:20px;"><b>* 는 필수 입력 항목입니다.</b></span>
+                    </div>
                     <table class="table">
                         <tbody>
                             <tr>
@@ -185,10 +184,15 @@ function onClickAsSubmitBtn() {
                             </tr>
                             <tr>
                                 <th style="width:200px;text-align:center;">제목</th>
-                                <td><input type="text" id="ans_title" name="ans_title" style="width:100%;height:30px;" maxlength="495"></td>
+                                <td>
+                                    <input type="text" id="ans_title" name="ans_title" style="width:100%;height:30px;" maxlength="495">
+                                    <div class="flex-height d-flex mt-2">
+                                        <span class="requiredText">> 답변글의 제목은 수정할 수 없습니다.</span>
+                                    </div>
+                                </td>
                             </tr>
                             <tr>
-                                <th style="width:200px;text-align:center;">내용</th>
+                                <th style="width:200px;text-align:center;"><span class="requiredTag mr-1">*</span>내용</th>
                                 <td>
                                     <textarea id="ans_content" name="ans_content" style="width:100%;height:300px;overflow-y:scroll;" placeholder="내용을 입력하세요" wrap="hard" maxlength="1000"/>
                                 </td>

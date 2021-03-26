@@ -1,4 +1,5 @@
 <script type="text/javascript">
+
 /* 메인 화면에서 받는 이메일 파라미터 */
 var param = {
     "email"     : sessionStorage.getItem("email"),
@@ -20,7 +21,6 @@ n_dialog.setConfig({
 
 $(document).ready(function(){
     $('#qs_wn').text(param.email);
-    console.log("==========> param.email :"+param.email);
 
 });
 
@@ -38,13 +38,15 @@ function onClickSubmitBtn() {
         "sessionId"         : sessionStorage.getItem("email")      //로그인한 사용자 아이디
     }
 
+    /* 유효성 검증 */
     if( $('[name="qs_title"]').val() == "" || $('[name="qs_title"]').val() == null ){
         alertMsg("제목을 입력해 주세요.");
+
     } else if ($('[name="qs_content"]').val() == "" || $('[name="qs_content"]').val() == null){
         alertMsg("내용을 입력해 주세요.");
-    } else {
 
-        n_dialog.confirm('등록하시겠습니까?',function(){
+    } else {
+       n_dialog.confirm('등록하시겠습니까?',function(){
                 if(this.key == 'ok'){       //확인클릭시
                     $.ajaxCall( param, {
                         method:'POST',
@@ -54,15 +56,12 @@ function onClickSubmitBtn() {
                         callbackFn:function(data){
                             if(data){
                                 // 리턴
-                                 //location.href = "{% url 'dili_api:question' %}";
                                  url = "{% url 'dili_api:question' %}";
                                  $('#grd_QnAListTable').load(url);
                                  $('#closeBtn').click();
                                  alertMsg("성공적으로 등록되었습니다.");
                                  console.log("등록되었습니다.");
 
-                                //sFlag = true;
-                                //fileSave();
                             } else{
                                 alertMsg("등록에 실패하였습니다.");
                                 console.log("등록에 실패하였습니다.");
@@ -73,7 +72,6 @@ function onClickSubmitBtn() {
                 }else{     //취소클릭시
                     alertMsg("취소하였습니다.");
                     console.log("취소하였습니다.");
-                    //location.reload();
                 }
 
             });
@@ -103,8 +101,11 @@ function onClickCloseBtn() {
         <center>
             <div id="grd_QnARegTable" style="overflow:auto;">
                 <form method="post" id="submitEmp" action="">
-                    <div class="flex-height mb-2" style="float:right;">
-                        <button class="button" id="closeBtn" type="button" onclick="onClickCloseBtn()" >목록</button>
+                    <div >
+                        <span class="requiredText" style="float:left;margin-top:20px;"><b>* 는 필수 입력 항목입니다.</b></span>
+                        <span class="flex-height mb-2" style="float:right;">
+                            <button class="button" id="closeBtn" type="button" onclick="onClickCloseBtn()" >목록</button>
+                        </span>
                     </div>
                     <table class="table">
                         <tbody>
@@ -113,11 +114,11 @@ function onClickCloseBtn() {
                                 <td><span id="qs_wn" name="qs_wn"></span></td>
                             </tr>
                             <tr>
-                                <th style="width:200px;text-align:center;">제목</th>
+                                <th style="width:200px;text-align:center;"><span class="requiredTag mr-1">*</span>제목</th>
                                 <td><input type="text" id="qs_title" name="qs_title" style="width:100%;height:30px;" maxlength="495" placeholder="제목을 입력하세요"></td>
                             </tr>
                             <tr>
-                                <th style="width:200px;text-align:center;">내용</th>
+                                <th style="width:200px;text-align:center;"><span class="requiredTag mr-1">*</span>내용</th>
                                 <td>
                                     <textarea  id="qs_content" name="qs_content" style="width:100%;height:300px;overflow-y:scroll;" placeholder="내용을 입력하세요" wrap="hard" maxlength="1000"/>
                                 </td>

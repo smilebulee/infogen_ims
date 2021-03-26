@@ -916,22 +916,13 @@ class question(generic.TemplateView):
     def get(self, request, *args, **kwargs):
         template_name = 'dili/question.html'
 
-
-        # r = requests.get('http://dili_api:5006/hello')
-        # rr = {
-        #     "result": r.text
-        # }
         return render(request, template_name)
-        # return render(request, template_name, rr)
+
 
 class questionDtl(generic.TemplateView):
     def get(self, request, *args, **kwargs):
         template_name = 'dili/questionDtl.html'
 
-        # r = requests.get('http://dili_api:5006/hello')
-        # rr = {
-        #     "result": r.text
-        # }
         return render(request, template_name)
 
 def getquestionInfo(request):
@@ -962,7 +953,6 @@ def getquestionLst(request):
 
     # api 호출
     r = requests.get('http://dili_api:5006/question', params=datas)
-    logger.info("sql 끝")
     paginator = Paginator(r.json(), 10)
     logger.info("----------------")
     logger.info(paginator)
@@ -983,7 +973,6 @@ def getquestionLst(request):
         'has_prev': result.has_previous()
     }
 
-    # return JsonResponse(r.json())
     return JsonResponse(data)
 
 def getQnaPopCnt(request):
@@ -1062,7 +1051,6 @@ class questionEditPop(generic.TemplateView):
         template_name = 'dili/questionEditPop.html'
         logger.info("questionEditPop Start")
         return render(request, template_name)
-        # return render(request, template_name, rr)
     
 def questionDelete(request):
     param = json.loads(request.POST['param'])
@@ -1075,7 +1063,6 @@ def questionDelete(request):
     }
 
     for row in param:
-        logger.info("------views.py------")
         datas.setdefault(row, param[row])
 
     r = requests.post('http://dili_api:5006/questionDel', data=datas)
@@ -1106,7 +1093,6 @@ def questionAw(request):
     return JsonResponse(r.json(), safe=False)
 
 def qnaAnserReg(request):
-    logger.info("qnaAnserReg Start")
     param = json.loads(request.POST['param'])
 
     logger.info("Parameters Start")
@@ -1166,7 +1152,6 @@ def qnaUpdateCnt(request):
     }
 
     for row in param:
-        logger.info("------views.py------")
         datas.setdefault(row, param[row])
 
     r = requests.post('http://dili_api:5006/qnaUpdateCnt', data=datas)
@@ -1177,8 +1162,6 @@ def qnaUpdateCnt(request):
     return JsonResponse(r.json(), safe=False)
 
 def qnaSearch(request):
-    logger.info("qnaSearch view.py Start")
-
     param = json.loads(request.GET['param'])
 
     logger.info("Parameters Logging Start")

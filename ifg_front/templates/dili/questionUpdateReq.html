@@ -1,8 +1,16 @@
 <script type="text/javascript">
+
 /* 메인 화면에서 받는 이메일 파라미터 */
 var param = {
     "email"     : sessionStorage.getItem("email"),
 }
+
+/* 원글 데이터 저장 변수 */
+var originNo;
+var originDepth;
+var originSort;
+var originTitle;
+var originContents;
 
 /*********************************************************************
 *   Dialog Setting
@@ -48,11 +56,7 @@ function getQnAnsw(number){
          }
     });
 }
-var originNo;
-var originDepth;
-var originSort;
-var originTitle;
-var originContents;
+
 
 /* 원글 정보 데이터 셋팅 */
 function qnaAnswer(data){
@@ -84,12 +88,13 @@ function onClickBackBtn() {
 
 };
 
+/* 초기화 버튼 클릭 이벤트 */
 function onClickResetBtn() {
     $('#ans_title').val(originTitle);
     $('#ans_content').val(originContents);
 };
 
-/* 답변등록 버튼 클릭 이벤트 */
+/* 수정 버튼 클릭 이벤트 */
 function onClickUpdateBtn() {
 
     var asWrID = $('#ans_Id').text();
@@ -105,10 +110,16 @@ function onClickUpdateBtn() {
         "number"     : number
     }
 
-    if( $('#ans_title').val() == "" || $('#ans_title').val() == null ){
+    /* 유효성 검증 */
+    if( $('#ans_title').val() == "" || $('#ans_title').val() == null  ){
         alertMsg("제목을 입력해 주세요.");
-    } else if ($('#ans_content').val() == "" || $('#ans_content').val() == null){
+
+    }else if ($('#ans_content').val() == "" || $('#ans_content').val() == null ){
         alertMsg("내용을 입력해 주세요.");
+
+    } else if ($('#ans_title').val() == originTitle && $('#ans_content').val() == originContents){
+    alertMsg("수정사항이 없습니다.");
+
     } else {
 
         n_dialog.confirm('수정 하시겠습니까?',function(){
@@ -127,8 +138,6 @@ function onClickUpdateBtn() {
                              alertMsg("성공적으로 수정되었습니다.");
                              console.log("수정되었습니다..");
 
-                            //sFlag = true;
-                            //fileSave();
                         } else{
                             alertMsg("수정에 실패하였습니다.");
                             console.log("수정에 실패하였습니다.");
@@ -139,7 +148,6 @@ function onClickUpdateBtn() {
             }else{     //취소클릭시
                 alertMsg("취소하였습니다.");
                 console.log("취소하였습니다.");
-                //location.reload();
             }
 
         });
@@ -159,6 +167,9 @@ function onClickUpdateBtn() {
         <center>
             <div id="grd_QnAAnsTable" style="overflow:auto;">
                 <form method="post" id="answerQ" action="">
+                    <div >
+                        <span class="requiredText" style="float:left;margin-top:20px;"><b>* 는 필수 입력 항목입니다.</b></span>
+                    </div>
                     <table class="table">
                         <tbody>
                             <tr>
@@ -166,11 +177,11 @@ function onClickUpdateBtn() {
                                 <td><span id="ans_Id" name="ans_Id"></span></td>
                             </tr>
                             <tr>
-                                <th style="width:200px;text-align:center;">제목</th>
+                                <th style="width:200px;text-align:center;"><span class="requiredTag mr-1">*</span>제목</th>
                                 <td><input type="text" id="ans_title" name="ans_title" style="width:100%;height:30px;" maxlength="495"></td>
                             </tr>
                             <tr>
-                                <th style="width:200px;text-align:center;">내용</th>
+                                <th style="width:200px;text-align:center;"><span class="requiredTag mr-1">*</span>내용</th>
                                 <td>
                                     <textarea id="ans_content" name="ans_content" style="width:100%;height:300px;overflow-y:scroll;" placeholder="내용을 입력하세요" wrap="hard" maxlength="1000"/>
                                 </td>

@@ -1,16 +1,18 @@
 <script type="text/javascript">
 
-
+/* 메인 화면에서 받는 이메일, 권한 파라미터 */
 var param = {
-"name" : '',
-"email" : sessionStorage.getItem("email"),
-"authId" : sessionStorage.getItem("authId")
+    "name" : '',
+    "email" : sessionStorage.getItem("email"),
+    "authId" : sessionStorage.getItem("authId")
 }
 
+/* 게시글 조회해온 데이터 저장 변수 (for 페이징) */
 var dataList;
 
 $(document).ready(function(){
 
+    /* 전체 게시글 조회 */
     $.ajaxCall( param, {
          'method' : 'GET',
          'url' : "{% url 'dili_api:getquestionInfo' %}",
@@ -22,7 +24,6 @@ $(document).ready(function(){
             console.log("data : ",data)
             // 리턴
             pagingSet(data);
-            //paging(data.length, 10, 5,1);
          }
     });
 
@@ -30,7 +31,7 @@ $(document).ready(function(){
 
 });
 
-
+/* 검색버튼 이벤트 */
 function onclickSearch(){
     var option = $('#searchOption').val();
     var keyword = $('#ipt_searchQna').val();
@@ -40,7 +41,7 @@ function onclickSearch(){
         "keyword" : keyword
     }
 
-
+    /* 검색 후 데이터 배열로 변환해서 리턴 */
     $.ajaxCall( param, {
          'method' : 'GET',
          'url' : "{% url 'dili_api:qnaSearch' %}",
@@ -53,12 +54,12 @@ function onclickSearch(){
             console.log("dataArr : ",dataArr)
             // 리턴
             pagingSet(dataArr);
-            //paging(data.length, 10, 5,1);
          }
     });
 
 };
 
+/* 가져온 data를 페이징 처리 없이 그리드에 그려주는 함수 (현재 미사용)*/
 function QnAListGrd(data){
 
     var size = data.length;
@@ -126,6 +127,7 @@ function QnAListGrd(data){
     });
 };
 
+/* 그리드 제목 클릭 시 해당 게시글 상세페이지로 이동 함수 */
 function onClickEvt(i) {
 
     var number = i;
@@ -137,6 +139,7 @@ function onClickEvt(i) {
 
 };
 
+/* 게시글 등록 페이지 이동 함수 */
 function onclickNewQna() {
 
     var url = "{% url 'dili_api:questionWrPop' %}";
@@ -145,17 +148,20 @@ function onclickNewQna() {
 
 };
 
+/* 페이징처리된 번호 클릭시 해당 페이지로 이동 함수 */
 function onClickPage(num){
-    pagingByEllena(dataList, num);
+    paging(dataList, num);
 }
 
+/* 게시글 조회, 검색 후 가져온 데이터를 변수에 저장하고 페이징 처리해주는 함수 */
 function pagingSet(data){
     dataList = data;
-    pagingByEllena(data, 1);
+    paging(data, 1);
 
 }
 
-function pagingByEllena(data, currentPage){
+/* 데이터를 현재 페이지 기준으로 그리드에 데이터 그려주고 페이징 처리해주는 함수*/
+function paging(data, currentPage){
 
     var numberPerPage = 10; //한페이지당 게시글 수
     var pagePerLine = 10; //한 라인당 페이지 수
@@ -172,7 +178,7 @@ function pagingByEllena(data, currentPage){
     var next = currentPage+1; // 다음 페이지 ▶
     var prev = currentPage-1; // 이전 페이지 ◀
 
-
+    // 테이블 생성 HTML 코드
     var QnAListTable = '<table class="table table-bordered text-center">';
     QnAListTable += '<thead>';
     QnAListTable += '<tr>';
@@ -232,15 +238,17 @@ function pagingByEllena(data, currentPage){
     QnAListTable += '</tbody>';
     QnAListTable += '</table>';
 
+    // 해당 위치에 QnAListTable HTML 코드 입력
     document.getElementById('grd_QnAListTable').innerHTML = QnAListTable;
 
+    // 페이징 생성 HTML 코드
     var QnaPaging = "";
 
     if(currentPage > 10){
-        QnaPaging += "<a id='pg_pPrev' onclick='onClickPage("+(((first-1)*10)+1)+")' style='color:black'>◀◀</a>";
+        QnaPaging += "<a id='pg_pPrev' onclick='onClickPage("+(((first-1)*10)+1)+")' style='color:black;cursor:pointer;'>◀◀</a>";
     }
     if(currentPage > 1){
-        QnaPaging += "<a id='pg_prev' onclick='onClickPage("+prev+")' style='color:black'>◀</a>";
+        QnaPaging += "<a id='pg_prev' onclick='onClickPage("+prev+")' style='color:black;padding-left:5px;cursor:pointer;'>◀</a>";
     }
 
     var tagStNo = (first*10)+1;
@@ -248,64 +256,24 @@ function pagingByEllena(data, currentPage){
     if( totalPage < tagEdNo){ tagEdNo = totalPage;}
     for(var i=tagStNo; i <= tagEdNo; i++){
         if( i == currentPage){
-            QnaPaging += "<a href='#' id='pg_"+i+"' style='font-weight:bold;color:red'> "+i+" </a>";
+            QnaPaging += "<a href='#' id='pg_"+i+"' style='font-weight:bold;color:red;padding-left:5px;'> "+i+" </a>";
 
         }else{
-            QnaPaging += "<a id='pg_"+i+"' onclick='onClickPage("+i+")' style='color:black'> "+i+" </a>";
+            QnaPaging += "<a id='pg_"+i+"' onclick='onClickPage("+i+")' style='color:black;padding-left:5px;cursor:pointer;'> "+i+" </a>";
         }
 
     }
     if(currentPage < totalPage){
-        QnaPaging += "<a id='pg_next' onclick='onClickPage("+next+")' style='color:black'> ▶ </a>";
+        QnaPaging += "<a id='pg_next' onclick='onClickPage("+next+")' style='color:black;padding-left:5px;cursor:pointer;'> ▶ </a>";
     }
 
     if(totalLine != 0 && (last-1) < totalLine){
-        QnaPaging += "<a id='pg_nNext' onclick='onClickPage("+(((last-1)*10)+1)+")'  style='color:black'> ▶▶ </a>";
+        QnaPaging += "<a id='pg_nNext' onclick='onClickPage("+(((last-1)*10)+1)+")'  style='color:black;padding-left:5px;cursor:pointer;'> ▶▶ </a>";
     }
 
+    // 해당 위치에 QnaPaging HTML 코드 입력
     document.getElementById('pagination').innerHTML = QnaPaging;
 
-};
-
-
-function paging(totalData, dataPerPage, pageCount, currentPage){
-
-    var totalPage= Math.ceil(totalData/dataPerPage);
-    var pageGroup= Math.ceil(currentPage/pageCount);
-
-    var last = pageGroup * pageCount;
-    var first = last - (pageCount -1);
-    var next = last+1;
-    var prev = first-1;
-
-    var $pagingView = $('#paging');
-    var html ="";
-    if(prev>0)
-        html += "<a href=# id='prev'></a> ";
-
-    for(var i=first; i <=last; i++){
-        html += "<a href='#' id="+i+">"+i+"</a>";
-    }
-
-    if (last < totalPage)
-        html += "<a href=# id='next'>></a>";
-
-    if(totalPage < 1)
-        last=first;
-
-    $("#paging").html(html);
-    $("#paging a").css({"color":"black"});
-    $("#paging a#"+ currentPage).css({"text-decoration":"none", "color":"red", "font-weight": "bold"});
-    $("paging a").click(function(){
-        var $item = $(this);
-        var $id = $item.attr("id");
-        var selectedPage = $item.text();
-
-        if($id == "next")  selectedPage = next;
-        if($id == "prev")  selectedPage = prev;
-
-        paging(totalData, dataPerPage, pageCount,1);
-    });
 };
 
 
@@ -354,7 +322,7 @@ function paging(totalData, dataPerPage, pageCount, currentPage){
                 </div>
                 <div id="col_search" class="collapse show" aria-labelledby="head_search" data-parent="#grp_search">
                     <div class="card-body flex-height d-flex m-0 p-2">
-                        <div class="align-self-center mr-5">
+                        <div class="align-self-center mr-3">
                             <select id="searchOption" class="form-control" name="searchOption">
                                 <option value = "00" selected>제목</option>
                                 <option value = "01">내용</option>
@@ -384,7 +352,4 @@ function paging(totalData, dataPerPage, pageCount, currentPage){
         <div id="pagination" style="margin-top:-30px;"></div>
     </center>
 
-        <div class="pagination-wrapper clearfix">
-            <ul class="pagination float --right" id="paging"></ul>
-        </div>
 </div>

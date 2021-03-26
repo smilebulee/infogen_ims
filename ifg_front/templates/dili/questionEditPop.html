@@ -1,10 +1,12 @@
 <script type="text/javascript">
 
+/* 메인 화면에서 받는 이메일, 권한 파라미터 */
 var param = {
     "email"     : sessionStorage.getItem("email"),
     "authId" : sessionStorage.getItem("authId")
 }
-/* 해당글 depth, 작성자 값 */
+
+/* 해당글 depth, 작성자 데이터 저장 변수 */
 var qnaDepth;
 var qnaWriter;
 
@@ -25,24 +27,22 @@ n_dialog.setConfig({
 
 $(document).ready(function(){
     var number = $('#hidden_selectNumber').val();
-    console.log("==========> number" +number);
 
     getEditQnaDetail(number);
-
 
 });
 
 
 
 function getEditQnaDetail(number){
-    console.log("==========> getEditQnaDetail");
+
     var param = {
         "number" : number,
         "status" : "R"
 
     }
 
-    /* 정보 조회 */
+    /* 게시물 상세정보 조회 */
     $.ajaxCall( param, {
          'method' : 'GET',
          'url' : "{% url 'dili_api:questiondetail' %}",
@@ -58,6 +58,7 @@ function getEditQnaDetail(number){
     });
 };
 
+/* 가져온 게시글 데이터 화면에 셋팅 */
 function qnaDtSet(data){
     console.log("Start")
     console.log(data)
@@ -71,14 +72,18 @@ function qnaDtSet(data){
     var get_qnahit = data[0].QNA_CNT;
     qnaDepth = data[0].DATA_DEPTH;
     qnaWriter = data[0].QNA_WR_NM;
+    oriWriter = data[0].ORIGIN_WR;
 
+    $('#ipt_qnatitle').text(get_qnaTt);
     $('#ipt_qnatitle').text(get_qnaTt);
     $('#qs_content').text(get_qnaCont);
     $('#ipt_wrNm').text(get_qnaWrNm);
     $('#ipt_wrDt').text(get_qnaDt);
     $('#hitCount').text(get_qnahit);
+    $('#ipt_hidden').text(oriWriter);
 
     /* 권한설정까지 셋팅 */
+
     /* 로그인한 아이디가 관리자*/
     if(param.authId == "ADMIN" && param.email != qnaWriter) {
         /* 수정 버튼 비활성화 */
@@ -94,7 +99,7 @@ function qnaDtSet(data){
         $('#deleteBtn').show();
         $('#answerBtn').show();
 
-    /* 로그인한 아이디가 관리자가 아니고본인글일 경우*/
+    /* 로그인한 아이디가 관리자가 아니고 본인글인경우*/
     }else if(param.authId != "ADMIN" &&param.email == qnaWriter){
         /* 수정, 삭제 활성화 */
         $('#updateBtn').show();
@@ -102,7 +107,15 @@ function qnaDtSet(data){
         /* 답변 버튼 비활성화 */
         $('#answerBtn').hide();
 
-    /* 로그인한 아이디가 관리자가 아니고 본인글도 아닐 경우*/
+    /* 로그인한 아이디가 관리자가 아니고 본인글도 아니지만 원글이 본인글일경우*/
+    }else if(param.authId != "ADMIN" && param.email != qnaWriter && param.email == oriWriter){
+        /* 수정, 삭제, 답변 버튼 비활성화 */
+        $('#updateBtn').hide();
+        $('#deleteBtn').hide();
+        /* 답변 버튼 활성화 */
+        $('#answerBtn').show();
+
+    /* 로그인한 아이디가 관리자가 아니고 본인글도 아니고 원글도 본인글이 아닐경우*/
     }else{
         /* 수정, 삭제, 답변 버튼 비활성화 */
         $('#updateBtn').hide();
@@ -115,7 +128,7 @@ function qnaDtSet(data){
 
 
 
-/* 닫기 버튼 클릭 이벤트 */
+/* 목록 버튼 클릭 이벤트 */
 function onClickBoardBtn() {
     var url = "{% url 'dili_api:question' %}" ;
     $('#testDiv').load(url);
@@ -149,8 +162,6 @@ function onClickDeleteBtn(){
                              alertMsg("성공적으로 삭제되었습니다.");
                              console.log("삭제되었습니다.");
 
-                            //sFlag = true;
-                            //fileSave();
                         } else{
                             alertMsg("삭제에 실패하였습니다.");
                             console.log("삭제에 실패하였습니다.");
@@ -161,12 +172,12 @@ function onClickDeleteBtn(){
             }else{     //취소클릭시
                 alertMsg("취소하였습니다.");
                 console.log("취소하였습니다.");
-                //location.reload();
             }
 
         });
 };
 
+/* 수정 버튼 클릭 이벤트 */
 function onClickUpdateBtn(){
     var number= $('#hidden_selectNumber').val();
     $('#hidden_originN').val(number);
@@ -175,6 +186,7 @@ function onClickUpdateBtn(){
     $('#qnaDiv').load(url);
 }
 
+/* 답변하기 버튼 클릭 이벤트 */
 function onClickAnswerBtn(){
     var number= $('#hidden_selectNumber').val();
     $('#hidden_originN').val(number);
@@ -183,9 +195,6 @@ function onClickAnswerBtn(){
     $('#qnaDiv').load(url);
 
 };
-
-
-
 
 </script>
     <input type="text" class="form-control" id="hidden_originN" name="hidden_originN" maxlength="30" readonly hidden/>
@@ -226,6 +235,7 @@ function onClickAnswerBtn(){
                             <td colspan="6">
                                 <!-- 버튼 -->
                                 <div class="flex-height mb-2" style="float:right;">
+                                    <input type="hidden" class="form-control" id="ipt_hidden" name="ipt_hidden" readonly/>
                                     <button class="button" id="updateBtn" type="button" onclick="onClickUpdateBtn()">수정</button>
                                     <button class="button" id="deleteBtn" type="button" onclick="onClickDeleteBtn()">삭제</button>
                                     <button class="button" id="answerBtn" type="button" onclick="onClickAnswerBtn()">답변하기</button>
