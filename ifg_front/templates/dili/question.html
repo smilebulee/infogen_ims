@@ -150,6 +150,7 @@ function onclickNewQna() {
 
 /* 페이징처리된 번호 클릭시 해당 페이지로 이동 함수 */
 function onClickPage(num){
+    alert('페이징!!!!!!! ');
     paging(dataList, num);
 }
 
@@ -243,7 +244,7 @@ function paging(data, currentPage){
 
     // 페이징 생성 HTML 코드
     var QnaPaging = "";
-
+    alert('a태그!!!!!!!');
     if(currentPage > 10){
         QnaPaging += "<a id='pg_pPrev' onclick='onClickPage("+(((first-1)*10)+1)+")' style='color:black;cursor:pointer;'>◀◀</a>";
     }
@@ -264,7 +265,7 @@ function paging(data, currentPage){
 
     }
     if(currentPage < totalPage){
-        QnaPaging += "<a id='pg_next' onclick='onClickPage("+next+")' style='color:black;padding-left:5px;cursor:pointer;'> ▶ </a>";
+        QnaPaging += "<span id='pg_next' onclick='onClickPage("+next+")' style='color:black;padding-left:5px;cursor:pointer;'> ▶ </span>";
     }
 
     if(totalLine != 0 && (last-1) < totalLine){
