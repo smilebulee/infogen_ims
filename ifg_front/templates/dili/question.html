@@ -150,10 +150,7 @@ function onclickNewQna() {
 
 /* 페이징처리된 번호 클릭시 해당 페이지로 이동 함수 */
 function onClickPage(num){
-<<<<<<< HEAD
 
-=======
->>>>>>> parent of 93ce432 (페이징 테스트)
     paging(dataList, num);
 }
 
@@ -249,34 +246,33 @@ function paging(data, currentPage){
     var QnaPaging = "";
 
     if(currentPage > 10){
-        QnaPaging += "<a id='pg_pPrev' onclick='onClickPage("+(((first-1)*10)+1)+")' style='color:black;padding-left:5px;cursor:pointer;'> ◀◀ </a>";
+        QnaPaging += "<a id='pg_pPrev' onclick='onClickPage("+(((first-1)*10)+1)+")' style='color:black;cursor:pointer;'>◀◀</a>";
     }
     if(currentPage > 1){
-        QnaPaging += "<a id='pg_prev' onclick='onClickPage("+prev+")' style='color:black;padding-left:5px;cursor:pointer;'> ◀ </a>";
+        QnaPaging += "<a id='pg_prev' onclick='onClickPage("+prev+")' style='color:black;padding-left:5px;cursor:pointer;'>◀</a>";
     }
 
     var tagStNo = (first*10)+1;
     var tagEdNo = (last -1)*10;
     if( totalPage < tagEdNo){ tagEdNo = totalPage;}
-
     for(var i=tagStNo; i <= tagEdNo; i++){
         if( i == currentPage){
-            QnaPaging += "<a id='pg_"+i+"' onclick='onClickPage("+i+")' style='font-weight:bold;color:red;padding-left:5px;cursor:pointer;'>" +i+ "</a>";
+            QnaPaging += "<a href='#' id='pg_"+i+"' style='font-weight:bold;color:red;padding-left:5px;'> "+i+" </a>";
+
         }else{
-            QnaPaging += "<a id='pg_"+i+"' onclick='onClickPage("+i+")' style='color:black;padding-left:5px;cursor:pointer;'>" +i+ "</a>";
+            QnaPaging += "<a id='pg_"+i+"' onclick='onClickPage("+i+")' style='color:black;padding-left:5px;cursor:pointer;'> "+i+" </a>";
         }
 
     }
     if(currentPage < totalPage){
         QnaPaging += "<a id='pg_next' onclick='onClickPage("+next+")' style='color:black;padding-left:5px;cursor:pointer;'> ▶ </a>";
-
     }
 
     if(totalLine != 0 && (last-1) < totalLine){
-        QnaPaging += "<a id='pg_nNext' onclick='onClickPage("+(((last-1)*10)+1)+")' style='color:black;padding-left:5px;cursor:pointer;'> ▶▶ </a>";
+        QnaPaging += "<a id='pg_nNext' onclick='onClickPage("+(((last-1)*10)+1)+")'  style='color:black;padding-left:5px;cursor:pointer;'> ▶▶ </a>";
     }
 
-    // 해당 위치에 QnaPaging HTML 코드 입력=
+    // 해당 위치에 QnaPaging HTML 코드 입력
     document.getElementById('pagination').innerHTML = QnaPaging;
 
 };
@@ -285,7 +281,6 @@ function paging(data, currentPage){
 
 
 </script>
-
     <input type="text" class="form-control" id="hidden_selectNumber" name="hidden_selectNumber" maxlength="30" readonly hidden/>
 
 <div id="qnaDiv">
@@ -352,9 +347,10 @@ function paging(data, currentPage){
      </div>
 </div>
 <!-- 게시글 목록 Div -->
+
     <center>
         <div id="grd_QnAListTable" style="overflow:auto; height:600px;"></div>
-        <div id="pagination" ></div>
+        <div id="pagination""></div>
     </center>
 
 </div>
