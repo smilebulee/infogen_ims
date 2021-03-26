@@ -257,7 +257,7 @@ function paging(data, currentPage){
     if( totalPage < tagEdNo){ tagEdNo = totalPage;}
     for(var i=tagStNo; i <= tagEdNo; i++){
         if( i == currentPage){
-            QnaPaging += "<a href='#' id='pg_"+i+"' style='font-weight:bold;color:red;padding-left:5px;'> "+i+" </a>";
+            QnaPaging += "<a id='pg_"+i+"'  onclick='onClickPage('"+i+"')' style='font-weight:bold;color:red;padding-left:5px;'> "+i+" </a>";
 
         }else{
             QnaPaging += "<a id='pg_"+i+"' class='test' onclick='onClickPage("+i+")' style='color:black;padding-left:5px;'> "+i+" </a>";
@@ -269,10 +269,10 @@ function paging(data, currentPage){
     }
 
     if(totalLine != 0 && (last-1) < totalLine){
-        QnaPaging += "<a id='pg_nNext' onclick='onClickPage("+(((last-1)*10)+1)+")'  style='color:black;padding-left:5px;cursor:pointer;'> ▶▶ </a>";
+        QnaPaging += '<a id="pg_nNext" onclick"onClickPage('+(((last-1)*10)+1)+')"  style="color:black;padding-left:5px;cursor:pointer;"> ▶▶ </a>';
     }
 
-    // 해당 위치에 QnaPaging HTML 코드 입력
+    // 해당 위치에 QnaPaging HTML 코드 입력=
     document.getElementById('pagination').innerHTML = QnaPaging;
 
 };
