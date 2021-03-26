@@ -265,7 +265,7 @@ function paging(data, currentPage){
 
     }
     if(currentPage < totalPage){
-        QnaPaging += "<span id='pg_next' onclick='onClickPage("+next+")' style='color:black;padding-left:5px;cursor:pointer;'> ▶ </span>";
+        QnaPaging += "<a id='pg_next' onclick='onClickPage("+next+")' style='color:black;padding-left:5px;cursor:pointer;'> ▶ </a>";
     }
 
     if(totalLine != 0 && (last-1) < totalLine){
