@@ -27,7 +27,35 @@ $(document).ready(function(){
          }
     });
 
+    /* 검색 엔터키 이벤트 */
+    $('#ipt_searchQna').keydown(function(e){
+        //엔터키 입력 + 이름컬럼에 값이 있는 경우.
+        if ( e.keyCode == 13 && $('#ipt_searchQna').val() != 'undefined' ) {
+            var option = $('#searchOption').val();
+            var keyword = $('#ipt_searchQna').val();
 
+            var param = {
+                "option" : option,
+                "keyword" : keyword
+            }
+
+            /* 검색 후 데이터 배열로 변환해서 리턴 */
+            $.ajaxCall( param, {
+                 'method' : 'GET',
+                 'url' : "{% url 'dili_api:qnaSearch' %}",
+                 'dataType' : 'json',
+                 'data' : JSON.stringify(param),
+                 'async' : false,
+                 'callbackFn' : function(data){
+                    var dataArr = JSON.parse(data)
+                    // 로그
+                    console.log("dataArr : ",dataArr)
+                    // 리턴
+                    pagingSet(dataArr);
+                 }
+            });
+        }
+    });
 
 });
 
@@ -347,10 +375,9 @@ function paging(data, currentPage){
      </div>
 </div>
 <!-- 게시글 목록 Div -->
-
     <center>
         <div id="grd_QnAListTable" style="overflow:auto; height:600px;"></div>
-        <div id="pagination""></div>
+        <div id="pagination" style="margin-bottom:30px;"></div>
     </center>
 
 </div>
