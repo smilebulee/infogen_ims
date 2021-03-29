@@ -79,7 +79,12 @@ function onClickSubmitBtn() {
 
 };
 
-
+/* 초기화 버튼 클릭 이벤트 */
+function onClickResetBtn() {
+debugger;
+    $('#qs_title').val("");
+    $('#qs_content').val("");
+};
 
 
 /* 목록 버튼 클릭 이벤트 */
@@ -127,7 +132,7 @@ function onClickCloseBtn() {
                     </table>
                     <div class="flex-height mb-2" style="float:right;">
                         <button class="button" id="submitBtn" type="button" onclick="onClickSubmitBtn()">등록</button>
-                        <input class="button" id="resetBtn" type="reset"/>
+                        <button class="button" id="resetBtn" type="button" onclick="onClickResetBtn()">초기화</button>
                     </div>
                 </form>
             </div>
