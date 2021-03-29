@@ -121,14 +121,15 @@ function onClickIsExistNmBtn() {
 
 /* 성명 중복체크 결과 */
 function isExistNmResult(data){
+
     console.log("Start")
     console.log(data)
     console.log(typeof(data))
     if(data.length > 0){
         alertMsg("이미 사용중인 성명입니다.<br>성명+숫자로 재입력해주세요.<br>(예: 홍길동1, 홍길동2)", function() {
             console.log("성명 중복체크 > 등록 불가능");
-            $('#ipt_empNm').val("");
             $('#ipt_empNm').focus();
+
         });
 
     }else{
@@ -145,7 +146,6 @@ function isExistNmResult(data){
 /* 성명 재설정 클릭 이벤트 */
 function onClickReIsExistNmBtn(){
     $('#ipt_empNm').attr('readonly', false);
-    $('#ipt_empNm').val("");
     $('#ipt_empNm').focus();
     $('#reIsExistNmBtn').attr('hidden', true);
     $('#isExistNmBtn').attr('hidden', false);
@@ -267,8 +267,15 @@ function onClickCloseBtn() {
 function onClickResetBtn() {
     $('#ipt_empId').attr('readonly', false);
     $('#reIsExistBtn').attr('hidden', true);
-    /*$('#ipt_empId').attr('style', 'width:200px');*/
     $('#isExistBtn').attr('hidden', false);
+    $('#ipt_empNm').attr('readonly', false);
+    $('#ipt_empId').val("");
+    $('#ipt_empPw').val("");
+    $('#ipt_empNm').val("");
+
+    $('#sbx_empAuthId').val("00");
+    $('#sbx_empDept').val("00");
+
 };
 
 
@@ -383,7 +390,7 @@ function validChk(){
                     <td>
                         <div class="align-self-center mr-5  pb-2">
                             <select id="sbx_empAuthId" name="sbx_empAuthId" class="form-control">
-                                <option value="none" selected>선택</option>
+                                <option value="00" selected>선택</option>
                             </select>
                         </div>
                     </td>
@@ -412,7 +419,7 @@ function validChk(){
                     <td colspan="2">
                         <div class="flex-height mt-4" style="float:right;">
                             <button class="button" id="submitBtn" type="button" onclick="onClickSubmitBtn()">등록</button>
-                            <input class="button" id="resetBtn" type="reset" onclick="onClickResetBtn()" />
+                            <button class="button" id="resetBtn" type="button" onclick="onClickResetBtn()">초기화</button>
                             <button class="button" id="closeBtn" type="button" onclick="onClickCloseBtn()" >닫기</button>
                         </div>
                     </td>

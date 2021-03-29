@@ -183,6 +183,7 @@ $("#empMgmtRegBtn").click(function(){
 function isKorean(){
      if((event.keyCode < 12592) || (event.keyCode > 12687)){
       event.returnValue = false
+      alertMsg("한글만 입력가능합니다.");
      }
 }
 
@@ -196,10 +197,10 @@ function maskingNm(strName){
         });
         var joinName = originName.join();
         return joinName.replace(/,/g, '');
-      } else {
+    } else {
         var pattern = /.$/; // 정규식
         return strName.replace(pattern, '*');
-      }
+    }
 }
 
 
