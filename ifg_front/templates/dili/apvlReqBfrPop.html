@@ -1,5 +1,8 @@
 <script type="text/javascript">
     $(document).ready(function(){
+        /* 사용자 권한 셋팅 */
+        checkEmpAuthsByEmail(sessionStorage.getItem("email"), ["ADMIN", "GM", "USER"]);
+
         //TO DO : h5_apvlReqBfrTit 등록/수정/상세 제목 변경
         //TO DO : btn_apvlBfrReq 저장/수정 버튼 변경
         if($('#currReqPopStts').val() == "register") {
@@ -18,14 +21,35 @@
             $("#ipt_jobStrtTm").val(strNowTm);
             $("#ipt_jobEndTm").val(strNowTm);
 
-            // 로그인한 사용자 소속 사업부장 이름, 이메일 조회 후 값 세팅
-            retrieveEmpDeptGmByEmail(sessionStorage.getItem("email"), function(data) {
+            // 로그인한 사용자 소속 현장대리인 이름, 이메일 조회 후 값 세팅
+            retrieveEmpDeptPrByEmail(sessionStorage.getItem("email"), function(data) {
                 if(data.length > 0) {
-                    $('#ipt_apvlLnSearchNamePop').val(data[0].DEPT_GM_NAME);
-                    $("#ipt_apvlLnSearchEmailPop").val(data[0].DEPT_GM_EMAIL);
+                    $('#ipt_apvlLnSearchNamePop').val(data[0].DEPT_PR_NAME);
+                    $("#ipt_apvlLnSearchEmailPop").val(data[0].DEPT_PR_EMAIL);
                     $('#ipt_apvlLnSearchNamePop').prop('readonly', true);
+
+                    // 로그인한 사용자 소속 사업부장 이름, 이메일 조회 후 값 세팅
+                    retrieveEmpDeptGmByEmail(sessionStorage.getItem("email"), function(data) {
+                        if(data.length > 0) {
+                            $('#ipt_refSearchNamePop').val(data[0].DEPT_GM_NAME);
+                            $("#ipt_refSearchEmailPop").val(data[0].DEPT_GM_EMAIL);
+                            $('#ipt_refSearchNamePop').prop('readonly', true);
+                        } else {
+                            alertMsg("소속 부서 사업부장 정보가 존재하지 않습니다. 경영지원실에 문의해주세요.", function() {
+                                $('#exitApvlReqModalBtn').click();
+                            });
+                            return;
+                        }
+                    });
+                } else {
+                    alertMsg("소속 부서 현장대리인 정보가 존재하지 않습니다. 경영지원실에 문의해주세요.", function() {
+                        $('#exitApvlReqModalBtn').click();
+                    });
+                    return;
                 }
             });
+
+
             // 기안자
             retrieveEmpNmByEmail(sessionStorage.getItem("email"), function(data) {
                 $('#sp_apvlReqName').text(data[0].EMP_NAME);
@@ -102,6 +126,7 @@
         */
 
         // 참조자 검색 - 직원조회 모달 오픈
+        /* 참조자 - 시스템상 자동 세팅으로 조회 불가 처리
         if($('#currReqPopStts').val() == "register" || $('#currReqPopStts').val() == "modify") {
             $("#ipt_refSearchNamePop").click(function(){
                 //자식창에서 여는 참조자 조회 팝업임을 표시
@@ -110,6 +135,7 @@
                 openEmpMgmtPop();
             });
         }
+        */
 
         // 직원 조회 모달 팝업 오픈
         function openEmpMgmtPop(ipt_id) {
@@ -121,11 +147,14 @@
         }
 
         // 성명 삭제 버튼 클릭 이벤트
+        // 참조자 - 시스템상 자동 세팅으로 삭제 불가 처리
+         $('#btn_delRefSearchNamePop').css('display', 'none');
+        /*
         $('#btn_delRefSearchNamePop').click(function(){
             $('#ipt_refSearchNamePop').val('');
             $('#ipt_refSearchEmailPop').val('');
         });
-
+        */
     });
 
 

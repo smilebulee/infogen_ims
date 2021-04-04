@@ -978,7 +978,51 @@ class empDeptGm(Resource): # Mariadb 연결 진행
                       "     , EMP_NAME AS DEPT_GM_NAME " \
                       "     , EMP_EMAIL AS DEPT_GM_EMAIL " \
                       "  FROM TB_EMP_MGMT " \
-                      " WHERE AUTH_ID = 'GM'" \
+                      " WHERE AUTH_ID LIKE '%GM%'" \
+                      "   AND DEPT_CD = (" \
+                      "                  SELECT DEPT_CD " \
+                      "                    FROM TB_EMP_MGMT " \
+                      "                   WHERE EMP_EMAIL = '" + data["email"] + "'" \
+                      "                 )"
+
+                logging.debug(sql)
+                cursor.execute(sql)
+
+        finally:
+            mysql_con.close()
+
+        result2 = cursor.fetchall()
+        for row in result2:
+            logging.debug('====== row====')
+            logging.debug(row)
+            logging.debug('===============')
+        array = list(result2)  # 결과를 리스트로
+
+        return json.dumps(result2, indent=4, cls=DateTimeEncoder)
+
+
+class empDeptPr(Resource): # Mariadb 연결 진행
+    def get(self):
+
+        data = request.get_json()
+
+        logging.debug('================== App Start ==================')
+        logging.debug(data)
+        logging.debug(data["email"])
+        logging.debug('================== App End ==================')
+
+        #requirements pymysql import 후 커넥트 사용
+        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
+                                        charset='utf8', autocommit=False)
+        try:
+            with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+                #쿼리문 실행
+                sql = "SELECT DEPT_CD " \
+                      "     , DEPT_NAME " \
+                      "     , EMP_NAME AS DEPT_PR_NAME " \
+                      "     , EMP_EMAIL AS DEPT_PR_EMAIL " \
+                      "  FROM TB_EMP_MGMT " \
+                      " WHERE AUTH_ID LIKE '%PR%'" \
                       "   AND DEPT_CD = (" \
                       "                  SELECT DEPT_CD " \
                       "                    FROM TB_EMP_MGMT " \
@@ -2793,7 +2837,8 @@ api.add_resource(empList,'/empList') #api 선언
 api.add_resource(empInfo,'/empInfo') #api 선언
 api.add_resource(empName,'/empName')                        #이메일로 사용자 이름 조회
 api.add_resource(empDept,'/empDept')                        #이메일로 사용자 부서 정보 조회
-api.add_resource(empDeptGm,'/empDeptGm')                      #이메일로 사용자 부서 현장대리인(GM) 정보 조회
+api.add_resource(empDeptGm,'/empDeptGm')                      #이메일로 사용자 부서 사업부장(GM) 정보 조회
+api.add_resource(empDeptPr,'/empDeptPr')                      #이메일로 사용자 부서 현장대리인(PR) 정보 조회
 api.add_resource(saveYryApvlReq,'/saveYryApvlReq')          #_
 api.add_resource(weekGridData,'/weekGridData') #api 선언
 api.add_resource(apvlInfo,'/apvlInfo') #api 선언
