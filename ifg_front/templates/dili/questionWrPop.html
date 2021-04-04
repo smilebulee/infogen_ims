@@ -27,14 +27,20 @@ $(document).ready(function(){
 
 /* 등록버튼 클릭 이벤트 */
 function onClickSubmitBtn() {
+debugger;
     var ipt_wrId = $('[name="qs_wn"]').val();
     var ipt_qnatitle = $('[name="qs_title"]').val();
     var sbx_qnaContent = $('[name="qs_content"]').val();
-
+    if($('#QnAShowYN:checked').val() == 'N'){
+        var chk_QnaShow = "N";
+    }else{
+        var chk_QnaShow = "Y";
+    }
     var param = {
         "ipt_wrId"     : ipt_wrId,
         "ipt_qnatitle"     : ipt_qnatitle,
         "sbx_qnaContent" : sbx_qnaContent,
+        "chk_QnaShow" : chk_QnaShow,
         "sessionId"         : sessionStorage.getItem("email")      //로그인한 사용자 아이디
     }
 
@@ -127,6 +133,12 @@ function onClickCloseBtn() {
                                 <td>
                                     <textarea  id="qs_content" name="qs_content" style="width:100%;height:300px;overflow-y:scroll;" placeholder="내용을 입력하세요" wrap="hard" maxlength="1000"/>
                                 </td>
+                            </tr>
+                            <tr>
+                                <th colspan="2" style="text-align:center;">
+                                    게시글을 비공개로 등록하시겠습니까?<br>
+                                    <label><input type='checkbox' class='QnAShowYN' name='QnAShowYN' id='QnAShowYN' value='N' />&nbsp;비공개&nbsp;&nbsp;&nbsp;</label>
+                                </th>
                             </tr>
                         </tbody>
                     </table>

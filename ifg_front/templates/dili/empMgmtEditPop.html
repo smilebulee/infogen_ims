@@ -22,7 +22,14 @@
         var email = document.getElementById('hidden_selectMail').value;
 
         $('#hidden_empMail').val(email);
-        getEditEmpInfo(email);
+
+
+        // 공통 코드 조회 - '권한 조회'
+        retrieveCmmCdChk('Echk_empAuthId', 'AUTH_CD', function(){
+            getEditEmpInfo(email);
+            $('#Echk_empAuthId').attr('style', "font-size:x-small");
+        });
+
 
     });
 
@@ -56,7 +63,7 @@
 
         var get_empId = data[0].EMP_ID;
         var get_empPw = data[0].EMP_PW;
-        var get_empAId = data[0].AUTH_ID;
+        var get_empAId = data[0].AUTH_ID.split("|");
         var get_empName = data[0].EMP_NAME;
         var get_empDCd = data[0].DEPT_CD;
 
@@ -66,17 +73,24 @@
             retrieveCmmCd('sbx_empDept', 'SLIN_BZDP', function(){
                 $("#sbx_empDept option[value='"+get_empDCd+"']").attr("selected", true);
             });
-            // 공통 코드 조회 - '권한 조회'
-            retrieveCmmCd('sbx_empAuthId', 'AUTH_CD', function(){
-                $("#sbx_empAuthId option[value='"+get_empAId+"']").attr("selected", true);
-            });
+
             initFlag = false;
+
         } else {
             $("#sbx_empDept option").removeAttr("selected")
             $("#sbx_empDept option[value='"+get_empDCd+"']").attr("selected", true);
-            $("#sbx_empAuthId option").removeAttr("selected")
-            $("#sbx_empAuthId option[value='"+get_empAId+"']").attr("selected", true);
+
          }
+
+
+        // 선택된 권한 체크
+        $('#Echk_empAuthId').children().find('.test').prop("checked", false);
+        for(i=0; i < get_empAId.length; i++){
+            var idVal = get_empAId[i];
+            $("#"+idVal).prop("checked", true);
+
+        }
+
 
         $('#ipt_empId').val(get_empId);
         $('#ipt_empPw').val(get_empPw);
@@ -156,9 +170,17 @@
     function onClickEditBtn() {
         var ipt_empId = $('[name="ipt_empId"]').val();
         var ipt_empPw = $('[name="ipt_empPw"]').val();
-        var ipt_empAuthId = $('[name="sbx_empAuthId"] option:selected').val();
+        /*var ipt_empAuthId = $('[name="sbx_empAuthId"] option:selected').val();*/
         var ipt_empNm = $('[name="ipt_empNm"]').val();
         var ipt_empDept = $('[name="sbx_empDept"] option:selected').val();
+
+        var query = "input[name='AUTH_CD']:checked";
+        var selectedEls = document.querySelectorAll(query);
+        var result = '';
+        selectedEls.forEach((el) => {
+            result += el.value + '|';
+        });
+        var ipt_empAuthId = result.slice(0, -1);
 
         if( ipt_empId == "" || ipt_empId == null ){
             alertMsg("직원 ID를 입력해 주세요.", function() {
@@ -175,7 +197,7 @@
                 $('#ipt_empPw').focus();
             });
             return false;
-        } else if (ipt_empAuthId == "none" || ipt_empAuthId == null ){
+        } else if (ipt_empAuthId.length < 1 || ipt_empAuthId == null ){
             alertMsg("직원 권한을 선택해 주세요.", function() {
                 $('#ipt_empAuthId').focus();
             });
@@ -246,6 +268,7 @@
         var email = document.getElementById('hidden_selectMail').value;
 
         getEditEmpInfo(email);
+
     };
 
     /* 삭제 버튼 클릭 이벤트 */
@@ -296,20 +319,20 @@
         $('#exitEmpModalBtn').click();
     };
 
-    /* 영문, 숫자만 입력가능체크 */
+    /* 패스워드 영문, 숫자만 입력가능체크 */
     function validChk(){
-        debugger;
          if(((event.keyCode >= 48) && (event.keyCode <= 57)) || ((event.keyCode >= 65) && (event.keyCode <= 90)) || ((event.keyCode >= 97) && (event.keyCode <= 122))){
             event.returnValue = true
          }else if( event.keyCode == undefined){
             event.returnValue = true
          }else{
-            var inputId = $('#ipt_empId').val();
-            $('#ipt_empId').val(inputId.substring( 0, (inputId.length)-1 ));
-            $('#ipt_empId').focus();
+            var ipt_empPw = $('#ipt_empPw').val();
+            $('#ipt_empPw').val(inputId.substring( 0, (ipt_empPw.length)-1 ));
+            $('#ipt_empPw').focus();
             event.returnValue = false
          }
     }
+
 </script>
 
 <div style="width :450px;">
@@ -397,16 +420,13 @@
                     <!-- 권한 -->
                     <tr>
                         <td>
-                            <div class="align-self-start align-self-center mr-5"><span class="requiredTag mr-1">*</span><label for="sbx_empAuthId">권한</label></div>
+                            <div class="align-self-start align-self-center mr-5"><span class="requiredTag mr-1">*</span><label for="Echk_empAuthId">권한</label></div>
                         </td>
-                        <td>
+                        <td colspan="2">
                             <div class="align-self-center mr-5  pb-2">
-                                <select id="sbx_empAuthId" name="sbx_empAuthId" class="form-control">
-                                    <option value="none">선택</option>
-                                </select>
+                                <div id="Echk_empAuthId"></div>
                             </div>
                         </td>
-                        <td></td>
                     </tr>
                     <!-- 부서 -->
                     <tr>

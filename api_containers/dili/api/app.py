@@ -893,20 +893,19 @@ class empInfo(Resource): # Mariadb 연결 진행
                 #쿼리문 실행
                 if workChk == 'Y':
                     #현재 재직중인 직원 조회
-                    sql = "SELECT SEQ_NO, EMP_NAME, EMP_EMAIL, EMP_ID, AUTH_ID, C.CMM_CD_NAME AUTH_VAL, DEPT_CD, DEPT_NAME, WORK_YN " \
-                          "FROM TB_EMP_MGMT E, TB_CMM_CD_DETL C " \
+                    sql = "SELECT SEQ_NO, EMP_NAME, EMP_EMAIL, EMP_ID, AUTH_ID AUTH_VAL, DEPT_CD, DEPT_NAME, WORK_YN " \
+                          "FROM TB_EMP_MGMT " \
                           "WHERE EMP_NAME LIKE '%" + data["name"] + "%' " \
-                          "AND E.AUTH_ID = C.CMM_CD " \
-                          "AND E.WORK_YN = 'Y' " \
+                          "AND WORK_YN = 'Y' " \
                           "ORDER BY SEQ_NO"
 
                 else:
                     # 전체 직원 조회
-                    sql = "SELECT SEQ_NO, EMP_NAME, EMP_EMAIL, EMP_ID, AUTH_ID, C.CMM_CD_NAME AUTH_VAL, DEPT_CD, DEPT_NAME, WORK_YN " \
-                          "FROM TB_EMP_MGMT E, TB_CMM_CD_DETL C " \
+                    sql = "SELECT SEQ_NO, EMP_NAME, EMP_EMAIL, EMP_ID, AUTH_ID AUTH_VAL, DEPT_CD, DEPT_NAME, WORK_YN " \
+                          "FROM TB_EMP_MGMT " \
                           "WHERE EMP_NAME LIKE '%" + data["name"] + "%' " \
-                          "AND E.AUTH_ID = C.CMM_CD " \
                           "ORDER BY SEQ_NO"
+
                 logging.debug(sql)
 
                 cursor.execute(sql)
@@ -2355,14 +2354,16 @@ class questionWrSubmit(Resource):
         ipt_wrId = request.form['ipt_wrId']
         ipt_qnatitle = request.form['ipt_qnatitle']
         sbx_qnaContent = request.form['sbx_qnaContent']
+        chk_QnaShow = request.form['chk_QnaShow']
         sessionId = request.form['sessionId']
 
 
         logging.debug("====Param data====")
 
         logging.debug("ipt_wrId = " + ipt_wrId)
-        logging.debug("ipt_empEmail = " + ipt_qnatitle)
-        logging.debug("ipt_empPw = " + sbx_qnaContent)
+        logging.debug("ipt_qnatitle = " + ipt_qnatitle)
+        logging.debug("sbx_qnaContent = " + sbx_qnaContent)
+        logging.debug("chk_QnaShow = " + chk_QnaShow)
         logging.debug("sessionId = " + sessionId)
 
 
@@ -2381,10 +2382,12 @@ class questionWrSubmit(Resource):
                 sql= "INSERT INTO TB_QNA_TEST (QNA_NO, QNA_ORIGIN_NO, DATA_DEPTH, QNA_SORTS, QNA_WR_NM, " \
                                                 "QNA_TITLE, " \
                                                 "QNA_MAIN, " \
+                                                "QNA_OPEN_YN, " \
                                                 "QNA_RGS_DATE) " \
                      "VALUES(nextval(QNA_SEQ2), lastval(QNA_SEQ2), 0, 0 , '" + sessionId + "', " \
                                             "'" + ipt_qnatitle + "', " \
                                             "'" + sbx_qnaContent + "', " \
+                                            "'" + chk_QnaShow + "', " \
                                             "DATE_ADD(NOW(), INTERVAL 9 HOUR))"
 
 

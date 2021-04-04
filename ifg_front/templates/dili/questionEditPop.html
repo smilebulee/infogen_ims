@@ -83,9 +83,10 @@ function qnaDtSet(data){
     $('#ipt_hidden').text(oriWriter);
 
     /* 권한설정까지 셋팅 */
+    var isAdmin = checkEmpAuthByEmail(sessionStorage.getItem("email"), "ADMIN");
 
     /* 로그인한 아이디가 관리자*/
-    if(param.authId == "ADMIN" && param.email != qnaWriter) {
+    if(isAdmin && param.email != qnaWriter) {
         /* 수정 버튼 비활성화 */
         $('#updateBtn').hide();
         /* 삭제, 답변 버튼 활성화 */
@@ -93,14 +94,14 @@ function qnaDtSet(data){
         $('#answerBtn').show();
 
     /* 로그인한 아이디가 관리자이고 본인글일 경우*/
-    }else if(param.authId == "ADMIN" &&param.email == qnaWriter){
+    }else if(isAdmin &&param.email == qnaWriter){
         /* 수정, 삭제 답변 버튼 활성화 */
         $('#updateBtn').show();
         $('#deleteBtn').show();
         $('#answerBtn').show();
 
     /* 로그인한 아이디가 관리자가 아니고 본인글인경우*/
-    }else if(param.authId != "ADMIN" &&param.email == qnaWriter){
+    }else if(!isAdmin &&param.email == qnaWriter){
         /* 수정, 삭제 활성화 */
         $('#updateBtn').show();
         $('#deleteBtn').show();
@@ -108,7 +109,7 @@ function qnaDtSet(data){
         $('#answerBtn').hide();
 
     /* 로그인한 아이디가 관리자가 아니고 본인글도 아니지만 원글이 본인글일경우*/
-    }else if(param.authId != "ADMIN" && param.email != qnaWriter && param.email == oriWriter){
+    }else if(!isAdmin && param.email != qnaWriter && param.email == oriWriter){
         /* 수정, 삭제, 답변 버튼 비활성화 */
         $('#updateBtn').hide();
         $('#deleteBtn').hide();

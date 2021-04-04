@@ -95,6 +95,48 @@ function retrieveCmmCd(cmp_id, grp_id, callBackFunc){
     });
  }
 
+ /* 공통코드 조회 및 checkbox 컴포넌트 등록 */
+function retrieveCmmCdChk(cmp_id, grp_id, callBackFunc){
+    var param = {
+        "grp_id" : grp_id
+    }
+
+    $.ajaxCall( param, {
+        method : 'GET',
+            'url' : '/dili/retrieveCmmCd/',
+            'dataType' : 'json',
+            'data' : JSON.stringify(param),
+            'async' : false,
+            'callbackFn' : function(data){
+                for(var i = 0; i < data.length; i++) {
+                    if(cmp_id != null && cmp_id != '') {
+                        var strChk = ""
+
+                        if(i == 0) {
+                            strChk +="<label><input type='checkbox' class='" +"test" + "' name='" + data[i].CMM_CD_GRP_ID + "' id='" + data[i].CMM_CD +"' value='" + data[i].CMM_CD +"' />&nbsp;" + data[i].CMM_CD_NAME + "&nbsp;&nbsp;&nbsp;</label>";
+
+                        } else {
+                            strChk +="<label><input type='checkbox' class='" +"test" + "' name='" + data[i].CMM_CD_GRP_ID + "' id='" + data[i].CMM_CD +"' value='" + data[i].CMM_CD +"' />&nbsp;" + data[i].CMM_CD_NAME + "&nbsp;&nbsp;&nbsp;</label>";
+
+                        }
+
+                        //var radio = ${strRadio);
+                        $('#' + cmp_id).append($(strChk));
+
+                    }
+                }
+
+                if(callBackFunc) {
+                    if(typeof callBackFunc == 'function') {
+                        callBackFunc(data);
+                    } else if(typeof callBackFunc == 'string') {
+                        window[callBackFunc](data);
+                    }
+                }
+            }
+    });
+ }
+
 
 /* 이메일 주소로 사용자 이름 조회 */
 function retrieveEmpNmByEmail(empEmail, callBackFunc) { // 추후 콜백 function 추가 }, callBackFunc){
@@ -177,6 +219,24 @@ function retrieveEmpDeptGmByEmail(empEmail, callBackFunc) {
     });
 }
 
+
+/* 이메일 주소로 사용자 권한 보유 여부 확인 */
+function checkEmpAuthByEmail(userId, authCd) {
+    var a = sessionStorage.getItem("authId");
+    var arr = a.split('|');
+    if(arr.indexOf(authCd) > -1) {
+        return true;
+    }
+    return false;
+}
+
+
+/*  */
+function retrieveAuthNmByAuthCd(authCd) {
+    var authNm = '';
+    /* 구현 예정 */
+    return authNm;
+}
 
 /* 자리수만큼 0 채우기 (근무 시간 형식 지정) */
 function fillZero(width, str){
