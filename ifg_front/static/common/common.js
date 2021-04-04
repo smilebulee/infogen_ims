@@ -193,7 +193,7 @@ function retrieveEmpDeptByEmail(empEmail, callBackFunc) {
 }
 
 
-/* 이메일 주소로 사용자 부서 조회 */
+/* 이메일 주소로 사용자 부서 사업부장 정보 조회 */
 function retrieveEmpDeptGmByEmail(empEmail, callBackFunc) {
 
     var param = {
@@ -219,23 +219,62 @@ function retrieveEmpDeptGmByEmail(empEmail, callBackFunc) {
     });
 }
 
+/* 이메일 주소로 사용자 부서 현장대리인 정보 조회 */
+function retrieveEmpDeptPrByEmail(empEmail, callBackFunc) {
+
+    var param = {
+        "email" : empEmail
+    }
+
+    $.ajaxCall( param, {
+        'method' : 'GET',
+        'url' : '/dili/getEmpDeptPr/',
+        'dataType' : 'json',
+        'data' : JSON.stringify(param),
+        'async' : false,
+        'callbackFn' : function(data){
+            //empNm = data[0].EMP_NAME;
+            if(callBackFunc) {
+                if(typeof callBackFunc == 'function') {
+                    callBackFunc(data);
+                } else if(typeof callBackFunc == 'string') {
+                    window[callBackFunc](data);
+                }
+            }
+        }
+    });
+}
 
 /* 이메일 주소로 사용자 권한 보유 여부 확인 */
 function checkEmpAuthByEmail(userId, authCd) {
-    var a = sessionStorage.getItem("authId");
-    var arr = a.split('|');
-    if(arr.indexOf(authCd) > -1) {
+    var authIds = sessionStorage.getItem("authId");
+    var authArr = authIds.split('|');
+    if(authArr.indexOf(authCd) > -1) {
         return true;
     }
     return false;
 }
 
+/* 이메일 주소, 권한코드 배열로 사용자 권한 보유 여부 확인 및 변수 생성
+ex.
+checkEmpAuthsByEmail("asete93", ["USER", "ADMIN", "TEST"]);
+으로 호출하여 사용할 경우,
+isUser, isAdmin, isTest 변수 생성 및 그 안에 권한 보유 여부 true, false 로 담김
+*/
+function checkEmpAuthsByEmail(userId, authCdArr) {
+    var authIds = sessionStorage.getItem("authId");
+    var authArr = authIds.split('|');
 
-/*  */
-function retrieveAuthNmByAuthCd(authCd) {
-    var authNm = '';
-    /* 구현 예정 */
-    return authNm;
+    for(auth of authCdArr)
+    {
+        var strTmp = "is" + auth.substring(0, 1).toUpperCase() + auth.substring(1).toLowerCase() + " = ";
+        if(authArr.indexOf(auth) > -1) {
+            strTmp += "true;";
+        } else {
+            strTmp += "false;";
+        }
+        eval(strTmp);
+    }
 }
 
 /* 자리수만큼 0 채우기 (근무 시간 형식 지정) */
@@ -244,7 +283,6 @@ function fillZero(width, str){
     return str.length >= width ? str:new Array(width-str.length+1).join('0')+str;
     //남는 길이만큼 0으로 채움
 }
-
 
 /* 시간 차이 구하기 (근무 시간) */
 function getTimeDiff(fromDtm, toDtm) {
