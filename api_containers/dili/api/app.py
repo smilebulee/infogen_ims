@@ -2286,6 +2286,7 @@ class question(Resource):  # Mariadb 연결 진행
                       "WHERE QNA_DEL_YN = 'N' " \
                       "ORDER BY QNA_ORIGIN_NO DESC, QNA_SORTS "
 
+
                 logging.debug(sql)
                 cursor.execute(sql)
 
@@ -2299,7 +2300,6 @@ class question(Resource):  # Mariadb 연결 진행
 
 class questionInfo(Resource):  # Mariadb 연결 진행
     def get(self):
-
         data =request.get_json()
 
         logging.debug('================== App Start ==================')
@@ -2314,11 +2314,11 @@ class questionInfo(Resource):  # Mariadb 연결 진행
                                     charset='utf8', autocommit=False)
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
-                # 쿼리문 실행
-                # 정상
-                sql = "SELECT QNA_NO,  QNA_ORIGIN_NO,  DATA_DEPTH, QNA_SORTS, QNA_TITLE,  QNA_MAIN,  QNA_WR_NM , QNA_RGS_DATE, QNA_DEL_YN " \
-                      "FROM TB_QNA_TEST  WHERE QNA_ORIGIN_NO NOT IN (SELECT QNA_NO FROM TB_QNA_TEST WHERE DATA_DEPTH = 0 AND QNA_DEL_YN = 'Y') " \
-                      "ORDER BY QNA_ORIGIN_NO DESC, QNA_SORTS ASC"
+
+                sql = "SELECT A.QNA_WR_NM ORIGIN_WR, B.QNA_NO,  B.QNA_ORIGIN_NO,  B.DATA_DEPTH, B.QNA_SORTS, B.QNA_TITLE,  B.QNA_MAIN,  B.QNA_WR_NM , B.QNA_RGS_DATE, B.QNA_DEL_YN " \
+                      "FROM TB_QNA_TEST  A, TB_QNA_TEST B " \
+                      "WHERE A.QNA_NO = B.QNA_ORIGIN_NO AND B.QNA_ORIGIN_NO NOT IN (SELECT QNA_NO FROM TB_QNA_TEST WHERE DATA_DEPTH = 0 AND QNA_DEL_YN = 'Y') " \
+                      "ORDER BY B.QNA_ORIGIN_NO DESC, B.QNA_SORTS ASC"
 
                 logging.debug(sql)
                 cursor.execute(sql)
@@ -2776,9 +2776,10 @@ class qnaSearch(Resource):  # Mariadb 연결 진행
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 # 쿼리문 실행
-                sql = "SELECT * FROM TB_QNA_TEST WHERE " \
-                      "QNA_ORIGIN_NO NOT IN (SELECT QNA_NO FROM TB_QNA_TEST WHERE DATA_DEPTH = 0 AND QNA_DEL_YN = 'Y') AND " \
-                      "QNA_ORIGIN_NO IN(SELECT QNA_NO FROM TB_QNA_TEST WHERE DATA_DEPTH = '0' AND "
+                sql = "SELECT A.QNA_WR_NM ORIGIN_WR, B.*  FROM TB_QNA_TEST  A, TB_QNA_TEST B WHERE " \
+                      "A.QNA_NO = B.QNA_ORIGIN_NO AND " \
+                      "B.QNA_ORIGIN_NO NOT IN (SELECT QNA_NO FROM TB_QNA_TEST WHERE DATA_DEPTH = 0 AND QNA_DEL_YN = 'Y') AND " \
+                      "B.QNA_ORIGIN_NO IN(SELECT QNA_NO FROM TB_QNA_TEST WHERE DATA_DEPTH = '0' AND "
 
                 if option == "00" : #제목
                     sql += "QNA_TITLE LIKE '%"+ keyword +"%'"
@@ -2789,7 +2790,7 @@ class qnaSearch(Resource):  # Mariadb 연결 진행
                 if option == "03" : #작성자
                     sql += "QNA_WR_NM LIKE '%"+ keyword +"%'"
 
-                sql += ")ORDER BY QNA_ORIGIN_NO DESC, QNA_SORTS ASC"
+                sql += ")ORDER BY B.QNA_ORIGIN_NO DESC, B.QNA_SORTS ASC"
 
                 logging.debug(sql)
                 cursor.execute(sql)

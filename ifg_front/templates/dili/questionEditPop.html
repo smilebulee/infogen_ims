@@ -94,14 +94,14 @@ function qnaDtSet(data){
         $('#answerBtn').show();
 
     /* 로그인한 아이디가 관리자이고 본인글일 경우*/
-    }else if(isAdmin &&param.email == qnaWriter){
+    }else if(isAdmin && param.email == qnaWriter){
         /* 수정, 삭제 답변 버튼 활성화 */
         $('#updateBtn').show();
         $('#deleteBtn').show();
         $('#answerBtn').show();
 
     /* 로그인한 아이디가 관리자가 아니고 본인글인경우*/
-    }else if(!isAdmin &&param.email == qnaWriter){
+    }else if(!isAdmin && param.email == qnaWriter){
         /* 수정, 삭제 활성화 */
         $('#updateBtn').show();
         $('#deleteBtn').show();
