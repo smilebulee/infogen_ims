@@ -7,6 +7,9 @@ var param = {
 }
 
 $(document).ready(function(){
+    /* 관리자여부 체크 */
+    var isAdmin = checkEmpAuthByEmail(sessionStorage.getItem("email"), "ADMIN");
+
     $('#empModalTest').load("{% url 'dili_api:empMgmtRegPop' %}");
 
     /* 목록조회 */
@@ -57,17 +60,17 @@ $(document).ready(function(){
     });
 
     /* 로그인한 아이디가 관리자일 경우*/
-    if(param.authId == "ADMIN") {
+    if(isAdmin) {
         /* 검색, 등록버튼 활성화 */
         $('#ipt_searchName').attr('readonly',false);
-        $('#empMgmtRegBtn').attr('disabled',false);
+        $('#empMgmtRegBtn').attr('hidden',false);
         $('#searchBtn').attr('disabled',false);
 
     }else{
         /* 검색, 등록버튼 비활성화 */
-        $('#ipt_searchName').attr('readonly',true);
-        $('#empMgmtRegBtn').attr('disabled',true);
-        $('#searchBtn').attr('disabled',true);
+        $('#ipt_searchName').attr('readonly',false);
+        $('#empMgmtRegBtn').attr('hidden',true);
+        $('#searchBtn').attr('disabled',false);
 
     }
 
@@ -102,6 +105,9 @@ function onClickSearchBtn(ipt_searchName) {
 
 /* 직원목록 생성 */
 function empListGrd(data){
+    /* 관리자여부 체크 */
+    var isAdmin = checkEmpAuthByEmail(sessionStorage.getItem("email"), "ADMIN");
+
     var size = data.length;
     var empListTable = '<table class="table table-bordered text-center">';
     empListTable += '<thead>';
@@ -121,7 +127,7 @@ function empListGrd(data){
     if(data.length > 0) {
         for(var i = 0; i < size; i++){
 
-            if(param.authId == "ADMIN") { /* 관리자일 경우 클릭 이벤트 */
+            if(data[i].EMP_EMAIL == sessionStorage.getItem("email") || isAdmin) { /* 관리자이거나 본인일  경우 클릭 이벤트 */
                 empListTable += '<tr id ="grd_empList" onclick="onClickEvt(\''+data[i].EMP_EMAIL+'\')">';
             }else{
                 empListTable += '<tr id ="grd_empList")>';

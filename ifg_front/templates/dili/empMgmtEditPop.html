@@ -1,5 +1,6 @@
 <script type="text/javascript">
     var initFlag = true;
+    var exPW;
 
     /*********************************************************************
     *   Dialog Setting
@@ -29,6 +30,27 @@
             getEditEmpInfo(email);
             $('#Echk_empAuthId').attr('style', "font-size:x-small");
         });
+
+
+        /* 권한설정까지 셋팅 */
+        var isAdmin = checkEmpAuthByEmail(sessionStorage.getItem("email"), "ADMIN");
+        if(isAdmin){
+            $('#deleteBtn').attr('disabled', false);
+            $('#sbx_empDept').attr('disabled',false);
+
+        }else{
+            $('[class="requiredTag mr-1"]').attr('hidden', true);
+            $('[class="requiredText"]').attr('hidden', true);
+            $('#starText').attr('hidden', false);
+            $('#starVal').text('※ 일반사용자는 패스워드만 수정 가능합니다.');
+            $('#textForPw').attr('hidden', true);
+            $('#starForUser').attr('hidden', false);
+
+            $('#deleteBtn').attr('hidden', true);
+            $('#reIsExistNmBtn').attr('disabled', true);
+            $('#isExistNmBtn').attr('disabled', true);
+            $('#sbx_empDept').attr('disabled',true);
+        }
 
 
     });
@@ -66,7 +88,7 @@
         var get_empAId = data[0].AUTH_ID.split("|");
         var get_empName = data[0].EMP_NAME;
         var get_empDCd = data[0].DEPT_CD;
-
+        exPW = get_empPw;
 
         if(initFlag) {
             // 공통 코드 조회 - '부서조회'
@@ -91,6 +113,12 @@
 
         }
 
+        var isAdmin = checkEmpAuthByEmail(sessionStorage.getItem("email"), "ADMIN");
+        if(isAdmin){
+            $('[name="AUTH_CD"]').attr('disabled', false);
+        }else{
+            $('[name="AUTH_CD"]').attr('disabled', true);
+        }
 
         $('#ipt_empId').val(get_empId);
         $('#ipt_empPw').val(get_empPw);
@@ -189,6 +217,11 @@
             return false;
         } else if (ipt_empPw == "" || ipt_empPw == null ){
             alertMsg("직원 비밀번호를 입력해 주세요.", function() {
+                $('#ipt_empPw').focus();
+            });
+            return false;
+        } else if (ipt_empPw ==  exPW ){
+            alertMsg("이전 비밀번호와 동일합니다.", function() {
                 $('#ipt_empPw').focus();
             });
             return false;
@@ -327,7 +360,7 @@
             event.returnValue = true
          }else{
             var ipt_empPw = $('#ipt_empPw').val();
-            $('#ipt_empPw').val(inputId.substring( 0, (ipt_empPw.length)-1 ));
+            $('#ipt_empPw').val(ipt_empPw.substring( 0, (ipt_empPw.length)-1 ));
             $('#ipt_empPw').focus();
             event.returnValue = false
          }
@@ -348,7 +381,7 @@
                         <td></td>
                         <td colspan="2">
                              <div class="flex-height mb-4">
-                                <span class="requiredText"><b>* 는 필수 입력 항목입니다.</b></span>
+                                <span class="requiredText" id="starText"><b id="starVal">* 는 필수 입력 항목입니다.</b></span>
                              </div>
                         </td>
                     </tr>
@@ -375,7 +408,7 @@
                     <!-- 비밀번호 -->
                     <tr>
                         <td>
-                            <div class="align-self-start align-self-center mr-3"><span class="requiredTag mr-1">*</span><label for="ipt_empPw">비밀번호</label></div>
+                            <div class="align-self-start align-self-center mr-3"><span class="requiredTag mr-1" id="starForUser">*</span><label for="ipt_empPw">비밀번호</label></div>
                         </td>
                         <td>
                             <div class="align-self-center mr-3">
@@ -388,7 +421,7 @@
                         <td></td>
                         <td colspan="2">
                             <div class="flex-height d-flex mb-2">
-                                <span class="requiredText">> 비밀번호는 영문, 숫자로 4~12자로 입력해주세요.</span>
+                                <span class="requiredText" id="textForPw" >> 비밀번호는 영문, 숫자로 4~12자로 입력해주세요.</span>
                             </div>
                         </td>
                     </tr>
