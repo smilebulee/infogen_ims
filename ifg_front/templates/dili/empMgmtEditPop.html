@@ -1,5 +1,6 @@
 <script type="text/javascript">
     var initFlag = true;
+    var exPW;
 
     /*********************************************************************
     *   Dialog Setting
@@ -22,7 +23,35 @@
         var email = document.getElementById('hidden_selectMail').value;
 
         $('#hidden_empMail').val(email);
-        getEditEmpInfo(email);
+
+
+        // 공통 코드 조회 - '권한 조회'
+        retrieveCmmCdChk('Echk_empAuthId', 'AUTH_CD', function(){
+            getEditEmpInfo(email);
+            $('#Echk_empAuthId').attr('style', "font-size:x-small");
+        });
+
+
+        /* 권한설정까지 셋팅 */
+        var isAdmin = checkEmpAuthByEmail(sessionStorage.getItem("email"), "ADMIN");
+        if(isAdmin){
+            $('#deleteBtn').attr('disabled', false);
+            $('#sbx_empDept').attr('disabled',false);
+
+        }else{
+            $('[class="requiredTag mr-1"]').attr('hidden', true);
+            $('[class="requiredText"]').attr('hidden', true);
+            $('#starText').attr('hidden', false);
+            $('#starVal').text('※ 일반사용자는 패스워드만 수정 가능합니다.');
+            $('#textForPw').attr('hidden', true);
+            $('#starForUser').attr('hidden', false);
+
+            $('#deleteBtn').attr('hidden', true);
+            $('#reIsExistNmBtn').attr('disabled', true);
+            $('#isExistNmBtn').attr('disabled', true);
+            $('#sbx_empDept').attr('disabled',true);
+        }
+
 
     });
 
@@ -56,27 +85,40 @@
 
         var get_empId = data[0].EMP_ID;
         var get_empPw = data[0].EMP_PW;
-        var get_empAId = data[0].AUTH_ID;
+        var get_empAId = data[0].AUTH_ID.split("|");
         var get_empName = data[0].EMP_NAME;
         var get_empDCd = data[0].DEPT_CD;
-
+        exPW = get_empPw;
 
         if(initFlag) {
             // 공통 코드 조회 - '부서조회'
             retrieveCmmCd('sbx_empDept', 'SLIN_BZDP', function(){
                 $("#sbx_empDept option[value='"+get_empDCd+"']").attr("selected", true);
             });
-            // 공통 코드 조회 - '권한 조회'
-            retrieveCmmCd('sbx_empAuthId', 'AUTH_CD', function(){
-                $("#sbx_empAuthId option[value='"+get_empAId+"']").attr("selected", true);
-            });
+
             initFlag = false;
+
         } else {
             $("#sbx_empDept option").removeAttr("selected")
             $("#sbx_empDept option[value='"+get_empDCd+"']").attr("selected", true);
-            $("#sbx_empAuthId option").removeAttr("selected")
-            $("#sbx_empAuthId option[value='"+get_empAId+"']").attr("selected", true);
+
          }
+
+
+        // 선택된 권한 체크
+        $('#Echk_empAuthId').children().find('.test').prop("checked", false);
+        for(i=0; i < get_empAId.length; i++){
+            var idVal = get_empAId[i];
+            $("#"+idVal).prop("checked", true);
+
+        }
+
+        var isAdmin = checkEmpAuthByEmail(sessionStorage.getItem("email"), "ADMIN");
+        if(isAdmin){
+            $('[name="AUTH_CD"]').attr('disabled', false);
+        }else{
+            $('[name="AUTH_CD"]').attr('disabled', true);
+        }
 
         $('#ipt_empId').val(get_empId);
         $('#ipt_empPw').val(get_empPw);
@@ -147,7 +189,6 @@
     /* 성명 재설정 클릭 이벤트 */
     function onClickReIsExistNmBtn(){
         $('#ipt_empNm').attr('readonly', false);
-        $('#ipt_empNm').val("");
         $('#ipt_empNm').focus();
         $('#reIsExistNmBtn').attr('hidden', true);
         $('#isExistNmBtn').attr('hidden', false);
@@ -157,9 +198,17 @@
     function onClickEditBtn() {
         var ipt_empId = $('[name="ipt_empId"]').val();
         var ipt_empPw = $('[name="ipt_empPw"]').val();
-        var ipt_empAuthId = $('[name="sbx_empAuthId"] option:selected').val();
+        /*var ipt_empAuthId = $('[name="sbx_empAuthId"] option:selected').val();*/
         var ipt_empNm = $('[name="ipt_empNm"]').val();
         var ipt_empDept = $('[name="sbx_empDept"] option:selected').val();
+
+        var query = "input[name='AUTH_CD']:checked";
+        var selectedEls = document.querySelectorAll(query);
+        var result = '';
+        selectedEls.forEach((el) => {
+            result += el.value + '|';
+        });
+        var ipt_empAuthId = result.slice(0, -1);
 
         if( ipt_empId == "" || ipt_empId == null ){
             alertMsg("직원 ID를 입력해 주세요.", function() {
@@ -171,12 +220,17 @@
                 $('#ipt_empPw').focus();
             });
             return false;
+        } else if (ipt_empPw ==  exPW ){
+            alertMsg("이전 비밀번호와 동일합니다.", function() {
+                $('#ipt_empPw').focus();
+            });
+            return false;
         } else if(ipt_empPw.length < 4 || ipt_empPw.length > 12 ) {
             alertMsg("직원 비밀번호는 4 ~ 12자로 입력해주세요.", function() {
                 $('#ipt_empPw').focus();
             });
             return false;
-        } else if (ipt_empAuthId == "none" || ipt_empAuthId == null ){
+        } else if (ipt_empAuthId.length < 1 || ipt_empAuthId == null ){
             alertMsg("직원 권한을 선택해 주세요.", function() {
                 $('#ipt_empAuthId').focus();
             });
@@ -247,6 +301,7 @@
         var email = document.getElementById('hidden_selectMail').value;
 
         getEditEmpInfo(email);
+
     };
 
     /* 삭제 버튼 클릭 이벤트 */
@@ -297,20 +352,20 @@
         $('#exitEmpModalBtn').click();
     };
 
-    /* 영문, 숫자만 입력가능체크 */
+    /* 패스워드 영문, 숫자만 입력가능체크 */
     function validChk(){
-        debugger;
          if(((event.keyCode >= 48) && (event.keyCode <= 57)) || ((event.keyCode >= 65) && (event.keyCode <= 90)) || ((event.keyCode >= 97) && (event.keyCode <= 122))){
             event.returnValue = true
          }else if( event.keyCode == undefined){
             event.returnValue = true
          }else{
-            var inputId = $('#ipt_empId').val();
-            $('#ipt_empId').val(inputId.substring( 0, (inputId.length)-1 ));
-            $('#ipt_empId').focus();
+            var ipt_empPw = $('#ipt_empPw').val();
+            $('#ipt_empPw').val(ipt_empPw.substring( 0, (ipt_empPw.length)-1 ));
+            $('#ipt_empPw').focus();
             event.returnValue = false
          }
     }
+
 </script>
 
 <div style="width :450px;">
@@ -326,7 +381,7 @@
                         <td></td>
                         <td colspan="2">
                              <div class="flex-height mb-4">
-                                <span class="requiredText"><b>* 는 필수 입력 항목입니다.</b></span>
+                                <span class="requiredText" id="starText"><b id="starVal">* 는 필수 입력 항목입니다.</b></span>
                              </div>
                         </td>
                     </tr>
@@ -353,7 +408,7 @@
                     <!-- 비밀번호 -->
                     <tr>
                         <td>
-                            <div class="align-self-start align-self-center mr-3"><span class="requiredTag mr-1">*</span><label for="ipt_empPw">비밀번호</label></div>
+                            <div class="align-self-start align-self-center mr-3"><span class="requiredTag mr-1" id="starForUser">*</span><label for="ipt_empPw">비밀번호</label></div>
                         </td>
                         <td>
                             <div class="align-self-center mr-3">
@@ -366,7 +421,7 @@
                         <td></td>
                         <td colspan="2">
                             <div class="flex-height d-flex mb-2">
-                                <span class="requiredText">> 비밀번호는 영문, 숫자로 4~12자로 입력해주세요.</span>
+                                <span class="requiredText" id="textForPw" >> 비밀번호는 영문, 숫자로 4~12자로 입력해주세요.</span>
                             </div>
                         </td>
                     </tr>
@@ -398,16 +453,13 @@
                     <!-- 권한 -->
                     <tr>
                         <td>
-                            <div class="align-self-start align-self-center mr-5"><span class="requiredTag mr-1">*</span><label for="sbx_empAuthId">권한</label></div>
+                            <div class="align-self-start align-self-center mr-5"><span class="requiredTag mr-1">*</span><label for="Echk_empAuthId">권한</label></div>
                         </td>
-                        <td>
+                        <td colspan="2">
                             <div class="align-self-center mr-5  pb-2">
-                                <select id="sbx_empAuthId" name="sbx_empAuthId" class="form-control">
-                                    <option value="none">선택</option>
-                                </select>
+                                <div id="Echk_empAuthId"></div>
                             </div>
                         </td>
-                        <td></td>
                     </tr>
                     <!-- 부서 -->
                     <tr>

@@ -895,20 +895,19 @@ class empInfo(Resource): # Mariadb 연결 진행
                 #쿼리문 실행
                 if workChk == 'Y':
                     #현재 재직중인 직원 조회
-                    sql = "SELECT SEQ_NO, EMP_NAME, EMP_EMAIL, EMP_ID, AUTH_ID, C.CMM_CD_NAME AUTH_VAL, DEPT_CD, DEPT_NAME, WORK_YN " \
-                          "FROM TB_EMP_MGMT E, TB_CMM_CD_DETL C " \
+                    sql = "SELECT SEQ_NO, EMP_NAME, EMP_EMAIL, EMP_ID, AUTH_ID AUTH_VAL, DEPT_CD, DEPT_NAME, WORK_YN " \
+                          "FROM TB_EMP_MGMT " \
                           "WHERE EMP_NAME LIKE '%" + data["name"] + "%' " \
-                          "AND E.AUTH_ID = C.CMM_CD " \
-                          "AND E.WORK_YN = 'Y' " \
+                          "AND WORK_YN = 'Y' " \
                           "ORDER BY SEQ_NO"
 
                 else:
                     # 전체 직원 조회
-                    sql = "SELECT SEQ_NO, EMP_NAME, EMP_EMAIL, EMP_ID, AUTH_ID, C.CMM_CD_NAME AUTH_VAL, DEPT_CD, DEPT_NAME, WORK_YN " \
-                          "FROM TB_EMP_MGMT E, TB_CMM_CD_DETL C " \
+                    sql = "SELECT SEQ_NO, EMP_NAME, EMP_EMAIL, EMP_ID, AUTH_ID AUTH_VAL, DEPT_CD, DEPT_NAME, WORK_YN " \
+                          "FROM TB_EMP_MGMT " \
                           "WHERE EMP_NAME LIKE '%" + data["name"] + "%' " \
-                          "AND E.AUTH_ID = C.CMM_CD " \
                           "ORDER BY SEQ_NO"
+
                 logging.debug(sql)
 
                 cursor.execute(sql)
@@ -981,7 +980,51 @@ class empDeptGm(Resource): # Mariadb 연결 진행
                       "     , EMP_NAME AS DEPT_GM_NAME " \
                       "     , EMP_EMAIL AS DEPT_GM_EMAIL " \
                       "  FROM TB_EMP_MGMT " \
-                      " WHERE AUTH_ID = 'GM'" \
+                      " WHERE AUTH_ID LIKE '%GM%'" \
+                      "   AND DEPT_CD = (" \
+                      "                  SELECT DEPT_CD " \
+                      "                    FROM TB_EMP_MGMT " \
+                      "                   WHERE EMP_EMAIL = '" + data["email"] + "'" \
+                      "                 )"
+
+                logging.debug(sql)
+                cursor.execute(sql)
+
+        finally:
+            mysql_con.close()
+
+        result2 = cursor.fetchall()
+        for row in result2:
+            logging.debug('====== row====')
+            logging.debug(row)
+            logging.debug('===============')
+        array = list(result2)  # 결과를 리스트로
+
+        return json.dumps(result2, indent=4, cls=DateTimeEncoder)
+
+
+class empDeptPr(Resource): # Mariadb 연결 진행
+    def get(self):
+
+        data = request.get_json()
+
+        logging.debug('================== App Start ==================')
+        logging.debug(data)
+        logging.debug(data["email"])
+        logging.debug('================== App End ==================')
+
+        #requirements pymysql import 후 커넥트 사용
+        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
+                                        charset='utf8', autocommit=False)
+        try:
+            with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+                #쿼리문 실행
+                sql = "SELECT DEPT_CD " \
+                      "     , DEPT_NAME " \
+                      "     , EMP_NAME AS DEPT_PR_NAME " \
+                      "     , EMP_EMAIL AS DEPT_PR_EMAIL " \
+                      "  FROM TB_EMP_MGMT " \
+                      " WHERE AUTH_ID LIKE '%PR%'" \
                       "   AND DEPT_CD = (" \
                       "                  SELECT DEPT_CD " \
                       "                    FROM TB_EMP_MGMT " \
@@ -2242,6 +2285,7 @@ class question(Resource):  # Mariadb 연결 진행
                       "WHERE QNA_DEL_YN = 'N' " \
                       "ORDER BY QNA_ORIGIN_NO DESC, QNA_SORTS "
 
+
                 logging.debug(sql)
                 cursor.execute(sql)
 
@@ -2255,7 +2299,6 @@ class question(Resource):  # Mariadb 연결 진행
 
 class questionInfo(Resource):  # Mariadb 연결 진행
     def get(self):
-
         data =request.get_json()
 
         logging.debug('================== App Start ==================')
@@ -2270,11 +2313,11 @@ class questionInfo(Resource):  # Mariadb 연결 진행
                                     charset='utf8', autocommit=False)
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
-                # 쿼리문 실행
-                # 정상
-                sql = "SELECT QNA_NO,  QNA_ORIGIN_NO,  DATA_DEPTH, QNA_SORTS, QNA_TITLE,  QNA_MAIN,  QNA_WR_NM , QNA_RGS_DATE, QNA_DEL_YN " \
-                      "FROM TB_QNA_TEST  WHERE QNA_ORIGIN_NO NOT IN (SELECT QNA_NO FROM TB_QNA_TEST WHERE DATA_DEPTH = 0 AND QNA_DEL_YN = 'Y') " \
-                      "ORDER BY QNA_ORIGIN_NO DESC, QNA_SORTS ASC"
+
+                sql = "SELECT A.QNA_WR_NM ORIGIN_WR, B.QNA_NO,  B.QNA_ORIGIN_NO,  B.DATA_DEPTH, B.QNA_SORTS, B.QNA_TITLE,  B.QNA_MAIN,  B.QNA_WR_NM , B.QNA_RGS_DATE, B.QNA_DEL_YN " \
+                      "FROM TB_QNA_TEST  A, TB_QNA_TEST B " \
+                      "WHERE A.QNA_NO = B.QNA_ORIGIN_NO AND B.QNA_ORIGIN_NO NOT IN (SELECT QNA_NO FROM TB_QNA_TEST WHERE DATA_DEPTH = 0 AND QNA_DEL_YN = 'Y') " \
+                      "ORDER BY B.QNA_ORIGIN_NO DESC, B.QNA_SORTS ASC"
 
                 logging.debug(sql)
                 cursor.execute(sql)
@@ -2354,14 +2397,16 @@ class questionWrSubmit(Resource):
         ipt_wrId = request.form['ipt_wrId']
         ipt_qnatitle = request.form['ipt_qnatitle']
         sbx_qnaContent = request.form['sbx_qnaContent']
+        chk_QnaShow = request.form['chk_QnaShow']
         sessionId = request.form['sessionId']
 
 
         logging.debug("====Param data====")
 
         logging.debug("ipt_wrId = " + ipt_wrId)
-        logging.debug("ipt_empEmail = " + ipt_qnatitle)
-        logging.debug("ipt_empPw = " + sbx_qnaContent)
+        logging.debug("ipt_qnatitle = " + ipt_qnatitle)
+        logging.debug("sbx_qnaContent = " + sbx_qnaContent)
+        logging.debug("chk_QnaShow = " + chk_QnaShow)
         logging.debug("sessionId = " + sessionId)
 
 
@@ -2380,10 +2425,12 @@ class questionWrSubmit(Resource):
                 sql= "INSERT INTO TB_QNA_TEST (QNA_NO, QNA_ORIGIN_NO, DATA_DEPTH, QNA_SORTS, QNA_WR_NM, " \
                                                 "QNA_TITLE, " \
                                                 "QNA_MAIN, " \
+                                                "QNA_OPEN_YN, " \
                                                 "QNA_RGS_DATE) " \
                      "VALUES(nextval(QNA_SEQ2), lastval(QNA_SEQ2), 0, 0 , '" + sessionId + "', " \
                                             "'" + ipt_qnatitle + "', " \
                                             "'" + sbx_qnaContent + "', " \
+                                            "'" + chk_QnaShow + "', " \
                                             "DATE_ADD(NOW(), INTERVAL 9 HOUR))"
 
 
@@ -2728,9 +2775,10 @@ class qnaSearch(Resource):  # Mariadb 연결 진행
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 # 쿼리문 실행
-                sql = "SELECT * FROM TB_QNA_TEST WHERE " \
-                      "QNA_ORIGIN_NO NOT IN (SELECT QNA_NO FROM TB_QNA_TEST WHERE DATA_DEPTH = 0 AND QNA_DEL_YN = 'Y') AND " \
-                      "QNA_ORIGIN_NO IN(SELECT QNA_NO FROM TB_QNA_TEST WHERE DATA_DEPTH = '0' AND "
+                sql = "SELECT A.QNA_WR_NM ORIGIN_WR, B.*  FROM TB_QNA_TEST  A, TB_QNA_TEST B WHERE " \
+                      "A.QNA_NO = B.QNA_ORIGIN_NO AND " \
+                      "B.QNA_ORIGIN_NO NOT IN (SELECT QNA_NO FROM TB_QNA_TEST WHERE DATA_DEPTH = 0 AND QNA_DEL_YN = 'Y') AND " \
+                      "B.QNA_ORIGIN_NO IN(SELECT QNA_NO FROM TB_QNA_TEST WHERE DATA_DEPTH = '0' AND "
 
                 if option == "00" : #제목
                     sql += "QNA_TITLE LIKE '%"+ keyword +"%'"
@@ -2741,7 +2789,7 @@ class qnaSearch(Resource):  # Mariadb 연결 진행
                 if option == "03" : #작성자
                     sql += "QNA_WR_NM LIKE '%"+ keyword +"%'"
 
-                sql += ")ORDER BY QNA_ORIGIN_NO DESC, QNA_SORTS ASC"
+                sql += ")ORDER BY B.QNA_ORIGIN_NO DESC, B.QNA_SORTS ASC"
 
                 logging.debug(sql)
                 cursor.execute(sql)
@@ -2860,7 +2908,8 @@ api.add_resource(empList,'/empList') #api 선언
 api.add_resource(empInfo,'/empInfo') #api 선언
 api.add_resource(empName,'/empName')                        #이메일로 사용자 이름 조회
 api.add_resource(empDept,'/empDept')                        #이메일로 사용자 부서 정보 조회
-api.add_resource(empDeptGm,'/empDeptGm')                      #이메일로 사용자 부서 현장대리인(GM) 정보 조회
+api.add_resource(empDeptGm,'/empDeptGm')                      #이메일로 사용자 부서 사업부장(GM) 정보 조회
+api.add_resource(empDeptPr,'/empDeptPr')                      #이메일로 사용자 부서 현장대리인(PR) 정보 조회
 api.add_resource(saveYryApvlReq,'/saveYryApvlReq')          #_
 api.add_resource(weekGridData,'/weekGridData') #api 선언
 api.add_resource(apvlInfo,'/apvlInfo') #api 선언

@@ -27,7 +27,35 @@ $(document).ready(function(){
          }
     });
 
+    /* 검색 엔터키 이벤트 */
+    $('#ipt_searchQna').keydown(function(e){
+        //엔터키 입력 + 이름컬럼에 값이 있는 경우.
+        if ( e.keyCode == 13 && $('#ipt_searchQna').val() != 'undefined' ) {
+            var option = $('#searchOption').val();
+            var keyword = $('#ipt_searchQna').val();
 
+            var param = {
+                "option" : option,
+                "keyword" : keyword
+            }
+
+            /* 검색 후 데이터 배열로 변환해서 리턴 */
+            $.ajaxCall( param, {
+                 'method' : 'GET',
+                 'url' : "{% url 'dili_api:qnaSearch' %}",
+                 'dataType' : 'json',
+                 'data' : JSON.stringify(param),
+                 'async' : false,
+                 'callbackFn' : function(data){
+                    var dataArr = JSON.parse(data)
+                    // 로그
+                    console.log("dataArr : ",dataArr)
+                    // 리턴
+                    pagingSet(dataArr);
+                 }
+            });
+        }
+    });
 
 });
 
@@ -138,6 +166,9 @@ function onClickEvt(i) {
     $('#qnaDiv').load(url);
 
 };
+function onClickNO(){
+    alertMsg("해당 게시글에 권한이 없습니다.\n 게시글은 본인만 확인 가능합니다.");
+}
 
 /* 게시글 등록 페이지 이동 함수 */
 function onclickNewQna() {
@@ -151,15 +182,17 @@ function onclickNewQna() {
 /* 페이징처리된 번호 클릭시 해당 페이지로 이동 함수 */
 function onClickPage(num){
 
-    paging(dataList, num);
+    paging2(dataList, num);
 }
 
 /* 게시글 조회, 검색 후 가져온 데이터를 변수에 저장하고 페이징 처리해주는 함수 */
 function pagingSet(data){
     dataList = data;
-    paging(data, 1);
+    paging2(data, 1);
 
 }
+
+
 
 /* 데이터를 현재 페이지 기준으로 그리드에 데이터 그려주고 페이징 처리해주는 함수*/
 function paging(data, currentPage){
@@ -278,7 +311,149 @@ function paging(data, currentPage){
 };
 
 
+/* 데이터를 현재 페이지 기준으로 그리드에 데이터 그려주고 페이징 처리해주는 함수___ 임시로 본인이 쓴글만 확인하도록 만든 임시사용 함수입니다 */
+function paging2(data, currentPage){
 
+    var numberPerPage = 10; //한페이지당 게시글 수
+    var pagePerLine = 10; //한 라인당 페이지 수
+
+    var totalData = data.length; //조회결과 데이터 수
+    var totalPage = Math.ceil(totalData/numberPerPage); // 전체 페이지 수
+    var totalLine = Math.ceil(totalPage/pagePerLine); // 전체 라인 수
+
+    /* 권한설정까지 셋팅 */
+    var isAdmin = checkEmpAuthByEmail(sessionStorage.getItem("email"), "ADMIN");
+    var sessionID = sessionStorage.getItem("email");
+
+    var first = parseInt(currentPage/pagePerLine); // 이전 라인 ◀◀
+    if(currentPage%pagePerLine == 0){ first--;}
+    var last = first+2; // 다음 라인 ▶▶
+
+    var next = currentPage+1; // 다음 페이지 ▶
+    var prev = currentPage-1; // 이전 페이지 ◀
+
+    // 테이블 생성 HTML 코드
+    var QnAListTable = '<table class="table table-bordered text-center">';
+    QnAListTable += '<thead>';
+    QnAListTable += '<tr>';
+    QnAListTable += '<th class="text-center">NO</th>';
+    QnAListTable += '<th class="text-center">제목</th>';
+    QnAListTable += '<th class="text-center">작성자</th>';
+    QnAListTable += '<th class="text-center">작성일시</th>';
+    QnAListTable += '</tr>';
+    QnAListTable += '</thead>';
+    QnAListTable += '<tbody>';
+
+    var pageStNo = 10*(currentPage-1);
+    var pageEdNo = (currentPage*10)-1;
+
+    if( (totalData-1) < pageEdNo){ pageEdNo = (totalData-1);}
+
+    for(var i = pageStNo; i <= pageEdNo; i++){
+
+        QnAListTable += '<tr id ="grd_QnAList")>';
+        QnAListTable += '<td id="qnaOrNo" class="pt-3-half" style="width:110px;">'+(i+1)+'</td>';
+        if(sessionID == data[i].ORIGIN_WR  || isAdmin ){
+                if(data[i].QNA_DEL_YN == 'Y'){
+                    QnAListTable += '<td id="qnaTitle" class="pt-3-half" style="text-align:left;color:grey;" >';
+                    for(var j = 0; j < data[i].DATA_DEPTH; j++){
+                        QnAListTable += "　　";
+                    }
+
+                    if(data[i].QNA_SORTS != 0){
+                        QnAListTable += "↳　";
+                    }
+                    QnAListTable += '<span style="text-decoration:line-through;">삭제된 게시글 입니다.</span></td>';
+                }else{
+                    QnAListTable += '<td id="qnaTitle" onclick="onClickEvt(\''+data[i].QNA_NO+'\')" class="pt-3-half" style="text-align:left;">';
+
+
+                    for(var j = 0; j < data[i].DATA_DEPTH; j++){
+                        QnAListTable += "　　";
+                    }
+
+                    if(data[i].QNA_SORTS != 0){
+                        QnAListTable += "↳　";
+                    }
+                    QnAListTable += data[i].QNA_TITLE+'</td>';
+
+                 }
+        }else{
+                if(data[i].QNA_DEL_YN == 'Y'){
+                    QnAListTable += '<td id="qnaTitle" class="pt-3-half" style="text-align:left;color:grey;" >';
+                    for(var j = 0; j < data[i].DATA_DEPTH; j++){
+                        QnAListTable += "　　";
+                    }
+
+                    if(data[i].QNA_SORTS != 0){
+                        QnAListTable += "↳　";
+                    }
+                    QnAListTable += '<span style="text-decoration:line-through;">삭제된 게시글 입니다.</span></td>';
+                }else{
+                    QnAListTable += '<td id="qnaTitle" onclick="onClickNO()" class="pt-3-half" style="text-align:left;">';
+
+
+                    for(var j = 0; j < data[i].DATA_DEPTH; j++){
+                        QnAListTable += "　　";
+                    }
+
+                    if(data[i].QNA_SORTS != 0){
+                        QnAListTable += "↳　";
+                    }
+                    QnAListTable += data[i].QNA_TITLE+'</td>';
+
+                 }
+        }
+        QnAListTable += '<td id="qnaWrt" class="pt-3-half" width="300">'+data[i].QNA_WR_NM+'</td>';
+        QnAListTable += '<td id="qnaRgd" class="pt-3-half" width="200">'+data[i].QNA_RGS_DATE+'</td>';
+        QnAListTable += '</tr>';
+    }
+    if((pageEdNo - pageStNo) < 9){
+        for(var i = 9; i > (pageEdNo - pageStNo); i--){
+            QnAListTable += '<tr><td class="pt-3-half"></td><td>　</td><td></td><td></td></tr>';
+
+        }
+    }
+    QnAListTable += '</tbody>';
+    QnAListTable += '</table>';
+
+    // 해당 위치에 QnAListTable HTML 코드 입력
+    document.getElementById('grd_QnAListTable').innerHTML = QnAListTable;
+
+    // 페이징 생성 HTML 코드
+    var QnaPaging = "";
+
+    if(currentPage > 10){
+        QnaPaging += "<a id='pg_pPrev' onclick='onClickPage("+(((first-1)*10)+1)+")' style='color:black;cursor:pointer;'>◀◀</a>";
+    }
+    if(currentPage > 1){
+        QnaPaging += "<a id='pg_prev' onclick='onClickPage("+prev+")' style='color:black;padding-left:5px;cursor:pointer;'>◀</a>";
+    }
+
+    var tagStNo = (first*10)+1;
+    var tagEdNo = (last -1)*10;
+    if( totalPage < tagEdNo){ tagEdNo = totalPage;}
+    for(var i=tagStNo; i <= tagEdNo; i++){
+        if( i == currentPage){
+            QnaPaging += "<a href='#' id='pg_"+i+"' style='font-weight:bold;color:red;padding-left:5px;'> "+i+" </a>";
+
+        }else{
+            QnaPaging += "<a id='pg_"+i+"' onclick='onClickPage("+i+")' style='color:black;padding-left:5px;cursor:pointer;'> "+i+" </a>";
+        }
+
+    }
+    if(currentPage < totalPage){
+        QnaPaging += "<a id='pg_next' onclick='onClickPage("+next+")' style='color:black;padding-left:5px;cursor:pointer;'> ▶ </a>";
+    }
+
+    if(totalLine != 0 && (last-1) < totalLine){
+        QnaPaging += "<a id='pg_nNext' onclick='onClickPage("+(((last-1)*10)+1)+")'  style='color:black;padding-left:5px;cursor:pointer;'> ▶▶ </a>";
+    }
+
+    // 해당 위치에 QnaPaging HTML 코드 입력
+    document.getElementById('pagination').innerHTML = QnaPaging;
+
+};
 
 </script>
     <input type="text" class="form-control" id="hidden_selectNumber" name="hidden_selectNumber" maxlength="30" readonly hidden/>
@@ -347,10 +522,9 @@ function paging(data, currentPage){
      </div>
 </div>
 <!-- 게시글 목록 Div -->
-
     <center>
         <div id="grd_QnAListTable" style="overflow:auto; height:600px;"></div>
-        <div id="pagination""></div>
+        <div id="pagination" style="margin-bottom:30px;"></div>
     </center>
 
 </div>

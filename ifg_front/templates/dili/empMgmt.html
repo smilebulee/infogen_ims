@@ -7,6 +7,10 @@ var param = {
 }
 
 $(document).ready(function(){
+    /* 관리자여부 체크 */
+    var isAdmin = checkEmpAuthByEmail(sessionStorage.getItem("email"), "ADMIN");
+
+    $('#empModalTest').load("{% url 'dili_api:empMgmtRegPop' %}");
 
     /* 목록조회 */
     $.ajaxCall( param, {
@@ -56,17 +60,17 @@ $(document).ready(function(){
     });
 
     /* 로그인한 아이디가 관리자일 경우*/
-    if(param.authId == "ADMIN") {
+    if(isAdmin) {
         /* 검색, 등록버튼 활성화 */
         $('#ipt_searchName').attr('readonly',false);
-        $('#empMgmtRegBtn').attr('disabled',false);
+        $('#empMgmtRegBtn').attr('hidden',false);
         $('#searchBtn').attr('disabled',false);
 
     }else{
         /* 검색, 등록버튼 비활성화 */
-        $('#ipt_searchName').attr('readonly',true);
-        $('#empMgmtRegBtn').attr('disabled',true);
-        $('#searchBtn').attr('disabled',true);
+        $('#ipt_searchName').attr('readonly',false);
+        $('#empMgmtRegBtn').attr('hidden',true);
+        $('#searchBtn').attr('disabled',false);
 
     }
 
@@ -101,6 +105,9 @@ function onClickSearchBtn(ipt_searchName) {
 
 /* 직원목록 생성 */
 function empListGrd(data){
+    /* 관리자여부 체크 */
+    var isAdmin = checkEmpAuthByEmail(sessionStorage.getItem("email"), "ADMIN");
+
     var size = data.length;
     var empListTable = '<table class="table table-bordered text-center">';
     empListTable += '<thead>';
@@ -117,11 +124,10 @@ function empListGrd(data){
     console.log("Start")
     console.log(data)
     console.log(typeof(data))
-
     if(data.length > 0) {
         for(var i = 0; i < size; i++){
 
-            if(param.authId == "ADMIN") { /* 관리자일 경우 클릭 이벤트 */
+            if(data[i].EMP_EMAIL == sessionStorage.getItem("email") || isAdmin) { /* 관리자이거나 본인일  경우 클릭 이벤트 */
                 empListTable += '<tr id ="grd_empList" onclick="onClickEvt(\''+data[i].EMP_EMAIL+'\')">';
             }else{
                 empListTable += '<tr id ="grd_empList")>';
@@ -174,15 +180,16 @@ $("#empMgmtRegBtn").click(function(){
 
     //$('#empModalDiv').css("width","30%");
 
-    modal('empModalDiv');
+    modal('empModalDivTest');
 
-    $('#empModal').load(url);
+    //$('#empModalTest').load(url);
 });
 
 /* 한글만 입력가능체크 */
 function isKorean(){
      if((event.keyCode < 12592) || (event.keyCode > 12687)){
       event.returnValue = false
+
      }
 }
 
@@ -196,18 +203,21 @@ function maskingNm(strName){
         });
         var joinName = originName.join();
         return joinName.replace(/,/g, '');
-      } else {
+    } else {
         var pattern = /.$/; // 정규식
         return strName.replace(pattern, '*');
-      }
+    }
 }
 
 
 
 
 </script>
-<!--직원등록, 수정 모달 영역 -->
 
+
+
+
+<!--직원등록, 수정 모달 영역 -->
 <div id="empModalDiv" class="modalUi">
     <div id="empModal">
     </div>
@@ -222,6 +232,19 @@ function maskingNm(strName){
     </a>
 </div>
 
+<div id="empModalDivTest" class="modalUi">
+    <div id="empModalTest">
+    </div>
+    <a class="modal_close_btn" id="exitEmpModalBtnTest">
+        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-x-circle" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+           <path fill-rule="evenodd" d="
+           M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+           <path fill-rule="evenodd" d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+        </svg>
+        <span id="apvlEmpEmailHiddenTest" style="display:none;" ></span>
+        <span id="apvlReqHiddenTest" style="display:none;" >apvlReq</span>
+    </a>
+</div>
 
 <div class="row">
     <div class="col-sm-12">

@@ -15,6 +15,9 @@
         }
         //console.log("###########SessionSettingInfo::", param);
 
+        /* 사용자 권한 셋팅 */
+        checkEmpAuthsByEmail(sessionStorage.getItem("email"), ["ADMIN", "GM", "USER"]);
+
         // 사용자 조회 > 이메일 : SessionSetting email로 설정
         $('#ipt_apvlSearchEmailPop').val(param.email);
         $("#ipt_apvlSearchEmail").val(param.email);
@@ -57,7 +60,7 @@
 
         //TODO : 관리자, 사업부장 권한 나뉘며 로직 엉킴. 수정 필요
         // 결재승인 버튼 및 직원조회 기능 권한 처리
-        if(param.authId != "ADMIN") {
+        if(!isAdmin) {
             //$('#apvlAcptBtn').css("display", 'none');
             //$('#ipt_apvlSearchNamePop").attr('readonly' true);
             //$("#ipt_apvlSearchNamePop").attr('onclick','').unbind('click');
@@ -68,15 +71,14 @@
         }
 
         // 결재승인 버튼 및 직원조회 기능 권한 처리 ( 성명 공란 검색 )
-        if(param.authId == "USER") {
+        if(!isAdmin && !isGm && isUser) {
             $('#apvlAcptBtn').css("display", 'none');
             $('#btn_delApvlSearchName').css("display", 'none');
         }
 
         /*
         $('#apvlAcptBtn').click(function(){
-            var strAuthId = sessionStorage.getItem("authId");
-            if(strAuthId != "ADMIN" || strAuthId != "GM") {
+            if(!isAdmin || !isGm) {
                 alertMsg('결재 승인 권한이 없습니다.');
                 return false;
             }
@@ -157,9 +159,9 @@
             //권한 따라 부서 세팅
             /*
             var strDeptCd = "";
-            if(param.authId == "ADMIN") {       //관리자
+            if(isAdmin) {       //관리자
                 strDeptCd = $("#sbx_slinBzdp option:selected").val();
-            } else if(param.authId == "GM") {   //사업부장
+            } else if(isGm) {   //사업부장
                 retrieveEmpDeptByEmail(param.email, function(data) {
                     if(data.length > 0) {
                         strDeptCd = data[0].DEPT_CD;
@@ -219,7 +221,7 @@
 
 
         // 직원조회 권한 처리 및 모달 오픈
-        if(param.authId == "ADMIN" || param.authId == "GM") {
+        if(isAdmin || isGm) {
             $("#ipt_apvlSearchName").click(function(){
                 //부모창에서 여는 직원 조회 팝업임을 표시
                 $('#apvlReqIptFlagHidden').text("apvlReqHist");
