@@ -355,6 +355,7 @@ class weekGridData(Resource): # Mariadb 연결 진행
                     + "       ,NVL(B.APVL_LAST_APRV_DT, 'N/A') AS APVL_LAST_APRV_DT "\
                     + "       ,NVL(B.TH1_APRV_STUS, 'N/A') AS TH1_APRV_STUS"\
                     + "       ,NVL(A.REST_TM,'') AS REST_TM"\
+                    + "       ,NVL(A.DINN_REST_TM,'') AS DINN_REST_TM"\
                     + "   FROM TB_WRK_TM_MGMT_M A "\
                     + "        LEFT OUTER JOIN TB_APVL_REQ_MGMT_M B"\
                     + "   ON A.WRK_DT = B.WRK_DT "\
@@ -440,6 +441,7 @@ class monthGridData(Resource): # Mariadb 연결 진행
                     + "       ,NVL(B.APVL_REQ_DT, 'N/A') AS APVL_REQ_DT "\
                     + "       ,NVL(B.APVL_LAST_APRV_DT, 'N/A') AS APVL_LAST_APRV_DT "\
                     + "       ,NVL(A.REST_TM,'') AS REST_TM "\
+                    + "       ,NVL(A.DINN_REST_TM,'') AS DINN_REST_TM "\
                     + "   FROM TB_WRK_TM_MGMT_M A "\
                     + "        LEFT OUTER JOIN TB_APVL_REQ_MGMT_M B"\
                     + "   ON A.WRK_DT = B.WRK_DT "\
@@ -1693,7 +1695,6 @@ class updateEndTm(Resource):  # Mariadb 연결 진행
         normWrkTm = params['normWrkTm']
         overWrkTm = params['overWrkTm']
         allWrkTm = params['allWrkTm']
-        restTm = params['restTm']
 
 
         # requirements pymysql import 후 커넥트 사용
@@ -1707,11 +1708,10 @@ class updateEndTm(Resource):  # Mariadb 연결 진행
                           "   SET JOB_END_TM  = %s " \
                           "      ,HLDY_WRK_TM = %s " \
                           "      ,ALL_WRK_TM  = %s " \
-                          "      ,REST_TM  = %s " \
                           "   WHERE EMP_EMAL_ADDR = %s " \
                           "   AND WRK_DT = %s "
                     logger.info(sql)
-                    cursor.execute(sql, (tm, overWrkTm, allWrkTm, restTm, email, dt))
+                    cursor.execute(sql, (tm, overWrkTm, allWrkTm, email, dt))
                     mysql_con.commit()
                 else:
                     # 쿼리문 실행
@@ -1720,11 +1720,10 @@ class updateEndTm(Resource):  # Mariadb 연결 진행
                           "      ,NORM_WRK_TM = %s " \
                           "      ,NGHT_WRK_TM = %s " \
                           "      ,ALL_WRK_TM  = %s " \
-                          "      ,REST_TM  = %s " \
                           "   WHERE EMP_EMAL_ADDR = %s " \
                           "   AND WRK_DT = %s "
                     logger.info(sql)
-                    cursor.execute(sql, (tm, normWrkTm, overWrkTm, allWrkTm, restTm, email, dt))
+                    cursor.execute(sql, (tm, normWrkTm, overWrkTm, allWrkTm, email, dt))
                     mysql_con.commit()
 
         finally:
@@ -2761,6 +2760,77 @@ class qnaSearch(Resource):  # Mariadb 연결 진행
 
         return json.dumps(result2, indent=4, cls=DateTimeEncoder)
 
+class updateRestTm(Resource):  # Mariadb 연결 진행
+    def post(self):
+
+        params = json.loads(request.data)
+        logger.info("App Parameters Start")
+        logger.info(params['email'])
+        logger.info("App Parameters End")
+
+        email = params['email']
+        dt = params['dt']
+        restTm = params['restTm']
+
+        # requirements pymysql import 후 커넥트 사용
+        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
+                                    charset='utf8', autocommit=False)
+        try:
+            with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+                # 쿼리문 실행
+                sql = "UPDATE TB_WRK_TM_MGMT_M " \
+                      "   SET REST_TM  = %s " \
+                      "   WHERE EMP_EMAL_ADDR = %s " \
+                      "   AND WRK_DT = %s "
+                logger.info(sql)
+                cursor.execute(sql, (restTm, email, dt))
+                mysql_con.commit()
+
+        finally:
+            mysql_con.close()
+
+        retJson = {
+            "status": 200,
+            "msg": "Data has been saved successfully"
+        }
+
+        return jsonify(retJson)
+
+class updateDinnRestTm(Resource):  # Mariadb 연결 진행
+    def post(self):
+
+        params = json.loads(request.data)
+        logger.info("App Parameters Start")
+        logger.info(params['email'])
+        logger.info("App Parameters End")
+
+        email = params['email']
+        dt = params['dt']
+        dinnRestTm = params['dinnRestTm']
+
+        # requirements pymysql import 후 커넥트 사용
+        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
+                                    charset='utf8', autocommit=False)
+        try:
+            with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+                # 쿼리문 실행
+                sql = "UPDATE TB_WRK_TM_MGMT_M " \
+                      "   SET DINN_REST_TM  = %s " \
+                      "   WHERE EMP_EMAL_ADDR = %s " \
+                      "   AND WRK_DT = %s "
+                logger.info(sql)
+                cursor.execute(sql, (dinnRestTm, email, dt))
+                mysql_con.commit()
+
+        finally:
+            mysql_con.close()
+
+        retJson = {
+            "status": 200,
+            "msg": "Data has been saved successfully"
+        }
+
+        return jsonify(retJson)
     
 api.add_resource(Hello, '/hello')
 api.add_resource(Register, '/register')
@@ -2818,6 +2888,8 @@ api.add_resource(qnaAnserReg,'/qnaAnserReg') #api선언
 api.add_resource(qnaUpdate,'/qnaUpdate') #api선언
 api.add_resource(qnaUpdateCnt,'/qnaUpdateCnt') #api선언
 api.add_resource(qnaSearch,'/qnaSearch') #api선언
+api.add_resource(updateRestTm,'/updateRestTm') #api선언
+api.add_resource(updateDinnRestTm,'/updateDinnRestTm') #api선언
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5006, debug=True)

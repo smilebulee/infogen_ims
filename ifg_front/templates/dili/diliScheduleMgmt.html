@@ -579,6 +579,7 @@
             weekTable += '<th class="text-center">업무시작시간</th>';
             weekTable += '<th class="text-center">업무종료시간</th>';
             weekTable += '<th class="text-center">휴게시간(분)</th>';
+            weekTable += '<th class="text-center">석식휴게시간(분)</th>';
             weekTable += '<th class="text-center">총근무시간</th>';
             weekTable += '<th class="text-center">근무시간상세</th>';
             weekTable += '<th class="text-center">결재상태</th>';
@@ -607,6 +608,7 @@
                 var apvlStus = "-"
                 var chckHldy = 0;
                 var restTm = 0;
+                var dinnRestTm = 0;
 
                 if(schdData.length > 0){
                     for(var j = 0; j < schdData.length; j++){
@@ -649,6 +651,7 @@
                             }
 
                             restTm = schdData[j].REST_TM;
+                            dinnRestTm = schdData[j].DINN_REST_TM;
                         }
                     }
                 }
@@ -658,6 +661,7 @@
                 weekTable += '<td class="pt-3-half" contenteditable="false">'+jobStrtTm+'</td>';
                 weekTable += '<td class="pt-3-half" contenteditable="false">'+jobEndTm+'</td>';
                 weekTable += '<td class="pt-3-half" contenteditable="false">'+restTm+'</td>';
+                weekTable += '<td class="pt-3-half" contenteditable="false">'+dinnRestTm+'</td>';
                 weekTable += '<td class="pt-3-half" contenteditable="false">'+allWrkTm+'</td>';
 
                 if(chckHldy == 0){
@@ -692,6 +696,7 @@
             monthTable += '<th class="text-center">업무시작시간</th>';
             monthTable += '<th class="text-center">업무종료시간</th>';
             monthTable += '<th class="text-center">휴게시간(분)</th>';
+            monthTable += '<th class="text-center">석식휴게시간(분)</th>';
             monthTable += '<th class="text-center">총근무시간</th>';
             monthTable += '<th class="text-center">근무시간상세</th>';
             monthTable += '<th class="text-center">결재상태</th>';
@@ -721,6 +726,7 @@
                 var apvlStus = "-"
                 var chckHldy = 0;
                 var restTm = 0;
+                var dinnRestTm = 0;
 
 				if(schdData.length > 0){
                     for(var j = 0; j < schdData.length; j++){
@@ -766,6 +772,7 @@
                             }
 
                             restTm = schdData[j].REST_TM;
+                            dinnRestTm = schdData[j].DINN_REST_TM;
                         }
 
                     }
@@ -777,6 +784,7 @@
                 monthTable += '<td class="pt-3-half" contenteditable="false">'+jobStrtTm+'</td>';
                 monthTable += '<td class="pt-3-half" contenteditable="false">'+jobEndTm+'</td>';
                 monthTable += '<td class="pt-3-half" contenteditable="false">'+restTm+'</td>';
+                monthTable += '<td class="pt-3-half" contenteditable="false">'+dinnRestTm+'</td>';
                 monthTable += '<td class="pt-3-half" contenteditable="false">'+allWrkTm+'</td>';
 
                 if(chckHldy == 0){
@@ -820,7 +828,8 @@
                 $('#tmpPopEndTm').text($('#'+trId.id).children().eq(2).text());
 
                 $('#tmpRestTm').text($('#'+trId.id).children().eq(3).text());
-                var detlSchd = $('#'+trId.id).children().eq(5).text();
+                $('#tmpDinnRestTm').text($('#'+trId.id).children().eq(4).text());
+                var detlSchd = $('#'+trId.id).children().eq(6).text();
                 var normWrkTm = "-";
                 var overWrkTm = "-";
                 var holi = "-";
@@ -835,8 +844,8 @@
                 $('#tmpNormWrkTm').text(normWrkTm);
                 $('#tmpOverWrkTm').text(overWrkTm);
                 $('#tmpHoli').text(holi);
-                $('#tmpPopAllTm').text($('#'+trId.id).children().eq(4).text());
-                $('#tmpPopApvlStus').text($('#'+trId.id).children().eq(6).text());
+                $('#tmpPopAllTm').text($('#'+trId.id).children().eq(5).text());
+                $('#tmpPopApvlStus').text($('#'+trId.id).children().eq(7).text());
             }
             $('#clickDate').val(wClickDt);
 
@@ -864,7 +873,9 @@
                 $('#tmpPopStrtTm').text($('#'+trId.id).children().eq(1).text());
                 $('#tmpPopEndTm').text($('#'+trId.id).children().eq(2).text());
                 $('#tmpRestTm').text($('#'+trId.id).children().eq(3).text());
-                var detlSchd = $('#'+trId.id).children().eq(5).text();
+                $('#tmpDinnRestTm').text($('#'+trId.id).children().eq(4).text());
+
+                var detlSchd = $('#'+trId.id).children().eq(6).text();
                 var normWrkTm = "-";
                 var overWrkTm = "-";
                 var holi = "-";
@@ -879,8 +890,8 @@
                 $('#tmpNormWrkTm').text(normWrkTm);
                 $('#tmpOverWrkTm').text(overWrkTm);
                 $('#tmpHoli').text(holi);
-                $('#tmpPopAllTm').text($('#'+trId.id).children().eq(4).text());
-                $('#tmpPopApvlStus').text($('#'+trId.id).children().eq(6).text());
+                $('#tmpPopAllTm').text($('#'+trId.id).children().eq(5).text());
+                $('#tmpPopApvlStus').text($('#'+trId.id).children().eq(7).text());
             }
             $('#clickDate').val(mClickDt);
 
@@ -1278,6 +1289,7 @@
                 <span id="tmpPopStrtTm" class="model_layout" style="display:none;" ></span>
                 <span id="tmpPopEndTm" class="model_layout" style="display:none;" ></span>
                 <span id="tmpRestTm" class="model_layout" style="display:none;" ></span>
+                <span id="tmpDinnRestTm" class="model_layout" style="display:none;" ></span>
 
                 <span id="tmpNormWrkTm" class="model_layout" style="display:none;" ></span>
                 <span id="tmpOverWrkTm" class="model_layout" style="display:none;" ></span>

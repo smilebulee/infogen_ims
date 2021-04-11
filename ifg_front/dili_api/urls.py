@@ -69,6 +69,9 @@ urlpatterns = [
 
     url(r'^saveStrtTm/', views.saveStrtTm, name='saveStrtTm'),
     url(r'^saveEndTm/', views.saveEndTm, name='saveEndTm'),
+    url(r'^updateRestTm/', views.updateRestTm, name='updateRestTm'),
+    url(r'^updateDinnRestTm/', views.updateDinnRestTm, name='updateDinnRestTm'),
+
 
     url(r'^getApvlInfo/', views.getApvlInfo, name='getApvlInfo'),
     url(r'^getYryUseDays/', views.getYryUseDays, name='getYryUseDays'),
