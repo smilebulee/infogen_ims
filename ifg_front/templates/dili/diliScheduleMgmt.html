@@ -966,7 +966,7 @@
 
             var totalWrkTm;
             totalWrkTm = "나의 총 근무가능 시간 (기본 근무시간 + 연장근무 가능시간) = ";
-            totalWrkTm += Number(data[0].WRK_TOT_TM) + Number(data[0].EXTN_WRK_PSBL_TM) + "H";
+            totalWrkTm += (Number(data[0].WRK_TOT_TM) + Number(data[0].EXTN_WRK_PSBL_TM)).toFixed(2) + "H";
 
             $('#totalTm').text(totalWrkTm);
        }
