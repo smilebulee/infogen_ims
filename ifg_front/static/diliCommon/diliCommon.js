@@ -128,10 +128,10 @@ function overWrkTmCall(date, allTmData){
         var hour = Math.floor((tmpSubtractTm % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
         var minute = Math.floor((tmpSubtractTm % (1000 * 60 * 60)) / (1000 * 60));
         var second = Math.floor((tmpSubtractTm % (1000 * 60)) / 1000);
-        var subtractTm = lpad((hour).toString(),2,"0")+":"+lpad((minute).toString(),2,"0")+":"+lpad((second).toString(),2,"0");
+        var subtractTm = lpad((hour).toString(),2,"0")+":"+lpad((minute).toString(),2,"0");
         overTmChk = subtractTm;
     }else {
-        overTmChk = "00:00:00";
+        overTmChk = "00:00";
     }
 
     return overTmChk

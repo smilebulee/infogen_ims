@@ -203,17 +203,17 @@
 
         if($('#hldyDivsCd').val() != "01" || $('#dowDivsCd').val() == "01" || $('#dowDivsCd').val() == "07"){
 
-            normWrkTm = "00:00:00";
+            normWrkTm = "00:00";
             overWrkTm = allWrkTm;
 
         } else{
 
-            if(overWrkTm == "00:00:00"){
+            if(overWrkTm == "00:00"){
 
                 normWrkTm = allWrkTm;
             }else {
 
-                normWrkTm = "08:00:00";
+                normWrkTm = "08:00";
             }
         }
 
@@ -222,7 +222,7 @@
         //$('#ipt_restTme').attr('disabled',true);
         document.getElementById('pop_schdDetlTm').innerHTML = '정상근무 : '+normWrkTm+' / 초과근무 : '+overWrkTm;
         $('#pop_schdDetlAllTm').text(allWrkTm);
-        if(overWrkTm != "00:00:00"){
+        if(overWrkTm != "00:00"){
             document.getElementById('pop_apvlStus').innerHTML = '<input type="button" class="button" onclick="onclickApvlUpld()" value="결재올리기">';
         }else {
             $('#pop_apvlStus').text("-");

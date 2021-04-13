@@ -617,17 +617,17 @@
 
                                 jobStrtTm = schdData[j].JOB_STRT_TM;
                                 jobEndTm = schdData[j].JOB_END_TM;
-                                if(schdData[j].ALL_WRK_TM != "00:00:00"){
+                                if(schdData[j].ALL_WRK_TM != "00:00"){
 
 									allWrkTm = schdData[j].ALL_WRK_TM;
 								}
 
-								if(schdData[j].NORM_WRK_TM != "00:00:00"){
+								if(schdData[j].NORM_WRK_TM != "00:00"){
 
 									normWrkTm = schdData[j].NORM_WRK_TM;
 								}
 
-                                if(schdData[j].OVER_WRK_TM != "00:00:00"){
+                                if(schdData[j].OVER_WRK_TM != "00:00"){
 
                                     overWrkTm = schdData[j].OVER_WRK_TM;
                                 }
@@ -637,7 +637,7 @@
                                 chckHldy = 1;
                             }
 
-                            if(schdData[j].APVL_REQ_DT == "N/A" && schdData[j].APVL_LAST_APRV_DT == "N/A" && schdData[j].OVER_WRK_TM != "00:00:00"){
+                            if(schdData[j].APVL_REQ_DT == "N/A" && schdData[j].APVL_LAST_APRV_DT == "N/A" && schdData[j].OVER_WRK_TM != "00:00"){
                                 apvlStus = "미등록"
                             }
                             if(schdData[j].TH1_APRV_STUS == "01"){
@@ -737,17 +737,17 @@
                                 jobStrtTm = schdData[j].JOB_STRT_TM;
                                 jobEndTm = schdData[j].JOB_END_TM;
 
-                                if(schdData[j].ALL_WRK_TM != "00:00:00"){
+                                if(schdData[j].ALL_WRK_TM != "00:00"){
 
 									allWrkTm = schdData[j].ALL_WRK_TM;
 								}
 
-								if(schdData[j].NORM_WRK_TM != "00:00:00"){
+								if(schdData[j].NORM_WRK_TM != "00:00"){
 
 									normWrkTm = schdData[j].NORM_WRK_TM;
 								}
 
-                                if(schdData[j].OVER_WRK_TM != "00:00:00"){
+                                if(schdData[j].OVER_WRK_TM != "00:00"){
 
                                     overWrkTm = schdData[j].OVER_WRK_TM;
                                 }
@@ -758,7 +758,7 @@
                                 chckHldy = 1;
                             }
 
-                            if(schdData[j].APVL_REQ_DT == "N/A" && schdData[j].APVL_LAST_APRV_DT == "N/A" && schdData[j].OVER_WRK_TM != "00:00:00"){
+                            if(schdData[j].APVL_REQ_DT == "N/A" && schdData[j].APVL_LAST_APRV_DT == "N/A" && schdData[j].OVER_WRK_TM != "00:00"){
                                 apvlStus = "미등록"
                             }
                             if(schdData[j].TH1_APRV_STUS == "01"){
@@ -1115,7 +1115,7 @@
 
                 if(statTm == "-" && endTm == "-" && apvlReqDivs == "03"){
                     statTmTitle = "휴가";
-                    statTm = "00:00:00"
+                    statTm = "00:00"
                 }
 
                 var startTimeAdd = wrkDt + "T" + statTm;
@@ -1123,7 +1123,7 @@
 
 
                 var apvlStus = "";
-                if(calendarData[i].APVL_REQ_DT == "N/A" && calendarData[i].APVL_LAST_APRV_DT == "N/A" && calendarData[i].OVER_WRK_TM != "00:00:00"){
+                if(calendarData[i].APVL_REQ_DT == "N/A" && calendarData[i].APVL_LAST_APRV_DT == "N/A" && calendarData[i].OVER_WRK_TM != "00:00"){
                     apvlStus = "미등록"
                 }
                 if(calendarData[i].TH1_APRV_STUS == "01"){
