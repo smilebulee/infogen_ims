@@ -102,8 +102,8 @@ function allWrkTmCall(date, strtTm, endTm, restTm){
     //var hour = Math.floor((tmpSubtractTm % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
     var tmpMinute = tmpSubtractTm/(1000 * 60);
 
-    if(tmpMinute > restTm){
-        tmpMinute -= restTm
+    if(tmpMinute > restTm && tmpMinute > 60){
+        tmpMinute -= (restTm + 60)
     }
     //var second = Math.floor((tmpSubtractTm % (1000 * 60)) / 1000);
     var hour = Math.floor(tmpMinute/60);
