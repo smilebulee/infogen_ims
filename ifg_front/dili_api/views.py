@@ -1206,3 +1206,17 @@ def updateRestTm(request):
     logger.info(r.json())
     return JsonResponse(r.json())
     
+def updateDinnRestTm(request):
+    param = json.loads(request.POST['param'])
+
+    logger.info("Parameters Start")
+    logger.info(param)
+    logger.info("Parameters End")
+
+
+    r = requests.post('http://dili_api:5006/updateDinnRestTm', data=json.dumps(param))
+
+    logger.info(r)
+    logger.info(r.text)
+    logger.info(r.json())
+    return JsonResponse(r.json())

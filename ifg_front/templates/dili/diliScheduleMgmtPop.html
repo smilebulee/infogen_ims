@@ -103,6 +103,7 @@
 
                 $('#pop_endJob').text(endTm);
                 $('#sbx_restTme').val(restTm);
+                $('#sbx_DinnRestTme').val(dinnRestTm);
                 document.getElementById('pop_schdDetlTm').innerHTML = '정상근무 : '+normWrkTm+' / 초과근무 : '+overWrkTm;
                 $('#pop_schdDetlAllTm').text(allTm);
                 $('#pop_apvlStus').text(apvlStus);
@@ -138,6 +139,8 @@
                 $('#pop_apvlStus').text(apvlStus);
                 $('#sbx_restTme').val(restTm);
                 $('#btn_restTm').show();
+                $('#sbx_dinnRestTme').val(dinnRestTm);
+                $('#btn_dinnRestTm').show();
 
             }else {
 
@@ -146,6 +149,9 @@
                 $('#sbx_restTme').attr('disabled',true);
                 $('#sbx_restTme').val(restTm);
                 $('#btn_restTm').hide();
+                $('#sbx_dinnRestTme').attr('disabled',true);
+                $('#sbx_dinnRestTme').val(dinnRestTm);
+                $('#btn_dinnRestTm').hide();
                 document.getElementById('pop_schdDetlTm').innerHTML = '정상근무 : '+normWrkTm+' / 초과근무 : '+overWrkTm;
                 $('#pop_schdDetlAllTm').text(allTm);
                 if(apvlStus == "미등록"){
@@ -168,6 +174,7 @@
             $('#pop_strtJob').text(strtTm);
             $('#pop_endJob').text(endTm);
             $('#sbx_restTme').val(restTm);
+            $('#sbx_dinnRestTme').val(dinnRestTm);
             $('#pop_schdDetlTm').text(holi);
             $('#pop_schdDetlAllTm').text(allTm);
             $('#pop_apvlStus').text(apvlStus);
@@ -329,6 +336,33 @@
 
     }
 
+    /*********************************************************************
+    *   석식휴게시간 등록
+    *********************************************************************/
+    function onclickDinnRestTm() {
+        var email = sessionStorage.getItem("email");
+        var dt = $("#pop_dt").text();
+        var dinnRestTm = $('#sbx_dinnRestTme').val();
+
+        var param = {
+            "email"     : email,
+            "dt"        : dt,
+            "dinnRestTm"    : dinnRestTm
+        }
+
+        $.ajaxCall( param, {
+             'method' : 'POST',
+             'url' : "{% url 'dili_api:updateDinnRestTm' %}",
+             'dataType' : 'json',
+             'data' : JSON.stringify(param),
+             'async' : false,
+             'callbackFn' : function(data){
+                alertMsg('저장 되었습니다.');
+             }
+        });
+
+    }
+
 </script>
 
 <input type="hidden" id="currReqMthd" value="02"/>
@@ -362,21 +396,21 @@
             <input type="button" class="button" id="btn_restTm" onclick="onclickRestTm()" value="등록">
         </td>
     </tr>
-<!--    <tr>-->
-<!--        <th class="text-center">석식휴게시간(단위 : 분)</th>-->
-<!--        <td><div style="float: left;">-->
-<!--            <select id="sbx_dinnRestTme" class="form-control" name="type" style="width:200px;">-->
-<!--                <option value = "0" selected>0</option>-->
-<!--                <option value = "10">10</option>-->
-<!--                <option value = "20">20</option>-->
-<!--                <option value = "30">30</option>-->
-<!--                <option value = "40">40</option>-->
-<!--                <option value = "50">50</option>-->
-<!--                <option value = "60">60</option>-->
-<!--            </select></div>-->
-<!--            <input type="button" class="button" id="btn_dinnRestTm" onclick="onclickDinnRestTm()" value="등록">-->
-<!--        </td>-->
-<!--    </tr>-->
+    <tr>
+        <th class="text-center">석식휴게시간(단위 : 분)</th>
+        <td><div style="float: left;">
+            <select id="sbx_dinnRestTme" class="form-control" name="type" style="width:200px;">
+                <option value = "0" selected>0</option>
+                <option value = "10">10</option>
+                <option value = "20">20</option>
+                <option value = "30">30</option>
+                <option value = "40">40</option>
+                <option value = "50">50</option>
+                <option value = "60">60</option>
+            </select></div>
+            <input type="button" class="button" id="btn_dinnRestTm" onclick="onclickDinnRestTm()" value="등록">
+        </td>
+    </tr>
     <tr>
         <th class="text-center">근무시간상세</th>
         <td class="pt-3-half" contenteditable="false" id="pop_schdDetlTm"></td>
