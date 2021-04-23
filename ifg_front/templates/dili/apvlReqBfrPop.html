@@ -158,11 +158,10 @@
     });
 
     // 근무일자 변경 시 근무 시간 값 세팅 처리
-    $("#ipt_wrkDt").unbind("change");
+     $(document).off("change", "#ipt_wrkDt");
 
     //$("#ipt_wrkDt").change(function(){
     $(document).on("change", "#ipt_wrkDt", function(){
-        debugger;
 
         //동일 일자 스케줄 등록 전 유효성 검증
         var param = {
@@ -383,7 +382,6 @@
                             'data' : JSON.stringify(param),
                             'async' : false,
                             'callbackFn' : function(data){
-                                debugger;
                                 g_toast.push('근무결재요청 ' + $('#btn_apvlBfrReq').text() + '이 완료되었습니다.');
 
                                 $('#exitApvlReqModalBtn').click();
