@@ -239,9 +239,11 @@
     *   결재 버튼클릭
     *********************************************************************/
     function onclickApvlUpld() {
+        var url = "{% url 'dili_api:apvlReqBfrPop' %}" ;
+        $('#currReqPopStts').val("registerLtr");
+        modal('apvlReqModalDiv');
+        $('#apvlUpld_modal').load(url);
 
-        modal('apvlUpldDiv_modal');                  //근무요청결재 화면 모달 띄우기
-        $("#apvlUpld_modal").load("{% url 'dili_api:apvlReqLtrPop' %}");
     }
     /*********************************************************************
     *  출근 INSERT

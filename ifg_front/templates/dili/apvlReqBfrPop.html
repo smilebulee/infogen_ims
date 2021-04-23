@@ -10,7 +10,7 @@
             $('#btn_apvlBfrReq').text("저장");
             $('#ipt_wrkDt').prop('readonly', false);
             $('#apvlReqUpdDtDiv').addClass('d-none');
-            $('#apvlReqAcptDiv').addClass('d-none');
+            $('#apvlReqAcptDiv' ).addClass('d-none');
 
             var nowDt = new Date();
             var strNowDt = nowDt.getFullYear() + '-' + fillZero(2, (nowDt.getMonth() + 1) + '') + '-' + fillZero(2, nowDt.getDate() + '');
@@ -157,6 +157,48 @@
         */
     });
 
+    // 근무일자 변경 시 근무 시간 값 세팅 처리
+    $("#ipt_wrkDt").unbind("change");
+
+    //$("#ipt_wrkDt").change(function(){
+    $(document).on("change", "#ipt_wrkDt", function(){
+        debugger;
+
+        //동일 일자 스케줄 등록 전 유효성 검증
+        var param = {
+            "email"         : sessionStorage.getItem("email"),      //로그인한 사용자 아이디
+            "wrkDt"         : $("#ipt_wrkDt").val(),                //근무일자
+        }
+        //console.log("###########param::", param);
+
+        var url = "{% url 'dili_api:getDuplWrkCnt' %}";
+        submissionCallList( param, 'GET', url, function(data) {
+            var nowDt = new Date();
+            var strNowTm = fillZero(2, nowDt.getHours()) + ':' + fillZero(2, nowDt.getMinutes());
+            if(data.length > 0 && data[0].WRK_CNT > 0) {
+                //동일 날짜에 결재요청건이 있는 경우
+                var msg = '일자 : ' + param.wrkDt + '\n근무 내역을 불러옵니다.';
+                cf_dialog.confirm(msg, function(){
+                    if(this.key == 'ok'){
+                        url = "{% url 'dili_api:getWrkTm' %}";
+                        submissionCallList( param, 'GET', url, function(data) {
+                            $("#ipt_jobStrtTm").val(data[0].JOB_END_TM);
+                            $('#ipt_jobStrtTm').attr('disabled', true);
+                            $("#ipt_jobEndTm").val(data[0].JOB_END_TM);
+                        });
+                    }
+                });
+            }
+            else {
+                //현재 접속시간으로 설정
+                $("#ipt_jobStrtTm").val(strNowTm);
+                $('#ipt_jobStrtTm').attr('disabled', false);
+                $("#ipt_jobEndTm").val(strNowTm);
+            }
+        });
+
+    });
+
 
     // 요청 버튼 선택 시, 유효성 검증 및 데이터 저장
     //$(document).on("click","#btn_apvlBfrReq",function(){
@@ -264,7 +306,8 @@
                     });
                 }
             });
-        } else if($('#currReqPopStts').val() == "modify") {
+        }
+        else if($('#currReqPopStts').val() == "modify") {
 
             //JSON.parse($('#currReqPopParamArr').val());
             var preReqInfo = $('#currReqPopInfoArr').val();
@@ -311,11 +354,12 @@
 
     //선결재 저장
     function saveApvlReq() {
-        var inptWrkDt = $("#ipt_wrkDt").val();
-        var inptStrtTm = $("#ipt_jobStrtTm").val().substring(0,2) +""+ $("#ipt_jobStrtTm").val().substring(3,5) +"00";
-        var inptEndTm  = $("#ipt_jobEndTm").val().substring(0,2) +""+ $("#ipt_jobEndTm").val().substring(3,5) +"00";
+        var inptWrkDt     = $("#ipt_wrkDt").val();
+        var inptStrtTm    = $("#ipt_jobStrtTm").val().substring(0,2) + "" + $("#ipt_jobStrtTm").val().substring(3,5) + "00";
+        var inptEndTm     = $("#ipt_jobEndTm" ).val().substring(0,2) + "" + $("#ipt_jobEndTm" ).val().substring(3,5) + "00";
         var inptWrkReqRsn = $("#txa_reqBfrRsn").val().trim();
-        var wrkTme = getTimeDiff($("#ipt_wrkDt").val() + ' ' +  $("#ipt_jobStrtTm").val() + ':00', $("#ipt_wrkDt").val() + ' ' +  $("#ipt_jobEndTm").val() + ':00');
+        var wrkTme        = getTimeDiff($("#ipt_wrkDt").val() + ' ' +  $("#ipt_jobStrtTm").val() + ':00'
+                                      , $("#ipt_wrkDt").val() + ' ' +  $("#ipt_jobEndTm" ).val() + ':00');
 
         param = {
             "currReqPopStts" : $("#currReqPopStts").val(),           // 현재 팝업 상태 - 신규 / 수정
@@ -363,7 +407,7 @@
             } else {
                 totalByte++;
             }
-            // 입력한 문자 길이보다 넘치면 잘라내기 위해 저
+            // 입력한 문자 길이보다 넘치면 잘라내기 위해
             if (totalByte <= maxByte) {
                 len = i + 1;
             }

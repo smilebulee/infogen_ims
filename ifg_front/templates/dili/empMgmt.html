@@ -2,6 +2,7 @@
 /* 메인 화면에서 받는 이메일 파라미터 */
 var param = {
     "name" : '',
+    "email" : sessionStorage.getItem("email"),
     "workChk" : 'N',
     "authId" : sessionStorage.getItem("authId")
 }
@@ -68,11 +69,15 @@ $(document).ready(function(){
 
     }else{
         /* 검색, 등록버튼 비활성화 */
-        $('#ipt_searchName').attr('readonly',false);
+        $('#ipt_searchName').attr('readonly',true);
         $('#empMgmtRegBtn').attr('hidden',true);
-        $('#searchBtn').attr('disabled',false);
+        $('#searchBtn').attr('disabled',true);
+        retrieveEmpNmByEmail(param.email, function(data) {
+            $('#ipt_searchName').val(data[0].EMP_NAME);
+        });
 
     }
+
 
 });
 
@@ -127,22 +132,33 @@ function empListGrd(data){
     if(data.length > 0) {
         for(var i = 0; i < size; i++){
 
-            if(data[i].EMP_EMAIL == sessionStorage.getItem("email") || isAdmin) { /* 관리자이거나 본인일  경우 클릭 이벤트 */
+            if(isAdmin) { /* 관리자일 경우 */
                 empListTable += '<tr id ="grd_empList" onclick="onClickEvt(\''+data[i].EMP_EMAIL+'\')">';
-            }else{
-                empListTable += '<tr id ="grd_empList")>';
+                empListTable += '<td id="empId" class="pt-3-half">'+data[i].EMP_ID+'</td>';
+                empListTable += '<td id="empName" class="pt-3-half">'+maskingNm(data[i].EMP_NAME)+'</td>';
+                empListTable += '<td id="empAuth" class="pt-3-half">'+data[i].AUTH_VAL+'</td>';
+                empListTable += '<td id="empDept" class="pt-3-half">'+data[i].DEPT_NAME+'</td>';
+                if(data[i].WORK_YN == "N"){
+                    empListTable += '<td id="empWork" class="pt-3-half" style="color:red;">퇴사</td>';
+                }else{
+                    empListTable += '<td id="empWork" class="pt-3-half"></td>';
+                }
+                empListTable += '</tr>';
+            }else { /* 일반사용자일 경우 */
+                if( data[i].EMP_EMAIL == sessionStorage.getItem("email") ){
+                    empListTable += '<tr id ="grd_empList" onclick="onClickEvt(\''+data[i].EMP_EMAIL+'\')">';
+                    empListTable += '<td id="empId" class="pt-3-half">'+data[i].EMP_ID+'</td>';
+                    empListTable += '<td id="empName" class="pt-3-half">'+maskingNm(data[i].EMP_NAME)+'</td>';
+                    empListTable += '<td id="empAuth" class="pt-3-half">'+data[i].AUTH_VAL+'</td>';
+                    empListTable += '<td id="empDept" class="pt-3-half">'+data[i].DEPT_NAME+'</td>';
+                    if(data[i].WORK_YN == "N"){
+                        empListTable += '<td id="empWork" class="pt-3-half" style="color:red;">퇴사</td>';
+                    }else{
+                        empListTable += '<td id="empWork" class="pt-3-half"></td>';
+                    }
+                    empListTable += '</tr>';
+                }
             }
-            empListTable += '<td id="empId" class="pt-3-half">'+data[i].EMP_ID+'</td>';
-            empListTable += '<td id="empName" class="pt-3-half">'+maskingNm(data[i].EMP_NAME)+'</td>';
-            empListTable += '<td id="empAuth" class="pt-3-half">'+data[i].AUTH_VAL+'</td>';
-            empListTable += '<td id="empDept" class="pt-3-half">'+data[i].DEPT_NAME+'</td>';
-            if(data[i].WORK_YN == "N"){
-                empListTable += '<td id="empWork" class="pt-3-half" style="color:red;">퇴사</td>';
-            }else{
-                empListTable += '<td id="empWork" class="pt-3-half"></td>';
-            }
-            empListTable += '</tr>';
-
         }
     }
 
@@ -151,10 +167,11 @@ function empListGrd(data){
     empListTable += '</table>';
 
     document.getElementById('grd_empListTable').innerHTML = empListTable;
-
-    $("#ipt_searchName").click(function(){
-        $('[name="ipt_searchName"]').val("");
-    });
+    if(isAdmin){
+        $("#ipt_searchName").click(function(){
+            $('[name="ipt_searchName"]').val("");
+        });
+    }
 };
 
 /* 그리드 클릭 이벤트 (직원정보 수정 팝업) */
@@ -178,11 +195,8 @@ function makePaging(ret){
 $("#empMgmtRegBtn").click(function(){
     var url = "{% url 'dili_api:empMgmtRegPop' %}" ;
 
-    //$('#empModalDiv').css("width","30%");
-
     modal('empModalDivTest');
 
-    //$('#empModalTest').load(url);
 });
 
 /* 한글만 입력가능체크 */
@@ -195,18 +209,8 @@ function isKorean(){
 
 /* 이름 마스킹처리 */
 function maskingNm(strName){
-    if (strName.length > 2) {
-        var originName = strName.split('');
-        originName.forEach(function(name, i) {
-          if (i === 0 || i === originName.length - 1) return;
-          originName[i] = '*';
-        });
-        var joinName = originName.join();
-        return joinName.replace(/,/g, '');
-    } else {
-        var pattern = /.$/; // 정규식
-        return strName.replace(pattern, '*');
-    }
+    return strName.substr(0, 1) + "*" + strName.substr(1+"*".length);
+
 }
 
 
