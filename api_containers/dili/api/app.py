@@ -632,7 +632,6 @@ class saveApvlReq(Resource): # Mariadb 연결 진행
                     "				) " \
                     "VALUES 		" \
                     "				('"  + email        + "' " \
-                    "				('"  + email        + "' " \
                     "				, '" + wrkDt        + "' " \
                     "				, '" + jobStrtTm    + "' " \
                     "				, '" + jobStrtTm    + "' " \
@@ -1801,15 +1800,30 @@ class insertStrtTm(Resource):  # Mariadb 연결 진행
                                     charset='utf8', autocommit=False)
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+
+                sql1 =  "UPDATE TB_APVL_REQ_MGMT_M    " \
+                        "   SET JOB_STRT_TM  	= %s  " \
+                        " WHERE EMP_EMAL_ADDR 	= %s  " \
+                        "   AND WRK_DT 			= %s  " \
+                        "   AND TH1_APRV_STUS 	= '01' " \
+                        "   AND JOB_STRT_TM 	= (  " \
+                        "						   SELECT NGHT_WRK_STRT_TM  " \
+                        "						     FROM TB_WRK_TM_MGMT_M  " \
+                        "						    WHERE EMP_EMAL_ADDR  = %s  " \
+                        "						      AND WRK_DT 		 = %s  " \
+                        "						   ) "
+                logger.info(sql1)
+                cursor.execute(sql1, (tm, email, dt, email, dt))
+                
                 # 쿼리문 실행
-                sql = "INSERT INTO TB_WRK_TM_MGMT_M( `EMP_EMAL_ADDR` " \
+                sql2 = "INSERT INTO TB_WRK_TM_MGMT_M( `EMP_EMAL_ADDR` " \
                       ",`WRK_DT` " \
                       ",`JOB_STRT_TM` " \
                       ") VALUES( %s ,%s ,%s ) " \
                       "ON DUPLICATE KEY " \
                       "UPDATE `JOB_STRT_TM` = %s"
-                logger.info(sql)
-                cursor.execute(sql, (email, dt, tm, tm))
+                logger.info(sql2)
+                cursor.execute(sql2, (email, dt, tm, tm))
 
                 mysql_con.commit()
 
@@ -1856,7 +1870,7 @@ class updateEndTm(Resource):  # Mariadb 연결 진행
                           "   AND WRK_DT = %s "
                     logger.info(sql)
                     cursor.execute(sql, (tm, nghtWrkStrtTm, overWrkTm, allWrkTm, email, dt))
-                    mysql_con.commit()
+
                 else:
                     # 쿼리문 실행
                     sql = "UPDATE TB_WRK_TM_MGMT_M " \
@@ -1869,8 +1883,19 @@ class updateEndTm(Resource):  # Mariadb 연결 진행
                           "   AND WRK_DT = %s "
                     logger.info(sql)
                     cursor.execute(sql, (tm, nghtWrkStrtTm, normWrkTm, overWrkTm, allWrkTm, email, dt))
-                    mysql_con.commit()
-
+                
+                # 수정하려는 날짜의 미승인 결재 요청 건이 있을 경우, 해당 record 수정
+                sql = "UPDATE TB_APVL_REQ_MGMT_M " \
+                      "   SET JOB_STRT_TM  	    = %s " \
+                      "     , JOB_END_TM 	    = %s " \
+                      "     , WRK_TME 		    = %s " \
+                      "     , APVL_UPD_DT 	    = NOW()" \
+                      " WHERE EMP_EMAL_ADDR     = %s " \
+                      "   AND WRK_DT 		    = %s " \
+                      "   AND TH1_APRV_STUS     = '01' "
+                logger.info(sql)
+                cursor.execute(sql, (nghtWrkStrtTm, tm, overWrkTm, email, dt))
+                mysql_con.commit()
         finally:
             mysql_con.close()
 

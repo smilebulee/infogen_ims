@@ -289,23 +289,23 @@
         else if ((overWrkTm.substr(0, 4) == '0000')) {
             nghtWrkStrtTm = endTm;
         }
-        var param = {
+        var param   = {
             "email"             : email,
             "dt"                : dt,
             "nghtWrkStrtTm"     : nghtWrkStrtTm,
             "tm"                : tm,
             "normWrkTm"         : normWrkTm.length == 4 ? normWrkTm + '00' : normWrkTm,
             "overWrkTm"         : overWrkTm.length == 4 ? overWrkTm + '00' : overWrkTm,
-            "allWrkTm"          : allWrkTm.length == 4  ? allWrkTm + '00'  : allWrkTm
+            "allWrkTm"          : allWrkTm.length  == 4 ? allWrkTm  + '00' : allWrkTm
         }
 
         $.ajaxCall( param, {
-             'method' : 'POST',
-             'url' : "{% url 'dili_api:saveEndTm' %}",
-             'dataType' : 'json',
-             'data' : JSON.stringify(param),
-             'async' : false,
-             'callbackFn' : function(data){
+             'method'           : 'POST',
+             'url'              : "{% url 'dili_api:saveEndTm' %}",
+             'dataType'         : 'json',
+             'data'             : JSON.stringify(param),
+             'async'            : false,
+             'callbackFn'       : function(data){
                 alertMsg('저장 되었습니다.');
              }
         });

@@ -252,39 +252,41 @@
         }
 
         //신규 저장 + 선결재 시, 입력받은 데이터 유효성 검증
-        if($('#currReqPopStts').val() == "register" && $("#currApvlDivsStts").val() == "01") {
-            //근무요청일시
-            var currDt = new Date();
-            var inptDt = new Date($('#ipt_wrkDt').val());
-            var inptStrtDtTm = new Date($('#ipt_wrkDt').val() + " " +  $("#ipt_jobStrtTm").val());
-            var inptEndDtTm  = new Date($('#ipt_wrkDt').val() + " " +  $("#ipt_jobEndTm").val());
-            var currDtTm  = new Date(currDt.getFullYear() + "-" + fillZero(2, (currDt.getMonth() + 1)) + "-" + currDt.getDate()
-                                     + " " + currDt.getHours() + ":" + currDt.getMinutes());
-            var strCurrDt = currDt.getFullYear() + "-" + fillZero(2, (currDt.getMonth() + 1)) + "-" + currDt.getDate();
-            var strInptDt = inptDt.getFullYear() + "-" + fillZero(2, (inptDt.getMonth() + 1)) + "-" + inptDt.getDate();
-            if( strCurrDt == strInptDt && currDtTm > inptStrtDtTm) {
-                alertMsg("근무 시간은 현재 시각 이후로 선택해주세요.", function() {
-                    $('#ipt_jobStrtTm').val(currDt.getHours() + ":" + currDt.getMinutes()).focus();
-                });
-                return;
-            }
-			else {
-                //현재 날짜가 결재 요청 일자 이후인 경우,
-                if( strCurrDt > strInptDt ) {
-                    alertMsg("근무 일자는 현재 일자 이후로 선택해주세요.", function() {
-                        $('#ipt_wrkDt').val(currDt.getFullYear() + "-" + fillZero(2, (currDt.getMonth() + 1)) + "-" + (currDt.getDate() + 1)).focus();
+        if($('#currReqPopStts').val() == "register") {
+            if($("#currApvlDivsStts").val() == "01") {
+                //근무요청일시
+                var currDt = new Date();
+                var inptDt = new Date($('#ipt_wrkDt').val());
+                var inptStrtDtTm = new Date($('#ipt_wrkDt').val() + " " +  $("#ipt_jobStrtTm").val());
+                var inptEndDtTm  = new Date($('#ipt_wrkDt').val() + " " +  $("#ipt_jobEndTm").val());
+                var currDtTm  = new Date(currDt.getFullYear() + "-" + fillZero(2, (currDt.getMonth() + 1)) + "-" + currDt.getDate()
+                                         + " " + currDt.getHours() + ":" + currDt.getMinutes());
+                var strCurrDt = currDt.getFullYear() + "-" + fillZero(2, (currDt.getMonth() + 1)) + "-" + currDt.getDate();
+                var strInptDt = inptDt.getFullYear() + "-" + fillZero(2, (inptDt.getMonth() + 1)) + "-" + inptDt.getDate();
+                if( strCurrDt == strInptDt && currDtTm > inptStrtDtTm) {
+                    alertMsg("근무 시간은 현재 시각 이후로 선택해주세요.", function() {
+                        $('#ipt_jobStrtTm').val(currDt.getHours() + ":" + currDt.getMinutes()).focus();
                     });
                     return;
                 }
+                else {
+                    //현재 날짜가 결재 요청 일자 이후인 경우,
+                    if( strCurrDt > strInptDt ) {
+                        alertMsg("근무 일자는 현재 일자 이후로 선택해주세요.", function() {
+                            $('#ipt_wrkDt').val(currDt.getFullYear() + "-" + fillZero(2, (currDt.getMonth() + 1)) + "-" + (currDt.getDate() + 1)).focus();
+                        });
+                        return;
+                    }
 
-                //현재 날짜가 결재 요청 일자 이후인 경우,
-                if( inptStrtDtTm > inptEndDtTm ) {
-                    alertMsg("근무 종료 시간은 근무 시작 시간 이후로 선택해주세요.", function() {
-                        $('#ipt_jobEndTm').val($('#ipt_jobStrtTm').val().substring(0, 4) + (parseInt($('#ipt_jobStrtTm').val().substring(4, 5)) + 1)).focus();
-                    });
-                    return;
+                    //현재 날짜가 결재 요청 일자 이후인 경우,
+                    if( inptStrtDtTm > inptEndDtTm ) {
+                        alertMsg("근무 종료 시간은 근무 시작 시간 이후로 선택해주세요.", function() {
+                            $('#ipt_jobEndTm').val($('#ipt_jobStrtTm').val().substring(0, 4) + (parseInt($('#ipt_jobStrtTm').val().substring(4, 5)) + 1)).focus();
+                        });
+                        return;
+                    }
+
                 }
-
             }
 
             //동일 일자 결재 진행건 유효성 검증
@@ -318,8 +320,7 @@
                 }
             });
         }
-        else if(($('#currReqPopStts').val() == "register" && $("#currApvlDivsStts").val() == "02")
-             || ($('#currReqPopStts').val() == "modify")) {
+        else if($('#currReqPopStts').val() == "modify") {
 
             //JSON.parse($('#currReqPopParamArr').val());
             var preReqInfo = $('#currReqPopInfoArr').val();
