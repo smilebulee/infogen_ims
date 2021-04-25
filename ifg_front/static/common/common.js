@@ -291,9 +291,10 @@ function fillZero(width, str){
 
 
 /* 시간 차이 구하기 (근무 시간) */
-function getTimeDiff(fromDtm, toDtm) {
-    var dt1 = new Date(fromDtm);
-    var dt2 = new Date(toDtm);
+function getTimeDiff(fromDtm, toDtm, isNormalWrk) {
+    var dt1         = new Date(fromDtm);
+    var dt2         = new Date(toDtm);
+    isNormalWrk     = isNormalWrk == null ? true : isNormalWrk;
 
     var tDiff = dt2 - dt1; //밀리초 단위 시간차 반환
 
@@ -302,7 +303,7 @@ function getTimeDiff(fromDtm, toDtm) {
     var ss = Math.floor((tDiff % (1000 * 60)) / 1000);
 
     //시간 차 9시간 이상인 경우, 식사 시간 1시간 제외
-    if(hh >= 9) {
+    if(isNormalWrk == true && hh >= 9) {
         hh = hh - 1;
     }
 
