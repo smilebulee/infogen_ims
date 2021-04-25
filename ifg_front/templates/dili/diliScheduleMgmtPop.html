@@ -271,14 +271,32 @@
     *  퇴근 update
     *********************************************************************/
     function setEndTm(email, dt, tm, normWrkTm, overWrkTm, allWrkTm ){
+        var nghtWrkStrtTm = '';
+        var strtTm  = dt + ' ' + $('#ipt_jobStrtTm').val();
+        var endTm   = dt + ' ' + $('#ipt_jobEndTm').val();
 
+        // 추가 근무 시간이 있고, 일반 업무 시간이 0일 떄 (휴일근무)
+        if ((overWrkTm.substr(0, 4) != '0000') && (normWrkTm.substr(0, 4) == '0000')) {
+            nghtWrkStrtTm = strtTm;
+        }
+        // 추가 근무 시간이 있고, 일반 업무 시간이 있을 떄 (야간근무)
+        else if ((overWrkTm.substr(0, 4) != '0000') && (normWrkTm.substr(0, 4) != '0000') && getTimeDiff(strtTm, endTm) >= '080000') {
+            var tmpTm = new Date(dt + ' ' + $('#ipt_jobStrtTm').val())
+            tmpTm.setHours(tmpTm.getHours() + 9);
+            nghtWrkStrtTm = fillZero(2, tmpTm.getHours()) + ':' + fillZero(2, tmpTm.getMinutes())  + ':' + fillZero(2, tmpTm.getSeconds())
+        }
+        // 추가 근무 시간이 없을 때
+        else if ((overWrkTm.substr(0, 4) == '0000')) {
+            nghtWrkStrtTm = endTm;
+        }
         var param = {
-            "email"     : email,
-            "dt"        : dt,
-            "tm"        : tm,
-            "normWrkTm" : normWrkTm,
-            "overWrkTm" : overWrkTm,
-            "allWrkTm"  : allWrkTm
+            "email"             : email,
+            "dt"                : dt,
+            "nghtWrkStrtTm"     : nghtWrkStrtTm,
+            "tm"                : tm,
+            "normWrkTm"         : normWrkTm.length == 4 ? normWrkTm + '00' : normWrkTm,
+            "overWrkTm"         : overWrkTm.length == 4 ? overWrkTm + '00' : overWrkTm,
+            "allWrkTm"          : allWrkTm.length == 4  ? allWrkTm + '00'  : allWrkTm
         }
 
         $.ajaxCall( param, {

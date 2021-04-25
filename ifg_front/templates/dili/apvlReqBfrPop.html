@@ -1,5 +1,5 @@
 <script type="text/javascript">
-    $(document).ready(function(){
+    $(document).ready(function() {
         /* 사용자 권한 셋팅 */
         checkEmpAuthsByEmail(sessionStorage.getItem("email"), ["ADMIN", "GM", "USER"]);
 
@@ -21,6 +21,10 @@
             $("#ipt_jobStrtTm").val(strNowTm);
             $("#ipt_jobEndTm").val(strNowTm);
 
+            //현재일 스케줄관리 정보 있는지 확인 후 불러옴
+            $("#ipt_wrkDt").change();
+
+
             // 로그인한 사용자 소속 현장대리인 이름, 이메일 조회 후 값 세팅
             retrieveEmpDeptPrByEmail(sessionStorage.getItem("email"), function(data) {
                 if(data.length > 0) {
@@ -41,7 +45,8 @@
                             return;
                         }
                     });
-                } else {
+                }
+				else {
                     alertMsg("소속 부서 현장대리인 정보가 존재하지 않습니다. 경영지원실에 문의해주세요.", function() {
                         $('#exitApvlReqModalBtn').click();
                     });
@@ -56,12 +61,13 @@
             });
             // 기안일
             $('#sp_reqDt').text(strNowDt);
-
-        } else if($('#currReqPopStts').val() == "modify") {
+        }
+		else if($('#currReqPopStts').val() == "modify") {
             var arrWrkDt =$('#currReqPopParamArr').val().split(';');
             if(arrWrkDt[4] != '01') {
                 $('#apvlReqAcptDiv').addClass('d-block');
-            } else {
+            }
+			else {
                 $('#apvlReqAcptDiv').addClass('d-none');
             }
 
@@ -70,7 +76,8 @@
                 if(arrWrkDt[4] != '01' && arrWrkDt[0] == sessionStorage.getItem("email")) {
                     $('#apvlReqAcptDiv').addClass('d-block');
                     $('#sp_apvlReqBfr').html("<b>근무결재요청 수정은 '미승인' 상태에서만 가능합니다.</b>");
-                } else {
+                }
+				else {
                     $('#sp_apvlReqBfr').html("<b>근무결재요청 수정은 본인만 가능합니다.</b>");
                 }
 
@@ -92,7 +99,8 @@
                 $('#txa_reqBfrRsn').prop('readonly', true);
                 $('#ipt_refSearchNamePop').prop('readonly', true);
 
-            } else if(arrWrkDt[4] == '01' && arrWrkDt[0] == sessionStorage.getItem("email")){
+            }
+			else if(arrWrkDt[4] == '01' && arrWrkDt[0] == sessionStorage.getItem("email")) {
                 $('#apvlReqAcptDiv').addClass('d-none');
 
                 $('#h5_apvlReqBfrTit').html("<b>근무결재요청 수정</b>");
@@ -108,7 +116,7 @@
             }
             var url = "{% url 'dili_api:getApvlReqHistDetl' %}";
 
-            submissionCallList( params, "GET", url, function(data){
+            submissionCallList( params, "GET", url, function(data) {
                 setApvlReqHistDetl2(data);
             });
         }
@@ -117,7 +125,7 @@
 
         // 결재자 검색 - 직원조회 모달 오픈
         /* 결재자 - 시스템상 자동 세팅으로 조회 불가 처리
-        $("#ipt_apvlLnSearchNamePop").click(function(){
+        $("#ipt_apvlLnSearchNamePop").click(function() {
             //자식창에서 여는 결재자 조회 팝업임을 표시
             $('#apvlReqIptFlagHidden').text("apvlLnReqBfrPop");
 
@@ -128,7 +136,7 @@
         // 참조자 검색 - 직원조회 모달 오픈
         /* 참조자 - 시스템상 자동 세팅으로 조회 불가 처리
         if($('#currReqPopStts').val() == "register" || $('#currReqPopStts').val() == "modify") {
-            $("#ipt_refSearchNamePop").click(function(){
+            $("#ipt_refSearchNamePop").click(function() {
                 //자식창에서 여는 참조자 조회 팝업임을 표시
                 $('#apvlReqIptFlagHidden').text("refReqBfrPop");
 
@@ -150,7 +158,7 @@
         // 참조자 - 시스템상 자동 세팅으로 삭제 불가 처리
          $('#btn_delRefSearchNamePop').css('display', 'none');
         /*
-        $('#btn_delRefSearchNamePop').click(function(){
+        $('#btn_delRefSearchNamePop').click(function() {
             $('#ipt_refSearchNamePop').val('');
             $('#ipt_refSearchEmailPop').val('');
         });
@@ -158,10 +166,8 @@
     });
 
     // 근무일자 변경 시 근무 시간 값 세팅 처리
-     $(document).off("change", "#ipt_wrkDt");
-
-    //$("#ipt_wrkDt").change(function(){
-    $(document).on("change", "#ipt_wrkDt", function(){
+    $(document).off("change", "#ipt_wrkDt");
+    $(document).on( "change", "#ipt_wrkDt", function() {
 
         //동일 일자 스케줄 등록 전 유효성 검증
         var param = {
@@ -172,16 +178,18 @@
 
         var url = "{% url 'dili_api:getDuplWrkCnt' %}";
         submissionCallList( param, 'GET', url, function(data) {
-            var nowDt = new Date();
-            var strNowTm = fillZero(2, nowDt.getHours()) + ':' + fillZero(2, nowDt.getMinutes());
+            var nowDt       = new Date();
+            var strNowTm    = fillZero(2, nowDt.getHours()) + ':' + fillZero(2, nowDt.getMinutes());
             if(data.length > 0 && data[0].WRK_CNT > 0) {
                 //동일 날짜에 결재요청건이 있는 경우
                 var msg = '일자 : ' + param.wrkDt + '\n근무 내역을 불러옵니다.';
-                cf_dialog.confirm(msg, function(){
-                    if(this.key == 'ok'){
+                // 후결재로 상태 변경
+                $("#currApvlDivsStts").val("02");
+                cf_dialog.confirm(msg, function() {
+                    if(this.key == 'ok') {
                         url = "{% url 'dili_api:getWrkTm' %}";
                         submissionCallList( param, 'GET', url, function(data) {
-                            $("#ipt_jobStrtTm").val(data[0].JOB_END_TM);
+                            $("#ipt_jobStrtTm").val(data[0].NGHT_WRK_STRT_TM);
                             $('#ipt_jobStrtTm').attr('disabled', true);
                             $("#ipt_jobEndTm").val(data[0].JOB_END_TM);
                         });
@@ -189,6 +197,8 @@
                 });
             }
             else {
+                // 선결재로 상태 변경
+                $("#currApvlDivsStts").val("01");
                 //현재 접속시간으로 설정
                 $("#ipt_jobStrtTm").val(strNowTm);
                 $('#ipt_jobStrtTm').attr('disabled', false);
@@ -200,8 +210,8 @@
 
 
     // 요청 버튼 선택 시, 유효성 검증 및 데이터 저장
-    //$(document).on("click","#btn_apvlBfrReq",function(){
-    $('#btn_apvlBfrReq').click(function(){
+    //$(document).on("click","#btn_apvlBfrReq",function() {
+    $('#btn_apvlBfrReq').click(function() {
         //공란 여부 검증
         //근무일자 유효성 검증
         if($("#ipt_wrkDt").val() == "") {
@@ -241,8 +251,8 @@
             return;
         }
 
-        //신규 저장 시, 입력받은 데이터 유효성 검증
-        if($('#currReqPopStts').val() == "register") {
+        //신규 저장 + 선결재 시, 입력받은 데이터 유효성 검증
+        if($('#currReqPopStts').val() == "register" && $("#currApvlDivsStts").val() == "01") {
             //근무요청일시
             var currDt = new Date();
             var inptDt = new Date($('#ipt_wrkDt').val());
@@ -257,7 +267,8 @@
                     $('#ipt_jobStrtTm').val(currDt.getHours() + ":" + currDt.getMinutes()).focus();
                 });
                 return;
-            } else {
+            }
+			else {
                 //현재 날짜가 결재 요청 일자 이후인 경우,
                 if( strCurrDt > strInptDt ) {
                     alertMsg("근무 일자는 현재 일자 이후로 선택해주세요.", function() {
@@ -288,66 +299,67 @@
                 if(data.length > 0 && data[0].APVL_REQ_CNT > 0) {
                     //동일 날짜에 결재요청건이 있는 경우
                     /*var msg = '일자 : ' + param.wrkDt + '\n결재요청건이 ' + data[0].APVL_REQ_CNT + '건 있습니다.\n 결재 요청하시겠습니까?';
-                    cf_dialog.confirm(msg, function(){
-                        if(this.key == 'ok'){
+                    cf_dialog.confirm(msg, function() {
+                        if(this.key == 'ok') {
                             saveApvlReq();
                         }
                     });*/
                     var msg = '일자 : ' + param.wrkDt + '\n결재요청건이 ' + data[0].APVL_REQ_CNT + '건 있습니다! \n결재 수정하십시오.';
                     alertMsg(msg);
                     return;
-                } else {
+                }
+				else {
                     //동일 날짜에 결재요청건이 없는 경우
-                    cf_dialog.confirm('근무결재요청을 ' + $('#btn_apvlBfrReq').text() + '하시겠습니까?', function(){
-                        if(this.key == 'ok'){
+                    cf_dialog.confirm('근무결재요청을 ' + $('#btn_apvlBfrReq').text() + '하시겠습니까?', function() {
+                        if(this.key == 'ok') {
                             saveApvlReq();
                         }
                     });
                 }
             });
         }
-        else if($('#currReqPopStts').val() == "modify") {
+        else if(($('#currReqPopStts').val() == "register" && $("#currApvlDivsStts").val() == "02")
+             || ($('#currReqPopStts').val() == "modify")) {
 
             //JSON.parse($('#currReqPopParamArr').val());
             var preReqInfo = $('#currReqPopInfoArr').val();
 
             var postReqInfo = {
-                'EMP_EMAIL'     : $("#ipt_apvlReqEmail").val(),
-                'EMP_NAME'      : $("#sp_apvlReqName").text(),
-                'TH1_APRV_NM'   : $("#ipt_apvlLnSearchEmailPop").val(),
-                'TH1_APRV_NAME' : $("#ipt_apvlLnSearchNamePop").val(),
-                'REF_NM'        : $("#ipt_refSearchEmailPop").val(),
-                'REF_NAME'      : $("#ipt_refSearchNamePop").val(),
-                'APVL_REQ_DT'   : $("#sp_reqDt").text(),
-                'WRK_DT'        : $("#ipt_wrkDt").val(),
-                'JOB_STRT_TM'   : $("#ipt_jobStrtTm").val(),
-                'JOB_END_TM'    : $("#ipt_jobEndTm").val(),
-                'WRK_REQ_RSN'   : $("#txa_reqBfrRsn").val().trim(),
-                'APVL_UPD_DT'   : $("#sp_updDt").text(),
-                'TH1_APRV_RSN'  : $("#txa_reqAcptRsn").text(),
-                'TH1_APRV_DT'   : $("#sp_acptDt").text()
+                'EMP_EMAIL'             : $("#ipt_apvlReqEmail").val(),
+                'EMP_NAME'              : $("#sp_apvlReqName").text(),
+                'TH1_APRV_NM'           : $("#ipt_apvlLnSearchEmailPop").val(),
+                'TH1_APRV_NAME'         : $("#ipt_apvlLnSearchNamePop").val(),
+                'REF_NM'                : $("#ipt_refSearchEmailPop").val(),
+                'REF_NAME'              : $("#ipt_refSearchNamePop").val(),
+                'APVL_REQ_DT'           : $("#sp_reqDt").text(),
+                'WRK_DT'                : $("#ipt_wrkDt").val(),
+                'JOB_STRT_TM'   		: $("#ipt_jobStrtTm").val(),
+                'NGHT_WRK_STRT_TM'   	: $("#ipt_jobStrtTm").val(),
+                'JOB_END_TM'    		: $("#ipt_jobEndTm").val(),
+                'WRK_REQ_RSN'   		: $("#txa_reqBfrRsn").val().trim(),
+                'APVL_UPD_DT'   		: $("#sp_updDt").text(),
+                'TH1_APRV_RSN'  		: $("#txa_reqAcptRsn").text(),
+                'TH1_APRV_DT'   		: $("#sp_acptDt").text()
             }
             postReqInfo = JSON.stringify(postReqInfo);
             console.log("preReqInfo::", preReqInfo);
             console.log("postReqInfo::", postReqInfo);
 
-            if(preReqInfo != postReqInfo){
+            if(preReqInfo != postReqInfo) {
                 var nowDt = new Date();
                 var strUpdDt = nowDt.getFullYear() + '-' + fillZero(2, (nowDt.getMonth() + 1) + '') + '-' + fillZero(2, nowDt.getDate() + '');
-                cf_dialog.confirm('수정일 : ' + strUpdDt + '\n근무결재요청을 ' + $('#btn_apvlBfrReq').text() + '하시겠습니까?', function(){
-                    if(this.key == 'ok'){
+                var msg = $('#currReqPopStts').val() == "modify" ? '수정일' : '등록일';
+                cf_dialog.confirm(msg + ' : ' + strUpdDt + '\n근무결재요청을 ' + $('#btn_apvlBfrReq').text() + '하시겠습니까?', function() {
+                    if(this.key == 'ok') {
                         saveApvlReq();
                     }
                 });
-            } else {
+            }
+			else {
                 alertMsg('수정사항이 없습니다!');
                 return;
             }
         }
-
-
-
-
     });
 
 
@@ -363,7 +375,7 @@
         param = {
             "currReqPopStts" : $("#currReqPopStts").val(),           // 현재 팝업 상태 - 신규 / 수정
             "email"          : sessionStorage.getItem("email"),      // 로그인한 사용자 아이디
-            "apvlDivs"       : "01",                                 // 01: 선결재, 02: 후결재
+            "apvlDivs"       : $("#currApvlDivsStts").val(),         // 01: 선결재, 02: 후결재
             "apvlReqDivs"    : "01",                                 // 01: 야간근무, 02: 휴일근무
             "wrkDt"          : $("#ipt_wrkDt").val(),                // 근무일자
             "jobStrtTm"      : inptStrtTm,                           // 근무 시작 시간
@@ -376,12 +388,12 @@
         }
 
         $.ajaxCall( param, {
-                            method : 'POST',
-                            'url' : '/dili/saveApvlReq/post',
-                            'dataType' : 'json',
-                            'data' : JSON.stringify(param),
-                            'async' : false,
-                            'callbackFn' : function(data){
+                            method          : 'POST',
+                            'url'           : '/dili/saveApvlReq/post',
+                            'dataType'      : 'json',
+                            'data'          : JSON.stringify(param),
+                            'async'         : false,
+                            'callbackFn'    : function(data) {
                                 g_toast.push('근무결재요청 ' + $('#btn_apvlBfrReq').text() + '이 완료되었습니다.');
 
                                 $('#exitApvlReqModalBtn').click();
@@ -402,7 +414,8 @@
             oneChar = strValue.charAt(i);
             if (escape(oneChar).length > 4) {
                 totalByte += 2;
-            } else {
+            }
+			else {
                 totalByte++;
             }
             // 입력한 문자 길이보다 넘치면 잘라내기 위해
@@ -424,6 +437,8 @@
 
 </script>
 
+<!-- 선결재 / 후결재 체크용 변수 -->
+<input type="hidden" id="currApvlDivsStts" value="01"></input>
 
 <div style="width :600px;">
         <div class="mb-4" role="alert">
@@ -537,8 +552,8 @@
                                             <div class="align-self-center mr-3">
                                                 <div class="align-self-center mr-3">
                                                     <span id="sp_apvlReqName"></span>
-                                                    <input type="text" class="align-self-start align-self-center mr-1 form-control" id="ipt_apvlReqEmail" name="ipt_apvlReqEmail" style="width:235px; display:none;" readonly/>
-                                                    <input type="text" class="align-self-start align-self-center mr-1 form-control" id="ipt_reqEmail" name="ipt_reqEmail" style="width:235px; display:none;" readonly/>
+                                                    <input type="text" class="align-self-start align-self-center mr-1 form-control" id="ipt_apvlReqEmail" 	name="ipt_apvlReqEmail" style="width:235px; display:none;" readonly/>
+                                                    <input type="text" class="align-self-start align-self-center mr-1 form-control" id="ipt_reqEmail" 		name="ipt_reqEmail" style="width:235px; display:none;" readonly/>
                                                 </div>
                                             </div>
 

@@ -622,8 +622,9 @@ class saveApvlReq(Resource): # Mariadb 연결 진행
                 sql2 = "INSERT INTO TB_WRK_TM_MGMT_M " \
                     "				(EMP_EMAL_ADDR " \
                     "				, WRK_DT " \
+                    "				, JOB_STRT_TM " \
+                    "				, NGHT_WRK_STRT_TM " \
                     "				, JOB_END_TM " \
-                    "				, NGHT_WRK_END_TM " \
                     "				, NGHT_WRK_TM " \
                     "				, ALL_WRK_TM " \
                     "				, INSRT_DT " \
@@ -631,7 +632,9 @@ class saveApvlReq(Resource): # Mariadb 연결 진행
                     "				) " \
                     "VALUES 		" \
                     "				('"  + email        + "' " \
+                    "				('"  + email        + "' " \
                     "				, '" + wrkDt        + "' " \
+                    "				, '" + jobStrtTm    + "' " \
                     "				, '" + jobStrtTm    + "' " \
                     "				, '" + jobEndTm     + "' " \
                     "				, '" + wrkTme       + "' " \
@@ -640,7 +643,7 @@ class saveApvlReq(Resource): # Mariadb 연결 진행
                     "				, NOW() " \
                     "				) ON DUPLICATE KEY " \
                     "UPDATE   JOB_END_TM 		= VALUES(JOB_END_TM) " \
-                    "		, NGHT_WRK_END_TM   = VALUES(NGHT_WRK_END_TM) " \
+                    "		, NGHT_WRK_STRT_TM  = VALUES(NGHT_WRK_STRT_TM) " \
                     "		, UPDT_DT			= VALUES(UPDT_DT) " \
                     "		, ALL_WRK_TM 		= LPAD(ALL_WRK_TM - NGHT_WRK_TM + VALUES(NGHT_WRK_TM), 6, '0') " \
                     "		, NGHT_WRK_TM		= VALUES(NGHT_WRK_TM) "
@@ -1189,8 +1192,8 @@ class wrkTm(Resource): # Mariadb 연결 진행
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 # 쿼리문 실행
-                sql =   "SELECT NVL(DATE_FORMAT(JOB_STRT_TM , '%H:%i'),'-') AS JOB_STRT_TM " \
-                        "     , NVL(DATE_FORMAT(JOB_END_TM  , '%H:%i'),'-') AS JOB_END_TM  " \
+                sql =   "SELECT NVL(DATE_FORMAT(NGHT_WRK_STRT_TM , '%H:%i'),'-') AS NGHT_WRK_STRT_TM " \
+                        "     , NVL(DATE_FORMAT(JOB_END_TM       , '%H:%i'),'-') AS JOB_END_TM  " \
                         "FROM   TB_WRK_TM_MGMT_M " \
                         "WHERE  EMP_EMAL_ADDR    = '" + data["email"] + "' " \
                         "AND    WRK_DT 			 = '" + data["wrkDt"] + "' "
@@ -1831,6 +1834,7 @@ class updateEndTm(Resource):  # Mariadb 연결 진행
         email = params['email']
         dt = params['dt']
         tm = params['tm']
+        nghtWrkStrtTm = params['nghtWrkStrtTm']
         normWrkTm = params['normWrkTm']
         overWrkTm = params['overWrkTm']
         allWrkTm = params['allWrkTm']
@@ -1845,24 +1849,26 @@ class updateEndTm(Resource):  # Mariadb 연결 진행
                     # 쿼리문 실행
                     sql = "UPDATE TB_WRK_TM_MGMT_M " \
                           "   SET JOB_END_TM  = %s " \
+                          "      ,NGHT_WRK_STRT_TM = %s " \
                           "      ,HLDY_WRK_TM = %s " \
                           "      ,ALL_WRK_TM  = %s " \
                           "   WHERE EMP_EMAL_ADDR = %s " \
                           "   AND WRK_DT = %s "
                     logger.info(sql)
-                    cursor.execute(sql, (tm, overWrkTm, allWrkTm, email, dt))
+                    cursor.execute(sql, (tm, nghtWrkStrtTm, overWrkTm, allWrkTm, email, dt))
                     mysql_con.commit()
                 else:
                     # 쿼리문 실행
                     sql = "UPDATE TB_WRK_TM_MGMT_M " \
                           "   SET JOB_END_TM  = %s " \
+                          "      ,NGHT_WRK_STRT_TM = %s " \
                           "      ,NORM_WRK_TM = %s " \
                           "      ,NGHT_WRK_TM = %s " \
                           "      ,ALL_WRK_TM  = %s " \
                           "   WHERE EMP_EMAL_ADDR = %s " \
                           "   AND WRK_DT = %s "
                     logger.info(sql)
-                    cursor.execute(sql, (tm, normWrkTm, overWrkTm, allWrkTm, email, dt))
+                    cursor.execute(sql, (tm, nghtWrkStrtTm, normWrkTm, overWrkTm, allWrkTm, email, dt))
                     mysql_con.commit()
 
         finally:
