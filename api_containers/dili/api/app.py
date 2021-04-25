@@ -767,7 +767,7 @@ class apvlReqHist(Resource): # Mariadb 연결 진행
                 if deptCd != "" and deptCd != "00":
                     sql += "   AND B.DEPT_CD = '" + deptCd + "' "
 
-                sql += " ORDER BY A.APVL_REQ_DT ASC "
+                sql += " ORDER BY A.APVL_REQ_DT ASC, A.WRK_DT ASC "
                 logging.debug("apvlReqHist SQL문" + sql)
                 cursor.execute(sql)
 
@@ -1803,6 +1803,7 @@ class insertStrtTm(Resource):  # Mariadb 연결 진행
 
                 sql1 =  "UPDATE TB_APVL_REQ_MGMT_M    " \
                         "   SET JOB_STRT_TM  	= %s  " \
+                        "     , APVL_UPD_DT  	= NOW()  " \
                         " WHERE EMP_EMAL_ADDR 	= %s  " \
                         "   AND WRK_DT 			= %s  " \
                         "   AND TH1_APRV_STUS 	= '01' " \
