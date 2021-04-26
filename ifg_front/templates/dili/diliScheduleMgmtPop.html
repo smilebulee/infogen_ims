@@ -240,8 +240,10 @@
     *********************************************************************/
     function onclickApvlUpld() {
         var url = "{% url 'dili_api:apvlReqBfrPop' %}" ;
-        $('#currReqPopStts').val("registerLtr");
-        modal('apvlReqModalDiv');
+        //$('#currReqMthd').val("02");
+        //$('#currReqPopStts').val("register");
+
+        modal('apvlUpldDiv_modal');
         $('#apvlUpld_modal').load(url);
 
     }
@@ -385,6 +387,7 @@
 
 </script>
 
+<input type="hidden" id="currReqPopStts" value="register"/>
 <input type="hidden" id="currReqMthd" value="02"/>
 <input type="hidden" id="hldyDivsCd"/>
 <input type="hidden" id="dowDivsCd"/>
