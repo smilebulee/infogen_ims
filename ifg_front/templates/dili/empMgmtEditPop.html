@@ -354,16 +354,15 @@
 
     /* 패스워드 영문, 숫자만 입력가능체크 */
     function validChk(){
-         if(((event.keyCode >= 48) && (event.keyCode <= 57)) || ((event.keyCode >= 65) && (event.keyCode <= 90)) || ((event.keyCode >= 97) && (event.keyCode <= 122))){
-            event.returnValue = true
-         }else if( event.keyCode == undefined){
-            event.returnValue = true
-         }else{
-            var ipt_empPw = $('#ipt_empPw').val();
-            $('#ipt_empPw').val(ipt_empPw.substring( 0, (ipt_empPw.length)-1 ));
+        var inputPw = $('#ipt_empPw').val();
+        var idReg = /^[a-z0-9]{0,12}$/g;
+        if( !idReg.test( inputPw) ) {
+            $('#ipt_empPw').val(inputPw.substring( 0, (inputPw.length)-1 ));
             $('#ipt_empPw').focus();
             event.returnValue = false
-         }
+        }else{
+            event.returnValue = true
+        }
     }
 
 </script>

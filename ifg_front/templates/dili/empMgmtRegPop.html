@@ -298,30 +298,28 @@ function onClickResetBtn2() {
 
 /* 아이디 영문, 숫자만 입력가능체크 */
 function validChk(){
-     if(((event.keyCode >= 48) && (event.keyCode <= 57)) || ((event.keyCode >= 65) && (event.keyCode <= 90)) || ((event.keyCode >= 97) && (event.keyCode <= 122))){
-        event.returnValue = true
-     }else if( event.keyCode == undefined){
-        event.returnValue = true
-     }else{
-        var inputId = $('#ipt_empId2').val();
+    var inputId = $('#ipt_empId2').val();
+    var idReg = /^[a-z0-9]{0,12}$/g;
+    if( !idReg.test( inputId) ) {
         $('#ipt_empId2').val(inputId.substring( 0, (inputId.length)-1 ));
         $('#ipt_empId2').focus();
         event.returnValue = false
-     }
+    }else{
+        event.returnValue = true
+    }
 }
 
-/* 패스워드 영문, 숫자만 입력가능체크 */
+/* 아이디 영문, 숫자만 입력가능체크 */
 function validChk2(){
-     if(((event.keyCode >= 48) && (event.keyCode <= 57)) || ((event.keyCode >= 65) && (event.keyCode <= 90)) || ((event.keyCode >= 97) && (event.keyCode <= 122))){
-        event.returnValue = true
-     }else if( event.keyCode == undefined){
-        event.returnValue = true
-     }else{
-        var ipt_empPw2 = $('#ipt_empPw2').val();
-        $('#ipt_empPw2').val(inputId.substring( 0, (ipt_empPw2.length)-1 ));
+    var inputPw = $('#ipt_empPw2').val();
+    var idReg = /^[a-z0-9]{0,12}$/g;
+    if( !idReg.test( inputPw) ) {
+        $('#ipt_empPw2').val(inputPw.substring( 0, (inputPw.length)-1 ));
         $('#ipt_empPw2').focus();
         event.returnValue = false
-     }
+    }else{
+        event.returnValue = true
+    }
 }
 
 
@@ -347,7 +345,7 @@ function validChk2(){
                 <!-- ID -->
                 <tr>
                     <td>
-                        <div class="align-self-start align-self-center mr-5"><span class="requiredTag mr-1">*</span><label for="ipt_empId">ID &nbsp;&nbsp;&nbsp;</label></div>
+                        <div class="align-self-start align-self-center mr-5"><span class="requiredTag mr-1">*</span><label for="ipt_empId2">ID &nbsp;&nbsp;&nbsp;</label></div>
                     </td>
                     <td>
                         <div class="align-self-center mr-2">
@@ -376,7 +374,7 @@ function validChk2(){
                     </td>
                     <td>
                         <div class="align-self-center mr-3">
-                            <input type="password" class="form-control" id="ipt_empPw2" name="ipt_empPw2" placeholder="PASSWORD" maxlength="12" onkeyup="validChk();" />
+                            <input type="password" class="form-control" id="ipt_empPw2" name="ipt_empPw2" placeholder="PASSWORD" maxlength="12" onkeyup="validChk2();" />
                         </div>
                     </td>
                     <td></td>
