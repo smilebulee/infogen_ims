@@ -34,6 +34,7 @@ $(document).ready(function(){
 /* ID 중복확인 버튼 클릭 이벤트 */
 function onClickIsExistBtn2() {
     var email = $('#ipt_empId2').val();
+
     if( email == "" || email == null){
         alertMsg("ID를 입력해주세요");
     }else if(email.length < 4 || email.length > 12 ) {
@@ -162,6 +163,7 @@ function onClickReIsExistNmBtn2(){
 
 /* 등록버튼 클릭 이벤트 */
 function onClickSubmitBtn2() {
+    if(isPwChk == false) validChk2();
     var ipt_empId2 = $('[name="ipt_empId2"]').val();
     var ipt_empPw2 = $('[name="ipt_empPw2"]').val();
     /* var ipt_empAuthId = $('[name="sbx_empAuthId"] option:selected').val(); */
@@ -298,27 +300,33 @@ function onClickResetBtn2() {
 
 /* 아이디 영문, 숫자만 입력가능체크 */
 function validChk(){
+    debugger;
     var inputId = $('#ipt_empId2').val();
     var idReg = /^[a-z0-9]{0,12}$/g;
     if( !idReg.test( inputId) ) {
+        $('#idValidText').attr('class','requiredTextAlert');
         $('#ipt_empId2').val(inputId.substring( 0, (inputId.length)-1 ));
         $('#ipt_empId2').focus();
         event.returnValue = false
     }else{
+        $('#idValidText').attr('class','requiredText');
         event.returnValue = true
     }
 }
 
-/* 아이디 영문, 숫자만 입력가능체크 */
+
+/* 비밀번호 영문, 숫자만 입력가능체크 */
 function validChk2(){
     var inputPw = $('#ipt_empPw2').val();
     var idReg = /^[a-z0-9]{0,12}$/g;
     if( !idReg.test( inputPw) ) {
+        $('#pwValidText').attr('class','requiredTextAlert');
         $('#ipt_empPw2').val(inputPw.substring( 0, (inputPw.length)-1 ));
         $('#ipt_empPw2').focus();
-        event.returnValue = false
+        event.returnValue = false;
     }else{
-        event.returnValue = true
+        $('#pwValidText').attr('class','requiredText');
+        event.returnValue = true;
     }
 }
 
@@ -338,7 +346,7 @@ function validChk2(){
                     <td></td>
                     <td colspan="2">
                          <div class="flex-height mb-4">
-                            <span class="requiredText"><b>* 는 필수 입력 항목입니다.</b></span>
+                            <span class="requiredTextAlert"><b>* 는 필수 입력 항목입니다.</b></span>
                          </div>
                     </td>
                 </tr>
@@ -363,7 +371,7 @@ function validChk2(){
                     <td></td>
                     <td colspan="2">
                         <div class="flex-height d-flex mb-2">
-                            <span class="requiredText">> ID는 영문, 숫자로 4~12자로 입력해주세요.</span>
+                            <span class="requiredText" id="idValidText">> ID는 영문, 숫자로 4~12자로 입력해주세요.</span>
                         </div>
                     </td>
                 </tr>
@@ -383,7 +391,7 @@ function validChk2(){
                     <td></td>
                     <td colspan="2">
                         <div class="flex-height d-flex mb-2">
-                            <span class="requiredText">> 비밀번호는 영문, 숫자로 4~12자로 입력해주세요.</span>
+                            <span class="requiredText"  id="pwValidText">> 비밀번호는 영문, 숫자로 4~12자로 입력해주세요.</span>
                         </div>
                     </td>
                 </tr>
