@@ -27,6 +27,12 @@
 }
 
 .requiredText {
+    color: #8A8C8F;
+    font-size: x-small;
+    float: right;
+}
+
+.requiredTextAlert {
     color: #EC1F27;
     font-size: x-small;
     float: right;
