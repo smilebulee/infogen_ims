@@ -43,9 +43,8 @@
             $('[class="requiredText"]').attr('hidden', true);
             $('#starText').attr('hidden', false);
             $('#starVal').text('※ 일반사용자는 패스워드만 수정 가능합니다.');
-            $('#textForPw').attr('hidden', true);
             $('#starForUser').attr('hidden', false);
-
+            $('#textForPw').attr('hidden', false);
             $('#deleteBtn').attr('hidden', true);
             $('#reIsExistNmBtn').attr('disabled', true);
             $('#isExistNmBtn').attr('disabled', true);
@@ -220,11 +219,6 @@
                 $('#ipt_empPw').focus();
             });
             return false;
-        } else if (ipt_empPw ==  exPW ){
-            alertMsg("이전 비밀번호와 동일합니다.", function() {
-                $('#ipt_empPw').focus();
-            });
-            return false;
         } else if(ipt_empPw.length < 4 || ipt_empPw.length > 12 ) {
             alertMsg("직원 비밀번호는 4 ~ 12자로 입력해주세요.", function() {
                 $('#ipt_empPw').focus();
@@ -354,21 +348,22 @@
 
     /* 패스워드 영문, 숫자만 입력가능체크 */
     function validChk(){
-         if(((event.keyCode >= 48) && (event.keyCode <= 57)) || ((event.keyCode >= 65) && (event.keyCode <= 90)) || ((event.keyCode >= 97) && (event.keyCode <= 122))){
-            event.returnValue = true
-         }else if( event.keyCode == undefined){
-            event.returnValue = true
-         }else{
-            var ipt_empPw = $('#ipt_empPw').val();
-            $('#ipt_empPw').val(ipt_empPw.substring( 0, (ipt_empPw.length)-1 ));
+        var inputPw = $('#ipt_empPw').val();
+        var idReg = /^[a-z0-9]{0,12}$/g;
+        if( !idReg.test( inputPw) ) {
+            $('#textForPw').attr('class','requiredTextAlert');
+            $('#ipt_empPw').val(inputPw.substring( 0, (inputPw.length)-1 ));
             $('#ipt_empPw').focus();
             event.returnValue = false
-         }
+        }else{
+            $('#textForPw').attr('class','requiredText');
+            event.returnValue = true
+        }
     }
 
 </script>
 
-<div style="width :450px;">
+<div style="width :500px;">
     <div class="mb-4" role="alert">
         <h6>
             <b>직원정보 수정/삭제</b>
@@ -381,7 +376,7 @@
                         <td></td>
                         <td colspan="2">
                              <div class="flex-height mb-4">
-                                <span class="requiredText" id="starText"><b id="starVal">* 는 필수 입력 항목입니다.</b></span>
+                                <span class="requiredTextAlert" id="starText"><b id="starVal">* 는 필수 입력 항목입니다.</b></span>
                              </div>
                         </td>
                     </tr>

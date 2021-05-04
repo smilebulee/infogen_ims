@@ -556,18 +556,19 @@ class saveApvlReq(Resource): # Mariadb 연결 진행
             logger.info(row + ':' + request.form[row])
             globals()[row] = request.form[row]
 
-        currReqPopStts = request.form['currReqPopStts']
-        email = request.form['email']
-        apvlDivs = request.form['apvlDivs']
-        apvlReqDivs = request.form['apvlReqDivs']
-        wrkDt = request.form['wrkDt']
-        jobStrtTm = request.form['jobStrtTm']
-        jobEndTm = request.form['jobEndTm']
-        wrkTme = request.form['wrkTme']
-        wrkReqRsn = request.form['wrkReqRsn']
-        th1AprvStus = request.form['th1AprvStus']
-        th1AprvNm = request.form['th1AprvNm']
-        refNm = request.form['refNm']
+
+        currReqPopStts  = request.form['currReqPopStts']
+        email           = request.form['email']
+        apvlDivs        = request.form['apvlDivs']
+        apvlReqDivs     = request.form['apvlReqDivs']
+        wrkDt           = request.form['wrkDt']
+        jobStrtTm       = request.form['jobStrtTm']
+        jobEndTm        = request.form['jobEndTm']
+        wrkTme          = request.form['wrkTme']
+        wrkReqRsn       = request.form['wrkReqRsn']
+        th1AprvStus     = request.form['th1AprvStus']
+        th1AprvNm       = request.form['th1AprvNm']
+        refNm           = request.form['refNm']
 
         #requirements pymysql import 후 커넥트 사용
         mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
@@ -590,32 +591,64 @@ class saveApvlReq(Resource): # Mariadb 연결 진행
                                                           "`TH1_APRV_NM`," \
                                                           "`REF_NM`," \
                                                           "`APVL_LAST_APRV_DT`)" \
-                                                " VALUES (   '" + email + "'"\
-                                                          ", '" + apvlDivs + "'"\
+                                                " VALUES (   '" + email       + "'"\
+                                                          ", '" + apvlDivs    + "'"\
                                                           ", '" + apvlReqDivs + "'"\
-                                                          ", '" + wrkDt + "'"\
-                                                          ", '" + jobStrtTm + "'"\
-                                                          ", '" + jobEndTm + "'"\
-                                                          ", '" + wrkTme + "'"\
-                                                          ", '" + wrkReqRsn + "'"\
+                                                          ", '" + wrkDt       + "'"\
+                                                          ", '" + jobStrtTm   + "'"\
+                                                          ", '" + jobEndTm    + "'"\
+                                                          ", '" + wrkTme      + "'"\
+                                                          ", '" + wrkReqRsn   + "'"\
                                                           ",      NOW()" \
                                                           ", '" + th1AprvStus + "'"\
-                                                          ", '" + th1AprvNm + "'"\
-                                                          ", '" + refNm + "'"\
+                                                          ", '" + th1AprvNm   + "'"\
+                                                          ", '" + refNm       + "'"\
                                                           ",      NOW())"
                 if currReqPopStts == "modify":
                     sql = "UPDATE TB_APVL_REQ_MGMT_M " \
-                          "   SET JOB_STRT_TM   = '" + jobStrtTm + "' " \
-                          "     , JOB_END_TM    = '" + jobEndTm + "' " \
-                          "     , WRK_REQ_RSN   = '" + wrkReqRsn + "' " \
-                          "     , TH1_APRV_NM   = '" + th1AprvNm + "' " \
-                          "     , REF_NM        = '" + refNm + "' " \
-                          "     , APVL_UPD_DT   = NOW() " \
-                          " WHERE EMP_EMAL_ADDR = '" + email + "' " \
-                          "   AND WRK_DT        = '" + wrkDt + "' "
+                          "   SET JOB_STRT_TM   = '"  + jobStrtTm   + "' " \
+                          "     , JOB_END_TM    = '"  + jobEndTm    + "' " \
+                          "     , WRK_TME       = '"  + wrkTme      + "' " \
+                          "     , WRK_REQ_RSN   = '"  + wrkReqRsn   + "' " \
+                          "     , TH1_APRV_NM   = '"  + th1AprvNm   + "' " \
+                          "     , REF_NM        = '"  + refNm       + "' " \
+                          "     , APVL_UPD_DT   =       NOW() " \
+                          " WHERE EMP_EMAL_ADDR = '"  + email       + "' " \
+                          "   AND WRK_DT        = '"  + wrkDt       + "' "
 
                 logger.info(sql)
                 cursor.execute(sql)
+
+                sql2 = "INSERT INTO TB_WRK_TM_MGMT_M " \
+                    "				(EMP_EMAL_ADDR " \
+                    "				, WRK_DT " \
+                    "				, JOB_STRT_TM " \
+                    "				, NGHT_WRK_STRT_TM " \
+                    "				, JOB_END_TM " \
+                    "				, NGHT_WRK_TM " \
+                    "				, ALL_WRK_TM " \
+                    "				, INSRT_DT " \
+                    "				, UPDT_DT " \
+                    "				) " \
+                    "VALUES 		" \
+                    "				('"  + email        + "' " \
+                    "				, '" + wrkDt        + "' " \
+                    "				, '" + jobStrtTm    + "' " \
+                    "				, '" + jobStrtTm    + "' " \
+                    "				, '" + jobEndTm     + "' " \
+                    "				, '" + wrkTme       + "' " \
+                    "				, '" + wrkTme       + "' " \
+                    "				, NOW() " \
+                    "				, NOW() " \
+                    "				) ON DUPLICATE KEY " \
+                    "UPDATE   JOB_END_TM 		= VALUES(JOB_END_TM) " \
+                    "		, NGHT_WRK_STRT_TM  = VALUES(NGHT_WRK_STRT_TM) " \
+                    "		, UPDT_DT			= VALUES(UPDT_DT) " \
+                    "		, ALL_WRK_TM 		= LPAD(ALL_WRK_TM - NGHT_WRK_TM + VALUES(NGHT_WRK_TM), 6, '0') " \
+                    "		, NGHT_WRK_TM		= VALUES(NGHT_WRK_TM) "
+
+                logger.info(sql2)
+                cursor.execute(sql2)
 
                 mysql_con.commit()
 
@@ -734,7 +767,7 @@ class apvlReqHist(Resource): # Mariadb 연결 진행
                 if deptCd != "" and deptCd != "00":
                     sql += "   AND B.DEPT_CD = '" + deptCd + "' "
 
-                sql += " ORDER BY A.APVL_REQ_DT ASC "
+                sql += " ORDER BY A.APVL_REQ_DT ASC, A.WRK_DT ASC "
                 logging.debug("apvlReqHist SQL문" + sql)
                 cursor.execute(sql)
 
@@ -1100,6 +1133,71 @@ class duplApvlReqCnt(Resource): # Mariadb 연결 진행
                       " WHERE EMP_EMAL_ADDR = '" + data["email"] + "' " \
                       "   AND WRK_DT = '" + data["wrkDt"] + "' "
                 logging.debug("duplApvlReqCnt SQL문" + sql)
+                cursor.execute(sql)
+
+        finally:
+            mysql_con.close()
+
+        result2 = cursor.fetchall()
+        for row in result2:
+            logging.debug('====== row====')
+            logging.debug(row)
+            logging.debug('===============')
+        array = list(result2)  # 결과를 리스트로
+
+        return json.dumps(result2, indent=4, cls=DateTimeEncoder)
+
+
+class duplWrkCnt(Resource): # Mariadb 연결 진행
+    def get(self):
+
+        data = request.get_json()
+
+        #requirements pymysql import 후 커넥트 사용
+        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
+                                        charset='utf8', autocommit=False)
+        try:
+            with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+                # 쿼리문 실행
+                sql =   "SELECT COUNT(*) AS WRK_CNT " \
+                        "FROM   TB_WRK_TM_MGMT_M    " \
+                        "WHERE  EMP_EMAL_ADDR    = '" + data["email"]  + "' " \
+                        "AND    WRK_DT 			 = '" + data["wrkDt"]  + "' "
+
+                logging.debug("duplWrkCnt SQL문" + sql)
+                cursor.execute(sql)
+
+        finally:
+            mysql_con.close()
+
+        result2 = cursor.fetchall()
+        for row in result2:
+            logging.debug('====== row====')
+            logging.debug(row)
+            logging.debug('===============')
+        array = list(result2)  # 결과를 리스트로
+
+        return json.dumps(result2, indent=4, cls=DateTimeEncoder)
+
+
+class wrkTm(Resource): # Mariadb 연결 진행
+    def get(self):
+
+        data = request.get_json()
+
+        #requirements pymysql import 후 커넥트 사용
+        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
+                                        charset='utf8', autocommit=False)
+        try:
+            with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+                # 쿼리문 실행
+                sql =   "SELECT NVL(DATE_FORMAT(NGHT_WRK_STRT_TM , '%H:%i'),'-') AS NGHT_WRK_STRT_TM " \
+                        "     , NVL(DATE_FORMAT(JOB_END_TM       , '%H:%i'),'-') AS JOB_END_TM  " \
+                        "FROM   TB_WRK_TM_MGMT_M " \
+                        "WHERE  EMP_EMAL_ADDR    = '" + data["email"] + "' " \
+                        "AND    WRK_DT 			 = '" + data["wrkDt"] + "' "
+
+                logging.debug("wrkTm SQL문" + sql)
                 cursor.execute(sql)
 
         finally:
@@ -1702,15 +1800,31 @@ class insertStrtTm(Resource):  # Mariadb 연결 진행
                                     charset='utf8', autocommit=False)
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+
+                sql1 =  "UPDATE TB_APVL_REQ_MGMT_M    " \
+                        "   SET JOB_STRT_TM  	= %s  " \
+                        "     , APVL_UPD_DT  	= NOW()  " \
+                        " WHERE EMP_EMAL_ADDR 	= %s  " \
+                        "   AND WRK_DT 			= %s  " \
+                        "   AND TH1_APRV_STUS 	= '01' " \
+                        "   AND JOB_STRT_TM 	= (  " \
+                        "						   SELECT NGHT_WRK_STRT_TM  " \
+                        "						     FROM TB_WRK_TM_MGMT_M  " \
+                        "						    WHERE EMP_EMAL_ADDR  = %s  " \
+                        "						      AND WRK_DT 		 = %s  " \
+                        "						   ) "
+                logger.info(sql1)
+                cursor.execute(sql1, (tm, email, dt, email, dt))
+                
                 # 쿼리문 실행
-                sql = "INSERT INTO TB_WRK_TM_MGMT_M( `EMP_EMAL_ADDR` " \
+                sql2 = "INSERT INTO TB_WRK_TM_MGMT_M( `EMP_EMAL_ADDR` " \
                       ",`WRK_DT` " \
                       ",`JOB_STRT_TM` " \
                       ") VALUES( %s ,%s ,%s ) " \
                       "ON DUPLICATE KEY " \
                       "UPDATE `JOB_STRT_TM` = %s"
-                logger.info(sql)
-                cursor.execute(sql, (email, dt, tm, tm))
+                logger.info(sql2)
+                cursor.execute(sql2, (email, dt, tm, tm))
 
                 mysql_con.commit()
 
@@ -1735,6 +1849,7 @@ class updateEndTm(Resource):  # Mariadb 연결 진행
         email = params['email']
         dt = params['dt']
         tm = params['tm']
+        nghtWrkStrtTm = params['nghtWrkStrtTm']
         normWrkTm = params['normWrkTm']
         overWrkTm = params['overWrkTm']
         allWrkTm = params['allWrkTm']
@@ -1749,26 +1864,39 @@ class updateEndTm(Resource):  # Mariadb 연결 진행
                     # 쿼리문 실행
                     sql = "UPDATE TB_WRK_TM_MGMT_M " \
                           "   SET JOB_END_TM  = %s " \
+                          "      ,NGHT_WRK_STRT_TM = %s " \
                           "      ,HLDY_WRK_TM = %s " \
                           "      ,ALL_WRK_TM  = %s " \
                           "   WHERE EMP_EMAL_ADDR = %s " \
                           "   AND WRK_DT = %s "
                     logger.info(sql)
-                    cursor.execute(sql, (tm, overWrkTm, allWrkTm, email, dt))
-                    mysql_con.commit()
+                    cursor.execute(sql, (tm, nghtWrkStrtTm, overWrkTm, allWrkTm, email, dt))
+
                 else:
                     # 쿼리문 실행
                     sql = "UPDATE TB_WRK_TM_MGMT_M " \
                           "   SET JOB_END_TM  = %s " \
+                          "      ,NGHT_WRK_STRT_TM = %s " \
                           "      ,NORM_WRK_TM = %s " \
                           "      ,NGHT_WRK_TM = %s " \
                           "      ,ALL_WRK_TM  = %s " \
                           "   WHERE EMP_EMAL_ADDR = %s " \
                           "   AND WRK_DT = %s "
                     logger.info(sql)
-                    cursor.execute(sql, (tm, normWrkTm, overWrkTm, allWrkTm, email, dt))
-                    mysql_con.commit()
-
+                    cursor.execute(sql, (tm, nghtWrkStrtTm, normWrkTm, overWrkTm, allWrkTm, email, dt))
+                
+                # 수정하려는 날짜의 미승인 결재 요청 건이 있을 경우, 해당 record 수정
+                sql = "UPDATE TB_APVL_REQ_MGMT_M " \
+                      "   SET JOB_STRT_TM  	    = %s " \
+                      "     , JOB_END_TM 	    = %s " \
+                      "     , WRK_TME 		    = %s " \
+                      "     , APVL_UPD_DT 	    = NOW()" \
+                      " WHERE EMP_EMAL_ADDR     = %s " \
+                      "   AND WRK_DT 		    = %s " \
+                      "   AND TH1_APRV_STUS     = '01' "
+                logger.info(sql)
+                cursor.execute(sql, (nghtWrkStrtTm, tm, overWrkTm, email, dt))
+                mysql_con.commit()
         finally:
             mysql_con.close()
 
@@ -2886,16 +3014,20 @@ api.add_resource(Retrieve, '/retrieve')
 api.add_resource(Save, '/save')
 
 api.add_resource(mariatestDB,'/mariatestDB') #api 선언
-api.add_resource(wrkTimeInfoByEml,'/wrkTimeInfoByEml')      #_
-api.add_resource(yryMgmt,'/yryMgmt')                        #_
-api.add_resource(hldyMgmt,'/hldyMgmt')                      #_
-api.add_resource(wrkApvlReq,'/wrkApvlReq')                  #_
-api.add_resource(saveApvlReq,'/saveApvlReq')                #근무 결재 요청 저장
-api.add_resource(saveApvlAcpt,'/saveApvlAcpt')              #근무 결재 승인 저장
-api.add_resource(apvlReqHist,'/apvlReqHist')                #근무 결재 요청 내역 조회
-api.add_resource(duplApvlReqCnt,'/duplApvlReqCnt')          #동일 일자 근무 결재 요청 내역 건수 조회
-api.add_resource(apvlReqHistDetl,'/apvlReqHistDetl')        #근무 결재 요청 상세 조회
-api.add_resource(apvlAcptHist,'/apvlAcptHist')              #근무 결재 승인 내역 조회
+
+api.add_resource(wrkTimeInfoByEml , '/wrkTimeInfoByEml')      # _
+api.add_resource(yryMgmt          , '/yryMgmt')               # _
+api.add_resource(hldyMgmt         , '/hldyMgmt')              # _
+api.add_resource(wrkApvlReq       , '/wrkApvlReq')            # _
+api.add_resource(saveApvlReq      , '/saveApvlReq')           # 근무 결재 요청 저장
+api.add_resource(saveApvlAcpt     , '/saveApvlAcpt')          # 근무 결재 승인 저장
+api.add_resource(apvlReqHist      , '/apvlReqHist')           # 근무 결재 요청 내역 조회
+api.add_resource(duplApvlReqCnt   , '/duplApvlReqCnt')        # 동일 일자 근무 결재 요청 내역 건수 조회
+api.add_resource(duplWrkCnt       , '/duplWrkCnt')            # 선결재 동일 일자 스케줄 등록 건수 조회
+api.add_resource(wrkTm            , '/wrkTm')                 # 선결재 동일 일자 스케줄 조회(정규 근무 시간정보)
+api.add_resource(apvlReqHistDetl  , '/apvlReqHistDetl')       # 근무 결재 요청 상세 조회
+api.add_resource(apvlAcptHist     , '/apvlAcptHist')          # 근무 결재 승인 내역 조회
+
 api.add_resource(calendarData,'/calendarData') #api 선언
 api.add_resource(noticeLst,'/noticeLst') #api 선언
 api.add_resource(noticePopCnt,'/noticePopCnt') #api 선언

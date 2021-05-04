@@ -28,132 +28,136 @@ function submissionCallList(paramList, method, url, callBackFunc) {
     });
 }
 
+
 /* 공통코드 조회 및 select 컴포넌트 option 으로 등록 */
-function retrieveCmmCdTest(sbx_id, grp_id){
+function retrieveCmmCdTest(sbx_id, grp_id)
+{
     var param = {
         "sbx_id" : sbx_id,
         "grp_id" : grp_id
     }
 
      $.ajaxCall( param, {
-             method : 'GET',
-             'url' : '/prj/retrieveCmmCd/',
-             'dataType' : 'json',
-             'data' : JSON.stringify(param),
-             'async' : false,
-             'callbackFn' : function(data){
-                for(var i = 0; i < data.length; i++){
-                    var option = $("<option value = "+data[i].CMM_CD+">"+data[i].CMM_CD_NAME+"</option>");
-                    $('#'+sbx_id).append(option);
-                }
-             }
+         method         : 'GET',
+         'url'          : '/prj/retrieveCmmCd/',
+         'dataType'     : 'json',
+         'data'         : JSON.stringify(param),
+         'async'        : false,
+         'callbackFn'   : function(data){
+            for(var i = 0; i < data.length; i++){
+                var option = $("<option value = "+data[i].CMM_CD+">"+data[i].CMM_CD_NAME+"</option>");
+                $('#'+sbx_id).append(option);
+            }
+         }
      });
  }
 
+
 /* 공통코드 조회 및 radio, select 컴포넌트 등록 */
-function retrieveCmmCd(cmp_id, grp_id, callBackFunc){
+function retrieveCmmCd(cmp_id, grp_id, callBackFunc)
+{
     var param = {
         "grp_id" : grp_id
     }
 
     $.ajaxCall( param, {
-        method : 'GET',
-            'url' : '/dili/retrieveCmmCd/',
-            'dataType' : 'json',
-            'data' : JSON.stringify(param),
-            'async' : false,
-            'callbackFn' : function(data){
-                for(var i = 0; i < data.length; i++) {
-                    if(cmp_id != null && cmp_id != '') {
-                        if($('#' + cmp_id).attr('type') == 'radio') {
-                            var strRadio ="<label><input type='radio' name='" + data[i].CMM_CD_GRP_ID  + "' value='" + data[i].CMM_CD;
-
-                            if(i == 0) {
-                                strRadio += "' checked>&nbsp;" + data[i].CMM_CD_NAME + "&nbsp;&nbsp;&nbsp;</label>";
-                            } else {
-                                strRadio += "'>&nbsp;" + data[i].CMM_CD_NAME + "&nbsp;&nbsp;&nbsp;</label>";
-                            }
-
-                            //var radio = ${strRadio);
-                            $('#' + cmp_id).parent().append($(strRadio));
-
-                        } else {
-                            var option = $("<option value = "+data[i].CMM_CD+">"+data[i].CMM_CD_NAME+"</option>");
-                            $('#' + cmp_id).append(option);
-                        }
-                    }
-                }
-
-                if(callBackFunc) {
-                    if(typeof callBackFunc == 'function') {
-                        callBackFunc(data);
-                    } else if(typeof callBackFunc == 'string') {
-                        window[callBackFunc](data);
-                    }
-                }
-            }
-    });
- }
-
- /* 공통코드 조회 및 checkbox 컴포넌트 등록 */
-function retrieveCmmCdChk(cmp_id, grp_id, callBackFunc){
-    var param = {
-        "grp_id" : grp_id
-    }
-
-    $.ajaxCall( param, {
-        method : 'GET',
-            'url' : '/dili/retrieveCmmCd/',
-            'dataType' : 'json',
-            'data' : JSON.stringify(param),
-            'async' : false,
-            'callbackFn' : function(data){
-                for(var i = 0; i < data.length; i++) {
-                    if(cmp_id != null && cmp_id != '') {
-                        var strChk = ""
+        method          : 'GET',
+        'url'           : '/dili/retrieveCmmCd/',
+        'dataType'      : 'json',
+        'data'          : JSON.stringify(param),
+        'async'         : false,
+        'callbackFn'    : function(data){
+            for(var i = 0; i < data.length; i++) {
+                if(cmp_id != null && cmp_id != '') {
+                    if($('#' + cmp_id).attr('type') == 'radio') {
+                        var strRadio ="<label><input type='radio' name='" + data[i].CMM_CD_GRP_ID  + "' value='" + data[i].CMM_CD;
 
                         if(i == 0) {
-                            strChk +="<label><input type='checkbox' class='" +"test" + "' name='" + data[i].CMM_CD_GRP_ID + "' id='" + data[i].CMM_CD +"' value='" + data[i].CMM_CD +"' />&nbsp;" + data[i].CMM_CD_NAME + "&nbsp;&nbsp;&nbsp;</label>";
-
+                            strRadio += "' checked>&nbsp;" + data[i].CMM_CD_NAME + "&nbsp;&nbsp;&nbsp;</label>";
                         } else {
-                            strChk +="<label><input type='checkbox' class='" +"test" + "' name='" + data[i].CMM_CD_GRP_ID + "' id='" + data[i].CMM_CD +"' value='" + data[i].CMM_CD +"' />&nbsp;" + data[i].CMM_CD_NAME + "&nbsp;&nbsp;&nbsp;</label>";
-
+                            strRadio += "'>&nbsp;" + data[i].CMM_CD_NAME + "&nbsp;&nbsp;&nbsp;</label>";
                         }
 
                         //var radio = ${strRadio);
-                        $('#' + cmp_id).append($(strChk));
+                        $('#' + cmp_id).parent().append($(strRadio));
 
-                    }
-                }
-
-                if(callBackFunc) {
-                    if(typeof callBackFunc == 'function') {
-                        callBackFunc(data);
-                    } else if(typeof callBackFunc == 'string') {
-                        window[callBackFunc](data);
+                    } else {
+                        var option = $("<option value = "+data[i].CMM_CD+">"+data[i].CMM_CD_NAME+"</option>");
+                        $('#' + cmp_id).append(option);
                     }
                 }
             }
+
+            if(callBackFunc) {
+                if(typeof callBackFunc == 'function') {
+                    callBackFunc(data);
+                } else if(typeof callBackFunc == 'string') {
+                    window[callBackFunc](data);
+                }
+            }
+        }
+    });
+ }
+
+
+/* 공통코드 조회 및 checkbox 컴포넌트 등록 */
+function retrieveCmmCdChk(cmp_id, grp_id, callBackFunc)
+{
+    var param = {
+        "grp_id" : grp_id
+    }
+
+    $.ajaxCall( param, {
+        method          : 'GET',
+        'url'           : '/dili/retrieveCmmCd/',
+        'dataType'      : 'json',
+        'data'          : JSON.stringify(param),
+        'async'         : false,
+        'callbackFn'    : function(data){
+            for(var i = 0; i < data.length; i++) {
+                if(cmp_id != null && cmp_id != '') {
+                    var strChk = ""
+
+                    if(i == 0) {
+                        strChk +="<label><input type='checkbox' class='" +"test" + "' name='" + data[i].CMM_CD_GRP_ID + "' id='" + data[i].CMM_CD +"' value='" + data[i].CMM_CD +"' />&nbsp;" + data[i].CMM_CD_NAME + "&nbsp;&nbsp;&nbsp;</label>";
+
+                    } else {
+                        strChk +="<label><input type='checkbox' class='" +"test" + "' name='" + data[i].CMM_CD_GRP_ID + "' id='" + data[i].CMM_CD +"' value='" + data[i].CMM_CD +"' />&nbsp;" + data[i].CMM_CD_NAME + "&nbsp;&nbsp;&nbsp;</label>";
+
+                    }
+
+                    //var radio = ${strRadio);
+                    $('#' + cmp_id).append($(strChk));
+
+                }
+            }
+
+            if(callBackFunc) {
+                if(typeof callBackFunc == 'function') {
+                    callBackFunc(data);
+                } else if(typeof callBackFunc == 'string') {
+                    window[callBackFunc](data);
+                }
+            }
+        }
     });
  }
 
 
 /* 이메일 주소로 사용자 이름 조회 */
-function retrieveEmpNmByEmail(empEmail, callBackFunc) { // 추후 콜백 function 추가 }, callBackFunc){
-    //var empNm = '';
-
+function retrieveEmpNmByEmail(empEmail, callBackFunc)
+{
     var param = {
         "email" : empEmail
     }
 
     $.ajaxCall( param, {
-        'method' : 'GET',
-        'url' : '/dili/getEmpName/',
-        'dataType' : 'json',
-        'data' : JSON.stringify(param),
-        'async' : false,
-        'callbackFn' : function(data){
-            //empNm = data[0].EMP_NAME;
+        'method'        : 'GET',
+        'url'           : '/dili/getEmpName/',
+        'dataType'      : 'json',
+        'data'          : JSON.stringify(param),
+        'async'         : false,
+        'callbackFn'    : function(data){
             if(callBackFunc) {
                 if(typeof callBackFunc == 'function') {
                     callBackFunc(data);
@@ -167,19 +171,19 @@ function retrieveEmpNmByEmail(empEmail, callBackFunc) { // 추후 콜백 functio
 
 
 /* 이메일 주소로 사용자 부서 조회 */
-function retrieveEmpDeptByEmail(empEmail, callBackFunc) {
-
+function retrieveEmpDeptByEmail(empEmail, callBackFunc)
+{
     var param = {
         "email" : empEmail
     }
 
     $.ajaxCall( param, {
-        'method' : 'GET',
-        'url' : '/dili/getEmpDept/',
-        'dataType' : 'json',
-        'data' : JSON.stringify(param),
-        'async' : false,
-        'callbackFn' : function(data){
+        'method'        : 'GET',
+        'url'           : '/dili/getEmpDept/',
+        'dataType'      : 'json',
+        'data'          : JSON.stringify(param),
+        'async'         : false,
+        'callbackFn'    : function(data){
             //empNm = data[0].EMP_NAME;
             if(callBackFunc) {
                 if(typeof callBackFunc == 'function') {
@@ -201,12 +205,12 @@ function retrieveEmpDeptGmByEmail(empEmail, callBackFunc) {
     }
 
     $.ajaxCall( param, {
-        'method' : 'GET',
-        'url' : '/dili/getEmpDeptGm/',
-        'dataType' : 'json',
-        'data' : JSON.stringify(param),
-        'async' : false,
-        'callbackFn' : function(data){
+        'method'        : 'GET',
+        'url'           : '/dili/getEmpDeptGm/',
+        'dataType'      : 'json',
+        'data'          : JSON.stringify(param),
+        'async'         : false,
+        'callbackFn'    : function(data){
             //empNm = data[0].EMP_NAME;
             if(callBackFunc) {
                 if(typeof callBackFunc == 'function') {
@@ -227,12 +231,12 @@ function retrieveEmpDeptPrByEmail(empEmail, callBackFunc) {
     }
 
     $.ajaxCall( param, {
-        'method' : 'GET',
-        'url' : '/dili/getEmpDeptPr/',
-        'dataType' : 'json',
-        'data' : JSON.stringify(param),
-        'async' : false,
-        'callbackFn' : function(data){
+        'method'        : 'GET',
+        'url'           : '/dili/getEmpDeptPr/',
+        'dataType'      : 'json',
+        'data'          : JSON.stringify(param),
+        'async'         : false,
+        'callbackFn'    : function(data){
             //empNm = data[0].EMP_NAME;
             if(callBackFunc) {
                 if(typeof callBackFunc == 'function') {
@@ -277,6 +281,7 @@ function checkEmpAuthsByEmail(userId, authCdArr) {
     }
 }
 
+
 /* 자리수만큼 0 채우기 (근무 시간 형식 지정) */
 function fillZero(width, str){
     str = str + '';
@@ -284,10 +289,12 @@ function fillZero(width, str){
     //남는 길이만큼 0으로 채움
 }
 
+
 /* 시간 차이 구하기 (근무 시간) */
-function getTimeDiff(fromDtm, toDtm) {
-    var dt1 = new Date(fromDtm);
-    var dt2 = new Date(toDtm);
+function getTimeDiff(fromDtm, toDtm, isNormalWrk) {
+    var dt1         = new Date(fromDtm);
+    var dt2         = new Date(toDtm);
+    isNormalWrk     = isNormalWrk == null ? true : isNormalWrk;
 
     var tDiff = dt2 - dt1; //밀리초 단위 시간차 반환
 
@@ -296,7 +303,7 @@ function getTimeDiff(fromDtm, toDtm) {
     var ss = Math.floor((tDiff % (1000 * 60)) / 1000);
 
     //시간 차 9시간 이상인 경우, 식사 시간 1시간 제외
-    if(hh >= 9) {
+    if(isNormalWrk == true && hh >= 9) {
         hh = hh - 1;
     }
 

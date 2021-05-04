@@ -254,9 +254,13 @@
     *   결재 버튼클릭
     *********************************************************************/
     function onclickApvlUpld() {
+        var url = "{% url 'dili_api:apvlReqBfrPop' %}" ;
+        //$('#currReqMthd').val("02");
+        //$('#currReqPopStts').val("register");
 
-        modal('apvlUpldDiv_modal');                  //근무요청결재 화면 모달 띄우기
-        $("#apvlUpld_modal").load("{% url 'dili_api:apvlReqLtrPop' %}");
+        modal('apvlUpldDiv_modal');
+        $('#apvlUpld_modal').load(url);
+
     }
     /*********************************************************************
     *  출근 INSERT
@@ -284,23 +288,41 @@
     *  퇴근 update
     *********************************************************************/
     function setEndTm(email, dt, tm, normWrkTm, overWrkTm, allWrkTm ){
+        var nghtWrkStrtTm = '';
+        var strtTm  = dt + ' ' + $('#ipt_jobStrtTm').val();
+        var endTm   = dt + ' ' + $('#ipt_jobEndTm').val();
 
-        var param = {
-            "email"     : email,
-            "dt"        : dt,
-            "tm"        : tm,
-            "normWrkTm" : normWrkTm,
-            "overWrkTm" : overWrkTm,
-            "allWrkTm"  : allWrkTm
+        // 추가 근무 시간이 있고, 일반 업무 시간이 0일 떄 (휴일근무)
+        if ((overWrkTm.substr(0, 4) != '0000') && (normWrkTm.substr(0, 4) == '0000')) {
+            nghtWrkStrtTm = strtTm;
+        }
+        // 추가 근무 시간이 있고, 일반 업무 시간이 있을 떄 (야간근무)
+        else if ((overWrkTm.substr(0, 4) != '0000') && (normWrkTm.substr(0, 4) != '0000') && getTimeDiff(strtTm, endTm) >= '080000') {
+            var tmpTm = new Date(dt + ' ' + $('#ipt_jobStrtTm').val())
+            tmpTm.setHours(tmpTm.getHours() + 9);
+            nghtWrkStrtTm = fillZero(2, tmpTm.getHours()) + ':' + fillZero(2, tmpTm.getMinutes())  + ':' + fillZero(2, tmpTm.getSeconds())
+        }
+        // 추가 근무 시간이 없을 때
+        else if ((overWrkTm.substr(0, 4) == '0000')) {
+            nghtWrkStrtTm = endTm;
+        }
+        var param   = {
+            "email"             : email,
+            "dt"                : dt,
+            "nghtWrkStrtTm"     : nghtWrkStrtTm,
+            "tm"                : tm,
+            "normWrkTm"         : normWrkTm.length == 4 ? normWrkTm + '00' : normWrkTm,
+            "overWrkTm"         : overWrkTm.length == 4 ? overWrkTm + '00' : overWrkTm,
+            "allWrkTm"          : allWrkTm.length  == 4 ? allWrkTm  + '00' : allWrkTm
         }
 
         $.ajaxCall( param, {
-             'method' : 'POST',
-             'url' : "{% url 'dili_api:saveEndTm' %}",
-             'dataType' : 'json',
-             'data' : JSON.stringify(param),
-             'async' : false,
-             'callbackFn' : function(data){
+             'method'           : 'POST',
+             'url'              : "{% url 'dili_api:saveEndTm' %}",
+             'dataType'         : 'json',
+             'data'             : JSON.stringify(param),
+             'async'            : false,
+             'callbackFn'       : function(data){
                 alertMsg('저장 되었습니다.');
              }
         });
@@ -380,6 +402,7 @@
 
 </script>
 
+<input type="hidden" id="currReqPopStts" value="register"/>
 <input type="hidden" id="currReqMthd" value="02"/>
 <input type="hidden" id="hldyDivsCd"/>
 <input type="hidden" id="dowDivsCd"/>
