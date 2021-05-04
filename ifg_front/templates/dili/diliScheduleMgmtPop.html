@@ -71,7 +71,7 @@
         var weekStrt = new Date($('#txt_weekStrtYy').text(), $('#txt_weekStrtMm').text()-1, $('#txt_weekStrtDd').text());
         var weekEnd = new Date($('#txt_weekEndYy').text(), $('#txt_weekEndMm').text()-1, $('#txt_weekEndDd').text());
 
-        var tmpFlag = betweenDay(weekStrt, weekEnd);
+        var tmpFlag = betweenDay(dt);
 
         $('#pop_dt').text(dt);
 
@@ -141,6 +141,21 @@
                 $('#btn_restTm').show();
                 $('#sbx_dinnRestTme').val(dinnRestTm);
                 $('#btn_dinnRestTm').show();
+
+                if(apvlStus == "미등록"){
+
+                    if ($('#empEmailHidden').val() == null || $('#empEmailHidden').val() == "") {
+
+                        document.getElementById('pop_apvlStus').innerHTML = '<input type="button" class="button" onclick="onclickApvlUpld()" value="결재올리기">';
+
+                    }else if($('#empEmailHidden').val() == sessionStorage.getItem("email")){
+
+                        document.getElementById('pop_apvlStus').innerHTML = '<input type="button" class="button" onclick="onclickApvlUpld()" value="결재올리기">';
+
+                    }
+                }else {
+                    $('#pop_apvlStus').text(apvlStus);
+                }
 
             }else {
 
