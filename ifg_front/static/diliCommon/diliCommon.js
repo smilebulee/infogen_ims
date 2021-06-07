@@ -147,13 +147,46 @@ function dateConverting2(date) {
     return date.replace(/-/gi,"/");
 }
 
-function betweenDay(weekStrt, weekEnd) {
+function betweenDay(dt) {
 
     var today = new Date();
-    if(weekStrt <= today && today <= weekEnd) {
-        return true;
-    } else {
-        return false;
+    var trgtDay = new Date(today.setDate(today.getDate() - today.getDay()));
+    var chk = 0;
+
+    for (var idx = 0;idx <7; idx++) {
+        var tmpDate = 0;
+
+        tmpDate = trgtDay;
+
+        if(chk != 0) {
+            tmpDate = new Date(trgtDay.setDate(trgtDay.getDate() + 1));
+        }
+
+        var tmpYear = tmpDate.getFullYear();
+        var tmpMonth = tmpDate.getMonth() + 1;
+
+        if(tmpMonth.toString().length == 1) {
+            tmpMonth = "0" + tmpMonth;
+        }
+
+        var tmpDay = tmpDate.getDate();
+
+        if(tmpDay.toString().length == 1){
+            tmpDay = "0" + tmpDay;
+        }
+
+        tmpDate = tmpYear + "-" + tmpMonth + "-" + tmpDay;
+
+        if(tmpDate == dt){
+            return true;
+        } else {
+            chk++;
+            continue;
+        }
+
+
     }
+
+    return false;
 
 }
