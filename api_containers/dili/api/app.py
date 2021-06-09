@@ -2442,9 +2442,9 @@ class questionInfo(Resource):  # Mariadb 연결 진행
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
 
-                sql = "SELECT A.QNA_WR_NM ORIGIN_WR, B.QNA_NO,  B.QNA_ORIGIN_NO,  B.DATA_DEPTH, B.QNA_SORTS, B.QNA_TITLE,  B.QNA_MAIN,  B.QNA_WR_NM , B.QNA_RGS_DATE, B.QNA_DEL_YN " \
-                      "FROM TB_QNA_TEST  A, TB_QNA_TEST B " \
-                      "WHERE A.QNA_NO = B.QNA_ORIGIN_NO AND B.QNA_ORIGIN_NO NOT IN (SELECT QNA_NO FROM TB_QNA_TEST WHERE DATA_DEPTH = 0 AND QNA_DEL_YN = 'Y') " \
+                sql = "SELECT A.QNA_WR_NM ORIGIN_WR, B.QNA_NO,  B.QNA_ORIGIN_NO,  B.DATA_DEPTH, B.QNA_SORTS, B.QNA_TITLE,  B.QNA_MAIN,  B.QNA_WR_NM , B.QNA_RGS_DATE, B.QNA_DEL_YN, C.EMP_NAME " \
+                      "FROM TB_QNA_TEST  A, TB_QNA_TEST B, TB_EMP_MGMT C " \
+                      "WHERE A.QNA_NO = B.QNA_ORIGIN_NO AND B.QNA_WR_NM = C.EMP_ID AND B.QNA_ORIGIN_NO NOT IN (SELECT QNA_NO FROM TB_QNA_TEST WHERE DATA_DEPTH = 0 AND QNA_DEL_YN = 'Y') " \
                       "ORDER BY B.QNA_ORIGIN_NO DESC, B.QNA_SORTS ASC"
 
                 logging.debug(sql)
@@ -2595,15 +2595,17 @@ class questiondetail(Resource): # Mariadb 연결 진행
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 #쿼리문 실행
                 if data["status"] == "R":
+                    logging.debug("#######################R일때")
                     sql1 = "UPDATE TB_QNA_TEST SET QNA_CNT = QNA_CNT+1 WHERE QNA_NO = '" + data["number"] + "'"
 
                     logging.debug(sql1)
                     cursor.execute(sql1)
                     mysql_con.commit()
 
-                sql2 = "SELECT A.*, B.ORIGIN_WR " \
+                sql2 = "SELECT A.*, B.ORIGIN_WR, C.EMP_NAME " \
                         "FROM TB_QNA_TEST A, " \
-                        "(SELECT QNA_WR_NM ORIGIN_WR FROM TB_QNA_TEST A WHERE QNA_NO  = (SELECT QNA_ORIGIN_NO FROM TB_QNA_TEST WHERE QNA_NO = '"+ data["number"] +"')) B " \
+                        "(SELECT QNA_WR_NM ORIGIN_WR FROM TB_QNA_TEST A WHERE QNA_NO  = (SELECT QNA_ORIGIN_NO FROM TB_QNA_TEST WHERE QNA_NO = '"+ data["number"] +"')) B, " \
+                        "(SELECT EMP_NAME FROM TB_EMP_MGMT WHERE EMP_ID = (SELECT QNA_WR_NM FROM TB_QNA_TEST WHERE QNA_NO = '"+ data["number"] +"')) C " \
                         "WHERE QNA_NO ='"+ data["number"] +"'"
 
 
@@ -2903,21 +2905,22 @@ class qnaSearch(Resource):  # Mariadb 연결 진행
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 # 쿼리문 실행
-                sql = "SELECT A.QNA_WR_NM ORIGIN_WR, B.*  FROM TB_QNA_TEST  A, TB_QNA_TEST B WHERE " \
-                      "A.QNA_NO = B.QNA_ORIGIN_NO AND " \
+                sql = "SELECT A.QNA_WR_NM ORIGIN_WR, B.*, C.EMP_NAME FROM TB_QNA_TEST  A, TB_QNA_TEST B, TB_EMP_MGMT C WHERE " \
+                      "A.QNA_NO = B.QNA_ORIGIN_NO AND B.QNA_WR_NM = C.EMP_ID AND " \
                       "B.QNA_ORIGIN_NO NOT IN (SELECT QNA_NO FROM TB_QNA_TEST WHERE DATA_DEPTH = 0 AND QNA_DEL_YN = 'Y') AND " \
-                      "B.QNA_ORIGIN_NO IN(SELECT QNA_NO FROM TB_QNA_TEST WHERE DATA_DEPTH = '0' AND "
+                      "B.QNA_ORIGIN_NO IN(SELECT QNA_NO FROM TB_QNA_TEST AA, TB_EMP_MGMT CC " \
+		              "WHERE AA.QNA_WR_NM = CC.EMP_ID AND AA.DATA_DEPTH = '0' AND ("
 
                 if option == "00" : #제목
-                    sql += "QNA_TITLE LIKE '%"+ keyword +"%'"
+                    sql += "AA.QNA_TITLE LIKE '%"+ keyword +"%'"
                 if option == "01" : #내용
-                    sql += "QNA_MAIN LIKE '%"+ keyword +"%'"
+                    sql += "AA.QNA_MAIN LIKE '%"+ keyword +"%'"
                 if option == "02" : #제목+내용
-                    sql += "QNA_TITLE LIKE '%"+ keyword +"%' OR QNA_MAIN LIKE '%"+ keyword +"%'"
+                    sql += "AA.QNA_TITLE LIKE '%"+ keyword +"%' OR AA.QNA_MAIN LIKE '%"+ keyword +"%'"
                 if option == "03" : #작성자
-                    sql += "QNA_WR_NM LIKE '%"+ keyword +"%'"
+                    sql += "CC.EMP_NAME LIKE '%"+ keyword +"%' OR AA.QNA_WR_NM LIKE '%"+ keyword +"%'"
 
-                sql += ")ORDER BY B.QNA_ORIGIN_NO DESC, B.QNA_SORTS ASC"
+                sql += "))ORDER BY B.QNA_ORIGIN_NO DESC, B.QNA_SORTS ASC"
 
                 logging.debug(sql)
                 cursor.execute(sql)

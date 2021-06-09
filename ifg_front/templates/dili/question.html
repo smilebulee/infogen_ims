@@ -404,7 +404,7 @@ function paging2(data, currentPage){
 
                  }
         }
-        QnAListTable += '<td id="qnaWrt" class="pt-3-half" width="300">'+data[i].QNA_WR_NM+'</td>';
+        QnAListTable += '<td id="qnaWrt" class="pt-3-half" width="300">'+data[i].QNA_WR_NM+'('+maskingNm(data[i].EMP_NAME)+')</td>';
         QnAListTable += '<td id="qnaRgd" class="pt-3-half" width="200">'+data[i].QNA_RGS_DATE+'</td>';
         QnAListTable += '</tr>';
     }
@@ -454,6 +454,12 @@ function paging2(data, currentPage){
     document.getElementById('pagination').innerHTML = QnaPaging;
 
 };
+
+/* 이름 마스킹처리 */
+function maskingNm(strName){
+    return strName.substr(0, 1) + "*" + strName.substr(1+"*".length);
+
+}
 
 </script>
     <input type="text" class="form-control" id="hidden_selectNumber" name="hidden_selectNumber" maxlength="30" readonly hidden/>
