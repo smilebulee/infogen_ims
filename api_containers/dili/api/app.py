@@ -2971,6 +2971,7 @@ class updateRestTm(Resource):  # Mariadb 연결 진행
         }
 
         return jsonify(retJson)
+
 class updateDinnRestTm(Resource):  # Mariadb 연결 진행
     def post(self):
 
@@ -3006,6 +3007,40 @@ class updateDinnRestTm(Resource):  # Mariadb 연결 진행
         }
 
         return jsonify(retJson)
+
+class popUpData(Resource): # Mariadb 연결 진행
+    def get(self):
+
+        data = request.get_json()
+
+        logging.debug('================== App Start ==================')
+        logging.debug(data)
+        logging.debug('================== App End ==================')
+
+        #requirements pymysql import 후 커넥트 사용
+        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
+                                        charset='utf8', autocommit=False)
+        try:
+            with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+                #쿼리문 실행
+                sql = "SELECT  NVL(REST_TM, '0') AS REST_TM "\
+                    + "       ,NVL(DINN_REST_TM, '0') AS DINN_REST_TM "\
+                    + "  FROM TB_WRK_TM_MGMT_M "\
+                    + " WHERE EMP_EMAL_ADDR = '" + data["email"] + "' "\
+                    + "   AND WRK_DT = '" + data["dt"] + "'"
+                logging.debug(sql)
+                cursor.execute(sql)
+        finally:
+            mysql_con.close()
+
+        result2 = cursor.fetchall()
+        for row in result2:
+            logging.debug('====== row2====')
+            logging.debug(row)
+            logging.debug('===============')
+        array = list(result2)  # 결과를 리스트로
+
+        return json.dumps(result2, indent=4, cls=DateTimeEncoder)
 
     
 api.add_resource(Hello, '/hello')
@@ -3071,6 +3106,7 @@ api.add_resource(qnaUpdateCnt,'/qnaUpdateCnt') #api선언
 api.add_resource(qnaSearch,'/qnaSearch') #api선언
 api.add_resource(updateRestTm,'/updateRestTm') #api선언
 api.add_resource(updateDinnRestTm,'/updateDinnRestTm') #api선언
+api.add_resource(popUpData,'/popUpData') #api 선언
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5006, debug=True)

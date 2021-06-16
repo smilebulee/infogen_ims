@@ -2,13 +2,14 @@
 
 <script type="text/javascript">
     $(document).ready(function(){
-        dataControl();
+        bsisDataInfo();
+        //dataControl();
 
-        var param = {
-            "dt"  : $('#pop_dt').text()
-        }
-        var url = "{% url 'dili_api:getHldyMgmt' %}";
-        submissionCallMap(param,'GET',url,getHldyMgmtSubMitDone);
+        //var param = {
+            //"dt"  : $('#pop_dt').text()
+        //}
+        //var url = "{% url 'dili_api:getHldyMgmt' %}";
+        //submissionCallMap(param,'GET',url,getHldyMgmtSubMitDone);
 
 
         /*********************************************************************
@@ -194,7 +195,44 @@
             $('#pop_schdDetlAllTm').text(allTm);
             $('#pop_apvlStus').text(apvlStus);
         }
+
+        var param = {
+            "dt"  : $('#pop_dt').text()
+        }
+        var url = "{% url 'dili_api:getHldyMgmt' %}";
+        submissionCallMap(param,'GET',url,getHldyMgmtSubMitDone);
     }
+
+    /*********************************************************************
+    *  휴게시간 정보조회
+    *********************************************************************/
+    function bsisDataInfo(){
+
+        var dt = $('#tmpPopDt').text();
+        var email = sessionStorage.getItem("email");
+
+        var param = {
+            "email" : email,
+            "dt"    : dt
+        }
+
+        $.ajaxCall( param, {
+             'method' : 'GET',
+             'url' : "{% url 'dili_api:getPopUpData' %}",
+             'dataType' : 'json',
+             'data' : JSON.stringify(param),
+             'async' : false,
+             'callbackFn' : function(data, status, xhr){
+                if(data.length > 0){
+                    $('#tmpRestTm').text(data[0].REST_TM);
+                    $('#tmpDinnRestTm').text(data[0].DINN_REST_TM);
+                }
+                dataControl();
+             }
+        });
+
+    }
+
     /*********************************************************************
     *   출근버튼 클릭
     *********************************************************************/
@@ -205,7 +243,7 @@
         var tm = $("#ipt_jobStrtTm").val();
         setStrtTm(email, dt, tm);
         $('#tmpPopStrtTm').text(tm);
-        dataControl();
+        bsisDataInfo();
     }
     /*********************************************************************
     *   퇴근버튼 클릭
@@ -406,6 +444,8 @@
 <input type="hidden" id="currReqMthd" value="02"/>
 <input type="hidden" id="hldyDivsCd"/>
 <input type="hidden" id="dowDivsCd"/>
+<span id="tmpRestTm" class="model_layout" style="display:none;" ></span>
+<span id="tmpDinnRestTm" class="model_layout" style="display:none;" ></span>
 <table class="table table-bordered text-center" style="width: 550px">
     <tr>
         <th class="text-center" style="width: 200px">일자</th>

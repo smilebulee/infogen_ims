@@ -98,6 +98,8 @@ urlpatterns = [
     url(r'^qnaUpdate', views.qnaUpdate, name='qnaUpdate'), #QNA 게시판 게시글 수정
     url(r'^qnaUpdateCnt', views.qnaUpdateCnt, name='qnaUpdateCnt'), #QNA 게시판 조회수 증가
     url(r'^qnaSearch', views.qnaSearch, name='qnaSearch'), #QNA 게시판 검색기능
+    url(r'^getPopUpData/', views.getPopUpData, name='getPopUpData'),
+
     
     # 공통 코드 조회
     url(r'^retrieveCmmCd/', views.retrieveCmmCd, name='retrieveCmmCd'),
