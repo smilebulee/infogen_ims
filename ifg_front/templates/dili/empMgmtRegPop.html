@@ -36,7 +36,9 @@ function onClickIsExistBtn2() {
     var email = $('#ipt_empId2').val();
 
     if( email == "" || email == null){
-        alertMsg("ID를 입력해주세요");
+        alertMsg("ID를 입력해주세요", function() {
+            $('#ipt_empId2').focus();
+        });
     }else if(email.length < 4 || email.length > 12 ) {
         alertMsg("직원 ID는 4 ~ 12자로 입력해주세요.", function() {
             $('#ipt_empId2').focus();
@@ -101,7 +103,9 @@ function onClickReIsExistBtn2(){
 function onClickIsExistNmBtn2() {
     var name = $('#ipt_empNm2').val();
     if( name == "" || name == null){
-        alertMsg("성명을 입력해주세요");
+        alertMsg("성명을 입력해주세요", function() {
+            $('#ipt_empNm2').focus();
+        });
     } else if (name.length < 2){
         alertMsg("직원 성명은 두 글자 이상 입력해 주세요.", function() {
             $('#ipt_empNm2').focus();
@@ -163,7 +167,6 @@ function onClickReIsExistNmBtn2(){
 
 /* 등록버튼 클릭 이벤트 */
 function onClickSubmitBtn2() {
-    if(isPwChk == false) validChk2();
     var ipt_empId2 = $('[name="ipt_empId2"]').val();
     var ipt_empPw2 = $('[name="ipt_empPw2"]').val();
     /* var ipt_empAuthId = $('[name="sbx_empAuthId"] option:selected').val(); */
@@ -300,7 +303,6 @@ function onClickResetBtn2() {
 
 /* 아이디 영문, 숫자만 입력가능체크 */
 function validChk(){
-    debugger;
     var inputId = $('#ipt_empId2').val();
     var idReg = /^[a-z0-9]{0,12}$/g;
     if( !idReg.test( inputId) ) {
