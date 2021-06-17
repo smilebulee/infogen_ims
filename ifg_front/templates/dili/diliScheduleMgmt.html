@@ -594,6 +594,7 @@
             var tdDate = "";
             var tempSetWeek = "";
             var sumRestTm = 0;
+            var tmpSumTotalWkrTm = 0;
 
             for(var i = 0; i < 7; i++){
 
@@ -664,6 +665,14 @@
                 }
 
                 sumRestTm += totalRestTm;
+                if(allWrkTm != '-') {
+                    var tmpTm = Number(allWrkTm.substr(0,2) * 60 ) + Number(allWrkTm.substr(3,6));
+                    tmpSumTotalWkrTm += Number(tmpTm);
+                }
+
+                var hour = Math.floor(tmpSumTotalWkrTm/60);
+                var minute = Math.floor(tmpSumTotalWkrTm%60);
+                var sumTotalWkrTm = lpad((hour).toString(),2,"0")+":"+lpad((minute).toString(),2,"0");
 
                 weekTable += '<tr id ="grd_week'+tempSetWeek+'" onclick="onclickWeekEvt(this)">';
                 weekTable += '<td class="pt-3-half" contenteditable="false">'+tdDate+'</td>';
@@ -690,7 +699,7 @@
             weekTable += '<td>-</td>';
             weekTable += '<td>-</td>';
             weekTable += '<td>'+sumRestTm+'</td>';
-            weekTable += '<td>-</td>';
+            weekTable += '<td>'+ sumTotalWkrTm +'</td>';
             weekTable += '<td>-</td>';
             weekTable += '<td>-</td></tr>';
             weekTable += '</tbody>';
@@ -728,6 +737,7 @@
             var mTdDate = "";
             var tempSetMonth = "";
             var sumRestTm = 0;
+            var tmpSumTotalWkrTm = 0;
 
             for(var i = 0; i < monthEndDate.getDate(); i++){
 
@@ -801,6 +811,14 @@
                 }
 
                 sumRestTm += totalRestTm;
+                if(allWrkTm != '-') {
+                    var tmpTm = Number(allWrkTm.substr(0,2) * 60 ) + Number(allWrkTm.substr(3,6));
+                    tmpSumTotalWkrTm += Number(tmpTm);
+                }
+
+                var hour = Math.floor(tmpSumTotalWkrTm/60);
+                var minute = Math.floor(tmpSumTotalWkrTm%60);
+                var sumTotalWkrTm = lpad((hour).toString(),2,"0")+":"+lpad((minute).toString(),2,"0");
 
                 monthTable += '<tr id ="grd_month'+tempSetMonth+'" onclick="onclickMonthEvt(this)">';
                 monthTable += '<td class="pt-3-half" contenteditable="false">'+mTdDate+'</td>';
@@ -826,7 +844,7 @@
             monthTable += '<td>-</td>';
             monthTable += '<td>-</td>';
             monthTable += '<td>'+sumRestTm+'</td>';
-            monthTable += '<td>-</td>';
+            monthTable += '<td>'+sumTotalWkrTm+'</td>';
             monthTable += '<td>-</td>';
             monthTable += '<td>-</td></tr>';
 
