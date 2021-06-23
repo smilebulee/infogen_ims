@@ -9,10 +9,12 @@ import socket
 #from bson.json_util import dumps
 import json
 import pymysql
+import os
 
 app = Flask(__name__)
 api = Api(app)
 logger = logging.getLogger(__name__)
+app.config['JSON_AS_ASCII'] = False
 
 import datetime
 from json import JSONEncoder
@@ -22,6 +24,15 @@ class DateTimeEncoder(JSONEncoder):
     def default(self, obj):
         if isinstance(obj, (datetime.date, datetime.datetime)):
             return obj.isoformat()
+
+def getMariaConn():
+    return pymysql.connect(
+            host=os.environ['MYSQL_HOST'],
+            port=int(os.environ['MYSQL_PORT']),
+            db=os.environ['MYSQL_DATABASE'],
+            user=os.environ['MYSQL_USER'],
+            password=os.environ['MYSQL_PASSWORD'],
+            charset='utf8')
 
 def getSystemInfo():
     logging.debug('dill Server')
@@ -218,8 +229,9 @@ class mariatestDB(Resource): # Mariadb 연결 진행
         logging.debug(request.get_json())
 
         #requirements pymysql import 후 커넥트 사용
-        mysql_con = pymysql.connect(getSystemInfo() , port=3306, db='IFG_IMS', user='ims2', password='1234',
-                                        charset='utf8', autocommit=False)
+        #mysql_con = pymysql.connect(getSystemInfo() , port=3306, db='IFG_IMS', user='ims2', password='1234',
+        #                                charset='utf8', autocommit=False)
+        mysql_con = getMariaConn()
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 #쿼리문 실행
@@ -244,8 +256,10 @@ class yryMgmt(Resource): # Mariadb 연결 진행
         data = request.get_json()
 
         #requirements pymysql import 후 커넥트 사용
-        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
-                                        charset='utf8', autocommit=False)
+        #mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
+        #                                charset='utf8', autocommit=False)
+        mysql_con = getMariaConn()
+
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 #쿼리문 실행
@@ -269,8 +283,10 @@ class totalWrktm(Resource): # Mariadb 연결 진행
         data = request.get_json()
 
         #requirements pymysql import 후 커넥트 사용
-        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
-                                        charset='utf8', autocommit=False)
+        #mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
+        #                                charset='utf8', autocommit=False)
+        mysql_con = getMariaConn()
+
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 #쿼리문 실행
@@ -304,8 +320,10 @@ class hldyMgmt(Resource): # Mariadb 연결 진행
         data = request.get_json()
 
         #requirements pymysql import 후 커넥트 사용
-        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
-                                        charset='utf8', autocommit=False)
+        #mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
+        #                                charset='utf8', autocommit=False)
+        mysql_con = getMariaConn()
+
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 #쿼리문 실행
@@ -337,8 +355,10 @@ class weekGridData(Resource): # Mariadb 연결 진행
         logging.debug('================== App End ==================')
 
         #requirements pymysql import 후 커넥트 사용
-        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
-                                        charset='utf8', autocommit=False)
+        #mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
+        #                                charset='utf8', autocommit=False)
+        mysql_con = getMariaConn()
+
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 #쿼리문 실행
@@ -389,8 +409,10 @@ class apvlInfo(Resource): # Mariadb 연결 진행
         logging.debug('================== App End ==================')
 
         #requirements pymysql import 후 커넥트 사용
-        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
-                                        charset='utf8', autocommit=False)
+        #mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
+        #                                charset='utf8', autocommit=False)
+        mysql_con = getMariaConn()
+
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 #쿼리문 실행
@@ -424,8 +446,10 @@ class monthGridData(Resource): # Mariadb 연결 진행
         logging.debug('================== App End ==================')
 
         #requirements pymysql import 후 커넥트 사용
-        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
-                                        charset='utf8', autocommit=False)
+        #mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
+        #                                charset='utf8', autocommit=False)
+        mysql_con = getMariaConn()
+
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 #쿼리문 실행
@@ -474,8 +498,10 @@ class wrkTimeInfoByEml(Resource): # Mariadb 연결 진행
         logging.debug('================== App End ==================')
 
         #requirements pymysql import 후 커넥트 사용
-        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
-                                        charset='utf8', autocommit=False)
+        #mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
+        #                                charset='utf8', autocommit=False)
+        mysql_con = getMariaConn()
+
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 #쿼리문 실행
@@ -509,8 +535,10 @@ class wrkApvlReq(Resource): # Mariadb 연결 진행
         data = request.get_json()
 
         #requirements pymysql import 후 커넥트 사용
-        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
-                                        charset='utf8', autocommit=False)
+        #mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
+        #                                charset='utf8', autocommit=False)
+        mysql_con = getMariaConn()
+
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 #쿼리문 실행
@@ -571,8 +599,10 @@ class saveApvlReq(Resource): # Mariadb 연결 진행
         refNm           = request.form['refNm']
 
         #requirements pymysql import 후 커넥트 사용
-        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
-                                        charset='utf8', autocommit=False)
+        #mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
+        #                                charset='utf8', autocommit=False)
+        mysql_con = getMariaConn()
+
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 #쿼리문 실행
@@ -681,8 +711,10 @@ class saveApvlAcpt(Resource): # Mariadb 연결 진행
         th1AprvRsn = request.form['th1AprvRsn']
 
         #requirements pymysql import 후 커넥트 사용
-        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
-                                        charset='utf8', autocommit=False)
+        #mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
+        #                                charset='utf8', autocommit=False)
+        mysql_con = getMariaConn()
+
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 #쿼리문 실행
@@ -731,8 +763,10 @@ class apvlReqHist(Resource): # Mariadb 연결 진행
         logging.debug('-------------------------------------------------------')
 
         #requirements pymysql import 후 커넥트 사용
-        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
-                                        charset='utf8', autocommit=False)
+        #mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
+        #                                charset='utf8', autocommit=False)
+        mysql_con = getMariaConn()
+
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 # 쿼리문 실행
@@ -801,8 +835,10 @@ class apvlAcptHist(Resource):  # Mariadb 연결 진행
         logging.debug('------------------------------------')
 
         # requirements pymysql import 후 커넥트 사용
-        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
-                                    charset='utf8', autocommit=False)
+        #mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
+        #                            charset='utf8', autocommit=False)
+        mysql_con = getMariaConn()
+
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 # 쿼리문 실행
@@ -879,8 +915,10 @@ class empList(Resource): # Mariadb 연결 진행
         logging.debug('================== App End ==================')
 
         #requirements pymysql import 후 커넥트 사용
-        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
-                                        charset='utf8', autocommit=False)
+        #mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
+        #                                charset='utf8', autocommit=False)
+        mysql_con = getMariaConn()
+
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 #쿼리문 실행
@@ -921,8 +959,10 @@ class empInfo(Resource): # Mariadb 연결 진행
         logging.debug('================== App End ==================')
 
         #requirements pymysql import 후 커넥트 사용
-        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
-                                        charset='utf8', autocommit=False)
+        #mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
+        #                                charset='utf8', autocommit=False)
+        mysql_con = getMariaConn()
+
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 #쿼리문 실행
@@ -969,8 +1009,7 @@ class empName(Resource): # Mariadb 연결 진행
         logging.debug('================== App End ==================')
 
         #requirements pymysql import 후 커넥트 사용
-        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
-                                        charset='utf8', autocommit=False)
+        mysql_con = getMariaConn()
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 #쿼리문 실행
@@ -1003,8 +1042,7 @@ class empDeptGm(Resource): # Mariadb 연결 진행
         logging.debug('================== App End ==================')
 
         #requirements pymysql import 후 커넥트 사용
-        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
-                                        charset='utf8', autocommit=False)
+        mysql_con = getMariaConn()
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 #쿼리문 실행
@@ -1047,8 +1085,7 @@ class empDeptPr(Resource): # Mariadb 연결 진행
         logging.debug('================== App End ==================')
 
         #requirements pymysql import 후 커넥트 사용
-        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
-                                        charset='utf8', autocommit=False)
+        mysql_con = getMariaConn()
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 #쿼리문 실행
@@ -1091,8 +1128,7 @@ class empDept(Resource): # Mariadb 연결 진행
         logging.debug('================== App End ==================')
 
         #requirements pymysql import 후 커넥트 사용
-        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
-                                        charset='utf8', autocommit=False)
+        mysql_con = getMariaConn()
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 #쿼리문 실행
@@ -1123,8 +1159,7 @@ class duplApvlReqCnt(Resource): # Mariadb 연결 진행
         data = request.get_json()
 
         #requirements pymysql import 후 커넥트 사용
-        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
-                                        charset='utf8', autocommit=False)
+        mysql_con = getMariaConn()
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 # 쿼리문 실행
@@ -1154,8 +1189,7 @@ class duplWrkCnt(Resource): # Mariadb 연결 진행
         data = request.get_json()
 
         #requirements pymysql import 후 커넥트 사용
-        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
-                                        charset='utf8', autocommit=False)
+        mysql_con = getMariaConn()
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 # 쿼리문 실행
@@ -1186,8 +1220,7 @@ class wrkTm(Resource): # Mariadb 연결 진행
         data = request.get_json()
 
         #requirements pymysql import 후 커넥트 사용
-        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
-                                        charset='utf8', autocommit=False)
+        mysql_con = getMariaConn()
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 # 쿼리문 실행
@@ -1219,8 +1252,7 @@ class apvlReqHistDetl(Resource): # Mariadb 연결 진행
         data = request.get_json()
 
         #requirements pymysql import 후 커넥트 사용
-        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
-                                        charset='utf8', autocommit=False)
+        mysql_con = getMariaConn()
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 # 쿼리문 실행
@@ -1273,8 +1305,7 @@ class calendarData(Resource): # Mariadb 연결 진행
         logging.debug('================== App End ==================')
 
         #requirements pymysql import 후 커넥트 사용
-        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
-                                        charset='utf8', autocommit=False)
+        mysql_con = getMariaConn()
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 #쿼리문 실행
@@ -1732,8 +1763,7 @@ class saveYryApvlReq(Resource):  # Mariadb 연결 진행
 
 
             # requirements pymysql import 후 커넥트 사용
-            mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
-                                        charset='utf8', autocommit=False)
+            mysql_con = getMariaConn()
             try:
                 with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                     # 쿼리문 실행
@@ -1914,8 +1944,7 @@ class yryUseDays(Resource): # Mariadb 연결 진행
         data = request.get_json()
 
         #requirements pymysql import 후 커넥트 사용
-        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
-                                        charset='utf8', autocommit=False)
+        mysql_con = getMariaConn()
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 # 쿼리문 실행
@@ -2221,8 +2250,7 @@ class empOneInfo(Resource): # Mariadb 연결 진행
         logging.debug('================== App End ==================')
 
         #requirements pymysql import 후 커넥트 사용
-        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
-                                        charset='utf8', autocommit=False)
+        mysql_con = getMariaConn()
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 #쿼리문 실행
@@ -2260,8 +2288,7 @@ class isExistEmpNm(Resource): # Mariadb 연결 진행
         logging.debug('================== App End ==================')
 
         #requirements pymysql import 후 커넥트 사용
-        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
-                                        charset='utf8', autocommit=False)
+        mysql_con = getMariaConn()
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 #쿼리문 실행
@@ -2589,8 +2616,7 @@ class questiondetail(Resource): # Mariadb 연결 진행
         logging.debug('================== App End ==================')
 
         #requirements pymysql import 후 커넥트 사용
-        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
-                                        charset='utf8', autocommit=False)
+        mysql_con = getMariaConn()
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 #쿼리문 실행
@@ -2688,8 +2714,7 @@ class questionAw(Resource): # Mariadb 연결 진행
         logging.debug('================== App End ==================')
 
         #requirements pymysql import 후 커넥트 사용
-        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
-                                        charset='utf8', autocommit=False)
+        mysql_con = getMariaConn()
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 #쿼리문 실행
@@ -3021,8 +3046,7 @@ class popUpData(Resource): # Mariadb 연결 진행
         logging.debug('================== App End ==================')
 
         #requirements pymysql import 후 커넥트 사용
-        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
-                                        charset='utf8', autocommit=False)
+        mysql_con = getMariaConn()
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 #쿼리문 실행

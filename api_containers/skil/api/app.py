@@ -20,7 +20,14 @@ logger = logging.getLogger(__name__)
 """ 
 HELPER FUNCTIONS
 """
-
+def getMariaConn():
+    return pymysql.connect(
+            host=os.environ['MYSQL_HOST'],
+            port=int(os.environ['MYSQL_PORT']),
+            db=os.environ['MYSQL_DATABASE'],
+            user=os.environ['MYSQL_USER'],
+            password=os.environ['MYSQL_PASSWORD'],
+            charset='utf8')
 
 def userExist(username):
     # if users.find({"Username": username}).count() == 0:
@@ -71,8 +78,7 @@ RESOURCES
 
 class Hello(Resource):
     def get(self):
-        mysql_con = pymysql.connect(host='218.151.225.142', port=9876, db='testdb', user='ims2', password='1234',
-                                    charset='utf8')
+        mysql_con = getMariaConn()
         mysql_con.cursor(pymysql.cursors.DictCursor)
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
@@ -223,8 +229,7 @@ class Save(Resource):
 
 class mariaClass(Resource):
     def get(self):
-        mysql_con = pymysql.connect(host='218.151.225.142', port=9876, db='testdb', user='ims2', password='1234',
-                                        charset='utf8')
+        mysql_con = getMariaConn()
 
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
@@ -263,8 +268,7 @@ class skilMgmtSearch(Resource):
         logging.debug('skil : ' + skil)
         logging.debug('------------------------------------')
 
-        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
-                                    charset='utf8')
+        mysql_con = getMariaConn()
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 sql = "SELECT A.EMP_NO, " \
@@ -349,8 +353,7 @@ class retrieveCmmCd(Resource):
 
         grp_id = request.args.get('grp_id')
 
-        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
-                                    charset='utf8')
+        mysql_con = getMariaConn()
 
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
@@ -379,8 +382,7 @@ class skilRegPopupSearch(Resource):
         logging.debug('skilRegPopupSearch empNo' + empNo)
         logging.debug('skilRegPopupSearch cntcDivsCd' + cntcDivsCd)
 
-        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
-                                    charset='utf8')
+        mysql_con = getMariaConn()
         if cntcDivsCd == '01' :
             try:
                 with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
@@ -452,8 +454,7 @@ class retrieveEmpSkilCd(Resource):
 
         logging.debug('retrieveskilCd Start')
 
-        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
-                                    charset='utf8')
+        mysql_con = getMariaConn()
 
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
@@ -482,8 +483,7 @@ class deleteSkilDetl(Resource):
 
         logging.debug(empNo)
 
-        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
-                                    charset='utf8')
+        mysql_con = getMariaConn()
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 sql = "DELETE FROM TB_SKIL_MGNT_M WHERE EMP_NO = %s " \
@@ -520,8 +520,7 @@ class saveSkilDetl(Resource):
 
         logging.debug(empNo)
 
-        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
-                                    charset='utf8')
+        mysql_con = getMariaConn()
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
 
@@ -585,8 +584,7 @@ class retrieveSkilCd(Resource):
         logging.debug('skilDiv : ' + skilDiv)
         logging.debug('------------------------------------')
 
-        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
-                                    charset='utf8')
+        mysql_con = getMariaConn()
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 sql = "SELECT SKIL_SNO, SKIL_DIVS_CD, SKIL_NAME, REG_EMP_NO, DATE_FORMAT(REG_DATE, '%Y-%m-%d') AS REG_DATE, RMKS FROM TB_SKIL_MGNT_CD WHERE 1=1 "
@@ -612,8 +610,7 @@ class getskilCdMgmt(Resource):
         # Get posted data from request
         logging.debug("getskilCdMgmt Start")
 
-        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
-                                    charset='utf8')
+        mysql_con = getMariaConn()
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 sql = "SELECT CMM_CD, CMM_CD_NAME FROM TB_CMM_CD_DETL WHERE CMM_CD_GRP_ID = 'SKIL_DIVS_CD' ORDER BY CMM_CD ASC"
@@ -672,8 +669,7 @@ class insertSkilCd(Resource):
             logging.debug(row + ':' + request.form[row])
             globals()[row] = request.form[row]
 
-        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
-                                    charset='utf8')
+        mysql_con = getMariaConn()
         logging.debug("CONNET Start")
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
@@ -713,8 +709,7 @@ class updateSkilCd(Resource):
             logging.debug(row + ':' + request.form[row])
             globals()[row] = request.form[row]
 
-        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
-                                    charset='utf8')
+        mysql_con = getMariaConn()
 
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
