@@ -46,7 +46,7 @@ services:
 #      - postgres
       - skil_api
       - cmm_api
-      - cnc_api
+#      - cnc_api
       - dili_api
 #      - eval_api
 #      - kpi_api
@@ -121,14 +121,14 @@ services:
     build: "./api_containers/cmm/db"
 
   # 5.접속 관리
-  cnc_api:
-    build: "./api_containers/cnc/api"
-    ports:
-      - "5005:5005"
-    links:
-      - cnc_db
-  cnc_db:
-    build: "./api_containers/cnc/db"
+#  cnc_api:
+#    build: "./api_containers/cnc/api"
+#    ports:
+#      - "5005:5005"
+#    links:
+#      - cnc_db
+#  cnc_db:
+#    build: "./api_containers/cnc/db"
 
   # 6.근태 관리
   dili_api:
@@ -168,23 +168,23 @@ services:
   #    build: "./api_containers/kpi/db"
 
   # 9.현황 관리
-  stat_api:
-    build: "./api_containers/stat/api"
-    ports:
-      - "5009:5009"
-    links:
-      - stat_db
-  stat_db:
-    build: "./api_containers/stat/db"
+#  stat_api:
+#    build: "./api_containers/stat/api"
+#    ports:
+#      - "5009:5009"
+#    links:
+#      - stat_db
+#  stat_db:
+#    build: "./api_containers/stat/db"
 
   # 10.사이트맵 관리
-  site_api:
-    build: "./api_containers/site/api"
-    ports:
-      - "5010:5010"
-    links:
-      - site_db
-  site_db:
-    build: "./api_containers/site/db"
+#  site_api:
+#    build: "./api_containers/site/api"
+#    ports:
+#      - "5010:5010"
+#    links:
+#      - site_db
+#  site_db:
+#    build: "./api_containers/site/db"
 
 

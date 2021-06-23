@@ -15,6 +15,7 @@
         <link href="{% static 'css/ax5picker.css' %}" rel="stylesheet"/>
         <link href="{% static 'css/ax5select.css' %}" rel="stylesheet"/>
         <link href="{% static 'css/ax5toast.css' %}" rel="stylesheet"/>
+        <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 
         <script type="text/javascript" src="{% static 'js/jquery-3.4.1.min.js' %}"></script>
         <script type="text/javascript" src="{% static 'js/bootstrap-4.4.1.min.js' %}"></script>
@@ -30,7 +31,10 @@
         <script type="text/javascript" src="{% static 'js/ax5select.js' %}"></script>
         <script type="text/javascript" src="{% static 'js/ax5toast.js' %}"></script>
         <script type="text/javascript" src="{% static 'js/jquery-util.js' %}?{% now 'YmdHis' %}"></script>
+        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+        <script type="text/javascript" src="{% static 'js/jquery.mtz.monthpicker.js' %}?{% now 'YmdHis' %}"></script>
 
+        <script type="text/javascript" src="{% static 'common/common.js' %}?{% now 'YmdHis' %}"></script>
         <script type="text/javascript">
             $(document).ready(function(){
 

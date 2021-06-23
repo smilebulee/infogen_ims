@@ -452,6 +452,7 @@ class monthGridData(Resource): # Mariadb 연결 진행
 
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+                logger.debug('========= sql generat')
                 #쿼리문 실행
                 sql = "SELECT  A.EMP_EMAL_ADDR "\
                     + "       ,A.WRK_DT "\
@@ -474,6 +475,7 @@ class monthGridData(Resource): # Mariadb 연결 진행
                     + "  AND A.EMP_EMAL_ADDR = '" + data["email"] + "' "\
                     + "  AND A.WRK_DT like '"+data["mDt"]+"%' "\
                     + "  ORDER BY A.WRK_DT"
+                logger.debug('========= sql generated')
                 logging.debug(sql + "???????")
                 cursor.execute(sql)
         finally:
