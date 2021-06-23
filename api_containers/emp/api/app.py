@@ -12,11 +12,12 @@ import socket
 
 import json
 import pymysql
+import os
 
 app = Flask(__name__)
 api = Api(app)
 logger = logging.getLogger(__name__)
-
+app.config['JSON_AS_ASCII'] = False
 
 # logging.debug("1")
 # mysql_con = pymysql.connect(host='mariadb', port=3306, db='test11', user='root', password='infogen')
@@ -410,13 +411,37 @@ class testDB(Resource):
 
 class mariatestDB(Resource): # Mariadb 연결 진행
     def get(self):
+        logger.info("this is api")
+
+        logger.info(os.environ['MYSQL_HOST'])
+        logger.info(os.environ['MYSQL_PORT'])
+        logger.info(os.environ['MYSQL_DATABASE'])
+        logger.info(os.environ['MYSQL_USER'])
+        logger.info(os.environ['MYSQL_PASSWORD'])
+
         #requirements pymysql import 후 커넥트 사용
-        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
-                                        charset='utf8')
+        """
+        mysql_con = pymysql.connect(
+            getSystemInfo(), 
+            port=3306, 
+            db='IFG_IMS', 
+            user='ims2', 
+            password='1234',
+            charset='utf8')
+        """
+        mysql_con = pymysql.connect(
+            host=os.environ['MYSQL_HOST'],
+            port=int(os.environ['MYSQL_PORT']),
+            db=os.environ['MYSQL_DATABASE'],
+            user=os.environ['MYSQL_USER'],
+            password=os.environ['MYSQL_PASSWORD'],
+            charset='utf8')
+
+        logger.info("connected")
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 #쿼리문 실행
-                sql = "SELECT * FROM WEB_CONN_TEST "
+                sql = "SELECT * FROM TB_EMP_MGMT "
                 cursor.execute(sql)
 
                 mysql_con.commit();
@@ -430,8 +455,14 @@ class mariatestDB(Resource): # Mariadb 연결 진행
             logging.debug(row)
             logging.debug('===============')
         array = list(result2)  # 결과를 리스트로
+        logger.info("return")
 
-        return result2
+        retJson = {
+            "status": 200,
+            "obj": array
+        }
+        return jsonify(retJson)
+
 
 class SingIn(Resource): # 사용자 정보 조회
     def post(self):
