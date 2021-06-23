@@ -1,4 +1,4 @@
 Flask
 flask_restful
 bcrypt
-PyMySQL
+pymysql
