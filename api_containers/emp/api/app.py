@@ -17,7 +17,6 @@ import os
 app = Flask(__name__)
 api = Api(app)
 logger = logging.getLogger(__name__)
-app.config['JSON_AS_ASCII'] = False
 
 # logging.debug("1")
 # mysql_con = pymysql.connect(host='mariadb', port=3306, db='test11', user='root', password='infogen')
@@ -53,7 +52,7 @@ def getSystemInfo():
     logging.debug('emp Server')
     logging.debug(socket.gethostbyname(socket.gethostname()))
     try:
-        if (socket.gethostbyname(socket.gethostname()) == "172.20.0.6" ) :
+        if (socket.gethostbyname(socket.gethostname()) == "172.18.0.7" ) :
             logging.debug('Prod Server')
             return "mariadb"
         else :
@@ -195,7 +194,7 @@ class Search(Resource):
         #     #     "email": email
         #     # })
 
-        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='test11', user='root', password='infogen')
+        mysql_con = pymysql.connect(host=getSystemInfo(), port=3306, db='test11', user='root', password='infogen')
         cursor = mysql_con.cursor()
 
         logging.debug("3")
@@ -308,7 +307,7 @@ class Search2(Resource):
 
         logging.debug("is not null id")
 
-        mysql_con = pymysql.connect(getSystemInfo(), port='3306:3306', db='test11', user='root', password='infogen',charset ='utf8')
+        mysql_con = pymysql.connect(host=getSystemInfo(), port='3306:3306', db='test11', user='root', password='infogen',charset ='utf8')
 
         try :
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
@@ -357,7 +356,7 @@ class empReferenceInit(Resource):
         logging.debug('------------------------------------')
 
 
-        mysql_con = pymysql.connect(getSystemInfo(), port='3306', db='test11', user='root', password='infogen',charset ='utf8')
+        mysql_con = pymysql.connect(host=getSystemInfo(), port='3306', db='test11', user='root', password='infogen',charset ='utf8')
         logging.debug('init sql end')
         try :
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
@@ -389,7 +388,7 @@ class empReferenceInit(Resource):
 
 class testDB(Resource):
     def get(self):
-        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
+        mysql_con = pymysql.connect(host=getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
                                         charset='utf8')
 
         try:
@@ -466,7 +465,7 @@ class mariatestDB(Resource): # Mariadb 연결 진행
 
 class SingIn(Resource): # 사용자 정보 조회
     def post(self):
-        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
+        mysql_con = pymysql.connect(host=getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
                                         charset='utf8')
 
         params = request.get_json()
@@ -511,7 +510,7 @@ class SingIn(Resource): # 사용자 정보 조회
 
 class authSearch(Resource):  # 사용자 권한 조회
     def post(self):
-        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
+        mysql_con = pymysql.connect(host=getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
                                         charset='utf8')
         params = request.get_json()
 
@@ -555,7 +554,7 @@ class getMainMenu(Resource):  # Mariadb 연결 진행
         logger.info('getMainMenu_app_start')
         data = request.get_json()
         # requirements pymysql import 후 커넥트 사용
-        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
+        mysql_con = pymysql.connect(host=getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
                                     charset='utf8', autocommit=False)
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
@@ -592,7 +591,7 @@ class getSubMenu(Resource):  # Mariadb 연결 진행
         logger.info('getSubMenu_app_start')
         data = request.get_json()
         # requirements pymysql import 후 커넥트 사용
-        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
+        mysql_con = pymysql.connect(host=getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
                                     charset='utf8', autocommit=False)
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:

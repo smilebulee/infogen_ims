@@ -26,6 +26,7 @@ class DateTimeEncoder(JSONEncoder):
             return obj.isoformat()
 
 def getMariaConn():
+    logging.debug('====================='+os.environ['MYSQL_HOST'])
     return pymysql.connect(
             host=os.environ['MYSQL_HOST'],
             port=int(os.environ['MYSQL_PORT']),
@@ -229,7 +230,7 @@ class mariatestDB(Resource): # Mariadb 연결 진행
         logging.debug(request.get_json())
 
         #requirements pymysql import 후 커넥트 사용
-        #mysql_con = pymysql.connect(getSystemInfo() , port=3306, db='IFG_IMS', user='ims2', password='1234',
+        #mysql_con = pymysql.connect(host=getSystemInfo() , port=3306, db='IFG_IMS', user='ims2', password='1234',
         #                                charset='utf8', autocommit=False)
         mysql_con = getMariaConn()
         try:
@@ -256,7 +257,7 @@ class yryMgmt(Resource): # Mariadb 연결 진행
         data = request.get_json()
 
         #requirements pymysql import 후 커넥트 사용
-        #mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
+        #mysql_con = pymysql.connect(host=getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
         #                                charset='utf8', autocommit=False)
         mysql_con = getMariaConn()
 
@@ -283,7 +284,7 @@ class totalWrktm(Resource): # Mariadb 연결 진행
         data = request.get_json()
 
         #requirements pymysql import 후 커넥트 사용
-        #mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
+        #mysql_con = pymysql.connect(host=getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
         #                                charset='utf8', autocommit=False)
         mysql_con = getMariaConn()
 
@@ -320,7 +321,7 @@ class hldyMgmt(Resource): # Mariadb 연결 진행
         data = request.get_json()
 
         #requirements pymysql import 후 커넥트 사용
-        #mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
+        #mysql_con = pymysql.connect(host=getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
         #                                charset='utf8', autocommit=False)
         mysql_con = getMariaConn()
 
@@ -355,7 +356,7 @@ class weekGridData(Resource): # Mariadb 연결 진행
         logging.debug('================== App End ==================')
 
         #requirements pymysql import 후 커넥트 사용
-        #mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
+        #mysql_con = pymysql.connect(host=getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
         #                                charset='utf8', autocommit=False)
         mysql_con = getMariaConn()
 
@@ -409,7 +410,7 @@ class apvlInfo(Resource): # Mariadb 연결 진행
         logging.debug('================== App End ==================')
 
         #requirements pymysql import 후 커넥트 사용
-        #mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
+        #mysql_con = pymysql.connect(host=getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
         #                                charset='utf8', autocommit=False)
         mysql_con = getMariaConn()
 
@@ -446,7 +447,7 @@ class monthGridData(Resource): # Mariadb 연결 진행
         logging.debug('================== App End ==================')
 
         #requirements pymysql import 후 커넥트 사용
-        #mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
+        #mysql_con = pymysql.connect(host=getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
         #                                charset='utf8', autocommit=False)
         mysql_con = getMariaConn()
 
@@ -500,7 +501,7 @@ class wrkTimeInfoByEml(Resource): # Mariadb 연결 진행
         logging.debug('================== App End ==================')
 
         #requirements pymysql import 후 커넥트 사용
-        #mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
+        #mysql_con = pymysql.connect(host=getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
         #                                charset='utf8', autocommit=False)
         mysql_con = getMariaConn()
 
@@ -537,7 +538,7 @@ class wrkApvlReq(Resource): # Mariadb 연결 진행
         data = request.get_json()
 
         #requirements pymysql import 후 커넥트 사용
-        #mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
+        #mysql_con = pymysql.connect(host=getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
         #                                charset='utf8', autocommit=False)
         mysql_con = getMariaConn()
 
@@ -601,7 +602,7 @@ class saveApvlReq(Resource): # Mariadb 연결 진행
         refNm           = request.form['refNm']
 
         #requirements pymysql import 후 커넥트 사용
-        #mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
+        #mysql_con = pymysql.connect(host=getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
         #                                charset='utf8', autocommit=False)
         mysql_con = getMariaConn()
 
@@ -713,7 +714,7 @@ class saveApvlAcpt(Resource): # Mariadb 연결 진행
         th1AprvRsn = request.form['th1AprvRsn']
 
         #requirements pymysql import 후 커넥트 사용
-        #mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
+        #mysql_con = pymysql.connect(host=getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
         #                                charset='utf8', autocommit=False)
         mysql_con = getMariaConn()
 
@@ -765,7 +766,7 @@ class apvlReqHist(Resource): # Mariadb 연결 진행
         logging.debug('-------------------------------------------------------')
 
         #requirements pymysql import 후 커넥트 사용
-        #mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
+        #mysql_con = pymysql.connect(host=getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
         #                                charset='utf8', autocommit=False)
         mysql_con = getMariaConn()
 
@@ -837,7 +838,7 @@ class apvlAcptHist(Resource):  # Mariadb 연결 진행
         logging.debug('------------------------------------')
 
         # requirements pymysql import 후 커넥트 사용
-        #mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
+        #mysql_con = pymysql.connect(host=getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
         #                            charset='utf8', autocommit=False)
         mysql_con = getMariaConn()
 
@@ -917,7 +918,7 @@ class empList(Resource): # Mariadb 연결 진행
         logging.debug('================== App End ==================')
 
         #requirements pymysql import 후 커넥트 사용
-        #mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
+        #mysql_con = pymysql.connect(host=getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
         #                                charset='utf8', autocommit=False)
         mysql_con = getMariaConn()
 
@@ -961,7 +962,7 @@ class empInfo(Resource): # Mariadb 연결 진행
         logging.debug('================== App End ==================')
 
         #requirements pymysql import 후 커넥트 사용
-        #mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
+        #mysql_con = pymysql.connect(host=getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
         #                                charset='utf8', autocommit=False)
         mysql_con = getMariaConn()
 
@@ -1362,7 +1363,7 @@ class noticeLst(Resource):  # Mariadb 연결 진행
         logging.debug('------------------------------------')
 
         # requirements pymysql import 후 커넥트 사용
-        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
+        mysql_con = pymysql.connect(host=getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
                                     charset='utf8', autocommit=False)
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
@@ -1458,7 +1459,7 @@ class noticeOne(Resource):  # Mariadb 연결 진행
         logging.debug('------------------------------------')
 
         # requirements pymysql import 후 커넥트 사용
-        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
+        mysql_con = pymysql.connect(host=getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
                                     charset='utf8', autocommit=False)
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
@@ -1505,7 +1506,7 @@ class noticePopCnt(Resource):  # Mariadb 연결 진행
         logging.debug('------------------------------------')
 
         # requirements pymysql import 후 커넥트 사용
-        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
+        mysql_con = pymysql.connect(host=getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
                                     charset='utf8', autocommit=False)
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
@@ -1536,7 +1537,7 @@ class noticePopUp(Resource):  # Mariadb 연결 진행
         logging.debug('------------------------------------')
 
         # requirements pymysql import 후 커넥트 사용
-        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
+        mysql_con = pymysql.connect(host=getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
                                     charset='utf8', autocommit=False)
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
@@ -1585,7 +1586,7 @@ class noticeMjrCnt(Resource):  # Mariadb 연결 진행
         logging.debug('------------------------------------')
 
         # requirements pymysql import 후 커넥트 사용
-        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
+        mysql_con = pymysql.connect(host=getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
                                     charset='utf8', autocommit=False)
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
@@ -1648,7 +1649,7 @@ class noticeSave(Resource):
 
 
 
-        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
+        mysql_con = pymysql.connect(host=getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
                                     charset='utf8', autocommit=False)
 
 
@@ -1715,7 +1716,7 @@ class noticeDelete(Resource):
         logging.debug("=====================")
 
 
-        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
+        mysql_con = pymysql.connect(host=getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
                                     charset='utf8', autocommit=False)
 
         logging.debug("delete Start")
@@ -1828,7 +1829,7 @@ class insertStrtTm(Resource):  # Mariadb 연결 진행
         tm = params['tm']
 
         # requirements pymysql import 후 커넥트 사용
-        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
+        mysql_con = pymysql.connect(host=getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
                                     charset='utf8', autocommit=False)
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
@@ -1888,7 +1889,7 @@ class updateEndTm(Resource):  # Mariadb 연결 진행
 
 
         # requirements pymysql import 후 커넥트 사용
-        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
+        mysql_con = pymysql.connect(host=getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
                                     charset='utf8', autocommit=False)
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
@@ -1977,7 +1978,7 @@ class retrieveCmmCd(Resource):
         # get data
         data = request.get_json()
 
-        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
+        mysql_con = pymysql.connect(host=getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
                                     charset='utf8')
 
         try:
@@ -2008,7 +2009,7 @@ class scheduleStatLst(Resource):
         # get data
         data = request.get_json()
 
-        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
+        mysql_con = pymysql.connect(host=getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
                                     charset='utf8')
 
         try:
@@ -2194,7 +2195,7 @@ class empMgmtRegSubmit(Resource):
 
 
 
-        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
+        mysql_con = pymysql.connect(host=getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
                                     charset='utf8', autocommit=False)
 
 
@@ -2348,7 +2349,7 @@ class empMgmtEditSubmit(Resource):
 
 
 
-        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
+        mysql_con = pymysql.connect(host=getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
                                     charset='utf8', autocommit=False)
 
 
@@ -2399,7 +2400,7 @@ class empMgmtDelSubmit(Resource):
 
 
 
-        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
+        mysql_con = pymysql.connect(host=getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
                                     charset='utf8', autocommit=False)
 
 
@@ -2432,7 +2433,7 @@ class question(Resource):  # Mariadb 연결 진행
         logging.debug(request.get_json())
 
         # requirements pymysql import 후 커넥트 사용
-        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
+        mysql_con = pymysql.connect(host=getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
                                     charset='utf8', autocommit=False)
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
@@ -2466,7 +2467,7 @@ class questionInfo(Resource):  # Mariadb 연결 진행
         logging.debug('================== App End ==================')
 
         # requirements pymysql import 후 커넥트 사용
-        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
+        mysql_con = pymysql.connect(host=getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
                                     charset='utf8', autocommit=False)
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
@@ -2496,7 +2497,7 @@ class qnaPopCnt(Resource):  # Mariadb 연결 진행
         logging.debug(request.get_json())
 
         # requirements pymysql import 후 커넥트 사용
-        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
+        mysql_con = pymysql.connect(host=getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
                                     charset='utf8', autocommit=False)
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
@@ -2522,7 +2523,7 @@ class qnaPopUp(Resource):  # Mariadb 연결 진행
 
 
         # requirements pymysql import 후 커넥트 사용
-        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
+        mysql_con = pymysql.connect(host=getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
                                     charset='utf8', autocommit=False)
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
@@ -2571,7 +2572,7 @@ class questionWrSubmit(Resource):
 
 
 
-        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
+        mysql_con = pymysql.connect(host=getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
                                     charset='utf8', autocommit=False)
 
 
@@ -2675,7 +2676,7 @@ class questionDel(Resource):
 
 
 
-        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
+        mysql_con = pymysql.connect(host=getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
                                     charset='utf8', autocommit=False)
 
 
@@ -2767,7 +2768,7 @@ class qnaAnserReg(Resource):
 
 
 
-        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
+        mysql_con = pymysql.connect(host=getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
                                     charset='utf8', autocommit=False)
 
 
@@ -2837,7 +2838,7 @@ class qnaUpdate(Resource):
 
 
 
-        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
+        mysql_con = pymysql.connect(host=getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
                                     charset='utf8', autocommit=False)
 
 
@@ -2886,7 +2887,7 @@ class qnaUpdateCnt(Resource):
 
 
 
-        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
+        mysql_con = pymysql.connect(host=getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
                                     charset='utf8', autocommit=False)
 
 
@@ -2927,7 +2928,7 @@ class qnaSearch(Resource):  # Mariadb 연결 진행
         logging.debug('================== App End ==================')
 
         # requirements pymysql import 후 커넥트 사용
-        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
+        mysql_con = pymysql.connect(host=getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
                                     charset='utf8', autocommit=False)
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
@@ -2979,7 +2980,7 @@ class updateRestTm(Resource):  # Mariadb 연결 진행
         restTm = params['restTm']
 
         # requirements pymysql import 후 커넥트 사용
-        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
+        mysql_con = pymysql.connect(host=getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
                                     charset='utf8', autocommit=False)
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
@@ -3015,7 +3016,7 @@ class updateDinnRestTm(Resource):  # Mariadb 연결 진행
         dinnRestTm = params['dinnRestTm']
 
         # requirements pymysql import 후 커넥트 사용
-        mysql_con = pymysql.connect(getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
+        mysql_con = pymysql.connect(host=getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
                                     charset='utf8', autocommit=False)
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
