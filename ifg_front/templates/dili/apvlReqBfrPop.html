@@ -5,23 +5,27 @@
 
         //TO DO : h5_apvlReqBfrTit 등록/수정/상세 제목 변경
         //TO DO : btn_apvlBfrReq 저장/수정 버튼 변경
-        if($('#currReqPopStts').val() == "register") {
+        if ($('#currReqPopStts').val() == "register") {
             $('#h5_apvlReqBfrTit').html("<b>근무결재요청 등록</b>");
             $('#btn_apvlBfrReq').text("저장");
             $('#ipt_wrkDt').prop('readonly', false);
             $('#apvlReqUpdDtDiv').addClass('d-none');
             $('#apvlReqAcptDiv' ).addClass('d-none');
 
+            // 후결재의 경우 스케줄 상세 팝업의 날짜, 출근, 퇴근 시간 세팅, 수정 불가 처리
+            if ($('#currReqMthd').val() == "02") {
+
+            }
             var nowDt = new Date();
             var strNowDt = nowDt.getFullYear() + '-' + fillZero(2, (nowDt.getMonth() + 1) + '') + '-' + fillZero(2, nowDt.getDate() + '');
             var strNowTm = fillZero(2, nowDt.getHours()) + ':' + fillZero(2, nowDt.getMinutes());
 
-            //기본 선택 날짜 접속일, 접속시간으로 설정
+            // 기본 선택 날짜 접속일, 접속시간으로 설정
             $("#ipt_wrkDt").val(strNowDt);
             $("#ipt_jobStrtTm").val(strNowTm);
             $("#ipt_jobEndTm").val(strNowTm);
 
-            //현재일 스케줄관리 정보 있는지 확인 후 불러옴
+            // 해당 날짜 스케줄관리 정보 있는지 확인 후 불러옴
             $("#ipt_wrkDt").change();
 
 
