@@ -307,6 +307,13 @@ class apvlReqPop(generic.TemplateView):
         # return render(request, template_name, rr)
 
 
+class yryApvlReqPop(generic.TemplateView):
+    def get(self, request, *args, **kwargs):
+        template_name = 'dili/yryApvlReqPopup.html'
+
+        return render(request, template_name)
+
+
 class apvlReqBfrPop(generic.TemplateView):
     def get(self, request, *args, **kwargs):
         template_name = 'dili/apvlReqBfrPop.html'
