@@ -52,7 +52,7 @@ def getSystemInfo():
     logging.debug('emp Server')
     logging.debug(socket.gethostbyname(socket.gethostname()))
     try:
-        if (socket.gethostbyname(socket.gethostname()) == "172.18.0.7" ) :
+        if (socket.gethostbyname(socket.gethostname()) == "172.20.0.6" ) :
             logging.debug('Prod Server')
             return "mariadb"
         else :
