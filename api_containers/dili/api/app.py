@@ -27,8 +27,15 @@ class DateTimeEncoder(JSONEncoder):
 
 def getMariaConn():
     logging.debug('====================='+os.environ['MYSQL_HOST'])
+
+    logging.info(os.environ['MYSQL_HOST'])
+    logging.info(os.environ['MYSQL_PORT'])
+    logging.info(os.environ['MYSQL_DATABASE'])
+    logging.info(os.environ['MYSQL_USER'])
+    logging.info(os.environ['MYSQL_PASSWORD'])
+
     return pymysql.connect(
-            host=os.environ['MYSQL_HOST'],
+            host=getSystemInfo(),
             port=int(os.environ['MYSQL_PORT']),
             db=os.environ['MYSQL_DATABASE'],
             user=os.environ['MYSQL_USER'],
@@ -39,7 +46,7 @@ def getSystemInfo():
     logging.debug('dill Server')
     logging.debug(socket.gethostbyname(socket.gethostname()))
     try:
-        if (socket.gethostbyname(socket.gethostname()) == "172.20.0.4" ) :
+        if (socket.gethostbyname(socket.gethostname()) == "172.20.0.13" ) :
             logging.debug('Prod Server')
             return "mariadb"
         else :
