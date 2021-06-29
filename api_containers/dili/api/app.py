@@ -1,5 +1,6 @@
 from flask import Flask, jsonify, request
 from flask_restful import Api, Resource
+from datetime import date, timedelta        # 연차 등록 시, 근무시간 레코드 등록을 위한 날짜 리스트 추출 용도로  추가
 #from pymongo import MongoClient
 import logging
 logging.basicConfig(level=logging.DEBUG)
@@ -1804,7 +1805,20 @@ class saveYryApvlReq(Resource):  # Mariadb 연결 진행
         logging.debug("emerCtpl     = " + emerCtpl)
         logging.debug("holiDays     = " + holiDays)
 
-        logging.debug("=====================")
+        logging.debug("========== 연차 시작일 / 종료일 사이 평일 추출 ==========")
+        strtDt = date(int(holiTerm1.split('-')[0]), int(holiTerm1.split('-')[1]), int(holiTerm1.split('-')[2]))
+        endDt  = date(int(holiTerm2.split('-')[0]), int(holiTerm2.split('-')[1]), int(holiTerm2.split('-')[2]))
+        delta  = endDt - strtDt
+        datelist = []
+        
+        # 시작일 / 종료일 사이 평일 
+        for i in range(delta.days + 1):
+            if ((strtDt + timedelta(days=i)).weekday() < 5):
+                datelist.append((strtDt + timedelta(days=i)).isoformat())
+
+        logging.debug(datelist)
+        logging.debug("=========================================================")
+
 
         # requirements pymysql import 후 커넥트 사용
         mysql_con = getMariaConn()
@@ -1851,16 +1865,17 @@ class saveYryApvlReq(Resource):  # Mariadb 연결 진행
                 logger.info(sql1)
                 cursor.execute(sql1)
 
-                sql2 = "INSERT INTO TB_WRK_TM_MGMT_M(" \
-                       "`EMP_EMAL_ADDR`," \
-                       "`WRK_DT`," \
-                       "`JOB_STRT_TM`," \
-                       "`JOB_END_TM`," \
-                       "`NORM_WRK_TM`)" \
-                       "VALUES( %s, %s, %s, %s, %s )"
+                for i in datelist:
+                    sql2 = "INSERT INTO TB_WRK_TM_MGMT_M(" \
+                           "`EMP_EMAL_ADDR`," \
+                           "`WRK_DT`," \
+                           "`JOB_STRT_TM`," \
+                           "`JOB_END_TM`," \
+                           "`NORM_WRK_TM`)" \
+                           "VALUES( %s, %s, %s, %s, %s )"
 
-                logger.info(sql2)
-                cursor.execute(sql2, (email, wrkDt, jobStrtTm, jobEndTm, wrkTme))
+                    logger.info(sql2)
+                    cursor.execute(sql2, (email, i, jobStrtTm, jobEndTm, wrkTme))
 
                 sql3 = "UPDATE TB_YRY_MGMT_M" \
                        "   SET USE_YRY_DAYS = USE_YRY_DAYS + %s" \
