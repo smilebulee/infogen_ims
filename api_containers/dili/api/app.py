@@ -1166,10 +1166,14 @@ class duplApvlReqCnt(Resource): # Mariadb 연결 진행
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 # 쿼리문 실행
-                sql = "SELECT COUNT(*) AS APVL_REQ_CNT " \
+                sql = "SELECT COUNT(*) AS APVL_REQ_CNT" \
+                      "     , CASE WHEN APVL_DIVS = '01' THEN '야간근무' " \
+                      "            WHEN APVL_DIVS = '02' THEN '휴일근무' " \
+                      "            WHEN APVL_DIVS = '03' THEN '연차' " \
+                      "            ELSE '' END APVL_DIVS " \
                       "  FROM TB_APVL_REQ_MGMT_M " \
                       " WHERE EMP_EMAL_ADDR = '" + data["email"] + "' " \
-                      "   AND WRK_DT = '" + data["wrkDt"] + "' "
+                      "   AND WRK_DT = '"        + data["wrkDt"] + "' "
                 logging.debug("duplApvlReqCnt SQL문" + sql)
                 cursor.execute(sql)
 
@@ -1745,72 +1749,129 @@ class saveYryApvlReq(Resource):  # Mariadb 연결 진행
     def post(self):
 
         params = json.loads(request.data)
+        #params = request.get_json()
         logger.info("App Parameters Start")
         logger.info(params)
         logger.info(type(params))
         logger.info("App Parameters End")
 
-        for row in params:
-            logger.info("request.form Parameters Start")
-            logger.info(row)
+        for row in request.form:
+            logger.info(row + ':' + request.form[row])
+            globals()[row] = request.form[row]
 
-            email = row['email']
-            apvlReqDivs = row['apvlReqDivs']
-            wrkDt = row['wrkDt']
-            wrkTme = row['wrkTme']
-            wrkReqRsn = row['wrkReqRsn']
-            th1AprvStus = row['th1AprvStus']
-            th1AprvNm = row['th1AprvNm']
-            emerCtpl = row['emerCtpl']
+        email           = params['email']
+        apvlDivs        = params['apvlDivs']
+        apvlReqDivs     = params['apvlReqDivs']
+        ptoKdCd         = params['ptoKdCd']
+        hdoKdCd         = params['hdoKdCd']
+        jobStrtTm       = params['jobStrtTm']
+        jobEndTm        = params['jobEndTm']
+        holiTerm1       = params['holiTerm1']
+        holiTerm2       = params['holiTerm2']
+        wrkDt           = params['wrkDt']
+        wrkTme          = params['wrkTme']
+        wrkReqRsn       = params['wrkReqRsn']
+        th1AprvStus     = params['th1AprvStus']
+        th1AprvNm       = params['th1AprvNm']
+        refNm           = params['refNm']
+        emerCtpl        = params['emerCtpl']
+        holiDays        = params['holiDays']
+        
+        logging.debug("====Param data====")
 
+        logging.debug("email        = " + email)
+        logging.debug("apvlDivs     = " + apvlDivs)
+        logging.debug("apvlReqDivs  = " + apvlReqDivs)
+        logging.debug("ptoKdCd      = " + ptoKdCd)
+        logging.debug("hdoKdCd      = " + hdoKdCd)
+        logging.debug("jobStrtTm    = " + jobStrtTm)
+        logging.debug("jobEndTm     = " + jobEndTm)
+        logging.debug("holiTerm1    = " + holiTerm1)
+        logging.debug("holiTerm2    = " + holiTerm2)
+        logging.debug("wrkDt        = " + wrkDt)
+        logging.debug("wrkTme       = " + wrkTme)
+        logging.debug("wrkReqRsn    = " + wrkReqRsn)
+        logging.debug("th1AprvStus  = " + th1AprvStus)
+        logging.debug("th1AprvNm    = " + th1AprvNm)
+        logging.debug("refNm        = " + refNm)
+        logging.debug("emerCtpl     = " + emerCtpl)
+        logging.debug("holiDays     = " + holiDays)
 
+        logging.debug("=====================")
 
-            # requirements pymysql import 후 커넥트 사용
-            mysql_con = getMariaConn()
-            try:
-                with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
-                    # 쿼리문 실행
-                    sql1 = "INSERT INTO TB_APVL_REQ_MGMT_M (" \
-                           "`EMP_EMAL_ADDR`," \
-                           "`APVL_REQ_DIVS`," \
-                           "`WRK_DT`," \
-                           "`WRK_TME`," \
-                           "`WRK_REQ_RSN`," \
-                           "`APVL_REQ_DT`," \
-                           "`TH1_APRV_STUS`," \
-                           "`TH1_APRV_NM`," \
-                           "`APVL_LAST_APRV_DT`," \
-                           "`EMER_CTPL`)" \
-                           "VALUES( %s, %s, %s, %s, %s, NOW(), %s, %s, NOW(), %s)"
+        # requirements pymysql import 후 커넥트 사용
+        mysql_con = getMariaConn()
+        try:
+            with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+                # 쿼리문 실행
+                sql1 = "INSERT INTO TB_APVL_REQ_MGMT_M (" \
+                                                      "`EMP_EMAL_ADDR`," \
+                                                      "`APVL_DIVS`," \
+                                                      "`APVL_REQ_DIVS`," \
+                                                      "`PTO_KD_CD`," \
+                                                      "`HDO_KD_CD`," \
+                                                      "`WRK_DT`," \
+                                                      "`JOB_STRT_TM`," \
+                                                      "`JOB_END_TM`," \
+                                                      "`HOLI_TERM1`," \
+                                                      "`HOLI_TERM2`," \
+                                                      "`WRK_TME`," \
+                                                      "`HOLI_REQ_RSN`," \
+                                                      "`APVL_REQ_DT`," \
+                                                      "`TH1_APRV_STUS`," \
+                                                      "`TH1_APRV_NM`," \
+                                                      "`REF_NM`," \
+                                                      "`EMER_CTPL`," \
+                                                      "`APVL_LAST_APRV_DT`)" \
+                                            " VALUES (   '" + email       + "'"\
+                                                      ", '" + apvlDivs    + "'"\
+                                                      ", '" + apvlReqDivs + "'"\
+                                                      ", '" + ptoKdCd + "'"\
+                                                      ", '" + hdoKdCd + "'"\
+                                                      ", '" + wrkDt       + "'"\
+                                                      ", '" + jobStrtTm   + "'"\
+                                                      ", '" + jobEndTm    + "'"\
+                                                      ", '" + holiTerm1   + "'"\
+                                                      ", '" + holiTerm2   + "'"\
+                                                      ", '" + wrkTme      + "'"\
+                                                      ", '" + wrkReqRsn   + "'"\
+                                                      ",      NOW()" \
+                                                      ", '" + th1AprvStus + "'"\
+                                                      ", '" + th1AprvNm   + "'"\
+                                                      ", '" + refNm       + "'"\
+                                                      ", '" + emerCtpl       + "'"\
+                                                      ",      NOW())"
+                logger.info(sql1)
+                cursor.execute(sql1)
 
-                    logger.info(sql1)
-                    cursor.execute(sql1, (email, apvlReqDivs, wrkDt, wrkTme, wrkReqRsn, th1AprvStus, th1AprvNm, emerCtpl))
+                sql2 = "INSERT INTO TB_WRK_TM_MGMT_M(" \
+                       "`EMP_EMAL_ADDR`," \
+                       "`WRK_DT`," \
+                       "`JOB_STRT_TM`," \
+                       "`JOB_END_TM`," \
+                       "`NORM_WRK_TM`)" \
+                       "VALUES( %s, %s, %s, %s, %s )"
 
-                    sql2 = "INSERT INTO TB_WRK_TM_MGMT_M(" \
-                           "`EMP_EMAL_ADDR`," \
-                           "`WRK_DT`)" \
-                           "VALUES( %s, %s )"
+                logger.info(sql2)
+                cursor.execute(sql2, (email, wrkDt, jobStrtTm, jobEndTm, wrkTme))
 
-                    logger.info(sql2)
-                    cursor.execute(sql2, (email, wrkDt))
+                sql3 = "UPDATE TB_YRY_MGMT_M" \
+                       "   SET USE_YRY_DAYS = USE_YRY_DAYS + %s" \
+                       " WHERE EMP_EMAL_ADDR = %s" \
 
-                    sql3 = "UPDATE TB_YRY_MGMT_M" \
-                           "   SET USE_YRY_DAYS = USE_YRY_DAYS+1" \
-                           " WHERE EMP_EMAL_ADDR = %s" \
+                logger.info(sql3)
+                cursor.execute(sql3, (holiDays, email))
 
-                    logger.info(sql3)
-                    cursor.execute(sql3, (email))
+                mysql_con.commit()
+        except Exception as e:
+            logger.info("에러!!!!!!!!!!!!!!!!!!!!!!!"+e)
+        finally:
+            mysql_con.close()
 
-                    mysql_con.commit()
-            except Exception as e:
-                logger.info("에러!!!!!!!!!!!!!!!!!!!!!!!"+e)
-            finally:
-                mysql_con.close()
-
-            retJson = {
-                "status": 200,
-                "msg": "Data has been saved successfully"
-            }
+        retJson = {
+            "status": 200,
+            "msg": "Data has been saved successfully"
+        }
 
         return jsonify(retJson)
 

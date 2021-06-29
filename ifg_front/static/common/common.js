@@ -281,6 +281,39 @@ function checkEmpAuthsByEmail(userId, authCdArr) {
     }
 }
 
+/* input, textArea 글자수 체크 함수
+제한 글자 수 초과 시 alert 창 띄운 뒤 넘어간 만큼 잘라낸 후 focus */
+function chkLength(obj, maxByte) {
+    var strValue = obj.value;
+    var strLen = strValue.length;
+    var totalByte = 0;
+    var len = 0;
+    var oneChar = "";
+    var str2 = "";
+    for (var i = 0; i < strLen; i++) {
+        oneChar = strValue.charAt(i);
+        if (escape(oneChar).length > 4) {
+            totalByte += 2;
+        }
+        else {
+            totalByte++;
+        }
+        // 입력한 문자 길이보다 넘치면 잘라내기 위해
+        if (totalByte <= maxByte) {
+            len = i + 1;
+        }
+    }
+    // 넘어가는 글자는 자른다.
+    if (totalByte > maxByte) {
+        alertMsg(maxByte + "자를 초과 입력 할 수 없습니다.", function() {
+            $("#" + obj.id).focus();
+            str2 = strValue.substr(0, len);
+            obj.value = str2;
+            //chkLength(obj, 4000);
+        });
+        return;
+    }
+}
 
 /* 자리수만큼 0 채우기 (근무 시간 형식 지정) */
 function fillZero(width, str){
