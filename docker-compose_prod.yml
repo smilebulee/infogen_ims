@@ -49,6 +49,13 @@ services:
       - SPRING_PROFILES_ACTIVE=prod
       - SPRING_APPLICATION_NAME=emp_api
       - SIDECAR_PORT=5001
+      - MYSQL_HOST=218.151.225.142
+      - MYSQL_ROOT_PASSWORD=infogen
+      - MYSQL_PORT=3306
+      - MYSQL_USER=ims2
+      - MYSQL_PASSWORD=1234
+      - MYSQL_DATABASE=IFG_IMS
+      - TZ=Asia/Seoul
   emp_db:
     build: "./api_containers/emp/db"
 
@@ -63,6 +70,13 @@ services:
       - SPRING_PROFILES_ACTIVE=prod
       - SPRING_APPLICATION_NAME=prj_api
       - SIDECAR_PORT=5002
+      - MYSQL_HOST=218.151.225.142
+      - MYSQL_ROOT_PASSWORD=infogen
+      - MYSQL_PORT=3306
+      - MYSQL_USER=ims2
+      - MYSQL_PASSWORD=1234
+      - MYSQL_DATABASE=IFG_IMS
+      - TZ=Asia/Seoul
   prj_db:
     build: "./api_containers/prj/db"
 
@@ -120,6 +134,13 @@ services:
       - SPRING_PROFILES_ACTIVE=local      # 이미지 생성시 세팅될 환경변수들
       - SPRING_APPLICATION_NAME=dili_api
       - SIDECAR_PORT=5006
+      - MYSQL_HOST=218.151.225.142
+      - MYSQL_ROOT_PASSWORD=infogen
+      - MYSQL_PORT=3306
+      - MYSQL_USER=ims2
+      - MYSQL_PASSWORD=1234
+      - MYSQL_DATABASE=IFG_IMS
+      - TZ=Asia/Seoul
   dili_db:
     build: "./api_containers/dili/db"   # Dockerfile의 경로
   dili_db2:
