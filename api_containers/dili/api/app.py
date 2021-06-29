@@ -39,7 +39,7 @@ def getSystemInfo():
     logging.debug('dill Server')
     logging.debug(socket.gethostbyname(socket.gethostname()))
     try:
-        if (socket.gethostbyname(socket.gethostname()) == "172.20.0.4" ) :
+        if (socket.gethostbyname(socket.gethostname()) == "172.20.0.12" ) :
             logging.debug('Prod Server')
             return "mariadb"
         else :
