@@ -107,32 +107,44 @@
             scheduleStatLstTable += '<thead>';
             scheduleStatLstTable += '<tr>';
             scheduleStatLstTable += '<th class="text-center">순번</th>';
-            scheduleStatLstTable += '<th class="text-center">일자</th>';
             scheduleStatLstTable += '<th class="text-center">부서</th>';
             scheduleStatLstTable += '<th class="text-center">성명</th>';
+            scheduleStatLstTable += '<th class="text-center">일자</th>';
+            scheduleStatLstTable += '<th class="text-center">요일</th>';
             scheduleStatLstTable += '<th class="text-center">근무구분</th>';
-            scheduleStatLstTable += '<th class="text-center">근무시간</th>';
+            scheduleStatLstTable += '<th class="text-center">시작시간</th>';
+            scheduleStatLstTable += '<th class="text-center">종료시간</th>';
+            scheduleStatLstTable += '<th class="text-center">휴게</th>';
+            scheduleStatLstTable += '<th class="text-center">총근무시간</th>';
             scheduleStatLstTable += '<th class="text-center">승인상태</th>';
             scheduleStatLstTable += '</tr>';
             scheduleStatLstTable += '</thead>';
             scheduleStatLstTable += '<tbody>';
 
+            var totalRestTm;
+
             if(data.length > 0) {
                 for(var i = 0; i < data.length; i++){
                     scheduleStatLstTable += '<tr>';
                     scheduleStatLstTable += '<td id="no'+i+'" class="pt-3-half">'+(i+1)+'</td>';
-                    scheduleStatLstTable += '<td id="wrkDt" class="pt-3-half">'+data[i].WRK_DT+'</td>';
                     scheduleStatLstTable += '<td id="deptNm" class="pt-3-half">'+data[i].DEPT_NAME+'</td>';
                     scheduleStatLstTable += '<td id="ocemName" class="pt-3-half">'+data[i].OCEM_NAME+'</td>';
+                    scheduleStatLstTable += '<td id="wrkDt" class="pt-3-half">'+data[i].WRK_DT+'</td>';
+                    scheduleStatLstTable += '<td id="dow" class="pt-3-half">'+data[i].DOW+'</td>';
                     var star = '';
                     if(data[i].APVL_REQ_YN == 'N') {
                         star += '★';
                     }
                     scheduleStatLstTable += '<td id="wrkDivs" class="pt-3-half">'+star + data[i].WRK_DIVS+'</td>';
-
-                    var wrkTm = data[i].WRK_STRT_TM + " ~ " + data[i].WRK_END_TM;
-                    var allWrkTm = " (근무시간 = " + data[i].ALL_WRK_TM.substring(0,2) + ":" + data[i].ALL_WRK_TM.substring(2,4) + ":" + data[i].ALL_WRK_TM.substring(4,6) + ")"
-                    scheduleStatLstTable += '<td id="wrkTm" class="pt-3-half">'+wrkTm+allWrkTm + '</td>';
+                    scheduleStatLstTable += '<td id="wrkStrtTm" class="pt-3-half">'+data[i].WRK_STRT_TM + '</td>';
+                    scheduleStatLstTable += '<td id="wrkEndTm" class="pt-3-half">'+data[i].WRK_END_TM + '</td>';
+                    if(data[i].ALL_WRK_TM > 60) {
+                        totalRestTm = Number(data[i].REST_TM) + Number(data[i].DINN_REST_TM) + 60;
+                    } else {
+                        totalRestTm = Number(data[i].REST_TM) + Number(data[i].DINN_REST_TM)
+                    }
+                    scheduleStatLstTable += '<td id="totalRestTm" class="pt-3-half">'+totalRestTm+ '</td>';
+                    scheduleStatLstTable += '<td id="allWrkTm" class="pt-3-half">'+data[i].ALL_WRK_TM + '</td>';
                     scheduleStatLstTable += '<td id="apvlStus" class="pt-3-half">'+data[i].APVL_STUS+'</td>';
                     scheduleStatLstTable += '</tr>';
                 }
