@@ -2105,6 +2105,18 @@ class scheduleStatLst(Resource):
                       "            WHEN NVL(A.WRK_DT, '') = '' THEN B.WRK_DT" \
                       "                                        ELSE A.WRK_DT" \
                       "                                         END WRK_DT" \
+                      "      ,(SELECT CASE WHEN DOW_DIVS_CD = '01' THEN '일'" \
+                      "                    WHEN DOW_DIVS_CD = '02' THEN '월'" \
+                      "                    WHEN DOW_DIVS_CD = '03' THEN '화'" \
+                      "                    WHEN DOW_DIVS_CD = '04' THEN '수'" \
+                      "                    WHEN DOW_DIVS_CD = '05' THEN '목'" \
+                      "                    WHEN DOW_DIVS_CD = '06' THEN '금'" \
+                      "                    WHEN DOW_DIVS_CD = '07' THEN '토'" \
+		              "                    ELSE ''" \
+					  "	                    END DOW_DT" \
+ 		              "          FROM TB_DT_INFO" \
+			          "         WHERE DT = NVL(A.WRK_DT, B.WRK_DT)" \
+		              "       ) DOW" \
                       "      ,(SELECT D.CMM_CD_NAME" \
                       "		     FROM TB_CMM_CD_DETL D" \
                       "		         ,TB_EMP_MGMT E" \
@@ -2114,6 +2126,8 @@ class scheduleStatLst(Resource):
                       "	     ,(SELECT C.EMP_NAME " \
                       "	         FROM TB_EMP_MGMT C" \
                       "	        WHERE C.EMP_EMAIL = NVL(A.EMP_EMAL_ADDR, B.EMP_EMAL_ADDR)) OCEM_NAME" \
+                      "      ,NVL(A.REST_TM, '') REST_TM" \
+                      "      ,NVL(A.DINN_REST_TM, '') DINN_REST_TM" \
                       "      ,CASE WHEN B.EMP_EMAL_ADDR IS NULL AND (A.HLDY_WRK_TM != '000000' OR A.NGHT_WRK_TM != '000000') THEN '야근(미승인)'" \
                       "            WHEN B.APVL_REQ_DIVS IS NOT NULL THEN (SELECT F.CMM_CD_NAME" \
                       "                                                     FROM TB_CMM_CD_DETL F" \
@@ -2131,7 +2145,7 @@ class scheduleStatLst(Resource):
                       "		 ,CASE WHEN NVL(B.APVL_REQ_DIVS, '') = '' THEN NVL(A.JOB_END_TM, '')" \
                       "		       WHEN B.APVL_REQ_DIVS = '01' OR B.APVL_REQ_DIVS = '02'" \
                       "		       THEN NVL(B.JOB_END_TM, '') ELSE '' END WRK_END_TM" \
-                      "		 ,NVL(A.ALL_WRK_TM,'') ALL_WRK_TM" \
+                      "		 ,CONCAT(SUBSTRING(NVL(A.ALL_WRK_TM,''),1,2),':',SUBSTRING(NVL(A.ALL_WRK_TM,''),3,2)) ALL_WRK_TM" \
                       "      ,CASE WHEN B.EMP_EMAL_ADDR IS NULL AND (A.HLDY_WRK_TM != '000000' OR A.NGHT_WRK_TM != '000000') THEN 'N'" \
                       "            ELSE 'Y' END APVL_REQ_YN" \
                       "  FROM TB_WRK_TM_MGMT_M A" \
@@ -2172,6 +2186,18 @@ class scheduleStatLst(Resource):
                       "             WHEN NVL(B.WRK_DT, '') = '' THEN A.WRK_DT" \
                       "				                            ELSE B.WRK_DT" \
                       "							  			     END WRK_DT" \
+                      "       ,(SELECT CASE WHEN DOW_DIVS_CD = '01' THEN '일'" \
+                      "                     WHEN DOW_DIVS_CD = '02' THEN '월'" \
+                      "                     WHEN DOW_DIVS_CD = '03' THEN '화'" \
+                      "                     WHEN DOW_DIVS_CD = '04' THEN '수'" \
+                      "                     WHEN DOW_DIVS_CD = '05' THEN '목'" \
+                      "                     WHEN DOW_DIVS_CD = '06' THEN '금'" \
+                      "                     WHEN DOW_DIVS_CD = '07' THEN '토'" \
+                      "                     ELSE ''" \
+                      "	                     END DOW_DT" \
+                      "           FROM TB_DT_INFO" \
+                      "          WHERE DT = NVL(A.WRK_DT, B.WRK_DT)" \
+                      "         ) DOW" \
                       "		  ,(SELECT D.CMM_CD_NAME" \
                       "		      FROM TB_CMM_CD_DETL D" \
                       "		          ,TB_EMP_MGMT E" \
@@ -2181,6 +2207,8 @@ class scheduleStatLst(Resource):
                       "		  ,(SELECT C.EMP_NAME" \
                       "	          FROM TB_EMP_MGMT C" \
                       "	         WHERE C.EMP_EMAIL = NVL(A.EMP_EMAL_ADDR, B.EMP_EMAL_ADDR)) OCEM_NAME" \
+                      "      ,NVL(A.REST_TM, '') REST_TM" \
+                      "      ,NVL(A.DINN_REST_TM, '') DINN_REST_TM" \
                       "      ,CASE WHEN B.EMP_EMAL_ADDR IS NULL AND (A.HLDY_WRK_TM != '000000' OR A.NGHT_WRK_TM != '000000') THEN '야근(미승인)'" \
                       "            WHEN B.APVL_REQ_DIVS IS NOT NULL THEN (SELECT F.CMM_CD_NAME" \
                       "                                                     FROM TB_CMM_CD_DETL F" \
@@ -2198,7 +2226,7 @@ class scheduleStatLst(Resource):
                       "		 ,CASE WHEN NVL(B.APVL_REQ_DIVS, '') = '' THEN NVL(A.JOB_END_TM, '')" \
                       "		       WHEN B.APVL_REQ_DIVS = '01' OR B.APVL_REQ_DIVS = '02'" \
                       "		       THEN NVL(B.JOB_END_TM, '') ELSE '' END WRK_END_TM" \
-                      "		 ,NVL(B.WRK_TME,'') ALL_WRK_TM" \
+                      "		 ,CONCAT(SUBSTRING(NVL(B.WRK_TME,''),1,2),':',SUBSTRING(NVL(B.WRK_TME,''),3,2)) ALL_WRK_TM" \
                       "      ,CASE WHEN B.EMP_EMAL_ADDR IS NULL AND (A.HLDY_WRK_TM != '000000' OR A.NGHT_WRK_TM != '000000') THEN 'N'" \
                       "            ELSE 'Y' END APVL_REQ_YN" \
                       "   FROM TB_WRK_TM_MGMT_M A" \
@@ -2229,7 +2257,7 @@ class scheduleStatLst(Resource):
                       sql += "    AND B.EMP_EMAL_ADDR IN (SELECT H.EMP_EMAIL" \
                              "                              FROM TB_EMP_MGMT H" \
                              "                             WHERE H.DEPT_CD = '" + data["dept"] + "')"
-                logging.debug(sql)
+                logging.debug(sql + "*****************")
                 cursor.execute(sql)
                 logging.debug('scheduleStatLst SUCCESS')
         finally:
