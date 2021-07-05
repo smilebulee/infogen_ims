@@ -6,7 +6,7 @@ from django.views import generic
 from django.http import JsonResponse
 
 from django.core.paginator import Paginator
-#from .models import Tb_page
+from django.contrib.auth.models import User
 
 from django.views.decorators.csrf import csrf_exempt
 # from .models import TB_EMP,Cd
@@ -937,10 +937,17 @@ def empMgmtEdit(request):
         logger.info("------views.py------")
         datas.setdefault(row, param[row])
 
+
+
     r = requests.post('http://dili_api:5006/empMgmtEditSubmit', data=datas)
     logger.info(r)
     logger.info(r.text)
     logger.info(r.json())
+    logger.info(datas)
+
+    usr = User.objects.get(username=datas['ipt_empId'])
+    usr.password = datas['ipt_empPw']
+    usr.save()
 
     return JsonResponse(r.json(), safe=False)
 
