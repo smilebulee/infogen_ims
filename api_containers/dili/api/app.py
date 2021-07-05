@@ -2140,11 +2140,9 @@ class scheduleStatLst(Resource):
                       "                       AND F.CMM_CD = B.TH1_APRV_STUS), '')" \
                       "          FROM DUAL) APVL_STUS" \
                       "		 ,CASE WHEN NVL(B.APVL_REQ_DIVS, '') = '' THEN NVL(A.JOB_STRT_TM, '')" \
-                      "		       WHEN B.APVL_REQ_DIVS = '01' OR B.APVL_REQ_DIVS = '02'" \
-                      "		       THEN NVL(B.JOB_STRT_TM, '') ELSE '' END WRK_STRT_TM" \
+                      "		       ELSE NVL(B.JOB_STRT_TM, '') END WRK_STRT_TM" \
                       "		 ,CASE WHEN NVL(B.APVL_REQ_DIVS, '') = '' THEN NVL(A.JOB_END_TM, '')" \
-                      "		       WHEN B.APVL_REQ_DIVS = '01' OR B.APVL_REQ_DIVS = '02'" \
-                      "		       THEN NVL(B.JOB_END_TM, '') ELSE '' END WRK_END_TM" \
+                      "		       ELSE NVL(B.JOB_END_TM, '') END WRK_END_TM" \
                       "		 ,CONCAT(SUBSTRING(NVL(A.ALL_WRK_TM,''),1,2),':',SUBSTRING(NVL(A.ALL_WRK_TM,''),3,2)) ALL_WRK_TM" \
                       "      ,CASE WHEN B.EMP_EMAL_ADDR IS NULL AND (A.HLDY_WRK_TM != '000000' OR A.NGHT_WRK_TM != '000000') THEN 'N'" \
                       "            ELSE 'Y' END APVL_REQ_YN" \
@@ -2160,15 +2158,15 @@ class scheduleStatLst(Resource):
                 if data["apvlStus"] != "" and data["apvlStus"] != "00":
                       sql += "    AND B.TH1_APRV_STUS = '" + data["apvlStus"] + "'" \
 
-                if data["wrkDivs"] != "" and data["wrkDivs"] != "00" and data["wrkDivs"] != "04" and data["wrkDivs"] != "05":
+                if data["wrkDivs"] != "" and data["wrkDivs"] != "00" and data["wrkDivs"] != "05" and data["wrkDivs"] != "06":
                       sql += "    AND B.APVL_REQ_DIVS = '" + data["wrkDivs"] + "'" \
 
-                if data["wrkDivs"] != "" and data["wrkDivs"] == "04":
+                if data["wrkDivs"] != "" and data["wrkDivs"] == "05":
                       sql += "    AND A.HLDY_WRK_TM = '000000'" \
                              "    AND A.NGHT_WRK_TM = '000000'" \
                              "    AND A.ALL_WRK_TM != '000000'" \
                     
-                if data["wrkDivs"] != "" and data["wrkDivs"] == "05":
+                if data["wrkDivs"] != "" and data["wrkDivs"] == "06":
                       sql += "    AND B.EMP_EMAL_ADDR IS NULL" \
                              "    AND (A.HLDY_WRK_TM != '000000' OR A.NGHT_WRK_TM != '000000')" \
 
@@ -2221,11 +2219,9 @@ class scheduleStatLst(Resource):
                       "                       AND F.CMM_CD = B.TH1_APRV_STUS), '')" \
                       "          FROM DUAL) APVL_STUS" \
                       "		 ,CASE WHEN NVL(B.APVL_REQ_DIVS, '') = '' THEN NVL(A.JOB_STRT_TM, '')" \
-                      "		       WHEN B.APVL_REQ_DIVS = '01' OR B.APVL_REQ_DIVS = '02'" \
-                      "		       THEN NVL(B.JOB_STRT_TM, '') ELSE '' END WRK_STRT_TM" \
+                      "		       ELSE NVL(B.JOB_STRT_TM, '') END WRK_STRT_TM" \
                       "		 ,CASE WHEN NVL(B.APVL_REQ_DIVS, '') = '' THEN NVL(A.JOB_END_TM, '')" \
-                      "		       WHEN B.APVL_REQ_DIVS = '01' OR B.APVL_REQ_DIVS = '02'" \
-                      "		       THEN NVL(B.JOB_END_TM, '') ELSE '' END WRK_END_TM" \
+                      "		       ELSE NVL(B.JOB_END_TM, '') END WRK_END_TM" \
                       "		 ,CONCAT(SUBSTRING(NVL(B.WRK_TME,''),1,2),':',SUBSTRING(NVL(B.WRK_TME,''),3,2)) ALL_WRK_TM" \
                       "      ,CASE WHEN B.EMP_EMAL_ADDR IS NULL AND (A.HLDY_WRK_TM != '000000' OR A.NGHT_WRK_TM != '000000') THEN 'N'" \
                       "            ELSE 'Y' END APVL_REQ_YN" \
@@ -2241,15 +2237,15 @@ class scheduleStatLst(Resource):
                 if data["apvlStus"] != "" and data["apvlStus"] != "00":
                       sql += "    AND B.TH1_APRV_STUS = '" + data["apvlStus"] + "'" \
 
-                if data["wrkDivs"] != "" and data["wrkDivs"] != "00" and data["wrkDivs"] != "04" and data["wrkDivs"] != "05":
+                if data["wrkDivs"] != "" and data["wrkDivs"] != "00" and data["wrkDivs"] != "05" and data["wrkDivs"] != "06":
                       sql += "    AND B.APVL_REQ_DIVS = '" + data["wrkDivs"] + "'" \
                     
-                if data["wrkDivs"] != "" and data["wrkDivs"] == "04":
+                if data["wrkDivs"] != "" and data["wrkDivs"] == "05":
                       sql += "    AND A.HLDY_WRK_TM = '000000'" \
                              "    AND A.NGHT_WRK_TM = '000000'" \
                              "    AND A.ALL_WRK_TM != '000000'" \
 
-                if data["wrkDivs"] != "" and data["wrkDivs"] == "05":
+                if data["wrkDivs"] != "" and data["wrkDivs"] == "06":
                       sql += "    AND B.EMP_EMAL_ADDR IS NULL" \
                              "    AND (A.HLDY_WRK_TM != '000000' OR A.NGHT_WRK_TM != '000000')" \
                 
