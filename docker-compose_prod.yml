@@ -131,7 +131,7 @@ services:
       - dili_db
       - dili_db2
     environment:
-      - SPRING_PROFILES_ACTIVE=local      # 이미지 생성시 세팅될 환경변수들
+      - SPRING_PROFILES_ACTIVE=prod      # 이미지 생성시 세팅될 환경변수들
       - SPRING_APPLICATION_NAME=dili_api
       - SIDECAR_PORT=5006
       - MYSQL_HOST=218.151.225.142

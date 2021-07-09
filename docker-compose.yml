@@ -117,6 +117,10 @@ services:
       - "5004:5004"
     links:
       - cmm_db
+    environment:
+      - SPRING_PROFILES_ACTIVE=local      # 이미지 생성시 세팅될 환경변수들
+      - SPRING_APPLICATION_NAME=cmm_api
+      - SIDECAR_PORT=5004
   cmm_db:
     build: "./api_containers/cmm/db"
 

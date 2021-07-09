@@ -45,9 +45,9 @@ def getMariaConn():
 
 def getSystemInfo():
     logging.debug('dill Server')
-    logging.debug(socket.gethostbyname(socket.gethostname()))
+    logging.debug("=====>>>>>>>>>>> " + os.environ['SPRING_PROFILES_ACTIVE'])
     try:
-        if (socket.gethostbyname(socket.gethostname()) == "172.20.0.5" ) :
+        if (os.environ['SPRING_PROFILES_ACTIVE'] == "prod" ) :
             logging.debug('Prod Server')
             return "mariadb"
         else :
