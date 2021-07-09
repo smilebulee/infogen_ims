@@ -39,7 +39,7 @@ services:
     build: "./ifg_front"
 
     ports:
-      - "8000:8000"
+      - "80:8000"
     links:
       - emp_api
       - prj_api
