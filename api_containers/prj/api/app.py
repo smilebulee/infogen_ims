@@ -8,6 +8,7 @@ import socket
 
 import json
 import pymysql
+import os
 
 app = Flask(__name__)
 api = Api(app)
@@ -51,9 +52,9 @@ def getUserMessages(username):
 
 def getSystemInfo():
     logging.debug('prj Server')
-    logging.debug(socket.gethostbyname(socket.gethostname()))
+    logging.debug("=====>>>>>>>>>>> " + os.environ['SPRING_PROFILES_ACTIVE'])
     try:
-        if (socket.gethostbyname(socket.gethostname()) == "172.20.0.14" ) :
+        if (os.environ['SPRING_PROFILES_ACTIVE'] == "prod"):
             logging.debug('Prod Server')
             return "mariadb"
         else :
