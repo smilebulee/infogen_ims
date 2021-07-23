@@ -2069,7 +2069,8 @@ class retrieveCmmCd(Resource):
                 sql = "SELECT " \
                       "CMM_CD_GRP_ID, CMM_CD, CMM_CD_NAME " \
                       "FROM TB_CMM_CD_DETL A " \
-                      "WHERE CMM_CD_GRP_ID = '" + data["grp_id"] + "'"
+                      "WHERE CMM_CD_GRP_ID = '" + data["grp_id"] + "'" \
+                      "  AND USE_YN = 'Y'"
                 cursor.execute(sql)
                 logging.debug('retrieveCmmCd SUCCESS')
         finally:
