@@ -793,14 +793,23 @@ class apvlReqHist(Resource): # Mariadb 연결 진행
                       "     , CASE WHEN A.APVL_REQ_DIVS = '01' THEN '야간근무' " \
                       "            WHEN A.APVL_REQ_DIVS = '02' THEN '휴일근무' " \
                       "            WHEN A.APVL_REQ_DIVS = '03' THEN '연차결재'  " \
+                      "            WHEN A.APVL_REQ_DIVS = '04' THEN '반차결재'  " \
                       "            ELSE '' END APVL_REQ_NM  " \
                       "     , CASE WHEN A.TH1_APRV_STUS = '01' THEN '미승인'" \
                       "            WHEN A.TH1_APRV_STUS = '02' THEN '승인'" \
                       "            ELSE '반려' END APRV_STUS_NM" \
                       "     , A.TH1_APRV_STUS" \
                       "     , C.EMP_NAME AS REF_NM" \
-                      "     , A.APVL_REQ_DT" \
-                      "     , A.WRK_REQ_RSN" \
+                      "     , IFNULL(A.APVL_REQ_DT, '') AS APVL_REQ_DT" \
+                      "     , IFNULL(A.WRK_REQ_RSN, '') AS WRK_REQ_RSN" \
+                      "     , CASE WHEN A.APVL_REQ_DIVS = '03'" \
+                      "            THEN IFNULL(CONCAT(A.HOLI_TERM1, ' ~ ', A.HOLI_TERM2), '') " \
+                      "            ELSE ''" \
+                      "        END AS YEONCHA" \
+                      "     , CASE WHEN A.APVL_REQ_DIVS = '04'" \
+                      "            THEN IFNULL(A.HOLI_TERM2, '') " \
+                      "            ELSE ''" \
+                      "        END AS BANCHA" \
                       "  FROM TB_APVL_REQ_MGMT_M A, TB_EMP_MGMT B, TB_EMP_MGMT C" \
                       " WHERE A.EMP_EMAL_ADDR = B.EMP_EMAIL" \
                       "   AND A.TH1_APRV_NM = C.EMP_EMAIL " \
@@ -860,13 +869,21 @@ class apvlAcptHist(Resource):  # Mariadb 연결 진행
                           "     , NVL(A.JOB_STRT_TM, '') JOB_STRT_TM " \
                           "     , NVL(A.JOB_END_TM, '') JOB_END_TM " \
                           "     , CASE WHEN A.APVL_REQ_DIVS = '01' THEN NVL(A.WRK_TME,'') WHEN A.APVL_REQ_DIVS = '02' THEN NVL(A.WRK_TME,'') ELSE '' END WRK_TME  " \
-                          "     , CASE WHEN A.APVL_REQ_DIVS = '01' THEN '야간근무' WHEN A.APVL_REQ_DIVS = '02' THEN '휴일근무' WHEN A.APVL_REQ_DIVS = '03' THEN '연차결재' ELSE '' END APVL_REQ_NM  " \
+                          "     , CASE WHEN A.APVL_REQ_DIVS = '01' THEN '야간근무' WHEN A.APVL_REQ_DIVS = '02' THEN '휴일근무' WHEN A.APVL_REQ_DIVS = '03' THEN '연차결재' WHEN A.APVL_REQ_DIVS = '04' THEN '반차결재' ELSE '' END APVL_REQ_NM  " \
                           "     , CASE WHEN A.TH1_APRV_STUS = '01' THEN '미승인'  " \
                           "       	   WHEN A.TH1_APRV_STUS = '02' THEN '승인'  " \
                           "            ELSE '반려' END APRV_STUS_NM " \
                           "     , NVL(A.APVL_REQ_DT, '') APVL_REQ_DT " \
                           "     , NVL(A.WRK_REQ_RSN, '') WRK_REQ_RSN " \
                           "     , A.TH1_APRV_STUS" \
+                          "     , CASE WHEN A.APVL_REQ_DIVS = '03'" \
+                          "            THEN IFNULL(CONCAT(A.HOLI_TERM1, ' ~ ', A.HOLI_TERM2), '') " \
+                          "            ELSE ''" \
+                          "        END AS YEONCHA" \
+                          "     , CASE WHEN A.APVL_REQ_DIVS = '04'" \
+                          "            THEN IFNULL(A.HOLI_TERM2, '') " \
+                          "            ELSE ''" \
+                          "        END AS BANCHA" \
                           "  FROM TB_APVL_REQ_MGMT_M A, TB_EMP_MGMT B, TB_EMP_MGMT C " \
                           " WHERE A.EMP_EMAL_ADDR = C.EMP_EMAIL  " \
                           "   AND A.TH1_APRV_NM = B.EMP_EMAIL  " \
@@ -883,13 +900,21 @@ class apvlAcptHist(Resource):  # Mariadb 연결 진행
                           "     , NVL(A.JOB_STRT_TM, '') JOB_STRT_TM " \
                           "     , NVL(A.JOB_END_TM, '') JOB_END_TM " \
                           "     , CASE WHEN A.APVL_REQ_DIVS = '01' THEN NVL(A.WRK_TME,'') WHEN A.APVL_REQ_DIVS = '02' THEN NVL(A.WRK_TME,'') ELSE '' END WRK_TME  " \
-                          "     , CASE WHEN A.APVL_REQ_DIVS = '01' THEN '야간근무' WHEN A.APVL_REQ_DIVS = '02' THEN '휴일근무' WHEN A.APVL_REQ_DIVS = '03' THEN '연차결재' ELSE '' END APVL_REQ_NM  " \
+                          "     , CASE WHEN A.APVL_REQ_DIVS = '01' THEN '야간근무' WHEN A.APVL_REQ_DIVS = '02' THEN '휴일근무' WHEN A.APVL_REQ_DIVS = '03' THEN '연차결재' WHEN A.APVL_REQ_DIVS = '04' THEN '반차결재' ELSE '' END APVL_REQ_NM  " \
                           "     , CASE WHEN A.TH1_APRV_STUS = '01' THEN '미승인'  " \
                           "       	   WHEN A.TH1_APRV_STUS = '02' THEN '승인'  " \
                           "            ELSE '반려' END APRV_STUS_NM " \
                           "     , NVL(A.APVL_REQ_DT, '') APVL_REQ_DT " \
                           "     , NVL(A.WRK_REQ_RSN, '') WRK_REQ_RSN " \
                           "     , A.TH1_APRV_STUS" \
+                          "     , CASE WHEN A.APVL_REQ_DIVS = '03'" \
+                          "            THEN IFNULL(CONCAT(A.HOLI_TERM1, ' ~ ', A.HOLI_TERM2), '') " \
+                          "            ELSE ''" \
+                          "        END AS YEONCHA" \
+                          "     , CASE WHEN A.APVL_REQ_DIVS = '04'" \
+                          "            THEN IFNULL(A.HOLI_TERM2, '') " \
+                          "            ELSE ''" \
+                          "        END AS BANCHA" \
                           "  FROM TB_APVL_REQ_MGMT_M A, TB_EMP_MGMT B, TB_EMP_MGMT C " \
                           " WHERE A.EMP_EMAL_ADDR = C.EMP_EMAIL  " \
                           "   AND A.TH1_APRV_NM = B.EMP_EMAIL  " \
@@ -1100,17 +1125,17 @@ class empDeptPr(Resource): # Mariadb 연결 진행
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 #쿼리문 실행
-                sql = "SELECT DEPT_CD " \
-                      "     , DEPT_NAME " \
-                      "     , EMP_NAME AS DEPT_PR_NAME " \
-                      "     , EMP_EMAIL AS DEPT_PR_EMAIL " \
-                      "  FROM TB_EMP_MGMT " \
-                      " WHERE AUTH_ID LIKE '%PR%'" \
-                      "   AND DEPT_CD = (" \
-                      "                  SELECT DEPT_CD " \
-                      "                    FROM TB_EMP_MGMT " \
-                      "                   WHERE EMP_EMAIL = '" + data["email"] + "'" \
-                      "                 )"
+                sql = "SELECT D.CMM_CD      AS DEPT_CD " \
+                      "     , D.CMM_CD_NAME AS DEPT_NAME " \
+                      "     , D.EMP_ID      AS DEPT_PR_EMAIL " \
+                      "     , (SELECT XX.EMP_NAME FROM TB_EMP_MGMT XX WHERE XX.EMP_ID = D.EMP_ID) AS DEPT_PR_NAME " \
+                      "  FROM TB_CMM_CD_DETL D " \
+                      " WHERE D.CMM_CD_GRP_ID = 'SLIN_BZDP' " \
+                      "   AND D.CMM_CD = ( " \
+                      "                   SELECT X.DEPT_CD ㄱ " \
+                      "                     FROM TB_EMP_MGMT X  " \
+                      "                    WHERE X.EMP_EMAIL = '" + data["email"] + "' " \
+                      "                  ) "
 
                 logging.debug(sql)
                 cursor.execute(sql)

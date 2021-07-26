@@ -1281,3 +1281,9 @@ def getPopUpData(request):
     logger.info(logger.info(ast.literal_eval(r.json())))
     logger.info(json.loads(r.text))
     return JsonResponse(ast.literal_eval(r.json()), safe=False)
+
+class deptMgmt(generic.TemplateView):
+    def get(self, request, *args, **kwargs):
+        template_name = 'dili/deptMgmt.html'
+
+        return render(request, template_name)

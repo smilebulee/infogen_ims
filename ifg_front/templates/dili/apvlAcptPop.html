@@ -64,9 +64,11 @@
             wrkApvlTable += '<thead>';
             wrkApvlTable += '<tr>';
             //wrkApvlTable += '<th class="text-center">순번</th>';
+            wrkApvlTable += '<th class="text-center">구분</th>';
             wrkApvlTable += '<th class="text-center">기안일</th>';
-            wrkApvlTable += '<th class="text-center">근무요청일시 출근시각 ~ 퇴근시각</th>';
-            //wrkApvlTable += '<th class="text-center">구분</th>';
+            wrkApvlTable += '<th class="text-center">연차일</th>';
+            wrkApvlTable += '<th class="text-center">반차일</th>';
+            wrkApvlTable += '<th class="text-center">요청일시 출근시각 ~ 퇴근시각</th>';
             wrkApvlTable += '<th class="text-center">기안자</th>';
             wrkApvlTable += '</tr>';
             wrkApvlTable += '</thead>';
@@ -88,9 +90,11 @@
 
                 wrkApvlTable += '<tr id ="grd_wrkApvlAcpt'+i+'" onclick="onApvlAcptClickEvt(this)">';
                 //wrkApvlTable += '<td class="pt-3-half">' + (i+1)                + '</td>';
+                wrkApvlTable += '<td class="pt-3-half">' + data[i].APVL_REQ_NM  + '</td>';
                 wrkApvlTable += '<td class="pt-3-half">' + data[i].APVL_REQ_DT  + '</td>';
+                wrkApvlTable += '<td class="pt-3-half">' + data[i].YEONCHA  + '</td>';
+                wrkApvlTable += '<td class="pt-3-half">' + data[i].BANCHA  + '</td>';
                 wrkApvlTable += '<td class="pt-3-half">' + wrkDtm               + '</td>';
-                //wrkApvlTable += '<td class="pt-3-half">' + data[i].APVL_REQ_NM  + '</td>';
                 wrkApvlTable += '<td class="pt-3-half">' + data[i].EMP_NAME     +'</td>';
                 wrkApvlTable += '<td class="pt-3-half" style="display: none;">' + data[i].WRK_DT + ";" + data[i].JOB_STRT_TM + ";" + data[i].JOB_END_TM + ";" + data[i].WRK_REQ_RSN + ";" + data[i].EMP_EMAL_ADDR  + ';' + data[i].TH1_APRV_STUS + '</td>';
                 wrkApvlTable += '</tr>';

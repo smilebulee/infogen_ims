@@ -293,10 +293,12 @@
             apvlReqHistTable += '<thead>';
             apvlReqHistTable += '<tr>';
             //apvlReqHistTable += '<th class="text-center">순번</th>';
+            apvlReqHistTable += '<th class="text-center">구분</th>';
             apvlReqHistTable += '<th class="text-center">기안일</th>';
+            apvlReqHistTable += '<th class="text-center">연차일</th>';
+            apvlReqHistTable += '<th class="text-center">반차일</th>';
             apvlReqHistTable += '<th class="text-center">기안자</th>';
             apvlReqHistTable += '<th class="text-center">근무요청일시 출근시각 ~ 퇴근시각 (총 근무시간)</th>';
-            //apvlReqHistTable += '<th class="text-center">구분</th>';
             apvlReqHistTable += '<th class="text-center">결재상태</th>';
             apvlReqHistTable += '<th class="text-center">결재자</th>';
             apvlReqHistTable += '<th class="text-center">근무요청사유</th>';
@@ -322,10 +324,12 @@
                 //apvlReqHistTable += '<tr onclick="onclickEvt(this)">';
                 apvlReqHistTable += '<tr onclick="onclickEvt2(this)">';
                 //apvlReqHistTable += '<td id="no'+i+'" class="pt-3-half">'+(i+1)+'</td>';
+                apvlReqHistTable += '<td class="pt-3-half">'+data[i].APVL_REQ_NM+'</td>';
                 apvlReqHistTable += '<td class="pt-3-half">'+data[i].APVL_REQ_DT+'</td>';
+                apvlReqHistTable += '<td class="pt-3-half">'+data[i].YEONCHA+'</td>';
+                apvlReqHistTable += '<td class="pt-3-half">'+data[i].BANCHA+'</td>';
                 apvlReqHistTable += '<td class="pt-3-half">'+data[i].EMP_NAME+'</td>';
                 apvlReqHistTable += '<td class="pt-3-half">'+wrkDtm+'</td>';
-                //apvlReqHistTable += '<td class="pt-3-half">'+data[i].APVL_REQ_NM+'</td>';
                 apvlReqHistTable += '<td class="pt-3-half">'+data[i].APRV_STUS_NM+'</td>';
                 apvlReqHistTable += '<td class="pt-3-half">'+data[i].REF_NM+'</td>';
                 data[i].WRK_REQ_RSN = data[i].WRK_REQ_RSN.length >= 30 ? data[i].WRK_REQ_RSN.substring(0, 30) + '...' : data[i].WRK_REQ_RSN ;
@@ -549,7 +553,7 @@
                             <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-caret-down-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z"/>
                             </svg>
-                            결재요청조회
+
                             <h6 style="float: right">
                                 <span class="requiredText"><b>* 는 필수 입력 항목입니다.</b></span>
                             </h6>
