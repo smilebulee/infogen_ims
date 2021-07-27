@@ -71,6 +71,9 @@ urlpatterns = [
     url(r'^isExistEmpNm/', views.isExistEmpNm, name='isExistEmpNm'),
 
     url(r'^deptMgmt/', views.deptMgmt.as_view(), name='deptMgmt'),
+    url(r'^getDeptInfo/', views.getDeptInfo, name='getDeptInfo'),
+    url(r'^deptMgmtRegPop', views.deptMgmtRegPop.as_view(), name='deptMgmtRegPop'),
+    url(r'^deptMgmtEditPop/', views.deptMgmtEditPop.as_view(), name='deptMgmtEditPop'),
 
     url(r'^getTotalWrktm/', views.getTotalWrktm, name='getTotalWrktm'),
 

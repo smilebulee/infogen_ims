@@ -1287,3 +1287,51 @@ class deptMgmt(generic.TemplateView):
         template_name = 'dili/deptMgmt.html'
 
         return render(request, template_name)
+
+def getDeptInfo(request):
+    param = json.loads(request.GET['param'])
+
+    logger.info("Parameters Logging Start")
+    logger.info(param)
+    logger.info("Parameters Logging End")
+
+    # api 호출
+    r = requests.get('http://dili_api:5006/deptInfo', json=param)
+    logger.info(r)
+    logger.info(r.text)
+    logger.info(r.json())
+    return JsonResponse(ast.literal_eval(r.json()), safe=False)
+
+class deptMgmtRegPop(generic.TemplateView):
+    def get(self, request, *args, **kwargs):
+        template_name = 'dili/deptMgmtRegPop.html'
+
+        return render(request, template_name)
+
+def deptMgmtReg(request):
+    param = json.loads(request.POST['param'])
+
+    logger.info("Parameters Start")
+    logger.info(param)
+    logger.info("Parameters End")
+
+    datas = {
+    }
+
+    for row in param:
+        logger.info("------views.py------")
+        datas.setdefault(row, param[row])
+
+    r = requests.post('http://dili_api:5006/deptMgmtRegSubmit', data=datas)
+    logger.info(r)
+    logger.info(r.text)
+    logger.info(r.json())
+
+    return JsonResponse(r.json(), safe=False)
+
+class deptMgmtEditPop(generic.TemplateView):
+    def get(self, request, *args, **kwargs):
+        template_name = 'dili/deptMgmtEditPop.html'
+
+        return render(request, template_name)
+        # return render(request, template_name, rr)

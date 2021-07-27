@@ -2,8 +2,7 @@
 /* 메인 화면에서 받는 이메일 파라미터 */
 var param = {
     "name" : '',
-    "email" : sessionStorage.getItem("email"),
-    "workChk" : 'N',
+    "deptCode" : '',
     "authId" : sessionStorage.getItem("authId")
 }
 
@@ -11,12 +10,12 @@ $(document).ready(function(){
     /* 관리자여부 체크 */
     var isAdmin = checkEmpAuthByEmail(sessionStorage.getItem("email"), "ADMIN");
 
-    $('#empModalTest').load("{% url 'dili_api:empMgmtRegPop' %}");
+    $('#deptModalTest').load("{% url 'dili_api:deptMgmtRegPop' %}");
 
     /* 목록조회 */
     $.ajaxCall( param, {
          'method' : 'GET',
-         'url' : "{% url 'dili_api:getEmpInfo' %}",
+         'url' : "{% url 'dili_api:getDeptInfo' %}",
          'dataType' : 'json',
          'data' : JSON.stringify(param),
          'async' : false,
@@ -24,58 +23,18 @@ $(document).ready(function(){
             // 로그
             console.log("data : ",data)
             // 리턴
-            empListGrd(data);
+            deptListGrd(data);
          }
-    });
-
-    $('#searchBtn').click(function(){
-        onClickSearchBtn(ipt_searchName);
-    });
-
-
-    /* 직원목록 엔터 조회 */
-    $('#ipt_searchName').keydown(function(e){
-            //엔터키 입력 + 이름컬럼에 값이 있는 경우.
-            if ( e.keyCode == 13 && $('#ipt_searchName').val() != 'undefined' ) {
-                var param = {
-                    name : $('#ipt_searchName').val(),
-                    "workChk" : 'N'
-                }
-
-                //목록조회
-                $.ajaxCall( param, {
-                     'method' : 'GET',
-                     'url' : "{% url 'dili_api:getEmpInfo' %}",
-                     'dataType' : 'json',
-                     'data' : JSON.stringify(param),
-                     'async' : false,
-                     'callbackFn' : function(data){
-                        // 로그
-                        console.log("data : ",data)
-                        // 리턴
-                        empListGrd(data);
-                     }
-                });
-
-            }
     });
 
     /* 로그인한 아이디가 관리자일 경우*/
     if(isAdmin) {
         /* 검색, 등록버튼 활성화 */
-        $('#ipt_searchName').attr('readonly',false);
-        $('#empMgmtRegBtn').attr('hidden',false);
-        $('#searchBtn').attr('disabled',false);
+        $('#deptMgmtRegBtn').attr('hidden',false);
 
     }else{
-        /* 검색, 등록버튼 비활성화 */
-        $('#ipt_searchName').attr('readonly',true);
-        $('#empMgmtRegBtn').attr('hidden',true);
-        $('#searchBtn').attr('disabled',true);
-        retrieveEmpNmByEmail(param.email, function(data) {
-            $('#ipt_searchName').val(data[0].EMP_NAME);
-        });
-
+        /* 검색, 등록버튼 비활성화 */;
+        $('#deptMgmtRegBtn').attr('hidden',true);
     }
 
 
@@ -93,7 +52,7 @@ function onClickSearchBtn(ipt_searchName) {
     /* 목록조회 */
     $.ajaxCall( param, {
          'method' : 'GET',
-         'url' : "{% url 'dili_api:getEmpInfo' %}",
+         'url' : "{% url 'dili_api:getDeptInfo' %}",
          'dataType' : 'json',
          'data' : JSON.stringify(param),
          'async' : false,
@@ -101,89 +60,61 @@ function onClickSearchBtn(ipt_searchName) {
             // 로그
             console.log("data : ",data)
             // 리턴
-            empListGrd(data);
+            deptListGrd(data);
          }
     });
 
 };
 
 
-/* 직원목록 생성 */
-function empListGrd(data){
+/* 부서목록 생성 */
+function deptListGrd(data){
     /* 관리자여부 체크 */
     var isAdmin = checkEmpAuthByEmail(sessionStorage.getItem("email"), "ADMIN");
 
     var size = data.length;
-    var empListTable = '<table class="table table-bordered text-center">';
-    empListTable += '<thead>';
-    empListTable += '<tr>';
-    empListTable += '<th class="text-center">ID</th>';
-    empListTable += '<th class="text-center">성명</th>';
-    empListTable += '<th class="text-center">권한</th>';
-    empListTable += '<th class="text-center">부서</th>';
-    empListTable += '<th class="text-center">비고</th>';
-    empListTable += '</tr>';
-    empListTable += '</thead>';
-    empListTable += '<tbody>';
+    var deptListTable = '<table class="table table-bordered text-center">';
+    deptListTable += '<thead>';
+    deptListTable += '<tr>';
+    deptListTable += '<th class="text-center">부서코드</th>';
+    deptListTable += '<th class="text-center">부서명</th>';
+    deptListTable += '<th class="text-center">현장대리인ID</th>';
+    deptListTable += '<th class="text-center">현장대리인명</th>';
+    deptListTable += '<th class="text-center">비고</th>';
+    deptListTable += '</tr>';
+    deptListTable += '</thead>';
+    deptListTable += '<tbody>';
 
     console.log("Start")
     console.log(data)
     console.log(typeof(data))
     if(data.length > 0) {
         for(var i = 0; i < size; i++){
-
-            if(isAdmin) { /* 관리자일 경우 */
-                empListTable += '<tr id ="grd_empList" onclick="onClickEvt(\''+data[i].EMP_EMAIL+'\')">';
-                empListTable += '<td id="empId" class="pt-3-half">'+data[i].EMP_ID+'</td>';
-                empListTable += '<td id="empName" class="pt-3-half">'+maskingNm(data[i].EMP_NAME)+'</td>';
-                empListTable += '<td id="empAuth" class="pt-3-half">'+data[i].AUTH_VAL+'</td>';
-                empListTable += '<td id="empDept" class="pt-3-half">'+data[i].DEPT_NAME+'</td>';
-                if(data[i].WORK_YN == "N"){
-                    empListTable += '<td id="empWork" class="pt-3-half" style="color:red;">퇴사</td>';
-                }else{
-                    empListTable += '<td id="empWork" class="pt-3-half"></td>';
-                }
-                empListTable += '</tr>';
-            }else { /* 일반사용자일 경우 */
-                if( data[i].EMP_EMAIL == sessionStorage.getItem("email") ){
-                    empListTable += '<tr id ="grd_empList" onclick="onClickEvt(\''+data[i].EMP_EMAIL+'\')">';
-                    empListTable += '<td id="empId" class="pt-3-half">'+data[i].EMP_ID+'</td>';
-                    empListTable += '<td id="empName" class="pt-3-half">'+maskingNm(data[i].EMP_NAME)+'</td>';
-                    empListTable += '<td id="empAuth" class="pt-3-half">'+data[i].AUTH_VAL+'</td>';
-                    empListTable += '<td id="empDept" class="pt-3-half">'+data[i].DEPT_NAME+'</td>';
-                    if(data[i].WORK_YN == "N"){
-                        empListTable += '<td id="empWork" class="pt-3-half" style="color:red;">퇴사</td>';
-                    }else{
-                        empListTable += '<td id="empWork" class="pt-3-half"></td>';
-                    }
-                    empListTable += '</tr>';
-                }
-            }
+            deptListTable += '<tr id ="grd_deptList" onclick="onClickEvt(\''+data[i].DEPT_CODE+'\')">';
+            deptListTable += '<td id="deptCode" class="pt-3-half">'+data[i].DEPT_CODE+'</td>';
+            deptListTable += '<td id="deptName" class="pt-3-half">'+maskingNm(data[i].DEPT_NAME)+'</td>';
+            deptListTable += '<td id="empId" class="pt-3-half">'+data[i].EMP_ID+'</td>';
+            deptListTable += '<td id="empName" class="pt-3-half">'+data[i].EMP_NAME+'</td>';
+            deptListTable += '<td id="rmks" class="pt-3-half">'+data[i].RMKS+'</td>';
+            deptListTable += '</tr>';
         }
     }
+    deptListTable += '</tbody>';
+    deptListTable += '</table>';
 
-
-    empListTable += '</tbody>';
-    empListTable += '</table>';
-
-    document.getElementById('grd_empListTable').innerHTML = empListTable;
-    if(isAdmin){
-        $("#ipt_searchName").click(function(){
-            $('[name="ipt_searchName"]').val("");
-        });
-    }
+    document.getElementById('grd_deptListTable').innerHTML = deptListTable;
 };
 
 /* 그리드 클릭 이벤트 (직원정보 수정 팝업) */
 function onClickEvt(i) {
-    var email = i;
-    $('#hidden_selectMail').val(email);
+    var deptCode = i;
+    $('#hidden_selectDeptCode').val(deptCode);
 
-    var url = "{% url 'dili_api:empMgmtEditPop' %}" + "/?email=" +email ;
+    var url = "{% url 'dili_api:deptMgmtEditPop' %}" + "/?deptCode=" +deptCode ;
 
-    modal('empModalDiv');
+    modal('deptModalDiv');
 
-    $('#empModal').load(url);
+    $('#deptModal').load(url);
 
 };
 
@@ -192,10 +123,10 @@ function makePaging(ret){
 };
 
 /* 직원조회 권한 처리 및 모달 오픈 */
-$("#empMgmtRegBtn").click(function(){
-    var url = "{% url 'dili_api:empMgmtRegPop' %}" ;
+$("#deptMgmtRegBtn").click(function(){
+    var url = "{% url 'dili_api:deptMgmtRegPop' %}" ;
 
-    modal('empModalDivTest');
+    modal('deptModalDivTest');
 
 });
 
@@ -213,39 +144,36 @@ function maskingNm(strName){
 
 }
 
-
-
-
 </script>
 
 
 
 
-<!--직원등록, 수정 모달 영역 -->
-<div id="empModalDiv" class="modalUi">
-    <div id="empModal">
+<!--부서등록, 수정 모달 영역 -->
+<div id="deptModalDiv" class="modalUi">
+    <div id="deptModal">
     </div>
-    <a class="modal_close_btn" id="exitEmpModalBtn">
+    <a class="modal_close_btn" id="exitDeptModalBtn">
         <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-x-circle" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
            <path fill-rule="evenodd" d="
            M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
            <path fill-rule="evenodd" d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
         </svg>
-        <span id="apvlEmpEmailHidden" style="display:none;" ></span>
+        <span id="apvlDeptHidden" style="display:none;" ></span>
         <span id="apvlReqHidden" style="display:none;" >apvlReq</span>
     </a>
 </div>
 
-<div id="empModalDivTest" class="modalUi">
-    <div id="empModalTest">
+<div id="deptModalDivTest" class="modalUi">
+    <div id="deptModalTest">
     </div>
-    <a class="modal_close_btn" id="exitEmpModalBtnTest">
+    <a class="modal_close_btn" id="exitDeptModalBtnTest">
         <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-x-circle" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
            <path fill-rule="evenodd" d="
            M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
            <path fill-rule="evenodd" d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
         </svg>
-        <span id="apvlEmpEmailHiddenTest" style="display:none;" ></span>
+        <span id="apvlDeptHiddenTest" style="display:none;" ></span>
         <span id="apvlReqHiddenTest" style="display:none;" >apvlReq</span>
     </a>
 </div>
@@ -254,33 +182,33 @@ function maskingNm(strName){
     <div class="col-sm-12">
         <div class="mb-4" role="alert">
             <h5>
-                <b>직원관리</b>
+                <b>부서관리</b>
             </h5>
         </div>
         <div class="accordion mb-4" id="grp_search">
             <div class="card">
-                <div class="card-header p-0" id="head_search">
-                    <h2 class="mb-0">
-                        <button class="btn btn-link btn-block text-left text-dark" type="button" data-toggle="collapse" data-target="#col_search" aria-expanded="true" aria-controls="collapseOne">
-                            <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-caret-down-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z"/>
-                            </svg>
-                            직원조회
-                        </button>
-                    </h2>
-                </div>
+<!--                <div class="card-header p-0" id="head_search">-->
+<!--                    <h2 class="mb-0">-->
+<!--                        <button class="btn btn-link btn-block text-left text-dark" type="button" data-toggle="collapse" data-target="#col_search" aria-expanded="true" aria-controls="collapseOne">-->
+<!--                            <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-caret-down-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">-->
+<!--                                <path d="M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z"/>-->
+<!--                            </svg>-->
+<!--                            직원조회-->
+<!--                        </button>-->
+<!--                    </h2>-->
+<!--                </div>-->
                 <div id="col_search" class="collapse show" aria-labelledby="head_search" data-parent="#grp_search">
                     <div class="card-body flex-height d-flex m-0 p-2">
-                        <div class="align-self-start align-self-center mr-3">성명</div>
-                        <div class="align-self-center mr-3">
-                            <input type="text" class="form-control" id="ipt_searchName" name="ipt_searchName" placeholder="이름을 입력해주세요." maxlength="5" onKeyPress="isKorean();"/>
-                        </div>
-                        <div class="align-self-center mr-3">
-                            <button class="button" id="searchBtn" type="button">조회</button>
-                        </div>
-                        <div class="align-self-end align-self-center mr-3">
+<!--                        <div class="align-self-start align-self-center mr-3">성명</div>-->
+<!--                        <div class="align-self-center mr-3">-->
+<!--                            <input type="text" class="form-control" id="ipt_searchName" name="ipt_searchName" placeholder="이름을 입력해주세요." maxlength="5" onKeyPress="isKorean();"/>-->
+<!--                        </div>-->
+<!--                        <div class="align-self-center mr-3">-->
+<!--                            <button class="button" id="searchBtn" type="button">조회</button>-->
+<!--                        </div>-->
+                        <div class="align-self-end align-self-right mr-3">
                             <input type="text" class="form-control" id="hidden_selectMail" name="hidden_selectMail" maxlength="30" readonly hidden/>
-                            <button class="button" id="empMgmtRegBtn" type="button">등록</button>
+                            <button class="button" id="deptMgmtRegBtn" type="button">등록</button>
                         </div>
                     </div>
                 </div>
@@ -288,7 +216,7 @@ function maskingNm(strName){
         </div>
 
         <center>
-            <div id="grd_empListTable" style="overflow:auto; height:600px;"></div>
+            <div id="grd_deptListTable" style="overflow:auto; height:600px;"></div>
 
         </center>
     </div>
