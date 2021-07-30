@@ -1307,7 +1307,7 @@ class apvlReqHistDetl(Resource): # Mariadb 연결 진행
                       "                 , DATE_FORMAT(A.WRK_DT, '%Y-%m-%d') WRK_DT" \
                       "                 , DATE_FORMAT(A.JOB_STRT_TM, '%H:%i:%s') JOB_STRT_TM" \
                       "                 , DATE_FORMAT(A.JOB_END_TM, '%H:%i:%s') JOB_END_TM" \
-                      "                 , A.WRK_REQ_RSN" \
+                      "                 , NVL(A.WRK_REQ_RSN, '') WRK_REQ_RSN" \
                       "                 , NVL(DATE_FORMAT(A.APVL_UPD_DT, '%Y-%m-%d'), '') APVL_UPD_DT" \
                       "                 , NVL(A.TH1_APRV_RSN,'') TH1_APRV_RSN " \
                       "                 , NVL(DATE_FORMAT(A.TH1_APRV_DT, '%Y-%m-%d'), '') TH1_APRV_DT" \
