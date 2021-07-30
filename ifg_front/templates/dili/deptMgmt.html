@@ -40,33 +40,6 @@ $(document).ready(function(){
 
 });
 
-
-
-/* 부서 검색 기능 */
-function onClickSearchBtn(ipt_searchName) {
-    var param = {
-        "name" : $('[name="ipt_searchName"]').val(),
-        "workChk" : 'N'
-    }
-
-    /* 목록조회 */
-    $.ajaxCall( param, {
-         'method' : 'GET',
-         'url' : "{% url 'dili_api:getDeptInfo' %}",
-         'dataType' : 'json',
-         'data' : JSON.stringify(param),
-         'async' : false,
-         'callbackFn' : function(data){
-            // 로그
-            console.log("data : ",data)
-            // 리턴
-            deptListGrd(data);
-         }
-    });
-
-};
-
-
 /* 부서목록 생성 */
 function deptListGrd(data){
     /* 관리자여부 체크 */
@@ -90,7 +63,7 @@ function deptListGrd(data){
     console.log(typeof(data))
     if(data.length > 0) {
         for(var i = 0; i < size; i++){
-            deptListTable += '<tr id ="grd_deptList" onclick="onClickEvt(\''+data[i].DEPT_CODE+'\')">';
+            deptListTable += '<tr id ="grd_deptList" onclick="onClickGrdEvt(\''+data[i].DEPT_CODE+'\')">';
             deptListTable += '<td id="deptCode" class="pt-3-half">'+data[i].DEPT_CODE+'</td>';
             deptListTable += '<td id="deptName" class="pt-3-half">'+data[i].DEPT_NAME+'</td>';
             deptListTable += '<td id="empId" class="pt-3-half">'+data[i].EMP_ID+'</td>';
@@ -106,7 +79,7 @@ function deptListGrd(data){
 };
 
 /* 그리드 클릭 이벤트 (부서정보 수정 팝업) */
-function onClickEvt(i) {
+function onClickGrdEvt(i) {
     var deptCode = i;
     $('#hidden_selectDeptCode').val(deptCode);
 

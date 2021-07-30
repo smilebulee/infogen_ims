@@ -137,7 +137,7 @@ function onClickselectBtn() {
             $('#ipt_empId2').val(email);
             $('#ipt_empNm2').val(name);
             $("#apvlEmpEmailHidden").text('');
-            $('#exitDeptModalBtn').click();
+            $('#exitDeptModalBtnM').click();
             ///////////////////////////////////////////////////////////////////////////////////
         }
     } else if ( $("#apvlReqHidden").text() == "deptEdtReq" ) {
@@ -228,7 +228,7 @@ function onDblClickEvt(i){
             $('#ipt_empId2').val(email);
             $('#ipt_empNm2').val(name);
             $("#apvlEmpEmailHidden").text('');
-            $('#exitDeptModalBtn').click();
+            $('#exitDeptModalBtnM').click();
             ///////////////////////////////////////////////////////////////////////////////////
         }
     } else if ( $("#apvlReqHidden").text() == "deptEdtReq" ) {
@@ -362,7 +362,7 @@ function onClickSearchBtn(ipt_searchName) {
                     if (data.length == 1) {
                         $('#ipt_empId2').val(data[0].EMP_EMAIL);
                         $('#ipt_empNm2').val(data[0].EMP_NAME);
-                        $('#exitDeptModalBtn').click();
+                        $('#exitDeptModalBtnM').click();
                     } else {
                         empListGrd(data);
                     }
@@ -472,7 +472,7 @@ $('#ipt_searchName').keydown(function(e){
                                 if (data.length == 1) {
                                     $('#ipt_empId2').val(data[0].EMP_EMAIL);
                                     $('#ipt_empNm2').val(data[0].EMP_NAME);
-                                    $('#exitDeptModalBtn').click();
+                                    $('#exitDeptModalBtnM').click();
                                 } else {
                                     empListGrd(data);
                                 }
