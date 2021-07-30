@@ -3,7 +3,7 @@ function modal(id) {
     var modal = $('#' + id);
 
     // 모달 div 뒤에 희끄무레한 레이어
-    var bg = $('<div>')
+    var bg = $('<div id="lay'+id+'">')
         .css({
             position: 'fixed',
             zIndex: zIndex,

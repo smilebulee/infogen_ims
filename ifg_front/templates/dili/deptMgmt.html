@@ -40,33 +40,6 @@ $(document).ready(function(){
 
 });
 
-
-
-/* 직원 검색 기능 */
-function onClickSearchBtn(ipt_searchName) {
-    var param = {
-        "name" : $('[name="ipt_searchName"]').val(),
-        "workChk" : 'N'
-    }
-
-    /* 목록조회 */
-    $.ajaxCall( param, {
-         'method' : 'GET',
-         'url' : "{% url 'dili_api:getDeptInfo' %}",
-         'dataType' : 'json',
-         'data' : JSON.stringify(param),
-         'async' : false,
-         'callbackFn' : function(data){
-            // 로그
-            console.log("data : ",data)
-            // 리턴
-            deptListGrd(data);
-         }
-    });
-
-};
-
-
 /* 부서목록 생성 */
 function deptListGrd(data){
     /* 관리자여부 체크 */
@@ -90,11 +63,11 @@ function deptListGrd(data){
     console.log(typeof(data))
     if(data.length > 0) {
         for(var i = 0; i < size; i++){
-            deptListTable += '<tr id ="grd_deptList" onclick="onClickEvt(\''+data[i].DEPT_CODE+'\')">';
+            deptListTable += '<tr id ="grd_deptList" onclick="onClickGrdEvt(\''+data[i].DEPT_CODE+'\')">';
             deptListTable += '<td id="deptCode" class="pt-3-half">'+data[i].DEPT_CODE+'</td>';
-            deptListTable += '<td id="deptName" class="pt-3-half">'+maskingNm(data[i].DEPT_NAME)+'</td>';
+            deptListTable += '<td id="deptName" class="pt-3-half">'+data[i].DEPT_NAME+'</td>';
             deptListTable += '<td id="empId" class="pt-3-half">'+data[i].EMP_ID+'</td>';
-            deptListTable += '<td id="empName" class="pt-3-half">'+data[i].EMP_NAME+'</td>';
+            deptListTable += '<td id="empName" class="pt-3-half">'+maskingNm(data[i].EMP_NAME)+'</td>';
             deptListTable += '<td id="rmks" class="pt-3-half">'+data[i].RMKS+'</td>';
             deptListTable += '</tr>';
         }
@@ -105,8 +78,8 @@ function deptListGrd(data){
     document.getElementById('grd_deptListTable').innerHTML = deptListTable;
 };
 
-/* 그리드 클릭 이벤트 (직원정보 수정 팝업) */
-function onClickEvt(i) {
+/* 그리드 클릭 이벤트 (부서정보 수정 팝업) */
+function onClickGrdEvt(i) {
     var deptCode = i;
     $('#hidden_selectDeptCode').val(deptCode);
 
@@ -144,6 +117,11 @@ function maskingNm(strName){
 
 }
 
+function fncDeptClose() {
+    document.getElementById('laydeptModalDivTest').remove();
+    $('#deptModalDivTest').hide();
+}
+
 </script>
 
 
@@ -160,14 +138,14 @@ function maskingNm(strName){
            <path fill-rule="evenodd" d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
         </svg>
         <span id="apvlDeptHidden" style="display:none;" ></span>
-        <span id="apvlReqHidden" style="display:none;" >apvlReq</span>
+        <span id="apvlReqHidden" style="display:none;" >deptReq</span>
     </a>
 </div>
 
 <div id="deptModalDivTest" class="modalUi">
     <div id="deptModalTest">
     </div>
-    <a class="modal_close_btn" id="exitDeptModalBtnTest">
+    <a id="exitDeptModalBtnTest" onclick="fncDeptClose()" style="position: absolute;top: 10px;right: 10px;">
         <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-x-circle" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
            <path fill-rule="evenodd" d="
            M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
@@ -207,7 +185,7 @@ function maskingNm(strName){
 <!--                            <button class="button" id="searchBtn" type="button">조회</button>-->
 <!--                        </div>-->
                         <div class="align-self-end align-self-right mr-3">
-                            <input type="text" class="form-control" id="hidden_selectMail" name="hidden_selectMail" maxlength="30" readonly hidden/>
+                            <input type="text" class="form-control" id="hidden_selectDeptCode" name="hidden_selectDeptCode" maxlength="30" readonly hidden/>
                             <button class="button" id="deptMgmtRegBtn" type="button">등록</button>
                         </div>
                     </div>
