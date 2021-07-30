@@ -127,7 +127,33 @@ function onClickselectBtn() {
             $('#exitEmpModalBtn').click();
 
         }
-    } else {
+    } else if ( $("#apvlReqHidden").text() == "deptReq" ) {
+        if($("#apvlEmpEmailHidden").text() == null || $("#apvlEmpEmailHidden").text() == ""){
+            alertMsg("직원을 선택해 주세요.");
+        }else{
+            var email = $(i).children().eq(1).text(); // 그리드에서 선택한 email 값
+            var name = $(i).children().eq(0).text(); // 그리드에서 선택한 name 값
+
+            $('#ipt_empId2').val(email);
+            $('#ipt_empNm2').val(name);
+            $("#apvlEmpEmailHidden").text('');
+            $('#exitDeptModalBtn').click();
+            ///////////////////////////////////////////////////////////////////////////////////
+        }
+    } else if ( $("#apvlReqHidden").text() == "deptEdtReq" ) {
+        if($("#apvlEmpEmailHidden").text() == null || $("#apvlEmpEmailHidden").text() == ""){
+            alertMsg("직원을 선택해 주세요.");
+        }else{
+            var email = $(i).children().eq(1).text(); // 그리드에서 선택한 email 값
+            var name = $(i).children().eq(0).text(); // 그리드에서 선택한 name 값
+
+            $('#ipt_empId').val(email);
+            $('#ipt_empNm').val(name);
+            $("#apvlEmpEmailHidden").text('');
+            $('#exitDeptModalBtn2').click();
+            ///////////////////////////////////////////////////////////////////////////////////
+        }
+    }else {
         if($("#empEmailHidden").val() == null || $("#empEmailHidden").val() == ""){
             alertMsg("직원을 선택해 주세요.");
         }else{
@@ -192,7 +218,33 @@ function onDblClickEvt(i){
             $("#apvlEmpEmailHidden").text('');
             ///////////////////////////////////////////////////////////////////////////////////
         }
-    } else {
+    } else if ( $("#apvlReqHidden").text() == "deptReq" ) {
+        if($("#apvlEmpEmailHidden").text() == null || $("#apvlEmpEmailHidden").text() == ""){
+            alertMsg("직원을 선택해 주세요.");
+        }else{
+            var email = $(i).children().eq(1).text(); // 그리드에서 선택한 email 값
+            var name = $(i).children().eq(0).text(); // 그리드에서 선택한 name 값
+
+            $('#ipt_empId2').val(email);
+            $('#ipt_empNm2').val(name);
+            $("#apvlEmpEmailHidden").text('');
+            $('#exitDeptModalBtn').click();
+            ///////////////////////////////////////////////////////////////////////////////////
+        }
+    } else if ( $("#apvlReqHidden").text() == "deptEdtReq" ) {
+        if($("#apvlEmpEmailHidden").text() == null || $("#apvlEmpEmailHidden").text() == ""){
+            alertMsg("직원을 선택해 주세요.");
+        }else{
+            var email = $(i).children().eq(1).text(); // 그리드에서 선택한 email 값
+            var name = $(i).children().eq(0).text(); // 그리드에서 선택한 name 값
+
+            $('#ipt_empId').val(email);
+            $('#ipt_empNm').val(name);
+            $("#apvlEmpEmailHidden").text('');
+            $('#exitDeptModalBtn2').click();
+            ///////////////////////////////////////////////////////////////////////////////////
+        }
+    }else {
         if($("#empEmailHidden").val() == null || $("#empEmailHidden").val() == ""){
             alertMsg("직원을 선택해 주세요.");
         }else{
@@ -306,6 +358,22 @@ function onClickSearchBtn(ipt_searchName) {
                         empListGrd(data);
                     }
                 //스케쥴 관리                            --신규 화면 추가의 경우. $('#apvlReqHidden') 객체 선언 후 분기처리.
+                } else if ( scrDivs == "deptReq" ) {
+                    if (data.length == 1) {
+                        $('#ipt_empId2').val(data[0].EMP_EMAIL);
+                        $('#ipt_empNm2').val(data[0].EMP_NAME);
+                        $('#exitDeptModalBtn').click();
+                    } else {
+                        empListGrd(data);
+                    }
+                } else if ( scrDivs == "deptEdtReq" ) {
+                    if (data.length == 1) {
+                        $('#ipt_empId').val(data[0].EMP_EMAIL);
+                        $('#ipt_empNm').val(data[0].EMP_NAME);
+                        $('#exitDeptModalBtn2').click();
+                    } else {
+                        empListGrd(data);
+                    }
                 } else {
                     if (data.length == 1) {
                         dataCustomArray = new Array();
@@ -400,6 +468,22 @@ $('#ipt_searchName').keydown(function(e){
                                     empListGrd(data);
                                 }
                             //스케쥴 관리                            --신규 화면 추가의 경우. $('#apvlReqHidden') 객체 선언 후 분기처리.
+                            }  else if ( scrDivs == "deptReq" ) {
+                                if (data.length == 1) {
+                                    $('#ipt_empId2').val(data[0].EMP_EMAIL);
+                                    $('#ipt_empNm2').val(data[0].EMP_NAME);
+                                    $('#exitDeptModalBtn').click();
+                                } else {
+                                    empListGrd(data);
+                                }
+                            } else if ( scrDivs == "deptEdtReq" ) {
+                                if (data.length == 1) {
+                                    $('#ipt_empId').val(data[0].EMP_EMAIL);
+                                    $('#ipt_empNm').val(data[0].EMP_NAME);
+                                    $('#exitDeptModalBtn2').click();
+                                } else {
+                                    empListGrd(data);
+                                }
                             } else {
                                 if (data.length == 1) {
                                     dataCustomArray = new Array();

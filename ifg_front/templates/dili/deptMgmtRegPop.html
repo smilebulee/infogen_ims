@@ -1,4 +1,4 @@
-<script type="text/javascript">
+ <script type="text/javascript">
 
 var initFlag = true;
 
@@ -16,247 +16,63 @@ n_dialog.setConfig({
     }
 });
 
-$("#exitEmpModalBtnTest").click(function(){//asdf
-    onClickResetBtn2();
-});
 
 $(document).ready(function(){
-    // 공통 코드 조회 - '부서 조회'
-    retrieveCmmCd('sbx_empDept2', 'SLIN_BZDP');
-    // 공통 코드 조회 - '권한 조회'
-    retrieveCmmCdChk('chk_empAuthId2', 'AUTH_CD');
-    $('#chk_empAuthId2').attr('style', "font-size:x-small");
 
 
 });
 
+$("#ipt_empNm2").click(function(){
+    var url = "{% url 'dili_api:empMgmtPop' %}" ;
+    modal('empModalDiv');
+    $('#empModal').load(url);
+    $('#empModalDiv').css("z-index", 15);
+});
 
-/* ID 중복확인 버튼 클릭 이벤트 */
-function onClickIsExistBtn2() {
-    var email = $('#ipt_empId2').val();
-
-    if( email == "" || email == null){
-        alertMsg("ID를 입력해주세요", function() {
-            $('#ipt_empId2').focus();
-        });
-    }else if(email.length < 4 || email.length > 12 ) {
-        alertMsg("직원 ID는 4 ~ 12자로 입력해주세요.", function() {
-            $('#ipt_empId2').focus();
-        });
-    }else{
-        var param = {
-            "email" : email
-        }
-
-        /* 정보 조회 */
-        $.ajaxCall( param, {
-             'method' : 'GET',
-             'url' : "{% url 'dili_api:getEditEmpInfo' %}",
-             'dataType' : 'json',
-             'data' : JSON.stringify(param),
-             'async' : false,
-             'callbackFn' : function(data){
-                // 로그
-                console.log("data : ",data);
-                // 리턴
-                isExistResult(data);
-             }
-        });
-    }
-
-};
-
-/* ID 중복체크 결과 */
-function isExistResult(data){
-    console.log("Start")
-    console.log(data)
-    console.log(typeof(data))
-    if(data.length > 0){
-        alertMsg("이미 사용중인 ID입니다.", function() {
-            console.log("ID 중복체크 > 등록 불가능");
-            $('#ipt_empId2').val("");
-            $('#ipt_empId2').focus();
-        });
-
-
-    }else{
-        alertMsg("사용 가능한 ID입니다.", function() {
-            console.log("ID 중복체크 > 등록가능");
-            $('#ipt_empId2').attr('readonly', true);
-            $('#reIsExistBtn2').attr('hidden', false);
-            $('#isExistBtn2').attr('hidden', true);
-        });
-    }
-};
-
-
-/* ID 재설정 클릭 이벤트 */
-function onClickReIsExistBtn2(){
-    $('#ipt_empId2').attr('readonly', false);
-    $('#ipt_empId2').val("");
-    $('#ipt_empId2').focus();
-    $('#reIsExistBtn2').attr('hidden', true);
-    $('#isExistBtn2').attr('hidden', false);
-}
-
-/* 성명 중복확인 버튼 클릭 이벤트 */
-function onClickIsExistNmBtn2() {
-    var name = $('#ipt_empNm2').val();
-    if( name == "" || name == null){
-        alertMsg("성명을 입력해주세요", function() {
-            $('#ipt_empNm2').focus();
-        });
-    } else if (name.length < 2){
-        alertMsg("직원 성명은 두 글자 이상 입력해 주세요.", function() {
-            $('#ipt_empNm2').focus();
-        });
-    }else{
-        var param = {
-            "name" : name
-        }
-
-        /* 정보 조회 */
-        $.ajaxCall( param, {
-             'method' : 'GET',
-             'url' : "{% url 'dili_api:isExistEmpNm' %}",
-             'dataType' : 'json',
-             'data' : JSON.stringify(param),
-             'async' : false,
-             'callbackFn' : function(data){
-                // 로그
-                console.log("data : ",data);
-                // 리턴
-                isExistNmResult(data);
-             }
-        });
-    }
-
-};
-
-/* 성명 중복체크 결과 */
-function isExistNmResult(data){
-
-    console.log("Start")
-    console.log(data)
-    console.log(typeof(data))
-    if(data.length > 0){
-        alertMsg("이미 사용중인 성명입니다.<br>성명+숫자로 재입력해주세요.<br>(예: 홍길동1, 홍길동2)", function() {
-            console.log("성명 중복체크 > 등록 불가능");
-            $('#ipt_empNm2').focus();
-
-        });
-
-    }else{
-        alertMsg("사용 가능한 성명입니다.", function() {
-            console.log("성명 중복체크 > 등록가능");
-            $('#ipt_empNm2').attr('readonly', true);
-            $('#reIsExistNmBtn2').attr('hidden', false);
-            $('#isExistNmBtn2').attr('hidden', true);
-        });
-    }
-};
-
-
-/* 성명 재설정 클릭 이벤트 */
-function onClickReIsExistNmBtn2(){
-    $('#ipt_empNm2').attr('readonly', false);
-    $('#ipt_empNm2').focus();
-    $('#reIsExistNmBtn2').attr('hidden', true);
-    $('#isExistNmBtn2').attr('hidden', false);
+function fncClose() {
+    document.getElementById('layempModalDiv').remove();
+    $('#empModalDiv').hide();
 }
 
 /* 등록버튼 클릭 이벤트 */
 function onClickSubmitBtn2() {
     var ipt_empId2 = $('[name="ipt_empId2"]').val();
-    var ipt_empPw2 = $('[name="ipt_empPw2"]').val();
-    /* var ipt_empAuthId = $('[name="sbx_empAuthId"] option:selected').val(); */
     var ipt_empNm2 = $('[name="ipt_empNm2"]').val();
-    var ipt_empDept = $('[name="sbx_empDept2"] option:selected').val();
+    var ipt_deptName = $('[name="ipt_deptName"]').val();
 
-    var query = "input[name='AUTH_CD']:checked";
-    var selectedEls = document.querySelectorAll(query);
     var result = '';
-    selectedEls.forEach((el) => {
-        result += el.value + '|';
-    });
-    var ipt_empAuthId = result.slice(0, -1);
 
-    if( ipt_empId2 == "" || ipt_empId2 == null ){
-        alertMsg("직원 ID를 입력해 주세요.", function() {
-            $('#ipt_empId2').focus();
+    if( ipt_deptName == "" || ipt_deptName == null ){
+        alertMsg("부서명을 입력해 주세요.", function() {
+            $('#ipt_deptName').focus();
         });
         return false;
-    } else if(ipt_empId2.length < 4 || ipt_empId2.length > 12 ) {
-        alertMsg("직원 ID는 4 ~ 12자로 입력해주세요.", function() {
-            $('#ipt_empId2').focus();
-        });
-        return false;
-    } else if($('#reIsExistBtn2').is(":hidden")) {
-        alertMsg("직원 ID 중복여부 체크해 주세요.", function() {
-            $('#ipt_empId2').focus();
-        });
-        return false;
-    } else if (ipt_empPw2 == "" || ipt_empPw2 == null ){
-        alertMsg("직원 비밀번호를 입력해 주세요.", function() {
-            $('#ipt_empPw2').focus();
-        });
-        return false;
-    } else if(ipt_empPw2.length < 4 || ipt_empPw2.length > 12 ) {
-        alertMsg("직원 비밀번호는 4 ~ 12자로 입력해주세요.", function() {
-            $('#ipt_empPw2').focus();
-        });
-        return false;
-    } else if (ipt_empNm2 == "" || ipt_empNm2 == null ){
-        alertMsg("직원 성명을 입력해 주세요.", function() {
+    } else if( ipt_empNm2 == "" || ipt_empNm2 == null ){
+        alertMsg("현장대리인을 선택해 주세요.", function() {
             $('#ipt_empNm2').focus();
-        });
-        return false;
-    } else if (ipt_empNm2.length < 2){
-        alertMsg("직원 성명은 두 글자 이상 입력해 주세요.", function() {
-            $('#ipt_empNm2').focus();
-        });
-        return false;
-    } else if($('#reIsExistNmBtn2').is(":hidden")) {
-        alertMsg("직원 성명 중복여부 체크해 주세요.", function() {
-            $('#ipt_empNm2').focus();
-        });
-        return false;
-    } else if (ipt_empAuthId == "none" || ipt_empAuthId == null ){
-        alertMsg("직원 권한을 선택해 주세요.", function() {
-            $('#ipt_empAuthId').focus();
-        });
-        return false;
-    } else if (ipt_empDept == "00" || ipt_empDept == null ){
-        alertMsg("직원 부서를 선택해 주세요.", function() {
-            $('#ipt_empDept').focus();
         });
         return false;
     }
-
 
     var param = {
         "ipt_empId"     : ipt_empId2,
-        "ipt_empPw"     : ipt_empPw2,
-        "ipt_empAuthId" : ipt_empAuthId,
         "ipt_empNm"     : ipt_empNm2,
-        "ipt_empDept"   : ipt_empDept,
+        "ipt_deptName"  : ipt_deptName,
         "sessionId"         : sessionStorage.getItem("email")      //로그인한 사용자 아이디
     }
-
     n_dialog.confirm('등록하시겠습니까?',function(){
             if(this.key == 'ok'){       //확인클릭시
                 $.ajaxCall( param, {
                     method:'POST',
-                    url : "{% url 'dili_api:empMgmtReg' %}",
+                    url : "{% url 'dili_api:deptMgmtReg' %}",
                     dataType:'json',
                     data:JSON.stringify(param),
                     callbackFn:function(data){
                         if(data){
                             // 리턴
-                             //location.href = "{% url 'dili_api:empMgmt' %}";
-                             url = "{% url 'dili_api:empMgmt' %}";
-                             $('#grd_empListTable').load(url);
-                             $('#exitEmpModalBtnTest').click();
+                             //location.href = "{% url 'dili_api:deptMgmt' %}";
+                             url = "{% url 'dili_api:deptMgmt' %}";
+                             $('#grd_deptListTable').load(url);
                              alertMsg("성공적으로 등록되었습니다.");
                              console.log("등록되었습니다.");
                             onClickResetBtn2();                                          //asdf
@@ -279,63 +95,38 @@ function onClickSubmitBtn2() {
 
 };
 
-/* 닫기 버튼 클릭 이벤트 */
-function onClickCloseBtn2() {
-    $('#exitEmpModalBtnTest').click();
-};
 
 /* 리셋 버튼 클릭 이벤트 */
 function onClickResetBtn2() {
-    $('#ipt_empId2').attr('readonly', false);
-    $('#reIsExistBtn2').attr('hidden', true);
-    $('#isExistBtn2').attr('hidden', false);
-    $('#ipt_empNm2').attr('readonly', false);
     $('#ipt_empId2').val("");
-    $('#ipt_empPw2').val("");
     $('#ipt_empNm2').val("");
-
-    $('#chk_empAuthId2').children().find('.test').prop("checked", false);
-    $('#sbx_empDept2').val("00");
-
-
+    $('#ipt_deptName').val("");
 };
 
-
-/* 아이디 영문, 숫자만 입력가능체크 */
-function validChk(){
-    var inputId = $('#ipt_empId2').val();
-    var idReg = /^[a-z0-9]{0,12}$/g;
-    if( !idReg.test( inputId) ) {
-        $('#idValidText').attr('class','requiredTextAlert');
-        $('#ipt_empId2').val(inputId.substring( 0, (inputId.length)-1 ));
-        $('#ipt_empId2').focus();
-        event.returnValue = false
-    }else{
-        $('#idValidText').attr('class','requiredText');
-        event.returnValue = true
-    }
-}
-
-
-/* 비밀번호 영문, 숫자만 입력가능체크 */
-function validChk2(){
-    var inputPw = $('#ipt_empPw2').val();
-    var idReg = /^[a-z0-9]{0,12}$/g;
-    if( !idReg.test( inputPw) ) {
-        $('#pwValidText').attr('class','requiredTextAlert');
-        $('#ipt_empPw2').val(inputPw.substring( 0, (inputPw.length)-1 ));
-        $('#ipt_empPw2').focus();
-        event.returnValue = false;
-    }else{
-        $('#pwValidText').attr('class','requiredText');
-        event.returnValue = true;
-    }
-}
-
-
+$("#exitDeptModalBtnTest").click(function(){//asdf
+    $('#exitDeptModalBtn').click();
+});
 
 </script>
-<div style="width :500px;">
+
+<!--직원조회 모달 영역 -->
+<div id="empModalDiv" class="modalUi">
+    <div id="empModal">
+    </div>
+        <a id="exitDeptModalBtnM" onclick="fncClose()" style="position: absolute;top: 10px;right: 10px;">
+        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-x-circle" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+           <path fill-rule="evenodd" d="
+           M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+           <path fill-rule="evenodd" d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+        </svg>
+<!-- 직원조회 모달 param -->
+        <span id="apvlEmpEmailHidden"   style="display:none;" ></span>
+        <span id="apvlReqHidden"        style="display:none;" >deptReq</span>
+        <span id="apvlReqIptFlagHidden" style="display:none;" ></span>
+    </a>
+</div>
+
+<div style="width :400px;">
     <div class="mb-4" role="alert">
         <h6>
             <b>부서등록</b>
@@ -359,7 +150,7 @@ function validChk2(){
                     </td>
                     <td>
                         <div class="align-self-center mr-2">
-                            <input type="text" class="form-control" id="ipt_deptName" name="ipt_deptName" placeholder="ID" maxlength="50" onkeyup="validChk();"/>
+                            <input type="text" class="form-control" id="ipt_deptName" name="ipt_deptName" placeholder="부서명" maxlength="50"/>
                         </div>
                     </td>
                 </tr>
@@ -370,7 +161,8 @@ function validChk2(){
                     </td>
                     <td>
                         <div class="align-self-center mr-2">
-                            <input type="text" class="form-control" id="ipt_empNm2" name="ipt_empNm2" placeholder="NAME" maxlength="5" />
+                            <input type="hidden" id="ipt_empId2" name="ipt_empId2" />
+                            <input type="text" class="form-control" id="ipt_empNm2" name="ipt_empNm2" placeholder="현장대리인" maxlength="5" readonly />
                         </div>
                     </td>
                 </tr>
@@ -384,7 +176,6 @@ function validChk2(){
                         <div class="flex-height mt-4" style="float:right;">
                             <button class="button" id="submitBtn2" type="button" onclick="onClickSubmitBtn2()">등록</button>
                             <button class="button" id="resetBtn2" type="button" onclick="onClickResetBtn2()">초기화</button>
-                            <button class="button" id="closeBtn2" type="button" onclick="onClickCloseBtn2()" >닫기</button>
                         </div>
                     </td>
                 </tr>

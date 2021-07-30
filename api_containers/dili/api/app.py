@@ -1,3 +1,4 @@
+#-*-coding:utf-8-*-
 from flask import Flask, jsonify, request
 from flask_restful import Api, Resource
 from datetime import date, timedelta        # 연차 등록 시, 근무시간 레코드 등록을 위한 날짜 리스트 추출 용도로  추가
@@ -3224,7 +3225,7 @@ class deptInfo(Resource): # Mariadb 연결 진행
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 #쿼리문 실행
-                # 전체 직원 조회
+                # 전체 부서 조회
                 sql = "SELECT C.CMM_CD AS DEPT_CODE" \
                       "     , C.CMM_CD_NAME AS DEPT_NAME" \
                       "     , C.USE_YN" \
@@ -3254,6 +3255,196 @@ class deptInfo(Resource): # Mariadb 연결 진행
 
         return json.dumps(result2, indent=4, cls=DateTimeEncoder)
 
+class deptMgmtRegSubmit(Resource):
+    def post(self):
+        logger.info('========app.py deptMgmtRegSubmit=========')
+        params = request.get_json()
+        logger.info(params)
+
+        for row in request.form:
+            logger.info(row + ':' + request.form[row])
+            globals()[row] = request.form[row]
+
+        ipt_empId2 = request.form['ipt_empId']
+        ipt_empNm2 = request.form['ipt_empNm']
+        ipt_deptName = request.form['ipt_deptName']
+        sessionId = request.form['sessionId']
+
+
+        logging.debug("====Param data====")
+
+        logging.debug("ipt_empId2 = " + ipt_empId2)
+        logging.debug("ipt_empNm2 = " + ipt_empNm2)
+        logging.debug("ipt_deptName = " + ipt_deptName)
+        logging.debug("sessionId = " + sessionId)
+
+
+
+        logging.debug("=====================")
+
+
+
+        mysql_con = pymysql.connect(host=getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
+                                    charset='utf8', autocommit=False)
+
+
+        logging.debug("save Start")
+
+        try:
+            with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+                sql= "INSERT INTO TB_CMM_CD_DETL(CMM_CD_GRP_ID, CMM_CD, CMM_CD_NAME, USE_YN, REG_DATE, REG_EMP_NO, CHG_DATE, CHG_EMP_NO, EMP_ID) "\
+                     "VALUES( "\
+                     "        'SLIN_BZDP' "\
+                     "      , (SELECT * FROM (SELECT MAX(CMM_CD)+1 FROM TB_CMM_CD_DETL WHERE CMM_CD_GRP_ID = 'SLIN_BZDP' AND CMM_CD <> '99') A) "\
+                     "      , '" + ipt_deptName + "' "\
+                     "      , 'Y' "\
+                     "      , NOW() "\
+                     "      , '" + sessionId + "' "\
+                     "      , NOW() "\
+                     "      , '" + sessionId + "' "\
+                     "      , '" + ipt_empId2 + "' "\
+                     " ) "\
+
+                logger.info(sql)
+                cursor.execute(sql)
+                mysql_con.commit()
+
+        finally:
+            mysql_con.close()
+
+        retJson = {
+            "status": 200,
+            "msg": "Data has been saved successfully"
+        }
+
+        return jsonify(retJson)
+
+class deptMgmtEditSubmit(Resource):
+    def post(self):
+        logger.info('========app.py empMgmtEditSubmit=========')
+        params = request.get_json()
+        logger.info(params)
+
+        for row in request.form:
+            logger.info(row + ':' + request.form[row])
+            globals()[row] = request.form[row]
+
+        ipt_empId = request.form['ipt_empId']
+        ipt_empNm = request.form['ipt_empNm']
+        ipt_deptCode = request.form['ipt_deptCode']
+        ipt_deptName = request.form['ipt_deptName']
+        sessionId = request.form['sessionId']
+
+
+        logging.debug("====Param data====")
+
+        logging.debug("ipt_empId = " + ipt_empId)
+        logging.debug("ipt_empNm = " + ipt_empNm)
+        logging.debug("ipt_deptCode = " + ipt_deptCode)
+        logging.debug("ipt_deptName = " + ipt_deptName)
+        logging.debug("sessionId = " + sessionId)
+
+        logging.debug("=====================")
+
+
+
+        mysql_con = pymysql.connect(host=getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
+                                    charset='utf8', autocommit=False)
+
+
+        logging.debug("save Start")
+
+        try:
+            with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+                # 부서정보 변경
+                sql= "UPDATE TB_CMM_CD_DETL "\
+                     "   SET CMM_CD_NAME = '" + ipt_deptName + "' "\
+                     "     , EMP_ID =  '" + ipt_empId + "' "\
+                     "     , CHG_DATE = NOW() "\
+                     "     , CHG_EMP_NO = '" + sessionId + "' "\
+                     " WHERE CMM_CD_GRP_ID = 'SLIN_BZDP' "\
+                     "   AND CMM_CD = '" + ipt_deptCode + "' "
+
+                logger.info(sql)
+                cursor.execute(sql)
+
+                # 부서내 사용자의 현장대리인, 부서명 변경
+                sql = "UPDATE TB_EMP_MGMT "\
+                      "   SET EMP_PR = '" + ipt_empId + "' "\
+                      "     , DEPT_NAME = '" + ipt_deptName + "' "\
+                      " WHERE DEPT_CD = '" + ipt_deptCode + "' "
+
+                logger.info(sql)
+                cursor.execute(sql)
+
+                # 변경한 부서의 현장대리인의 권한, 부서코드, 부서명 변경
+                sql = "UPDATE TB_EMP_MGMT " \
+                      "   SET AUTH_ID = 'PR' " \
+                      "     , DEPT_CD = '" + ipt_deptCode + "' "\
+                      "     , DEPT_NAME = '" + ipt_deptName + "' "\
+                      " WHERE EMP_ID = '" + ipt_empId + "' "
+                logger.info(sql)
+                cursor.execute(sql)
+
+                mysql_con.commit()
+
+        finally:
+            mysql_con.close()
+
+        retJson = {
+            "status": 200,
+            "msg": "Data has been saved successfully"
+        }
+
+        return jsonify(retJson)
+
+class deptOneInfo(Resource): # Mariadb 연결 진행
+    def get(self):
+
+        data = request.get_json()
+
+        logging.debug('================== App Start ==================')
+        logging.debug(data)
+        logging.debug(data["deptCode"])
+        logging.debug('================== App End ==================')
+
+        #requirements pymysql import 후 커넥트 사용
+        mysql_con = getMariaConn()
+        try:
+            with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+                #쿼리문 실행
+                sql = "SELECT C.CMM_CD AS DEPT_CODE" \
+                      "     , C.CMM_CD_NAME AS DEPT_NAME" \
+                      "     , C.USE_YN" \
+                      "     , IFNULL(C.RMKS, '') AS RMKS" \
+                      "     , C.EMP_ID" \
+                      "     , (SELECT E.EMP_NAME" \
+                      "          FROM TB_EMP_MGMT E" \
+                      "         WHERE E.EMP_ID = C.EMP_ID" \
+                      "       ) AS EMP_NAME" \
+                      "  FROM TB_CMM_CD_DETL C" \
+                      " WHERE C.CMM_CD_GRP_ID = 'SLIN_BZDP'" \
+                      "   AND C.CMM_CD = '" + data["deptCode"] + "'"\
+                      " ORDER BY C.CMM_CD"
+
+                logging.debug(sql)
+                cursor.execute(sql)
+                logging.debug('getEditDeptInfo SUCCESS')
+
+        finally:
+            mysql_con.close()
+            logging.debug('getEditDeptInfo CLOSE')
+
+
+
+        result2 = cursor.fetchall()
+        for row in result2:
+            logging.debug('====== row====')
+            logging.debug(row)
+            logging.debug('===============')
+        array = list(result2)  # 결과를 리스트로
+
+        return json.dumps(result2, indent=4, cls=DateTimeEncoder)
     
 api.add_resource(Hello, '/hello')
 api.add_resource(Register, '/register')
@@ -3320,6 +3511,10 @@ api.add_resource(updateRestTm,'/updateRestTm') #api선언
 api.add_resource(updateDinnRestTm,'/updateDinnRestTm') #api선언
 api.add_resource(popUpData,'/popUpData') #api 선언
 api.add_resource(deptInfo,'/deptInfo') #api 선언
+api.add_resource(deptMgmtRegSubmit,'/deptMgmtRegSubmit') #api 선언
+api.add_resource(deptMgmtEditSubmit,'/deptMgmtEditSubmit') #api 선언
+api.add_resource(deptOneInfo,'/deptOneInfo') #api 선언
+
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5006, debug=True)
