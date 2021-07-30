@@ -2173,6 +2173,16 @@ class scheduleStatLst(Resource):
                       "		 ,CONCAT(SUBSTRING(NVL(A.ALL_WRK_TM,''),1,2),':',SUBSTRING(NVL(A.ALL_WRK_TM,''),3,2)) ALL_WRK_TM" \
                       "      ,CASE WHEN B.EMP_EMAL_ADDR IS NULL AND (A.HLDY_WRK_TM != '000000' OR A.NGHT_WRK_TM != '000000') THEN 'N'" \
                       "            ELSE 'Y' END APVL_REQ_YN" \
+                      "      ,CASE WHEN NVL(A.NGHT_WRK_TM, '') != '' OR NVL(A.NGHT_WRK_TM, '') != '000000' THEN '연장'" \
+                      "            ELSE ''" \
+                      "             END NGHT_WRK_YN" \
+                      "      ,CASE WHEN NVL(A.HLDY_WRK_TM, '') != '' OR NVL(A.HLDY_WRK_TM, '') != '000000' THEN '휴일'" \
+                      "            ELSE ''" \
+                      "             END HLDY_WRK_YN" \
+                      "      ,CASE WHEN NVL(B.PTO_KD_CD, '') = '01' THEN '연차'" \
+                      "            WHEN NVL(B.PTO_KD_CD, '') = '02' THEN '반차'" \
+                      "            ELSE ''" \
+                      "             END PTO_KD_YN" \
                       "  FROM TB_WRK_TM_MGMT_M A" \
                       "  LEFT OUTER JOIN" \
                       "       TB_APVL_REQ_MGMT_M B" \
@@ -2252,6 +2262,16 @@ class scheduleStatLst(Resource):
                       "		 ,CONCAT(SUBSTRING(NVL(B.WRK_TME,''),1,2),':',SUBSTRING(NVL(B.WRK_TME,''),3,2)) ALL_WRK_TM" \
                       "      ,CASE WHEN B.EMP_EMAL_ADDR IS NULL AND (A.HLDY_WRK_TM != '000000' OR A.NGHT_WRK_TM != '000000') THEN 'N'" \
                       "            ELSE 'Y' END APVL_REQ_YN" \
+                      "      ,CASE WHEN NVL(A.NGHT_WRK_TM, '') != '' OR NVL(A.NGHT_WRK_TM, '') != '000000' THEN '연장'" \
+                      "            ELSE ''" \
+                      "             END NGHT_WRK_YN" \
+                      "      ,CASE WHEN NVL(A.HLDY_WRK_TM, '') != '' OR NVL(A.HLDY_WRK_TM, '') != '000000' THEN '휴일'" \
+                      "            ELSE ''" \
+                      "             END HLDY_WRK_YN" \
+                      "      ,CASE WHEN NVL(B.PTO_KD_CD, '') = '01' THEN '연차'" \
+                      "            WHEN NVL(B.PTO_KD_CD, '') = '02' THEN '반차'" \
+                      "            ELSE ''" \
+                      "             END PTO_KD_YN" \
                       "   FROM TB_WRK_TM_MGMT_M A" \
                       "  RIGHT OUTER JOIN" \
                       "        TB_APVL_REQ_MGMT_M B" \
