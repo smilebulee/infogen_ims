@@ -1133,7 +1133,7 @@ class empDeptPr(Resource): # Mariadb 연결 진행
                       "  FROM TB_CMM_CD_DETL D " \
                       " WHERE D.CMM_CD_GRP_ID = 'SLIN_BZDP' " \
                       "   AND D.CMM_CD = ( " \
-                      "                   SELECT X.DEPT_CD ㄱ " \
+                      "                   SELECT X.DEPT_CD " \
                       "                     FROM TB_EMP_MGMT X  " \
                       "                    WHERE X.EMP_EMAIL = '" + data["email"] + "' " \
                       "                  ) "
@@ -1808,7 +1808,7 @@ class saveYryApvlReq(Resource):  # Mariadb 연결 진행
         th1AprvStus     = params['th1AprvStus']
         th1AprvNm       = params['th1AprvNm']
         refNm           = params['refNm']
-        emerCtpl        = params['emerCtpl']
+        #emerCtpl        = params['emerCtpl']
         holiDays        = params['holiDays']
         
         logging.debug("====Param data====")
@@ -1828,7 +1828,7 @@ class saveYryApvlReq(Resource):  # Mariadb 연결 진행
         logging.debug("th1AprvStus  = " + th1AprvStus)
         logging.debug("th1AprvNm    = " + th1AprvNm)
         logging.debug("refNm        = " + refNm)
-        logging.debug("emerCtpl     = " + emerCtpl)
+        #logging.debug("emerCtpl     = " + emerCtpl)
         logging.debug("holiDays     = " + holiDays)
 
         logging.debug("========== 연차 시작일 / 종료일 사이 평일 추출 ==========")
@@ -1868,7 +1868,6 @@ class saveYryApvlReq(Resource):  # Mariadb 연결 진행
                                                       "`TH1_APRV_STUS`," \
                                                       "`TH1_APRV_NM`," \
                                                       "`REF_NM`," \
-                                                      "`EMER_CTPL`," \
                                                       "`APVL_LAST_APRV_DT`)" \
                                             " VALUES (   '" + email       + "'"\
                                                       ", '" + apvlDivs    + "'"\
@@ -1886,7 +1885,6 @@ class saveYryApvlReq(Resource):  # Mariadb 연결 진행
                                                       ", '" + th1AprvStus + "'"\
                                                       ", '" + th1AprvNm   + "'"\
                                                       ", '" + refNm       + "'"\
-                                                      ", '" + emerCtpl       + "'"\
                                                       ",      NOW())"
                 logger.info(sql1)
                 cursor.execute(sql1)

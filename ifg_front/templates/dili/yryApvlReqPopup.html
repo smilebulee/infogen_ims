@@ -29,13 +29,12 @@
              'async'        : false,
              'callbackFn'   : function(data){
                 if (data.length > 0) {
-                    $('#txt_allAnhoDays').text(data[0].ALL_YRY_DAYS) //전체연차일수
-                    $('#txt_rmnAnhoDays').text(data[0].ALL_YRY_DAYS - data[0].USE_YRY_DAYS) //남은연차일수
-
+                    $('#txt_allAnhoDays').val(data[0].ALL_YRY_DAYS) //전체연차일수
+                    $('#txt_rmnAnhoDays').val(data[0].ALL_YRY_DAYS - data[0].USE_YRY_DAYS) //남은연차일수
                 }
                 else {
-                    $('#txt_allAnhoDays').text(0) //전체연차일수
-                    $('#txt_rmnAnhoDays').text(0) //남은연차일수
+                    $('#txt_allAnhoDays').val(0) //전체연차일수
+                    $('#txt_rmnAnhoDays').val(0) //남은연차일수
                 }
              }
         });
@@ -407,29 +406,29 @@
         if (/^[0-9]{2,3}[0-9]{3,4}[0-9]{4}/.test(args)) {
             return true;
         }
-        alertMsg(msg, function() {
-            $("#ipt_emerCtpl").focus();
-        });
+        //alertMsg(msg, function() {
+        //    $("#ipt_emerCtpl").focus();
+        //});
 
         return false;
     }
 
     // focus out 시 비상연락망 유효성 검사
     $('#ipt_emerCtpl').focusout(function() {
-        if($("#ipt_emerCtpl").val() == "") {
-            return;
-        }
-        telValidator($("#ipt_emerCtpl").val());
+        //if($("#ipt_emerCtpl").val() == "") {
+        //    return;
+        //}
+        //telValidator($("#ipt_emerCtpl").val());
     });
 
     function btnReqEvt2() {
         n_dialog.confirm('저장하시겠습니까?',function(){
             if(this.key == 'ok'){
-                if(Number($('#txt_rmnAnhoDays').text()) == 0){
+                if(Number($('#txt_rmnAnhoDays').val()) == 0){
                     alertMsg("남은연차가 없습니다.");
                     return;
                 }
-                if(Number($('#txt_rmnAnhoDays').text()) < Number(calcWrkDate())){
+                if(Number($('#txt_rmnAnhoDays').val()) < Number(calcWrkDate())){
                     alertMsg("남은연차일수 보다 등록하실 연차일수가 더 큽니다.");
                     return;
                 }
@@ -541,6 +540,7 @@
             return;
         }
 
+        /*
         if($("#ipt_emerCtpl").val() == "") {
             alertMsg("비상연락망을 입력해주세요.", function() {
                 $('#ipt_emerCtpl').focus();
@@ -553,6 +553,7 @@
             });
             return;
         }
+        */
 
         if($("#ipt_yryApvlLnSearchNamePop").val().trim() == "" || $("#ipt_yryApvlLnSearchEmailPop").val().trim() == "") {
             alertMsg("결재자를 선택해주세요.", function() {
@@ -915,9 +916,9 @@ return;
                         <!--전체연차일수/ 남은연차일수 표기-->
 <!--                        <div class="card-body flex-height d-flex">-->
 <!--                            <span> 남은 연차 일수 : </span>-->
-<!--                            <span id="txt_rmnAnhoDays">0</span>-->
+                            <input type="hidden" id="txt_rmnAnhoDays" value="0">
 <!--                            <span> 일 / 총 연차 일수 : </span>-->
-<!--                            <span id="txt_allAnhoDays">0</span>-->
+                            <input type="hidden" id="txt_allAnhoDays" value="0">
 <!--                            <span> 일</span>-->
 <!--                        </div>-->
 
