@@ -13,6 +13,7 @@ from .helpers import ajax_login_required
 import requests
 import logging
 import json
+import bcrypt
 
 
 logger = logging.getLogger(__name__)
@@ -119,7 +120,7 @@ def signin(request):
     password = request.POST['password']
     #email = request.POST['email']
     next = request.POST['next']
-    encPassword = password.encode('utf-8')
+    encPassword = bcrypt.hashpw(password.encode('utf8'), bcrypt.gensalt())
 
     logger.info(username)
     logger.info(password)
