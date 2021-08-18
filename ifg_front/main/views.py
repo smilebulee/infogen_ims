@@ -119,16 +119,17 @@ def signin(request):
     password = request.POST['password']
     #email = request.POST['email']
     next = request.POST['next']
+    encPassword = password.encode('utf-8')
 
     logger.info(username)
     logger.info(password)
-    logger.info(password.encode('utf-8'))
+    logger.info(encPassword)
     datas = {
          'emp_id' : username,
          'emp_pw' : password
     }
     logger.info('data set33333 >>>>>>>>>>>>>>>>>>>')
-    user = authenticate(request, username=username, password=password)
+    user = authenticate(request, username=username, password=encPassword)
     userCheck = User.objects.filter(username=username)
 
     logger.info(user)
@@ -138,7 +139,7 @@ def signin(request):
         r = requests.post('http://emp_api:5001/SingIn', data=datas)
         if not userCheck :
             logger.info('usercheck fail')
-            user = User.objects.create_user(username=username,  password=password)  #임시 , email=email
+            user = User.objects.create_user(username=username,  password=encPassword)  #임시 , email=email
             logger.info('fail  >>>>>>>>>>>>>>>>>>>')
     else:
         r = requests.post('http://emp_api:5001/SingIn', data=datas)
