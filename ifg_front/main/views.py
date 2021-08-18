@@ -113,13 +113,13 @@ def login_form2(request):
     return render(request, template_name, {'form': form, 'next': next})
 
 def signin(request):
-    logger.info('data skill >>>>>>>>>>>>>>>>>>>')
-    logger.info(request.GET)
-    username = request.GET['username']
-    logger.info(request.GET['username'])
-    password = request.GET['password']
-    #email = request.GET['email']
-    next = request.GET['next']
+    logger.info('data skill >>>>>>>>>>>>>>>>>>>33')
+    logger.info(request.POST)
+    username = request.POST['username']
+    logger.info(request.POST['username'])
+    password = request.POST['password']
+    #email = request.POST['email']
+    next = request.POST['next']
 
     datas = {
          'emp_id' : username,
@@ -166,12 +166,12 @@ def signin(request):
 
 def signin2(request):
     logger.info('data signin dili >>>>>>>>>>>>>>>>>>>')
-    logger.info(request.GET)
-    username = request.GET['username']
-    logger.info(request.GET['username'])
-    password = request.GET['password']
+    logger.info(request.POST)
+    username = request.POST['username']
+    logger.info(request.POST['username'])
+    password = request.POST['password']
     #email = request.POST['email']
-    next = request.GET['next']
+    next = request.POST['next']
 
     datas = {
          'emp_id' : username,
