@@ -114,12 +114,12 @@ def login_form2(request):
 
 def signin(request):
     logger.info('data skill >>>>>>>>>>>>>>>>>>>')
-    logger.info(request.POST)
-    username = request.POST['username']
-    logger.info(request.POST['username'])
-    password = request.POST['password']
-    #email = request.POST['email']
-    next = request.POST['next']
+    logger.info(request.GET)
+    username = request.GET['username']
+    logger.info(request.GET['username'])
+    password = request.GET['password']
+    #email = request.GET['email']
+    next = request.GET['next']
 
     datas = {
          'emp_id' : username,
@@ -166,12 +166,12 @@ def signin(request):
 
 def signin2(request):
     logger.info('data signin dili >>>>>>>>>>>>>>>>>>>')
-    logger.info(request.POST)
-    username = request.POST['username']
-    logger.info(request.POST['username'])
-    password = request.POST['password']
+    logger.info(request.GET)
+    username = request.GET['username']
+    logger.info(request.GET['username'])
+    password = request.GET['password']
     #email = request.POST['email']
-    next = request.POST['next']
+    next = request.GET['next']
 
     datas = {
          'emp_id' : username,
