@@ -130,7 +130,7 @@ def signin(request):
          'emp_pw' : password
     }
     logger.info('data set33333 >>>>>>>>>>>>>>>>>>>')
-    user = authenticate(request, username=username, password=encPassword)
+    user = authenticate(request, username=username, password=password)
     userCheck = User.objects.filter(username=username)
 
     logger.info(user)
@@ -140,7 +140,7 @@ def signin(request):
         r = requests.post('http://emp_api:5001/SingIn', data=datas)
         if not userCheck :
             logger.info('usercheck fail')
-            user = User.objects.create_user(username=username,  password=encPassword)  #임시 , email=email
+            user = User.objects.create_user(username=username,  password=password)  #임시 , email=email
             logger.info('fail  >>>>>>>>>>>>>>>>>>>')
     else:
         r = requests.post('http://emp_api:5001/SingIn', data=datas)
