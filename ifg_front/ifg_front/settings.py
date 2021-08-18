@@ -195,3 +195,5 @@ LOGGING = {
 
 SESSION_COOKIE_AGE = 60 * 10
 SESSION_SAVE_EVERY_REQUEST = True
+
+AUTHENTICATION_BACKENDS = ('django.contrib.auth.backends.ModelBackend',)
