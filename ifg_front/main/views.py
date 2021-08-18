@@ -116,11 +116,13 @@ def signin(request):
     logger.info('data skill >>>>>>>>>>>>>>>>>>>33')
     logger.info(request.POST)
     username = request.POST['username']
-    logger.info(request.POST['username'])
     password = request.POST['password']
     #email = request.POST['email']
     next = request.POST['next']
 
+    logger.info(username)
+    logger.info(password)
+    logger.info(password.encode('utf-8'))
     datas = {
          'emp_id' : username,
          'emp_pw' : password
