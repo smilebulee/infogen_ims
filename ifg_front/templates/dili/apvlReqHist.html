@@ -71,6 +71,9 @@
         }
 
         // 결재승인 버튼 및 직원조회 기능 권한 처리 ( 성명 공란 검색 )
+        console.log("isAdmin : "+isAdmin);
+        console.log("isGm    : "+isGm);
+        console.log("isUser  : "+isUser);
         if(!isAdmin && !isGm && isUser) {
             $('#apvlAcptBtn').css("display", 'none');
             $('#btn_delApvlSearchName').css("display", 'none');

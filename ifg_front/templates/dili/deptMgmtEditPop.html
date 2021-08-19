@@ -56,14 +56,19 @@
         var get_useYn   = data[0].USE_YN;
         var get_empId   = data[0].EMP_ID;
         var get_empName = data[0].EMP_NAME;
+        var get_gmId   = data[0].GM_ID;
+        var get_gmName = data[0].GM_NAME;
 
         $('#ipt_deptCode').val(get_deptCode);
         $('#ipt_deptName').val(get_deptName);
         $('#ipt_empId').val(get_empId);
         $('#ipt_empNm').val(get_empName);
+        $('#ipt_gmId').val(get_gmId);
+        $('#ipt_gmNm').val(get_gmName);
 
         /* 성명관련 버튼 초기화 */
         $('#ipt_empNm').attr('readonly', true);
+        $('#ipt_gmNm').attr('readonly', true);
     };
 
     /* 수정버튼 클릭 이벤트 */
@@ -72,6 +77,8 @@
         var ipt_empNm = $('[name="ipt_empNm"]').val();
         var ipt_deptCode = $('[name="ipt_deptCode"]').val();
         var ipt_deptName = $('[name="ipt_deptName"]').val();
+        var ipt_gmId = $('[name="ipt_gmId"]').val();
+        var ipt_gmNm = $('[name="ipt_gmNm"]').val();
 
         if( ipt_deptName == "" || ipt_deptName == null ){
             alertMsg("부서명을 입력해 주세요.", function() {
@@ -83,6 +90,11 @@
                 $('#ipt_empNm').focus();
             });
             return false;
+        } else if (ipt_gmNm == "" || ipt_gmNm == null ){
+            alertMsg("사업부장을 선택해 주세요.", function() {
+                $('#ipt_gmNm').focus();
+            });
+            return false;
         }
 
         var param = {
@@ -90,6 +102,8 @@
             "ipt_empNm"     : ipt_empNm,
             "ipt_deptCode"  : ipt_deptCode,
             "ipt_deptName"  : ipt_deptName,
+            "ipt_gmId"      : ipt_gmId,
+            "ipt_gmNm"      : ipt_gmNm,
             "sessionId"     : sessionStorage.getItem("email")      //로그인한 사용자 아이디
         }
 
@@ -140,14 +154,27 @@
         $('#empModalDiv2').css("z-index", 15);
     });
 
+    $("#ipt_gmNm").click(function(){
+        $('#apvlReqHidden').text('deptGmEdtReq');
+        var url = "{% url 'dili_api:empMgmtPop' %}" ;
+        modal('empModalDiv3');
+        $('#empModal3').load(url);
+        $('#empModalDiv3').css("z-index", 15);
+    });
+
     function fncClose() {
         document.getElementById('layempModalDiv2').remove();
         $('#empModalDiv2').hide();
     }
 
+    function fncClose3() {
+        document.getElementById('layempModalDiv3').remove();
+        $('#empModalDiv3').hide();
+    }
+
 </script>
 
-<!--직원조회 모달 영역 -->
+<!--직원조회 모달 영역 - 현장대리인 -->
 <div id="empModalDiv2" class="modalUi">
     <div id="empModal2">
     </div>
@@ -161,6 +188,19 @@
         <span id="apvlEmpEmailHidden"   style="display:none;" ></span>
         <span id="apvlReqHidden"        style="display:none;" >deptEdtReq</span>
         <span id="apvlReqIptFlagHidden" style="display:none;" ></span>
+    </a>
+</div>
+
+<!--직원조회 모달 영역 - 사업부장 -->
+<div id="empModalDiv3" class="modalUi">
+    <div id="empModal3">
+    </div>
+        <a id="exitDeptModalBtn3" onclick="fncClose3()" style="position: absolute;top: 10px;right: 10px;">
+        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-x-circle" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+           <path fill-rule="evenodd" d="
+           M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+           <path fill-rule="evenodd" d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+        </svg>
     </a>
 </div>
 
@@ -222,6 +262,18 @@
                             <div class="align-self-center mr-2">
                                 <input type="hidden" class="form-control" id="ipt_empId" name="ipt_empId"/>
                                 <input type="text" class="form-control" id="ipt_empNm" name="ipt_empNm" placeholder="NAME" />
+                            </div>
+                        </td>
+                    </tr>
+                    <!-- 사업부장 -->
+                    <tr>
+                        <td>
+                            <div class="align-self-start align-self-center mr-5"><span class="requiredTag mr-1">*</span><label for="ipt_gmNm">사업부장</label></div>
+                        </td>
+                        <td>
+                            <div class="align-self-center mr-2">
+                                <input type="hidden" class="form-control" id="ipt_gmId" name="ipt_gmId"/>
+                                <input type="text" class="form-control" id="ipt_gmNm" name="ipt_gmNm" placeholder="NAME" />
                             </div>
                         </td>
                     </tr>

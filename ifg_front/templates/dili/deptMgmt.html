@@ -51,8 +51,8 @@ function deptListGrd(data){
     deptListTable += '<tr>';
     deptListTable += '<th class="text-center">부서코드</th>';
     deptListTable += '<th class="text-center">부서명</th>';
-    deptListTable += '<th class="text-center">현장대리인ID</th>';
     deptListTable += '<th class="text-center">현장대리인명</th>';
+    deptListTable += '<th class="text-center">사업부장명</th>';
     deptListTable += '<th class="text-center">비고</th>';
     deptListTable += '</tr>';
     deptListTable += '</thead>';
@@ -66,8 +66,8 @@ function deptListGrd(data){
             deptListTable += '<tr id ="grd_deptList" onclick="onClickGrdEvt(\''+data[i].DEPT_CODE+'\')">';
             deptListTable += '<td id="deptCode" class="pt-3-half">'+data[i].DEPT_CODE+'</td>';
             deptListTable += '<td id="deptName" class="pt-3-half">'+data[i].DEPT_NAME+'</td>';
-            deptListTable += '<td id="empId" class="pt-3-half">'+data[i].EMP_ID+'</td>';
             deptListTable += '<td id="empName" class="pt-3-half">'+maskingNm(data[i].EMP_NAME)+'</td>';
+            deptListTable += '<td id="gmName" class="pt-3-half">'+maskingNm(data[i].GM_NAME)+'</td>';
             deptListTable += '<td id="rmks" class="pt-3-half">'+data[i].RMKS+'</td>';
             deptListTable += '</tr>';
         }

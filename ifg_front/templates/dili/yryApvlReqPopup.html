@@ -75,6 +75,7 @@
                     $('#ipt_yryApvlLnSearchNamePop').prop('readOnly', true);
 
                     // 로그인한 사용자 소속 사업부장 이름, 이메일 조회 후 값 세팅
+
                     retrieveEmpDeptGmByEmail(sessionStorage.getItem("email"), function(data) {
                         if(data.length > 0) {
                             $('#ipt_yryRefSearchNamePop').val(data[0].DEPT_GM_NAME);
@@ -87,6 +88,7 @@
                             return;
                         }
                     });
+
                 }
 				else {
                     alertMsg("소속 부서 현장대리인 정보가 존재하지 않습니다. 경영지원실에 문의해주세요.", function() {
