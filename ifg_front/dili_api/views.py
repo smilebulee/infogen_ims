@@ -12,6 +12,7 @@ from django.views.decorators.csrf import csrf_exempt
 # from .models import TB_EMP,Cd
 
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.hashers import make_password, is_password_usable
 from main.helpers import ajax_login_required
 
 import requests
@@ -946,7 +947,7 @@ def empMgmtEdit(request):
     logger.info(datas)
 
     usr = User.objects.get(username=datas['ipt_empId'])
-    usr.password = datas['ipt_empPw']
+    usr.password = make_password(datas['ipt_empPw'])
     usr.save()
 
     return JsonResponse(r.json(), safe=False)
