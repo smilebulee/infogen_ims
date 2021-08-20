@@ -156,7 +156,7 @@
             scheduleStatLstTable += '<th class="text-center">성명</th>';
             scheduleStatLstTable += '<th class="text-center">일자</th>';
             scheduleStatLstTable += '<th class="text-center">요일</th>';
-            scheduleStatLstTable += '<th class="text-center">근무구분</th>';
+            //scheduleStatLstTable += '<th class="text-center">근무구분</th>';
             scheduleStatLstTable += '<th class="text-center">시작시간</th>';
             scheduleStatLstTable += '<th class="text-center">종료시간</th>';
             scheduleStatLstTable += '<th class="text-center">휴게</th>';
@@ -184,7 +184,7 @@
                     if(data[i].APVL_REQ_YN == 'N') {
                         star += '★';
                     }
-                    scheduleStatLstTable += '<td id="wrkDivs" class="pt-3-half">'+star + data[i].WRK_DIVS+'</td>';
+                    //scheduleStatLstTable += '<td id="wrkDivs" class="pt-3-half">'+star + data[i].WRK_DIVS+'</td>';
                     scheduleStatLstTable += '<td id="wrkStrtTm" class="pt-3-half">'+data[i].WRK_STRT_TM + '</td>';
                     scheduleStatLstTable += '<td id="wrkEndTm" class="pt-3-half">'+data[i].WRK_END_TM + '</td>';
                     if(data[i].ALL_WRK_TM > 60) {
