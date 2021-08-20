@@ -1895,11 +1895,12 @@ class saveYryApvlReq(Resource):  # Mariadb 연결 진행
                            "`WRK_DT`," \
                            "`JOB_STRT_TM`," \
                            "`JOB_END_TM`," \
+                           "`ALL_WRK_TM`," \
                            "`NORM_WRK_TM`)" \
-                           "VALUES( %s, %s, %s, %s, %s )"
+                           "VALUES( %s, %s, %s, %s, %s, %s )"
 
                     logger.info(sql2)
-                    cursor.execute(sql2, (email, i, jobStrtTm, jobEndTm, wrkTme))
+                    cursor.execute(sql2, (email, i, jobStrtTm, jobEndTm, wrkTme, wrkTme))
 
                 sql3 = "UPDATE TB_YRY_MGMT_M" \
                        "   SET USE_YRY_DAYS = USE_YRY_DAYS + %s" \
