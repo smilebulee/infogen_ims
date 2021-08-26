@@ -388,7 +388,7 @@ class weekGridData(Resource): # Mariadb 연결 진행
                     + "       ,NVL(A.DINN_REST_TM,'') AS DINN_REST_TM"\
                     + "   FROM TB_WRK_TM_MGMT_M A "\
                     + "        LEFT OUTER JOIN TB_APVL_REQ_MGMT_M B"\
-                    + "   ON A.WRK_DT = B.WRK_DT "\
+                    + "   ON A.WRK_DT BETWEEN B.HOLI_TERM1 AND B.HOLI_TERM2 "\
                     + "   AND A.EMP_EMAL_ADDR = B.EMP_EMAL_ADDR "\
                     + "  WHERE 1 = 1 "\
                     + "  AND A.EMP_EMAL_ADDR = '" + data["email"] + "' "\
@@ -479,7 +479,7 @@ class monthGridData(Resource): # Mariadb 연결 진행
                     + "       ,NVL(A.DINN_REST_TM,'') AS DINN_REST_TM "\
                     + "   FROM TB_WRK_TM_MGMT_M A "\
                     + "        LEFT OUTER JOIN TB_APVL_REQ_MGMT_M B"\
-                    + "   ON A.WRK_DT = B.WRK_DT "\
+                    + "   ON A.WRK_DT BETWEEN B.HOLI_TERM1 AND B.HOLI_TERM2 "\
                     + "   AND A.EMP_EMAL_ADDR = B.EMP_EMAL_ADDR "\
                     + "  WHERE 1 = 1 " \
                     + "  AND A.EMP_EMAL_ADDR = '" + data["email"] + "' "\
@@ -522,7 +522,7 @@ class wrkTimeInfoByEml(Resource): # Mariadb 연결 진행
                     + "      ,DATE_FORMAT(SEC_TO_TIME(SUM(TIME_TO_SEC(STR_TO_DATE( CONCAT(SUBSTRING(A.NORM_WRK_TM,1,2),':',SUBSTRING(A.NORM_WRK_TM,3,2),':',SUBSTRING(A.NORM_WRK_TM,5,2)) ,'%H:%i:%S')))),'%H.%i') NORM_WRK_TM" \
                     + "      ,DATE_FORMAT(SEC_TO_TIME((SUM(TIME_TO_SEC(STR_TO_DATE( CONCAT(SUBSTRING(A.HLDY_WRK_TM,1,2),':',SUBSTRING(A.HLDY_WRK_TM,3,2),':',SUBSTRING(A.HLDY_WRK_TM,5,2)) ,'%H:%i:%S'))) + SUM(TIME_TO_SEC(STR_TO_DATE( CONCAT(SUBSTRING(A.NGHT_WRK_TM,1,2),':',SUBSTRING(A.NGHT_WRK_TM,3,2),':',SUBSTRING(A.NGHT_WRK_TM,5,2)) ,'%H:%i:%S')))) - SUM(TIME_TO_SEC(STR_TO_DATE( CONCAT(SUBSTRING(IFNULL(B.WRK_TME,'000000'),1,2),':',SUBSTRING(IFNULL(B.WRK_TME,'000000'),3,2),':',SUBSTRING(IFNULL(B.WRK_TME,'000000'),5,2)) ,'%H:%i:%S')))),'%H.%i') NOT_APRV_OVER_WRK_TM" \
                     + "      ,DATE_FORMAT(SEC_TO_TIME(SUM(TIME_TO_SEC(STR_TO_DATE( CONCAT(SUBSTRING(IFNULL(B.WRK_TME,'000000'),1,2),':',SUBSTRING(IFNULL(B.WRK_TME,'000000'),3,2),':',SUBSTRING(IFNULL(B.WRK_TME,'000000'),5,2)) ,'%H:%i:%S')))),'%H.%i') APRV_OVER_WRK_TM" \
-                    + "  FROM TB_WRK_TM_MGMT_M A LEFT OUTER JOIN TB_APVL_REQ_MGMT_M B ON A.EMP_EMAL_ADDR = B.EMP_EMAL_ADDR AND A.WRK_DT = B.WRK_DT AND B.APVL_REQ_DIVS IN ('01','02')" \
+                    + "  FROM TB_WRK_TM_MGMT_M A LEFT OUTER JOIN TB_APVL_REQ_MGMT_M B ON A.EMP_EMAL_ADDR = B.EMP_EMAL_ADDR AND A.WRK_DT BETWEEN B.HOLI_TERM1 AND B.HOLI_TERM2 AND B.APVL_REQ_DIVS IN ('01','02')" \
                     + " WHERE A.EMP_EMAL_ADDR = '" +data["email"] + "'" \
                     + "   AND A.WRK_DT LIKE '" + data["dt"] + "%'" \
                     + " GROUP BY A.EMP_EMAL_ADDR"
@@ -1364,7 +1364,7 @@ class calendarData(Resource): # Mariadb 연결 진행
                       + "                   - TIME_TO_SEC(STR_TO_DATE( CONCAT(SUBSTRING(A.NORM_WRK_TM,1,2),':',SUBSTRING(A.NORM_WRK_TM,3,2)) ,'%H:%i'))),'%H:%i') AS OVER_WRK_TM " \
                       + "   FROM TB_WRK_TM_MGMT_M A " \
                       + "        LEFT OUTER JOIN TB_APVL_REQ_MGMT_M B" \
-                      + "     ON A.WRK_DT = B.WRK_DT " \
+                      + "     ON A.WRK_DT BETWEEN B.HOLI_TERM1 AND B.HOLI_TERM2 " \
                       + "    AND A.EMP_EMAL_ADDR = B.EMP_EMAL_ADDR " \
                       + "  WHERE 1 = 1 " \
                       + "    AND A.EMP_EMAL_ADDR = '" + data["email"] + "'"\
