@@ -2186,7 +2186,7 @@ class scheduleStatLst(Resource):
                       "  LEFT OUTER JOIN" \
                       "       TB_APVL_REQ_MGMT_M B" \
                       "    ON A.EMP_EMAL_ADDR = B.EMP_EMAL_ADDR" \
-                      "   AND A.WRK_DT = B.WRK_DT" \
+                      "   AND AND A.WRK_DT BETWEEN B.HOLI_TERM1 AND B.HOLI_TERM2" \
                       " WHERE SUBSTRING(A.WRK_DT, 1, 7) = '" + data["wrkDt"] + "'"
                 if data["email"] != "":
                       sql += "    AND A.EMP_EMAL_ADDR = '" + data["email"] + "'" \
