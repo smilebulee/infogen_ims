@@ -253,8 +253,8 @@
         var dt = $("#pop_dt").text();
         var tm = $("#ipt_jobEndTm").val();
         var strtTm = $('#ipt_jobStrtTm').val();
-        var restTm = $('#tmpRestTm').text();
-        var dinnRestTm = $('#tmpDinnRestTm').text();
+        var restTm = $("#sbx_restTme").val();
+        var dinnRestTm = $("#sbx_dinnRestTme").val();
         var totalRestTm = Number(restTm) + Number(dinnRestTm);
 
         var allWrkTm = allWrkTmCall(dateConverting2(dt), strtTm, tm, totalRestTm);
