@@ -81,7 +81,8 @@
 
         var tmpFlag = betweenDay(dt);
 
-        var aa = new Date();
+        var aa = new Date(dt);
+        console.log(aa);
         var dayLabel = aa.getDay();
 
         $('#pop_dt').text(dt+" ("+getDayLabel(dayLabel)+")");
