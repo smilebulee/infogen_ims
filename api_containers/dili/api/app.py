@@ -1902,7 +1902,7 @@ class saveYryApvlReq(Resource):  # Mariadb 연결 진행
                     "		, `TH1_APRV_STUS`   = '" + th1AprvStus + "'"\
                     "		, `TH1_APRV_NM`     = '" + th1AprvNm   + "'"\
                     "		, `REF_NM`          = '" + refNm       + "'"\
-                    "		, `APVL_LAST_APRV_DT` = NOW())"
+                    "		, `APVL_LAST_APRV_DT` = NOW()"
                 logger.info(sql1)
                 cursor.execute(sql1)
 
