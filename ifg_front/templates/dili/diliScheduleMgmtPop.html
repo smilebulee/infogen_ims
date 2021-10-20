@@ -53,6 +53,13 @@
         $('#dowDivsCd').val(data[0].DOW_DIVS_CD);
     }
 
+    function getDayLabel(day) {
+        var week = new Array('일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일');
+        var today = day;
+        var todayLabel = week[today];
+        return todayLabel;
+    }
+
     /*********************************************************************
     *   Grid set Data
     *********************************************************************/
@@ -85,6 +92,7 @@
         console.log(month);     // 출력: 8
         console.log(date);     // 출력: 21
         console.log(dayLabel);     // 출력: 4
+        console.log(getDayLabel(day));
 
 
         $('#pop_dt').text(dt);
