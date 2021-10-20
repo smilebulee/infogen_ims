@@ -74,7 +74,20 @@
 
         var tmpFlag = betweenDay(dt);
 
-        $('#pop_dt').text(dt+","+holi);
+        var aa = new Date();
+
+        var year = aa.getFullYear();
+        var month = aa.getMonth()+1;
+        var date = aa.getDate();
+        var dayLabel = aa.getDay();
+
+        console.log(year);     // 출력: 2014
+        console.log(month);     // 출력: 8
+        console.log(date);     // 출력: 21
+        console.log(dayLabel);     // 출력: 4
+
+
+        $('#pop_dt').text(dt);
 
         var nowDt = new Date();
         var strNowTm = fillZero(2, nowDt.getHours()) + ':' + fillZero(2, nowDt.getMinutes());
