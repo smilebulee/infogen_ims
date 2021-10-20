@@ -1886,7 +1886,8 @@ class saveYryApvlReq(Resource):  # Mariadb 연결 진행
                                                       ", '" + th1AprvStus + "'"\
                                                       ", '" + th1AprvNm   + "'"\
                                                       ", '" + refNm       + "'"\
-                                                      ",      NOW()) ON DUPLICATE KEY " \
+                                                      ",      NOW()" \
+                                                      ") ON DUPLICATE KEY " \
                     "UPDATE   `APVL_DIVS` 		= '" + apvlDivs    + "'"\
                     "		, `APVL_REQ_DIVS`   = '" + apvlReqDivs + "'"\
                     "		, `PTO_KD_CD`		= '" + ptoKdCd + "'"\
@@ -1897,7 +1898,7 @@ class saveYryApvlReq(Resource):  # Mariadb 연결 진행
                     "		, `HOLI_TERM2`      = '" + holiTerm2   + "'"\
                     "		, `WRK_TME`         = '" + wrkTme      + "'"\
                     "		, `HOLI_REQ_RSN`    = '" + wrkReqRsn   + "'"\
-                    "		, `APVL_REQ_DT`     = NOW()" \          
+                    "		, `APVL_REQ_DT`     = NOW()" \
                     "		, `TH1_APRV_STUS`   = '" + th1AprvStus + "'"\
                     "		, `TH1_APRV_NM`     = '" + th1AprvNm   + "'"\
                     "		, `REF_NM`          = '" + refNm       + "'"\
