@@ -1850,6 +1850,7 @@ class saveYryApvlReq(Resource):  # Mariadb 연결 진행
         mysql_con = getMariaConn()
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+
                 # 쿼리문 실행
                 sql1 = "INSERT INTO TB_APVL_REQ_MGMT_M (" \
                                                       "`EMP_EMAL_ADDR`," \
@@ -1885,7 +1886,22 @@ class saveYryApvlReq(Resource):  # Mariadb 연결 진행
                                                       ", '" + th1AprvStus + "'"\
                                                       ", '" + th1AprvNm   + "'"\
                                                       ", '" + refNm       + "'"\
-                                                      ",      NOW())"
+                                                      ",      NOW()) ON DUPLICATE KEY " \
+                    "UPDATE   APVL_DIVS 		= '" + apvlDivs    + "'"\
+                    "		, APVL_REQ_DIVS     = '" + apvlReqDivs + "'"\
+                    "		, PTO_KD_CD			    = '" + ptoKdCd + "'"\
+                    "		, HDO_KD_CD 		    = '" + hdoKdCd + "'"\
+                    "		, JOB_STRT_TM       = '" + jobStrtTm   + "'"\
+                    "		, JOB_END_TM        = '" + jobEndTm    + "'"\
+                    "		, HOLI_TERM1        = '" + holiTerm1   + "'"\
+                    "		, HOLI_TERM2        = '" + holiTerm2   + "'"\
+                    "		, WRK_TME           = '" + wrkTme      + "'"\
+                    "		, HOLI_REQ_RSN      = '" + wrkReqRsn   + "'"\
+                    "		, APVL_REQ_DT       =      NOW()" \          
+                    "		, TH1_APRV_STUS     = '" + th1AprvStus + "'"\
+                    "		, TH1_APRV_NM       = '" + th1AprvNm   + "'"\
+                    "		, REF_NM            = '" + refNm       + "'"\
+                    "		, APVL_LAST_APRV_DT =      NOW())"
                 logger.info(sql1)
                 cursor.execute(sql1)
 
@@ -1897,10 +1913,14 @@ class saveYryApvlReq(Resource):  # Mariadb 연결 진행
                            "`JOB_END_TM`," \
                            "`ALL_WRK_TM`," \
                            "`NORM_WRK_TM`)" \
-                           "VALUES( %s, %s, %s, %s, %s, %s )"
+                           "VALUES( %s, %s, %s, %s, %s, %s ) ON DUPLICATE KEY " \
+                    "UPDATE   JOB_STRT_TM 	= %s" \
+                    "		, JOB_END_TM    = %s" \
+                    "		, ALL_WRK_TM	= %s" \
+                    "		, NORM_WRK_TM   = %s"
 
                     logger.info(sql2)
-                    cursor.execute(sql2, (email, i, jobStrtTm, jobEndTm, wrkTme, wrkTme))
+                    cursor.execute(sql2, (email, i, jobStrtTm, jobEndTm, wrkTme, wrkTme, jobStrtTm, jobEndTm, wrkTme, wrkTme))
 
                 sql3 = "UPDATE TB_YRY_MGMT_M" \
                        "   SET USE_YRY_DAYS = USE_YRY_DAYS + %s" \
