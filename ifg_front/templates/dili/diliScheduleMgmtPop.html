@@ -83,9 +83,8 @@
 
         var aa = new Date();
         var dayLabel = aa.getDay();
-        //console.log(getDayLabel(dayLabel));
 
-        $('#pop_dt').text(dt+"("+getDayLabel(dayLabel)+")");
+        $('#pop_dt').text(dt+" ("+getDayLabel(dayLabel)+")");
 
         var nowDt = new Date();
         var strNowTm = fillZero(2, nowDt.getHours()) + ':' + fillZero(2, nowDt.getMinutes());
@@ -208,7 +207,7 @@
         }
 
         var param = {
-            "dt"  : $('#pop_dt').text()
+            "dt"  : dt
         }
         var url = "{% url 'dili_api:getHldyMgmt' %}";
         submissionCallMap(param,'GET',url,getHldyMgmtSubMitDone);
