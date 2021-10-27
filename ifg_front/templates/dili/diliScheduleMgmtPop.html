@@ -171,8 +171,18 @@
 
             }else {
 
-                $('#pop_strtJob').text(strtTm);
-                $('#pop_endJob').text(endTm);
+                if (ptoKdCd == "02") {
+                    document.getElementById('pop_strtJob').innerHTML = '<div style="float: left;"><input type="time" class="align-self-start align-self-center form-control" id="ipt_jobStrtTm"  style="width:125px;" name="ipt_jobStrtTm" /></div>'
+                    + '<input type="button" class="button" onclick="onclickStrtTm()" value="출근버튼">';
+
+                    document.getElementById('pop_endJob').innerHTML = '<div style="float: left;"><input type="time" class="align-self-start align-self-center form-control" id="ipt_jobEndTm"  style="width:125px;" name="ipt_jobEndTm" /></div>'
+                    + '<input type="button" class="button" onclick="onclickEndTm()" value="퇴근버튼">';
+                    $("#ipt_jobEndTm").val(strNowTm);
+                }else {
+                    $('#pop_strtJob').text(strtTm);
+                    $('#pop_endJob').text(endTm);
+                }
+
                 $('#sbx_restTme').attr('disabled',true);
                 $('#sbx_restTme').val(restTm);
                 $('#btn_restTm').hide();
@@ -197,7 +207,6 @@
                 }
             }
         }else {
-            console.log("ptoKdCd : "+ptoKdCd);
             if (ptoKdCd == "02") {
                 document.getElementById('pop_strtJob').innerHTML = '<div style="float: left;"><input type="time" class="align-self-start align-self-center form-control" id="ipt_jobStrtTm"  style="width:125px;" name="ipt_jobStrtTm" /></div>'
                 + '<input type="button" class="button" onclick="onclickStrtTm()" value="출근버튼">';
@@ -208,6 +217,22 @@
             }else {
                 $('#pop_strtJob').text(strtTm);
                 $('#pop_endJob').text(endTm);
+            }
+
+            if(strtTm != "") {
+                if(strtTm == "-") {
+                    $("#ipt_jobStrtTm").val(strNowTm);
+                } else {
+                    $("#ipt_jobStrtTm").val(strtTm);
+                }
+            }
+
+            if(endTm != "") {
+                if(endTm == "-") {
+                    $("#ipt_jobEndTm").val(strNowTm);
+                } else {
+                    $("#ipt_jobEndTm").val(endTm);
+                }
             }
 
             $('#sbx_restTme').val(restTm);
