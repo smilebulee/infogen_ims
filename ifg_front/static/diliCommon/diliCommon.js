@@ -91,7 +91,7 @@ function getCurrentTime() {
 *   전체근무시간 호출
 *********************************************************************/
 function allWrkTmCall(date, strtTm, endTm, restTm){
-
+    console.log("date, strtTm, endTm, restTm : "+date+", "+strtTm+", "+endTm+", "+restTm);
     var tmpStrtDate = date+" "+strtTm;
     var tmpEndDate = date+" "+endTm;
 
@@ -110,6 +110,7 @@ function allWrkTmCall(date, strtTm, endTm, restTm){
     var minute = Math.floor(tmpMinute%60);
     var subtractTm = lpad((hour).toString(),2,"0")+":"+lpad((minute).toString(),2,"0")+":00";
 
+    console.log("hour, minute, subtractTm : "+hour+", "+minute+", "+subtractTm);
     return subtractTm
 }
 
