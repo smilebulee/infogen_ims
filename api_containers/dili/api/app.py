@@ -689,7 +689,7 @@ class saveApvlReq(Resource): # Mariadb 연결 진행
                     "		, ALL_WRK_TM 		= LPAD(ALL_WRK_TM - NGHT_WRK_TM + VALUES(NGHT_WRK_TM), 6, '0') " \
                     "		, NGHT_WRK_TM		= VALUES(NGHT_WRK_TM) "
 
-                logger.info(sql2)
+                logger.debug(sql2)
                 cursor.execute(sql2)
 
                 mysql_con.commit()
