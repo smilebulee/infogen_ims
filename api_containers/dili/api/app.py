@@ -2199,10 +2199,7 @@ class scheduleStatLst(Resource):
                       "      ,CASE WHEN NVL(A.HLDY_WRK_TM, '') != '' AND NVL(A.HLDY_WRK_TM, '') != '000000' THEN CONCAT(SUBSTRING(NVL(A.HLDY_WRK_TM, ''), 1, 2), ':', SUBSTRING(NVL(A.HLDY_WRK_TM, ''), 3, 2))" \
                       "            ELSE ''" \
                       "             END HLDY_WRK_YN" \
-                      "      ,CASE WHEN NVL(B.PTO_KD_CD, '') = '01' THEN '연차'" \
-                      "            WHEN NVL(B.PTO_KD_CD, '') = '02' THEN '반차'" \
-                      "            ELSE ''" \
-                      "             END PTO_KD_YN" \
+                      "      ,CONCAT(SUBSTRING(NVL(A.ALL_WRK_TM,''),1,2),':',SUBSTRING(NVL(A.ALL_WRK_TM,''),3,2)) PTO_KD_YN" \
                       "  FROM TB_WRK_TM_MGMT_M A" \
                       "  LEFT OUTER JOIN" \
                       "       TB_APVL_REQ_MGMT_M B" \
