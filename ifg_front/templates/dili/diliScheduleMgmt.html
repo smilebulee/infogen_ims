@@ -574,6 +574,13 @@
 
         }
 
+        function getDayLabel(day) {
+            var week = new Array('일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일');
+            var today = day;
+            var todayLabel = week[today];
+            return todayLabel;
+        }
+
         /*********************************************************************
         *   Week Grid 생성
         *********************************************************************/
@@ -602,11 +609,11 @@
             var tempSetWeek = "";
             var sumRestTm = 0;
             var tmpSumTotalWkrTm = 0;
-
             for(var i = 0; i < 7; i++){
 
                 tdDate = weekGridStrtDate.getDate();
                 tempSetWeek = dateConverting1(setWeek(weekGridStrtDate).baseDate);
+                console.log("ㅋㅋㅋ weekGridStrtDate : "+weekGridStrtDate);
 
                 var jobStrtTm = "-";
                 var jobEndTm = "-";
@@ -682,7 +689,7 @@
                 var sumTotalWkrTm = lpad((hour).toString(),2,"0")+":"+lpad((minute).toString(),2,"0");
 
                 weekTable += '<tr id ="grd_week'+tempSetWeek+'" onclick="onclickWeekEvt(this)">';
-                weekTable += '<td class="pt-3-half" contenteditable="false">'+tdDate+'</td>';
+                weekTable += '<td class="pt-3-half" contenteditable="false">'+tdDate+' ('+getDayLabel(weekGridStrtDate.getDay())+')'+'</td>';
                 weekTable += '<td class="pt-3-half" contenteditable="false">'+jobStrtTm+'</td>';
                 weekTable += '<td class="pt-3-half" contenteditable="false">'+jobEndTm+'</td>';
                 weekTable += '<td class="pt-3-half" contenteditable="false">'+totalRestTm+'</td>';
