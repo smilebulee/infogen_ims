@@ -2192,7 +2192,7 @@ class scheduleStatLst(Resource):
                       "		       ELSE NVL(B.JOB_STRT_TM, '') END WRK_STRT_TM" \
                       "		 ,CASE WHEN NVL(B.APVL_REQ_DIVS, '') = '' THEN NVL(A.JOB_END_TM, '')" \
                       "		       ELSE NVL(B.JOB_END_TM, '') END WRK_END_TM" \
-                      "		 ,CONCAT(SUBSTRING(DATE_SUB(STR_TO_DATE(A.ALL_WRK_TM, '%H%i'), INTERVAL (A.REST_TM+A.DINN_REST_TM) MINUTE) ,1,2), ':', SUBSTRING(DATE_SUB(A.STR_TO_DATE(A.ALL_WRK_TM, '%H%i'), INTERVAL (A.REST_TM+A.DINN_REST_TM) MINUTE) ,4,2)) ALL_WRK_TM" \
+                      "		 ,CONCAT(SUBSTRING(DATE_SUB(STR_TO_DATE(A.ALL_WRK_TM, '%H%i'), INTERVAL (A.REST_TM+A.DINN_REST_TM) MINUTE) ,1,2), ':', SUBSTRING(DATE_SUB(STR_TO_DATE(A.ALL_WRK_TM, '%H%i'), INTERVAL (A.REST_TM+A.DINN_REST_TM) MINUTE) ,4,2)) ALL_WRK_TM" \
                       "      ,CASE WHEN B.EMP_EMAL_ADDR IS NULL AND (A.HLDY_WRK_TM != '000000' OR A.NGHT_WRK_TM != '000000') THEN 'N'" \
                       "            ELSE 'Y' END APVL_REQ_YN" \
                       "      ,CASE WHEN NVL(A.NGHT_WRK_TM, '') != '' AND NVL(A.NGHT_WRK_TM, '') != '000000' THEN CONCAT(SUBSTRING(NVL(A.NGHT_WRK_TM, ''), 1, 2), ':', SUBSTRING(NVL(A.NGHT_WRK_TM, ''), 3, 2))" \
