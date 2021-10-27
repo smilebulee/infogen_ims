@@ -71,6 +71,7 @@
         var normWrkTm = $('#tmpNormWrkTm').text();
         var overWrkTm = $('#tmpOverWrkTm').text();
         var holi = $('#tmpHoli').text();
+        var ptoKdCd = $('#tmpptoKdCd').text();
         var allTm = $('#tmpPopAllTm').text();
         var apvlStus = $('#tmpPopApvlStus').text();
         var restTm = $('#tmpRestTm').text();
@@ -90,7 +91,7 @@
         var nowDt = new Date();
         var strNowTm = fillZero(2, nowDt.getHours()) + ':' + fillZero(2, nowDt.getMinutes());
 
-        if(holi != "휴가"){
+        if(holi != "연차휴가" && holi != "반차휴가"){
             if(tmpFlag){
 
                 if ($('#empEmailHidden').val() == null || $('#empEmailHidden').val() == "") {
@@ -197,6 +198,17 @@
                 }
             }
         }else {
+            if (ptoKdCd == "02") {
+                document.getElementById('pop_strtJob').innerHTML = '<div style="float: left;"><input type="time" class="align-self-start align-self-center form-control" id="ipt_jobStrtTm"  style="width:125px;" name="ipt_jobStrtTm" /></div>'
+                + '<input type="button" class="button" onclick="onclickStrtTm()" value="출근버튼">';
+
+                document.getElementById('pop_endJob').innerHTML = '<div style="float: left;"><input type="time" class="align-self-start align-self-center form-control" id="ipt_jobEndTm"  style="width:125px;" name="ipt_jobEndTm" /></div>'
+                + '<input type="button" class="button" onclick="onclickEndTm()" value="퇴근버튼">';
+                $("#ipt_jobEndTm").val(strNowTm);
+            }else {
+                $('#pop_strtJob').text("-");
+                $('#pop_endJob').text("-");
+            }
 
             $('#pop_strtJob').text(strtTm);
             $('#pop_endJob').text(endTm);

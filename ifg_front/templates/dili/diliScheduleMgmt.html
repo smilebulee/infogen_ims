@@ -625,6 +625,7 @@
                 var restTm = 0;
                 var dinnRestTm = 0;
                 var totalRestTm = 0;
+                var ptoKdCd = ""; //휴가구분 01 연차 02 반차
 
                 if(schdData.length > 0){
                     for(var j = 0; j < schdData.length; j++){
@@ -649,8 +650,8 @@
                                 }
 
                             }else {
-
                                 chckHldy = 1;
+                                ptoKdCd = schdData[j].PTO_KD_CD;
                             }
 
                             if(schdData[j].APVL_REQ_DT == "N/A" && schdData[j].APVL_LAST_APRV_DT == "N/A" && schdData[j].OVER_WRK_TM != "00:00"){
@@ -699,8 +700,14 @@
 
                     weekTable += '<td class="pt-3-half" contenteditable="false">정상근무 : '+normWrkTm+' / 초과근무 : '+overWrkTm+'</td>';
                 }else {
+                    if(ptoKdCd == "01"){
+                        weekTable += '<td class="pt-3-half" contenteditable="false">연차휴가</td>';
+                    }else if(ptoKdCd == "02"){
+                        weekTable += '<td class="pt-3-half" contenteditable="false">반차휴가</td>';
+                    }else{
+                        weekTable += '<td class="pt-3-half" contenteditable="false">오류발생 담당자확인요청필요</td>';
+                    }
 
-                    weekTable += '<td class="pt-3-half" contenteditable="false">휴가</td>';
                 }
 
                 weekTable += '<td class="pt-3-half" contenteditable="false">'+apvlStus+'</td>';
@@ -767,6 +774,7 @@
                 var restTm = 0;
                 var dinnRestTm = 0;
                 var totalRestTm = 0;
+                var ptoKdCd = ""; //휴가구분 01 연차 02 반차
 
 				if(schdData.length > 0){
                     for(var j = 0; j < schdData.length; j++){
@@ -794,8 +802,8 @@
 
 
                             }else {
-
                                 chckHldy = 1;
+                                ptoKdCd = schdData[j].PTO_KD_CD;
                             }
 
                             if(schdData[j].APVL_REQ_DT == "N/A" && schdData[j].APVL_LAST_APRV_DT == "N/A" && schdData[j].OVER_WRK_TM != "00:00"){
@@ -845,8 +853,13 @@
 
                     monthTable += '<td class="pt-3-half" contenteditable="false">정상근무 : '+normWrkTm+' / 초과근무 : '+overWrkTm+'</td>';
                 }else {
-
-                    monthTable += '<td class="pt-3-half" contenteditable="false">휴가</td>';
+                    if(ptoKdCd == "01"){
+                        monthTable += '<td class="pt-3-half" contenteditable="false">연차휴가</td>';
+                    }else if(ptoKdCd == "02"){
+                        monthTable += '<td class="pt-3-half" contenteditable="false">반차휴가</td>';
+                    }else{
+                        monthTable += '<td class="pt-3-half" contenteditable="false">오류발생 담당자확인요청필요</td>';
+                    }
                 }
 
                 monthTable += '<td class="pt-3-half" contenteditable="false">'+apvlStus+'</td>';
@@ -895,17 +908,24 @@
                 var normWrkTm = "-";
                 var overWrkTm = "-";
                 var holi = "-";
-                if(detlSchd != "휴가"){
+                var ptoKdCd = "";
+                if(detlSchd != "연차휴가" && detlSchd != "반차휴가"){
 
                     normWrkTm = detlSchd.split('/')[0].replace('정상근무 : ','').trim();
                     overWrkTm = detlSchd.split('/')[1].replace('초과근무 : ','').trim();
                 }else {
-
+                    if(detlSchd=="연차휴가"){
+                        ptoKdCd = "01";
+                    }else if(detlSchd=="반차휴가"){
+                        ptoKdCd = "02";
+                    }
+                    ptoKdCd
                     holi = detlSchd;
                 }
                 $('#tmpNormWrkTm').text(normWrkTm);
                 $('#tmpOverWrkTm').text(overWrkTm);
                 $('#tmpHoli').text(holi);
+                $('#tmpPtoKdCd').text(ptoKdCd);
                 $('#tmpPopAllTm').text($('#'+trId.id).children().eq(4).text());
                 $('#tmpPopApvlStus').text($('#'+trId.id).children().eq(6).text());
             }
@@ -941,7 +961,7 @@
                 var normWrkTm = "-";
                 var overWrkTm = "-";
                 var holi = "-";
-                if(detlSchd != "휴가"){
+                if(detlSchd != "연차휴가" && detlSchd != "반차휴가"){
 
                     normWrkTm = detlSchd.split('/')[0].replace('정상근무 : ','').trim();
                     overWrkTm = detlSchd.split('/')[1].replace('초과근무 : ','').trim();
@@ -1356,6 +1376,7 @@
                 <span id="tmpNormWrkTm" class="model_layout" style="display:none;" ></span>
                 <span id="tmpOverWrkTm" class="model_layout" style="display:none;" ></span>
                 <span id="tmpHoli" class="model_layout" style="display:none;" ></span>
+                <span id="tmpPtoKdCd" class="model_layout" style="display:none;" ></span>
 
                 <span id="tmpPopAllTm" class="model_layout" style="display:none;" ></span>
                 <span id="tmpPopApvlStus" class="model_layout" style="display:none;" ></span>
