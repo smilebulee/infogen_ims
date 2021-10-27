@@ -349,6 +349,7 @@
     *  퇴근 update
     *********************************************************************/
     function setEndTm(email, dt, tm, normWrkTm, overWrkTm, allWrkTm ){
+        console.log("email, dt, tm, normWrkTm, overWrkTm, allWrkTm  : "+email+", "+dt+", "+tm+", "+normWrkTm+", "+overWrkTm+", "+allWrkTm);
         var nghtWrkStrtTm = '';
         var strtTm  = dt + ' ' + $('#ipt_jobStrtTm').val();
         var endTm   = dt + ' ' + $('#ipt_jobEndTm').val();
@@ -367,6 +368,7 @@
         else if ((overWrkTm.substr(0, 4) == '0000')) {
             nghtWrkStrtTm = endTm;
         }
+        console.log("email, dt, tm, normWrkTm, overWrkTm, allWrkTm  : "+email+", "+dt+", "+tm+", "+normWrkTm+", "+overWrkTm+", "+allWrkTm);
         var param   = {
             "email"             : email,
             "dt"                : dt,
