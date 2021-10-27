@@ -693,7 +693,7 @@
                 var sumTotalWkrTm = lpad((hour).toString(),2,"0")+":"+lpad((minute).toString(),2,"0");
 
                 weekTable += '<tr id ="grd_week'+tempSetWeek+'" onclick="onclickWeekEvt(this)">';
-                weekTable += '<td class="pt-3-half" contenteditable="false">'+tdDate+' ('+getDayLabel(tdDate)+')'+'</td>';
+                weekTable += '<td class="pt-3-half" contenteditable="false">'+tdDate+' ('+getDayLabel(weekGridStrtDate)+')'+'</td>';
                 weekTable += '<td class="pt-3-half" contenteditable="false">'+jobStrtTm+'</td>';
                 weekTable += '<td class="pt-3-half" contenteditable="false">'+jobEndTm+'</td>';
                 weekTable += '<td class="pt-3-half" contenteditable="false">'+totalRestTm+'</td>';
