@@ -656,6 +656,15 @@
                                 if(ptoKdCd == "02"){
                                     jobStrtTm = schdData[j].JOB_STRT_TM;
                                     jobEndTm = schdData[j].JOB_END_TM;
+                                    if(schdData[j].ALL_WRK_TM != "00:00"){
+                                        allWrkTm = schdData[j].ALL_WRK_TM;
+                                    }
+                                    if(schdData[j].NORM_WRK_TM != "00:00"){
+                                        normWrkTm = schdData[j].NORM_WRK_TM;
+                                    }
+                                    if(schdData[j].OVER_WRK_TM != "00:00"){
+                                        overWrkTm = schdData[j].OVER_WRK_TM;
+                                    }
                                 }
                             }
 
@@ -809,6 +818,20 @@
                             }else {
                                 chckHldy = 1;
                                 ptoKdCd = schdData[j].PTO_KD_CD;
+
+                                if(ptoKdCd == "02"){
+                                    jobStrtTm = schdData[j].JOB_STRT_TM;
+                                    jobEndTm = schdData[j].JOB_END_TM;
+                                    if(schdData[j].ALL_WRK_TM != "00:00"){
+                                        allWrkTm = schdData[j].ALL_WRK_TM;
+                                    }
+                                    if(schdData[j].NORM_WRK_TM != "00:00"){
+                                        normWrkTm = schdData[j].NORM_WRK_TM;
+                                    }
+                                    if(schdData[j].OVER_WRK_TM != "00:00"){
+                                        overWrkTm = schdData[j].OVER_WRK_TM;
+                                    }
+                                }
                             }
 
                             if(schdData[j].APVL_REQ_DT == "N/A" && schdData[j].APVL_LAST_APRV_DT == "N/A" && schdData[j].OVER_WRK_TM != "00:00"){
