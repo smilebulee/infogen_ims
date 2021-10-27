@@ -2201,7 +2201,7 @@ class scheduleStatLst(Resource):
                       "             END HLDY_WRK_YN" \
                       "      ,CASE WHEN NVL(B.PTO_KD_CD, '') = '01' THEN '연차'" \
                       "            WHEN NVL(B.PTO_KD_CD, '') = '02' THEN '반차'" \
-                      "            ELSE '연차'" \
+                      "            ELSE ''" \
                       "             END PTO_KD_YN" \
                       "  FROM TB_WRK_TM_MGMT_M A" \
                       "  LEFT OUTER JOIN" \
