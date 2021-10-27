@@ -206,12 +206,10 @@
                 + '<input type="button" class="button" onclick="onclickEndTm()" value="퇴근버튼">';
                 $("#ipt_jobEndTm").val(strNowTm);
             }else {
-                $('#pop_strtJob').text("-");
-                $('#pop_endJob').text("-");
+                $('#pop_strtJob').text(strtTm);
+                $('#pop_endJob').text(endTm);
             }
 
-            $('#pop_strtJob').text(strtTm);
-            $('#pop_endJob').text(endTm);
             $('#sbx_restTme').val(restTm);
             $('#sbx_dinnRestTme').val(dinnRestTm);
             $('#pop_schdDetlTm').text(holi);
