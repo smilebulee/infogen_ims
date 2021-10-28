@@ -368,7 +368,6 @@
         }
     });
 
-
     //선결재 저장
     function saveApvlReq() {
         var inptWrkDt     = $("#ipt_wrkDt").val();
@@ -378,11 +377,23 @@
         var wrkTme        = getTimeDiff($("#ipt_wrkDt").val() + ' ' +  $("#ipt_jobStrtTm1").val() + ':00'
                                       , $("#ipt_wrkDt").val() + ' ' +  $("#ipt_jobEndTm1" ).val() + ':00');
 
+        console.log("inptWrkDt : "+inptWrkDt);
+        var dd = new Date(inptWrkDt);
+        var day = dd.getDay();
+        console.log("day = "+day);
+
+        var apvlReqDivs = "";
+        if(day == "1" || day == "2"){
+            apvlReqDivs = "02";
+        }else{
+            apvlReqDivs = "01";
+        }
+
         param = {
             "currReqPopStts" : $("#currReqPopStts").val(),           // 현재 팝업 상태 - 신규 / 수정
             "email"          : sessionStorage.getItem("email"),      // 로그인한 사용자 아이디
             "apvlDivs"       : $("#currApvlDivsStts").val(),         // 01: 선결재, 02: 후결재
-            "apvlReqDivs"    : "01",                                 // 01: 야간근무, 02: 휴일근무
+            "apvlReqDivs"    : apvlReqDivs,                          // 01: 야간근무, 02: 휴일근무
             "wrkDt"          : $("#ipt_wrkDt").val(),                // 근무일자
             "jobStrtTm"      : inptStrtTm,                           // 근무 시작 시간
             "jobEndTm"       : inptEndTm,                            // 근무 종료 시간
