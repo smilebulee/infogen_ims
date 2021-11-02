@@ -308,8 +308,7 @@
         var allWrkTm = allWrkTmCall(dateConverting2(dt), strtTm, tm, totalRestTm);
         var overWrkTm = overWrkTmCall(dateConverting2(dt), allWrkTm);
         var normWrkTm = "";
-        alertMsg("테스트용");
-        return false;
+
         if($('#hldyDivsCd').val() != "01" || $('#dowDivsCd').val() == "01" || $('#dowDivsCd').val() == "07"){
 
             normWrkTm = "00:00";
@@ -327,6 +326,8 @@
         }
 
         setEndTm(email, dt, tm, normWrkTm.replace(/:/gi,''), overWrkTm.replace(/:/gi,''), allWrkTm.replace(/:/gi,'') );
+        alertMsg("테스트용");
+        return false;
         $('#pop_endJob').text(tm);
         //$('#ipt_restTme').attr('disabled',true);
         document.getElementById('pop_schdDetlTm').innerHTML = '정상근무 : '+normWrkTm+' / 초과근무 : '+overWrkTm;
