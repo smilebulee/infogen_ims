@@ -326,8 +326,7 @@
         }
 
         setEndTm(email, dt, tm, normWrkTm.replace(/:/gi,''), overWrkTm.replace(/:/gi,''), allWrkTm.replace(/:/gi,'') );
-        alertMsg("테스트용");
-        return false;
+
         $('#pop_endJob').text(tm);
         //$('#ipt_restTme').attr('disabled',true);
         document.getElementById('pop_schdDetlTm').innerHTML = '정상근무 : '+normWrkTm+' / 초과근무 : '+overWrkTm;
@@ -345,7 +344,8 @@
         var url = "{% url 'dili_api:apvlReqBfrPop' %}" ;
         //$('#currReqMthd').val("02");
         //$('#currReqPopStts').val("register");
-
+        alertMsg("테스트용");
+        return false;
         modal('apvlUpldDiv_modal');
         $('#apvlUpld_modal').load(url);
 
