@@ -1352,7 +1352,38 @@
             getWrkTimeByIml(null, dt);
         }
 
+        /*********************************************************************
+        *   출근버튼 클릭
+        *********************************************************************/
+        function onclickStrtTmMain() {
 
+            var email = sessionStorage.getItem("email");
+            var dt = getCurrentDate();
+            var tm = getCurrentTime();
+            setStrtTmMain(email, dt, tm);
+            $('#tmpPopStrtTm').text(tm);
+
+        }
+
+        function setStrtTmMain(email, dt, tm ){
+            var param = {
+                "email"  : email,
+                "dt"     : dt,
+                "tm"     : tm
+            }
+
+            $.ajaxCall( param, {
+                 'method' : 'POST',
+                 'url' : "{% url 'dili_api:saveStrtTm' %}",
+                 'dataType' : 'json',
+                 'data' : JSON.stringify(param),
+                 'async' : false,
+                 'callbackFn' : function(data){
+                    alertMsg('저장 되었습니다.');
+                    $('#exitSchdModal').click();
+                 }
+            });
+        }
 
         /*********************************************************************
         *  퇴근 UPDATE
@@ -1529,8 +1560,8 @@
                         <button type="button" class="btn btn-outline-secondary btn-sm calendar-btnAction" id="next">다음달</button>
                         <button type="button" class="btn btn-outline-secondary btn-sm calendar-btnAction" id="prev">이전달</button>
                         &nbsp;
-                        <!--<button type="button" class="btn btn-outline-secondary btn-sm calendar-btnAction button" id="btn_lvoc" onclick="onclickLvocPop()">퇴근</button>
-                        <button type="button" class="btn btn-outline-secondary btn-sm calendar-btnAction button" id="btn_atnd" onclick="onclickStrtTmMain()">출근</button>-->
+                        <button type="button" class="btn btn-outline-secondary btn-sm calendar-btnAction button" id="btn_lvoc" onclick="onclickLvocPop()">퇴근</button>
+                        <button type="button" class="btn btn-outline-secondary btn-sm calendar-btnAction button" id="btn_atnd" onclick="onclickStrtTmMain()">출근</button>
                     </div>
                 </div>
 
