@@ -395,6 +395,11 @@
             nghtWrkStrtTm = endTm;
         }
 
+        alertMsg(nghtWrkStrtTm);
+        alertMsg(normWrkTm.length == 4 ? normWrkTm + '00' : normWrkTm);
+        alertMsg(overWrkTm.length == 4 ? overWrkTm + '00' : overWrkTm);
+        alertMsg(allWrkTm.length  == 4 ? allWrkTm  + '00' : allWrkTm);
+
         console.log("email, dt, tm, normWrkTm, overWrkTm, allWrkTm  : "+email+", "+dt+", "+tm+", "+normWrkTm+", "+overWrkTm+", "+allWrkTm);
         var param   = {
             "email"             : email,
