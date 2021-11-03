@@ -712,7 +712,7 @@
 
                 if(chckHldy == 0){
 
-                    weekTable += '<td class="pt-3-half" contenteditable="false">정상근무 : '+normWrkTm+' / 초과근무 : '+overWrkTm+'</td>';
+                    weekTable += '<td class="pt-3-half" contenteditable="false">정상근무 : '+normWrkTm+' / 연장근무 : '+overWrkTm+'</td>';
                 }else {
                     if(ptoKdCd == "01"){
                         weekTable += '<td class="pt-3-half" contenteditable="false">연차휴가</td>';
@@ -879,7 +879,7 @@
 
                 if(chckHldy == 0){
 
-                    monthTable += '<td class="pt-3-half" contenteditable="false">정상근무 : '+normWrkTm+' / 초과근무 : '+overWrkTm+'</td>';
+                    monthTable += '<td class="pt-3-half" contenteditable="false">정상근무 : '+normWrkTm+' / 연장근무 : '+overWrkTm+'</td>';
                 }else {
                     if(ptoKdCd == "01"){
                         monthTable += '<td class="pt-3-half" contenteditable="false">연차휴가</td>';
@@ -940,7 +940,7 @@
                 if(detlSchd != "연차휴가" && detlSchd != "반차휴가"){
 
                     normWrkTm = detlSchd.split('/')[0].replace('정상근무 : ','').trim();
-                    overWrkTm = detlSchd.split('/')[1].replace('초과근무 : ','').trim();
+                    overWrkTm = detlSchd.split('/')[1].replace('연장근무 : ','').trim();
                 }else {
                     if(detlSchd=="연차휴가"){
                         ptoKdCd = "01";
@@ -991,7 +991,7 @@
                 if(detlSchd != "연차휴가" && detlSchd != "반차휴가"){
 
                     normWrkTm = detlSchd.split('/')[0].replace('정상근무 : ','').trim();
-                    overWrkTm = detlSchd.split('/')[1].replace('초과근무 : ','').trim();
+                    overWrkTm = detlSchd.split('/')[1].replace('연장근무 : ','').trim();
                 }else {
                     if(detlSchd=="연차휴가"){
                         ptoKdCd = "01";
@@ -1016,8 +1016,8 @@
         *                    - strtDate         : 조회할 시작 일      (String or Date - Format YYYY/MM/DD )
         *                    - endDate          : 조회할 마지막 일    (String or Date - Format YYYY/MM/DD )
         *   Output Parameter - nmlWrkTime       : 정상근무시간
-        *                      aprvWrkTime      : 초과근무시간(승인)
-        *                      notAprvWrkTime   : 초과근무시간(미승인)
+        *                      aprvWrkTime      : 연장근무시간(승인)
+        *                      notAprvWrkTime   : 연장근무시간(미승인)
         *********************************************************************/
        function getWrkTimeByIml(email, dt) {
 
