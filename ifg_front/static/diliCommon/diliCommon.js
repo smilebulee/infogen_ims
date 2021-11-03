@@ -150,7 +150,10 @@ function dateConverting2(date) {
 
 function dateConverting3(date) {
 
-    return date.replace(/[-:]/gi,",");
+    var arr = [];
+    arr = date.split(/[-:]/);
+
+    return arr;
 }
 
 function betweenDay(dt) {
