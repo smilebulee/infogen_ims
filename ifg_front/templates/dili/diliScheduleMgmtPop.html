@@ -386,10 +386,9 @@
         }
         // 추가 근무 시간이 있고, 일반 업무 시간이 있을 떄 (야간근무)
         else if ((overWrkTm.substr(0, 4) != '0000') && (normWrkTm.substr(0, 4) != '0000') && getTimeDiff(strtTm, endTm) >= '080000') {
-            var tmpTm = new Date(dt + ' ' + $('#ipt_jobStrtTm').val());
+            //var tmpTm = new Date(dt + ' ' + $('#ipt_jobStrtTm').val());
             //tmpTm.setHours(tmpTm.getHours() + 9);
-            alert(tmpTm);
-            nghtWrkStrtTm = fillZero(2, tmpTm.getHours()) + ':' + fillZero(2, tmpTm.getMinutes())  + ':' + fillZero(2, tmpTm.getSeconds());
+            nghtWrkStrtTm = fillZero(2, strtTm.getHours()) + ':' + fillZero(2, strtTm.getMinutes())  + ':' + fillZero(2, strtTm.getSeconds());
         }
         // 추가 근무 시간이 없을 때
         else if ((overWrkTm.substr(0, 4) == '0000')) {
