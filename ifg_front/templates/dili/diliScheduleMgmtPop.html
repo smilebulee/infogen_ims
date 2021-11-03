@@ -388,7 +388,7 @@
         else if ((overWrkTm.substr(0, 4) != '0000') && (normWrkTm.substr(0, 4) != '0000') && getTimeDiff(strtTm, endTm) >= '080000') {
             //var tmpTm = new Date(dt + ' ' + $('#ipt_jobStrtTm').val());
             //tmpTm.setHours(tmpTm.getHours() + 9);
-            var tmpTm = new Date('2021-11-03 08:53');
+            var tmpTm = new Date(2021,11,03,08,53,00');
             alert(tmpTm);
             nghtWrkStrtTm = fillZero(2, tmpTm.getHours()) + ':' + fillZero(2, tmpTm.getMinutes())  + ':' + fillZero(2, tmpTm.getSeconds());
         }
