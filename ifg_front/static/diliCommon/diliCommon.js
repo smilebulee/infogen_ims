@@ -148,6 +148,11 @@ function dateConverting2(date) {
     return date.replace(/-/gi,"/");
 }
 
+function dateConverting3(date) {
+
+    return date.replace(/[-:]/gi,",");
+}
+
 function betweenDay(dt) {
 
     var today = new Date();
