@@ -3409,7 +3409,82 @@ class deptOneInfo(Resource): # Mariadb 연결 진행
         array = list(result2)  # 결과를 리스트로
 
         return json.dumps(result2, indent=4, cls=DateTimeEncoder)
-    
+
+class diliScheduleTotalMgmt(Resource):
+    def get(self):
+
+        logging.debug('diliScheduleTotalMgmt Start')
+
+        # get data
+        data = request.get_json()
+
+        mysql_con = pymysql.connect(host=getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
+                                    charset='utf8')
+
+        try:
+            with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+                sql = "SELECT CASE WHEN NVL(B.EMP_EMAL_ADDR, '') = '' THEN A.EMP_EMAL_ADDR" \
+                      "            WHEN NVL(A.EMP_EMAL_ADDR, '') = '' THEN B.EMP_EMAL_ADDR" \
+                      "                                               ELSE A.EMP_EMAL_ADDR" \
+                      "                                                END EMP_EMAL_ADDR" \
+                      "      ,(SELECT D.CMM_CD_NAME" \
+                      "		     FROM TB_CMM_CD_DETL D" \
+                      "		         ,TB_EMP_MGMT E" \
+                      "			WHERE D.CMM_CD_GRP_ID = 'SLIN_BZDP'" \
+                      "			  AND D.CMM_CD = E.DEPT_CD" \
+                      "			  AND E.EMP_EMAIL = NVL(A.EMP_EMAL_ADDR, B.EMP_EMAL_ADDR)) DEPT_NAME" \
+                      "	     ,(SELECT C.EMP_NAME " \
+                      "	         FROM TB_EMP_MGMT C" \
+                      "	        WHERE C.EMP_EMAIL = NVL(A.EMP_EMAL_ADDR, B.EMP_EMAL_ADDR)) OCEM_NAME" \
+                      "      ,(SUM(SUBSTRING(DATE_SUB(STR_TO_DATE(A.ALL_WRK_TM, '%H%i'), INTERVAL (A.REST_TM+A.DINN_REST_TM) MINUTE) ,1,2))" \
+                      "       + FLOOR(SUM(SUBSTRING(DATE_SUB(STR_TO_DATE(A.ALL_WRK_TM, '%H%i'), INTERVAL (A.REST_TM+A.DINN_REST_TM) MINUTE) ,4,2))/60)) ALL_WRK_TM_T" \
+                      "      ,MOD(SUM(SUBSTRING(DATE_SUB(STR_TO_DATE(A.ALL_WRK_TM, '%H%i'), INTERVAL (A.REST_TM+A.DINN_REST_TM) MINUTE) ,4,2)),60) ALL_WRK_TM_M" \
+                      "      ,(SUM(CASE WHEN NVL(A.NGHT_WRK_TM, '') != '' AND NVL(A.NGHT_WRK_TM, '') != '000000' THEN SUBSTRING(NVL(A.NGHT_WRK_TM, ''), 1, 2)" \
+                      "                                                                                          ELSE ''" \
+                      "                                                                                          END )" \
+                      "       + FLOOR(SUM(CASE WHEN NVL(A.NGHT_WRK_TM, '') != '' AND NVL(A.NGHT_WRK_TM, '') != '000000' THEN SUBSTRING(NVL(A.NGHT_WRK_TM, ''), 3, 2)" \
+                      "                                                                                          ELSE ''" \
+                      "                                                                                          END )/60) ) NGHT_WRK_YN_T" \
+                      "     ,MOD(SUM(CASE WHEN NVL(A.NGHT_WRK_TM, '') != '' AND NVL(A.NGHT_WRK_TM, '') != '000000' THEN SUBSTRING(NVL(A.NGHT_WRK_TM, ''), 3, 2)" \
+                      "                                                                                          ELSE ''" \
+                      "                                                                                          END ),60) NGHT_WRK_YN_M" \
+                      "     ,(SUM(CASE WHEN NVL(A.HLDY_WRK_TM, '') != '' AND NVL(A.HLDY_WRK_TM, '') != '000000' THEN SUBSTRING(NVL(A.HLDY_WRK_TM, ''), 1, 2)" \
+                      "                                                                                          ELSE ''" \
+                      "                                                                                          END )" \
+                      "       + FLOOR(SUM(CASE WHEN NVL(A.HLDY_WRK_TM, '') != '' AND NVL(A.HLDY_WRK_TM, '') != '000000' THEN SUBSTRING(NVL(A.HLDY_WRK_TM, ''), 3, 2)" \
+                      "                                                                                          ELSE ''" \
+                      "                                                                                          END )/60) ) HLDY_WRK_YN_T" \
+                      "     ,MOD(SUM(CASE WHEN NVL(A.HLDY_WRK_TM, '') != '' AND NVL(A.HLDY_WRK_TM, '') != '000000' THEN SUBSTRING(NVL(A.HLDY_WRK_TM, ''), 3, 2)" \
+                      "                                                                                          ELSE ''" \
+                      "                                                                                          END ),60) HLDY_WRK_YN_M" \
+                      "  FROM TB_WRK_TM_MGMT_M A" \
+                      "  LEFT OUTER JOIN" \
+                      "       TB_APVL_REQ_MGMT_M B" \
+                      "    ON A.EMP_EMAL_ADDR = B.EMP_EMAL_ADDR" \
+                      "   AND A.WRK_DT BETWEEN B.HOLI_TERM1 AND B.HOLI_TERM2" \
+                      " WHERE SUBSTRING(A.WRK_DT, 1, 7) = '" + data["wrkDt"] + "'"
+                if data["dept"] != "" and data["dept"] != "00":
+                    sql += "    AND A.EMP_EMAL_ADDR IN (SELECT H.EMP_EMAIL" \
+                           "                              FROM TB_EMP_MGMT H" \
+                           "                             WHERE H.DEPT_CD = '" + data["dept"] + "')"
+                sql += "GROUP BY EMP_EMAL_ADDR"
+
+                logging.debug(sql + "*****************")
+                cursor.execute(sql)
+                logging.debug('diliScheduleTotalMgmt SUCCESS')
+        finally:
+            mysql_con.close()
+
+        result2 = cursor.fetchall()
+        for row in result2:
+            logging.debug('====== row====')
+            logging.debug(row)
+            logging.debug('===============')
+        array = list(result2)  # 결과를 리스트로
+
+        return json.dumps(result2, indent=4, cls=DateTimeEncoder)
+
+
 api.add_resource(Hello, '/hello')
 api.add_resource(Register, '/register')
 api.add_resource(Retrieve, '/retrieve')
@@ -3478,7 +3553,7 @@ api.add_resource(deptInfo,'/deptInfo') #api 선언
 api.add_resource(deptMgmtRegSubmit,'/deptMgmtRegSubmit') #api 선언
 api.add_resource(deptMgmtEditSubmit,'/deptMgmtEditSubmit') #api 선언
 api.add_resource(deptOneInfo,'/deptOneInfo') #api 선언
-
+api.add_resource(diliScheduleTotalMgmt,'/diliScheduleTotalMgmt') #api 선언
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5006, debug=True)

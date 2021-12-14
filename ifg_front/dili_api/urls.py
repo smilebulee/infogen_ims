@@ -117,6 +117,10 @@ urlpatterns = [
     url(r'^scheduleStatLst/', views.scheduleStatLst.as_view(), name='scheduleStatLst'),
     url(r'^getScheduleStatLst/', views.getScheduleStatLst, name='getScheduleStatLst'),
 
+    #근무현황(종합)
+    url(r'^diliScheduleTotalMgmt/', views.diliScheduleTotalMgmt.as_view(), name='diliScheduleTotalMgmt'),
+    url(r'^getdiliScheduleTotalMgmt/', views.getdiliScheduleTotalMgmt, name='getdiliScheduleTotalMgmt'),
+
     # 공지사항 파일업로드 추가
     url(r'^my_view/', views.my_view, name='my-view'),
     # web UI 샘플

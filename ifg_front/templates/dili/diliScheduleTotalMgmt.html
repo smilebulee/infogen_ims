@@ -1,0 +1,366 @@
+
+{% load static %}
+
+    <script type="text/javascript">
+        $(document).ready(function(){
+
+            <!--    공통코드 조회    -->
+            <!--    1. 부서    -->
+            retrieveCmmCd('SLIN_BZDP',settingSlinBzdp);
+            retrieveCmmCd('BSIS_YEAR',settingBaseYear);
+
+            if(sessionStorage.getItem("authId") != "ADMIN") {
+                $("#ipt_searchOcemName").val(sessionStorage.getItem("email"));
+            }
+
+             //현재 날짜 가져오기
+            var today = new Date();
+            var year = today.getFullYear(); // 년도
+            var month = today.getMonth();  // 월 (today.getMonth()는 0~11로 출력)
+            var date = today.getDate();  // 날짜
+            var day = today.getDay();  // 요일 (0~6으로 출력, 0:일요일, 1:월요일, 6:토요일)
+
+            <!--    공통코드 함수    -->
+            function retrieveCmmCd(grp_id, callBackFunc){
+                var param = {
+                    "grp_id" : grp_id
+                }
+
+                var url = "{% url 'dili_api:retrieveCmmCd' %}";
+                submissionCallMap(param,'GET',url,callBackFunc);
+
+
+            };
+
+            function settingSlinBzdp(data){
+                var deptList = '';
+                deptList += '<option value="00">전체</option>'
+
+                if(data.length > 0) {
+                    for(var i=0; i < data.length; i++){
+                        deptList += '<option value="'+data[i].CMM_CD+'">'+ data[i].CMM_CD_NAME +'</option>'
+                    }
+                }
+
+                document.getElementById('sbx_dept').innerHTML = deptList;
+
+                if (sessionStorage.getItem("deptCd") == "01") {
+                    $("#sbx_dept option:eq(01)").attr("selected", "selected");
+                } else if (sessionStorage.getItem("deptCd") == "02") {
+                    $("#sbx_dept option:eq(02)").attr("selected", "selected");
+                } else if (sessionStorage.getItem("deptCd") == "03") {
+                    $("#sbx_dept option:eq(03)").attr("selected", "selected");
+                } else if (sessionStorage.getItem("deptCd") == "04") {
+                    $("#sbx_dept option:eq(04)").attr("selected", "selected");
+                } else if (sessionStorage.getItem("deptCd") == "05") {
+                    $("#sbx_dept option:eq(05)").attr("selected", "selected");
+                } else if (sessionStorage.getItem("deptCd") == "06") {
+                    $("#sbx_dept option:eq(06)").attr("selected", "selected");
+                } else {
+                    $("#sbx_dept option:eq(00)").attr("selected", "selected");
+                }
+            }
+
+            function settingBaseYear(data){
+                var wrkDtYy = '';
+                if(data.length > 0) {
+                    for(var i=0; i < data.length; i++){
+                        wrkDtYy += '<option value="'+data[i].CMM_CD+'">'+ data[i].CMM_CD_NAME +'</option>'
+                    }
+                }
+
+                document.getElementById('sbx_wrkDtYy').innerHTML = wrkDtYy;
+                $("#sbx_wrkDtYy").val(year);
+                $("#sbx_wrkDtMm").val(month+1);
+
+                var dt;
+
+                if($('#sbx_wrkDtMm').val().length == 1){
+                    dt = $('#sbx_wrkDtYy').val() + "-" + "0" + $('#sbx_wrkDtMm').val();
+                 } else {
+                    dt = $('#sbx_wrkDtYy').val() + "-" + $('#sbx_wrkDtMm').val();
+                }
+                    getWrkTime(dt);
+             }
+
+         });
+
+        /*********************************************************************
+        *   날짜 기준 해당월에 대한 근무시간
+        *********************************************************************/
+       function getWrkTime( dt) {
+
+            var param = {
+                "dt"  : dt
+            }
+
+            var url = "{% url 'dili_api:getTotalWrktm' %}";
+            submissionCallMap(param,'GET',url,getTotalWrktmSubMitDone);
+       }
+
+       function getTotalWrktmSubMitDone(data){
+            $('#ipt_wrkTime').val(data[0].WRK_TOT_TM + ":00");
+            if(Math.round(data[0].EXTN_WRK_PSBL_TM%1*60).toString().length == 1){
+                $('#ipt_wrkOverTime').val(Math.floor(data[0].EXTN_WRK_PSBL_TM) + ":0" + Math.round(data[0].EXTN_WRK_PSBL_TM%1*60));
+            }else{
+                $('#ipt_wrkOverTime').val(Math.floor(data[0].EXTN_WRK_PSBL_TM) + ":" + Math.round(data[0].EXTN_WRK_PSBL_TM%1*60));
+            }
+
+            var totalWrkTm;
+
+            totalWrkTm = (Number(data[0].WRK_TOT_TM) + Number(data[0].EXTN_WRK_PSBL_TM)).toFixed(2);
+            totalWrkTmMin = Math.round(totalWrkTm%1*60);
+            if(totalWrkTmMin.toString().length == 1){
+                $('#ipt_totWrkTime').val(Math.floor(totalWrkTm) + ":0" + totalWrkTmMin)
+            }else{
+                $('#ipt_totWrkTime').val(Math.floor(totalWrkTm) + ":" + totalWrkTmMin)
+            }
+
+       }
+
+        /*********************************************************************
+        *  기준월 변경
+        *********************************************************************/
+        function timeChange(){
+            var dt;
+            if($('#sbx_wrkDtMm').val().length == 1){
+                dt = $('#sbx_wrkDtYy').val() + "-" + "0" + $('#sbx_wrkDtMm').val();
+             } else {
+                dt = $('#sbx_wrkDtYy').val() + "-" + $('#sbx_wrkDtMm').val();
+            }
+                getWrkTime(dt);
+
+        }
+
+        /*********************************************************************
+        *   조회
+        *********************************************************************/
+        $("#searchBtn").click(function(){
+            var dt;
+            if($('#sbx_wrkDtMm').val().length == 1){
+                dt = $('#sbx_wrkDtYy').val() + "-" + "0" + $('#sbx_wrkDtMm').val();
+             } else {
+                dt = $('#sbx_wrkDtYy').val() + "-" + $('#sbx_wrkDtMm').val();
+            }
+
+            var param = {
+                "wrkDt" : dt
+                ,"dept" : $('#sbx_dept').val()
+            }
+            var url = "{% url 'dili_api:getdiliScheduleTotalMgmt' %}";
+            submissionCallMap(param,'GET',url,scheduleTotalMgmt);
+        });
+
+
+
+        function scheduleTotalMgmt(data){
+            totWrkTimeSplit = $('#ipt_totWrkTime').val().split(':');
+           var scheduleTotalMgmtTable = '<table class="table table-bordered text-center" id="totalData"';
+            scheduleTotalMgmtTable += '<thead>';
+            scheduleTotalMgmtTable += '<tr>';
+
+            scheduleTotalMgmtTable += '<th class="text-center">순번</th>';
+            scheduleTotalMgmtTable += '<th class="text-center">성명</th>';
+            scheduleTotalMgmtTable += '<th class="text-center">연장</th>';
+            scheduleTotalMgmtTable += '<th class="text-center">야간</th>';
+            scheduleTotalMgmtTable += '<th class="text-center">주휴</th>';
+            scheduleTotalMgmtTable += '<th class="text-center">총근무</th>';
+            scheduleTotalMgmtTable += '<th class="text-center">연장가능</th>';
+
+            scheduleTotalMgmtTable += '</tr>';
+            scheduleTotalMgmtTable += '</thead>';
+            scheduleTotalMgmtTable += '<tbody>';
+            if(data.length > 0) {
+                for(var i = 0; i < data.length; i++){
+                    scheduleTotalMgmtTable += '<tr>';
+                    scheduleTotalMgmtTable += '<td id="no'+i+'" class="pt-3-half">'+(i+1)+'</td>';
+                    scheduleTotalMgmtTable += '<td id="ocemName" class="pt-3-half" ondblclick="ondblclickOcemNmEvt(\''+data[i].OCEM_NAME+'\',\'' + data[i].EMP_EMAL_ADDR + '\')">'+data[i].OCEM_NAME+'</td>';
+                    if(!(data[i].NGHT_WRK_YN_T == '0' && data[i].NGHT_WRK_YN_M == '0')){
+                        NGHT_WRK_YN_T = data[i].NGHT_WRK_YN_T
+                        NGHT_WRK_YN_M = data[i].NGHT_WRK_YN_M
+                        if(data[i].NGHT_WRK_YN_T.toString().length == 1) NGHT_WRK_YN_T = "0"+NGHT_WRK_YN_T
+                        if(data[i].NGHT_WRK_YN_M.toString().length == 1) NGHT_WRK_YN_M = "0"+NGHT_WRK_YN_M
+                        scheduleTotalMgmtTable += '<td id="nightWrkYn" class="pt-3-half">'+NGHT_WRK_YN_T + ':' + NGHT_WRK_YN_M + '</td>';
+                    } else{
+                        scheduleTotalMgmtTable += '<td id="nightWrkYn" class="pt-3-half">-</td>';
+                    }
+                    scheduleTotalMgmtTable += '<td id="" class="pt-3-half">-</td>';
+                    if(!(data[i].HLDY_WRK_YN_T == '0' && data[i].HLDY_WRK_YN_M == '0')){
+                        HLDY_WRK_YN_T = data[i].HLDY_WRK_YN_T
+                        HLDY_WRK_YN_M = data[i].HLDY_WRK_YN_M
+                        if(data[i].HLDY_WRK_YN_T.toString().length == 1) HLDY_WRK_YN_T = "0"+HLDY_WRK_YN_T
+                        if(data[i].HLDY_WRK_YN_M.toString().length == 1) HLDY_WRK_YN_M = "0"+HLDY_WRK_YN_M
+                        scheduleTotalMgmtTable += '<td id="hldyWrkYn" class="pt-3-half">'+HLDY_WRK_YN_T + ':' + HLDY_WRK_YN_M + '</td>';
+                    } else{
+                        scheduleTotalMgmtTable += '<td id="hldyWrkYn" class="pt-3-half">-</td>';
+                    }
+                    if(!(data[i].ALL_WRK_TM_T == '0' && data[i].ALL_WRK_TM_M == '0')){
+                        ALL_WRK_TM_T = data[i].ALL_WRK_TM_T
+                        ALL_WRK_TM_M = data[i].ALL_WRK_TM_M
+                        if(data[i].ALL_WRK_TM_T.toString().length == 1) ALL_WRK_TM_T = "0"+ALL_WRK_TM_T
+                        if(data[i].ALL_WRK_TM_M.toString().length == 1) ALL_WRK_TM_M = "0"+ALL_WRK_TM_M
+                        scheduleTotalMgmtTable += '<td id="allWrkTm" class="pt-3-half">'+ALL_WRK_TM_T + ':' + ALL_WRK_TM_M + '</td>';
+                    } else{
+                        scheduleTotalMgmtTable += '<td id="allWrkTm" class="pt-3-half">-</td>';
+                    }
+                    overWrkTmH = Number(totWrkTimeSplit[0])-data[i].ALL_WRK_TM_T
+                    if(Math.floor((60-data[i].ALL_WRK_TM_M+Number(totWrkTimeSplit[1]))/60) == 0) overWrkTmH = overWrkTmH - 1
+                    overWrkTmM = (60-data[i].ALL_WRK_TM_M+Number(totWrkTimeSplit[1]))%60
+                    if(overWrkTmH.toString().length == 1) overWrkTmH = "0" + overWrkTmH
+                    if(overWrkTmM.toString().length == 1) overWrkTmM = "0" + overWrkTmM
+                    if( overWrkTmH < 20 ){
+                        scheduleTotalMgmtTable += '<td id="overWrkTm" class="pt-3-half" style="color:red;">'+ overWrkTmH + ":" + overWrkTmM + '</td>';
+                    }else{
+                        scheduleTotalMgmtTable += '<td id="overWrkTm" class="pt-3-half">'+ overWrkTmH + ":" + overWrkTmM + '</td>';
+                    }
+
+                    scheduleTotalMgmtTable += '</tr>';
+                }
+            }
+            scheduleTotalMgmtTable += '</tbody>';
+            scheduleTotalMgmtTable += '</table>';
+
+            document.getElementById('grid_teamTotalStat').innerHTML = scheduleTotalMgmtTable;
+
+        }
+        /*********************************************************************
+        *   그리드 이름 더블클릭 이벤트
+        *********************************************************************/
+        function ondblclickOcemNmEvt(getOcemName, getOcemEmail){
+            var dt;
+            if($('#sbx_wrkDtMm').val().length == 1){
+                dt = $('#sbx_wrkDtYy').val() + "-" + "0" + $('#sbx_wrkDtMm').val();
+             } else {
+                dt = $('#sbx_wrkDtYy').val() + "-" + $('#sbx_wrkDtMm').val();
+            }
+
+            $('#hidden_selectDt').val(dt);
+            $('#hidden_selectDept').val($('#sbx_dept').val());
+            $('#hidden_selectName').val(getOcemName);
+            $('#hidden_selectEmail').val(getOcemEmail);
+
+            var url = "{% url 'dili_api:scheduleStatLst' %}";
+
+            $('#workDiv').load(url);
+
+        }
+
+  </script>
+    <input type="text" class="form-control" id="hidden_selectDt" name="hidden_selectDt" maxlength="30" readonly hidden/>
+    <input type="text" class="form-control" id="hidden_selectDept" name="hidden_selectDept" maxlength="30" readonly hidden/>
+    <input type="text" class="form-control" id="hidden_selectName" name="hidden_selectName" maxlength="30" readonly hidden/>
+    <input type="text" class="form-control" id="hidden_selectEmail" name="hidden_selectEmail" maxlength="30" readonly hidden/>
+    <div id="workDiv">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="mb-4" role="alert">
+                <h5>
+                    <b>근무현황(종합)</b>
+                </h5>
+            </div>
+
+            <!-- 1. 부서 조회영역 -->
+            <div class="accordion mb-4" id="grp_search">
+                <div class="card">
+
+                    <div class="card-header p-0" id="head_search">
+                        <h2 class="mb-0">
+                            <button class="btn btn-link btn-block text-left text-dark" type="button" data-toggle="collapse" data-target="#col_search" aria-expanded="true" aria-controls="collapseOne">
+                                <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-caret-down-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z"/>
+                                </svg>
+                                조회
+                            </button>
+                        </h2>
+                    </div>
+
+                    <div id="col_search" class="collapse show" aria-labelledby="head_search" data-parent="#grp_search">
+
+                        <div class="card-body flex-height d-flex m-0 p-2">
+                            <div class="align-self-start align-self-center mr-3">기준월</div>
+                            <div class="align-self-center mr-1">
+                                <select id="sbx_wrkDtYy" class="form-control" name="type" onchange="timeChange()">
+                                </select>
+                            </div>
+                            <div class="align-self-center mr-5">
+                                <select id="sbx_wrkDtMm" class="form-control" name="type" onchange="timeChange()">
+                                    <option value = "1">1월</option>
+                                    <option value = "2">2월</option>
+                                    <option value = "3">3월</option>
+                                    <option value = "4">4월</option>
+                                    <option value = "5">5월</option>
+                                    <option value = "6">6월</option>
+                                    <option value = "7">7월</option>
+                                    <option value = "8">8월</option>
+                                    <option value = "9">9월</option>
+                                    <option value = "10">10월</option>
+                                    <option value = "11">11월</option>
+                                    <option value = "12">12월</option>
+                                </select>
+                            </div>
+
+                            <div class="align-self-start align-self-center mr-3">부서</div>
+                            <div class="align-self-center mr-5">
+                                <select id="sbx_dept" class="form-control" name="type">
+                                </select>
+                            </div>
+
+                            <div class="align-self-end align-self-center">
+                                <button class="button" id="searchBtn">조회</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. 월별 근무시간 영역 -->
+            <div class="accordion mb-4" id="grp_mmTotWrkTime">
+                <div class="card">
+                    <div class="card-header p-0" id="head_totWrkTime">
+                        <h2 class="mb-0">
+                            <button id="btn_acdTotWrkTime" class="btn btn-link btn-block text-left text-dark" type="button" data-toggle="collapse" data-target="#col_totWrkTime" aria-expanded="true" aria-controls="collapseOne">
+                                <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-caret-down-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z"/>
+                                </svg>
+                                월별 근무시간
+                            </button>
+                        </h2>
+                    </div>
+
+                    <div id="col_totWrkTime" class="collapse show" aria-labeledby="head_totWrkTime" data-parent="#grp_mmTotWrkTime">
+                        <div class="card-body flex-height d-flex m-0 p-2">
+                            <div class="align-self-start align-self-center mr-2">소정근무시간</div>
+                            <div class="align-self-center mr-5">
+                                <input type="text" class="form-control" id="ipt_wrkTime" name="ipt_wrkTime"  maxlength="10" readonly/>
+                            </div>
+
+                            <div class="align-self-start align-self-center mr-2">연장가능</div>
+                            <div class="align-self-center mr-5">
+                                <input type="text" class="form-control" id="ipt_wrkOverTime" name="ipt_wrkOverTime"  maxlength="10" readonly/>
+                            </div>
+
+                            <div class="align-self-start align-self-center mr-2">총근무가능</div>
+                            <div class="align-self-center mr-5">
+                                <input type="text" class="form-control" id="ipt_totWrkTime" name="ipt_totWrkTime"  maxlength="10" readonly/>
+                            </div>
+                         </div>
+                     </div>
+                 </div>
+            </div>
+            <!-- 조회 결과 테이블-->
+            <div id="grp_grid">
+                <div class="p-0">
+                    <div class="d-flex justify-content-center" style="height:0; visibility:hidden;">
+                        <input type="text" name="date" id="monthpickerData" />
+                    </div>
+                    <!--  Grid 영역  -->
+                    <div id="grp_showteamTotalStatList">
+                        <!--근무현황 조회 table 영역 -->
+                        <div id="grid_teamTotalStat">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>

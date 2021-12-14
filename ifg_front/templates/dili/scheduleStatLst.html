@@ -3,7 +3,6 @@
 
         <script type="text/javascript">
         $(document).ready(function(){
-
             <!--    공통코드 조회    -->
             <!--    1. 부서    -->
             retrieveCmmCd('SLIN_BZDP',settingSlinBzdp);
@@ -33,7 +32,7 @@
             };
 
             function settingSlinBzdp(data){
-                var deptList = '';
+                 var deptList = '';
                 deptList += '<option value="00">전체</option>'
 
                 if(data.length > 0) {
@@ -72,9 +71,24 @@
                 document.getElementById('sbx_wrkDtYy').innerHTML = wrkDtYy;
                 $("#sbx_wrkDtYy").val(year);
                 $("#sbx_wrkDtMm").val(month+1);
+
+                <!-- 근무현황(종합) 상세화면일때 해당 직원정보(이름, 이메일, 부서) 셋팅함수 호출-->
+                if(sessionStorage.getItem("authId") == "ADMIN") {
+                    if($('#hidden_selectDt').val() != undefined){
+                        var selectDt = $('#hidden_selectDt').val();
+                        var selectDept = $('#hidden_selectDept').val();
+                        var selectName = $('#hidden_selectName').val();
+                        var selectEmail = $('#hidden_selectEmail').val();
+
+                        getSelectedInfo(selectDt, selectDept, selectName, selectEmail);
+
+                    }
+                }
+
             }
 
          });
+
 
         $("#searchBtn").click(function(){
 
@@ -99,6 +113,8 @@
 
             var url = "{% url 'dili_api:getScheduleStatLst' %}";
             submissionCallMap(param,'GET',url,scheduleStatLst);
+
+
         });
 
         $("#excelDownBtn").click(function(){
@@ -232,6 +248,25 @@
             $('.model_layout').empty();
         });
 
+        function getSelectedInfo(selectDt, selectDept, selectName, selectEmail){
+
+            // 부서 setting
+            $("#sbx_dept").val(selectDept)
+
+            // 성명 setting
+            $('#ipt_searchOcemNamePop').val(selectName);
+            $('#ipt_searchOcemName').val(selectName);
+            $('#ipt_searchOcemEmail').val(selectEmail);
+
+            // 일자 setting
+            var year = selectDt.split("-")[0];
+            var month = selectDt.split("-")[1];
+            $("#sbx_wrkDtYy").val(year);
+            $("#sbx_wrkDtMm").val(month);
+
+            $("#searchBtn").click();
+
+        }
 
     </script>
     <!--직원조회 모달 영역 -->
