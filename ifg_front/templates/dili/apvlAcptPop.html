@@ -18,7 +18,7 @@
 
 
         /*********************************************************************
-        *   Session Email 값 기준 근무 결재요청 리스트 조회
+        *   Session Email 값 기준 연차 결재요청 리스트 조회
         *********************************************************************/
         var param = {
             "email" : sessionStorage.getItem("email"),
@@ -43,7 +43,7 @@
 
 
         /*********************************************************************
-        *   srchAcptHistBtn 버튼 클릭 이벤트 - 근무결재요청 내역 조회
+        *   srchAcptHistBtn 버튼 클릭 이벤트 - 연차결재요청 내역 조회
         *********************************************************************/
         $('#srchAcptHistBtn').click(function() {
             initApvlAcptDetl();
@@ -53,7 +53,7 @@
     });
 
     /*********************************************************************
-    *   근무결재요청 Grid 생성
+    *   연차결재요청 Grid 생성
     *********************************************************************/
     function wrkApvlAcptGrd(data){
         // div 초기화
@@ -68,7 +68,7 @@
             wrkApvlTable += '<th class="text-center">기안일</th>';
             wrkApvlTable += '<th class="text-center">연차일</th>';
             wrkApvlTable += '<th class="text-center">반차일</th>';
-            wrkApvlTable += '<th class="text-center">요청일시 출근시각 ~ 퇴근시각</th>';
+<!--            wrkApvlTable += '<th class="text-center">요청일시</th>';-->
             wrkApvlTable += '<th class="text-center">기안자</th>';
             wrkApvlTable += '</tr>';
             wrkApvlTable += '</thead>';
@@ -101,7 +101,7 @@
             }
         } else {
                 wrkApvlTable += '<tr>';
-                wrkApvlTable += '<td colspan="5" class="pt-3-half">결재 요청 내역이 없습니다.</td>';
+                wrkApvlTable += '<td colspan="5" class="pt-3-half">연차 요청 내역이 없습니다.</td>';
                 wrkApvlTable += '</tr>';
 
 
@@ -117,7 +117,7 @@
     }
 
     /*********************************************************************
-    *   근무결재요청 조회 transaction
+    *   연차결재요청 조회 transaction
     *********************************************************************/
     function srchApvlAcptHist() {
         var param = {
@@ -140,7 +140,7 @@
     }
 
 
-    // 결재 요청 상세 값 초기화
+    // 연차 요청 상세 값 초기화
     function initApvlAcptDetl() {
         $('#ipt_reqAcptWrkDt').val('')
         $('#ipt_reqAcptJobStrtTm').val('')
@@ -171,7 +171,7 @@
 
         //결재/승인사유 유효성 검증
         if($("#txa_reqAcptRsnAcpt").val().trim() == "") {
-            alertMsg("근무요청 " + msg + " 사유를 입력해주세요.", function() {
+            alertMsg("연차요청 " + msg + " 사유를 입력해주세요.", function() {
                 $("#txa_reqAcptRsnAcpt").focus();
             });
             return;
@@ -190,11 +190,11 @@
 
                 var param = {
                     "email"         : $("#ipt_reqAcptEmpEmalAddr").val(),   //기안자 아이디
-                    "wrkDt"         : $("#ipt_reqAcptWrkDt").val(),         //근무요청일시
-                    "jobStrtTm"     : inptStrtTm,                           //근무 시작 시간
-                    "jobEndTm"      : inptEndTm,                            //근무 종료 시간
+                    "wrkDt"         : $("#ipt_reqAcptWrkDt").val(),         //연차요청일시
+                    "jobStrtTm"     : inptStrtTm,                           //연차 시작 시간
+                    "jobEndTm"      : inptEndTm,                            //연차 종료 시간
                     "th1AprvStus"   : apvlAcptStus,                         //01: 미승인, 02: 승인, 03: 반려
-                    "th1AprvRsn"    : $("#txa_reqAcptRsnAcpt").val(),       //근무승인사유
+                    "th1AprvRsn"    : $("#txa_reqAcptRsnAcpt").val(),       //연차승인사유
                     //"th1AprvNm"     : sessionStorage.getItem("email"),    //결재자 : 로그인한 사용자 아이디
                 }
 
@@ -287,7 +287,7 @@
 <div style="width :600px;">
         <div class="mb-4" role="alert">
             <h5>
-                <b>근무결재승인</b>
+                <b>연차승인</b>
             </h5>
             <div role="alert">
                 <h6 style="text-align: right">
@@ -309,7 +309,7 @@
                             <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-caret-down-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z"/>
                             </svg>
-                            근무결재 승인
+                            연차결재 승인
                         </button>
                     </h2>
                 </div>-->
@@ -349,7 +349,7 @@
                                         </div>
 
                                         <!--<div class="flex-height d-flex m-0 p-2">
-                                            <div class="align-self-start align-self-center mr-3" style="font-weight:bold">근무요청일시</div>
+                                            <div class="align-self-start align-self-center mr-3" style="font-weight:bold">연차요청일시</div>
                                             <div class="align-self-center mr-1">
                                                 <div style="float: left;">
                                                      <input type="date" class="align-self-start align-self-center mr-1 form-control" id="ipt_reqAcptWrkDt"       name="ipt_reqAcptWrkDt" disabled/>
@@ -372,7 +372,7 @@
                                         <input type="hidden" id="ipt_reqAcptTh1AprvStus" name="ipt_reqAcptTh1AprvStus" />
 
                                         <div class="flex-height d-flex m-0 p-2">
-                                            <div class="align-self-start align-self-center mr-3" style="font-weight:bold">근무요청사유&nbsp;&nbsp;&nbsp;&nbsp;</div>
+                                            <div class="align-self-start align-self-center mr-3" style="font-weight:bold">연차요청사유&nbsp;&nbsp;&nbsp;&nbsp;</div>
                                             <div class="align-self-center mr-7">
                                                 <textarea id="txa_reqAcptRsn" name="txa_reqAcptRsn" maxlength="500" style="resize: none; width:440px;height:70px;" placeholder="사유를 입력해주세요.(200자 이하)" disabled></textarea>
                                             </div>
