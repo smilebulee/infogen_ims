@@ -52,14 +52,14 @@
         // 공통 코드 조회 - '결재 상태'
         retrieveCmmCd('sbx_apvlSttsCd', 'APVL_STTS_CD');
 
-        // 결재요청월 > 접속 월로 설정
+        // 연차요청월 > 접속 월로 설정
         var todayDt = new Date();
         var strTodayDt = todayDt.getFullYear() + '-' + fillZero(2, (todayDt.getMonth() + 1) + '');
         $('#ipt_apvlSearchYyyyMm').val(strTodayDt)
 
 
         //TODO : 관리자, 사업부장 권한 나뉘며 로직 엉킴. 수정 필요
-        // 결재승인 버튼 및 직원조회 기능 권한 처리
+        // 연차승인 버튼 및 직원조회 기능 권한 처리
         if(!isAdmin) {
             //$('#apvlAcptBtn').css("display", 'none');
             //$('#ipt_apvlSearchNamePop").attr('readonly' true);
@@ -70,7 +70,7 @@
             //$('#ipt_apvlSearchNamePop').prop('readonly', false);
         }
 
-        // 결재승인 버튼 및 직원조회 기능 권한 처리 ( 성명 공란 검색 )
+        // 연차승인 버튼 및 직원조회 기능 권한 처리 ( 성명 공란 검색 )
         console.log("isAdmin : "+isAdmin);
         console.log("isGm    : "+isGm);
         console.log("isUser  : "+isUser);
@@ -82,7 +82,7 @@
         /*
         $('#apvlAcptBtn').click(function(){
             if(!isAdmin || !isGm) {
-                alertMsg('결재 승인 권한이 없습니다.');
+                alertMsg('연차 승인 권한이 없습니다.');
                 return false;
             }
         });
@@ -101,11 +101,11 @@
             $('#grd_apvlReqHistDetl').css('display', 'none');
         }
 
-        // 결재요청월 focusout 이벤트
+        // 연차요청월 focusout 이벤트
         /*
         $('#ipt_apvlSearchYyyyMm').blur(function() {
             if($("#ipt_apvlSearchYyyyMm").val() == "" || $("#ipt_apvlSearchYyyyMm").val().length != 7) {
-                alertMsg("결재요청월을 선택해주세요.", function() {
+                alertMsg("연차요청월을 선택해주세요.", function() {
                     $('#ipt_apvlSearchYyyyMm').focus();
                 });
                 return;
@@ -117,21 +117,21 @@
         *********************************************************************/
         //조회 버튼 클릭 이벤트
         $("#apvlHistSearchBtn").click(function(){
-            //결재요청월 유효성 검증
+            //연차요청월 유효성 검증
             if($("#ipt_apvlSearchYyyyMm").val() == "" || $("#ipt_apvlSearchYyyyMm").val().length != 7) {
-                alertMsg("결재요청월을 선택해주세요.", function() {
+                alertMsg("연차요청월을 선택해주세요.", function() {
                     $('#ipt_apvlSearchYyyyMm').focus();
                 });
                 return;
             }
 
-            //결재요청월 유효성 검증
+            //연차요청월 유효성 검증
             var nowDt = new Date();
             var strNowDt = nowDt.getFullYear() + '-' + fillZero(2, (nowDt.getMonth() + 1) + '');
             var inptDt = new Date($("#ipt_apvlSearchYyyyMm").val());
             var todayDt = new Date(strNowDt);
             if(inptDt > todayDt) {
-                alertMsg("결재요청월은 현재월, 현재월 이전으로 선택해주세요.", function() {
+                alertMsg("연차요청월은 현재월, 현재월 이전으로 선택해주세요.", function() {
                     $('#ipt_apvlSearchYyyyMm').val(strNowDt).focus();
                 });
                 return;
@@ -157,7 +157,7 @@
             */
 
             /*********************************************************************
-            *   Session Email 값 기준 근무 결재요청 리스트 조회
+            *   Session Email 값 기준 근무 연차요청 리스트 조회
             *********************************************************************/
             //권한 따라 부서 세팅
             /*
@@ -174,7 +174,7 @@
             */
 
             var params = {
-                "apvlReqDtYm"  : $("#ipt_apvlSearchYyyyMm").val(),                                     // 결재요청월
+                "apvlReqDtYm"  : $("#ipt_apvlSearchYyyyMm").val(),                                     // 연차요청월
                 //"deptCd"       : strDeptCd,                                                            // 부서
                 "deptCd"       : $("#sbx_slinBzdp option:selected").val(),                             // 부서
                 "email"        : $("#ipt_apvlSearchEmail").val(),// || sessionStorage.getItem("email"),//사용자 조회  > 이메일 값
@@ -189,7 +189,7 @@
         });
 
 
-        // 화면 진입 시, 로그인한 사용자 기준으로 결재요청이력 조회
+        // 화면 진입 시, 로그인한 사용자 기준으로 연차요청이력 조회
         /*
         $("#sbx_slinBzdp").change(function(){
             if(cnt == 0) {
@@ -281,7 +281,7 @@
     });
     var cnt = 0;
     /*********************************************************************
-    *   근무결재요청내역 Grid 생성
+    *   근무연차요청내역 Grid 생성
     *********************************************************************/
     function apvlReqHistGrd(data){
         // 결재 상세 테이블 숨김
@@ -344,7 +344,7 @@
             }
         } else {
             apvlReqHistTable += '<tr>';
-            apvlReqHistTable += '<td colspan="6" class="pt-3-half">결재 요청 내역이 없습니다.</td>';
+            apvlReqHistTable += '<td colspan="6" class="pt-3-half">연차 요청 내역이 없습니다.</td>';
             apvlReqHistTable += '</tr>';
 
         }
@@ -366,7 +366,7 @@
         $(trId).nextAll().css("background-color","");
         $(trId).css("background-color","lightGrey");
 
-        // 결재 요청 정보 PK
+        // 연차 요청 정보 PK
         var arrWrkDt =$(trId).children().eq(5).html().split(';');
 
         // 트랜잭션
@@ -541,7 +541,7 @@
         <div class="align-self-start flex-height d-flex m-0 p-2" role="alert">
             <div class="align-self-start align-self-center mr-3">
                 <h5>
-                    <b>결재요청관리</b>
+                    <b>연차요청관리</b>
                 </h5>
             </div>
 
@@ -594,11 +594,11 @@
                         <div class="align-self-center mr-3">
                             <button class="button" id="yryReqBtn">연차등록</button>
                         </div>
-                        <div class="align-self-center mr-3">
-                            <button class="button" id="apvlReqBtn">결재등록</button>
-                        </div>
+<!--                        <div class="align-self-center mr-3">-->
+<!--                            <button class="button" id="apvlReqBtn">결재등록</button>-->
+<!--                        </div>-->
                         <div class="align-self-end align-self-center">
-                            <button class="button" id="apvlAcptBtn">결재승인</button>
+                            <button class="button" id="apvlAcptBtn">연차승인</button>
                         </div>
 
 
@@ -615,7 +615,7 @@
                             <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-caret-down-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z"/>
                             </svg>
-                            결재요청 이력
+                            연차요청 이력
                         </button>
                     </h2>
                 </div>-->
@@ -631,7 +631,7 @@
                                 <thead>
                                     <tr>
                                         <!--<th class="text-center">결재 차수</th>-->
-                                        <th class="text-center">결재 요청일</th>
+                                        <th class="text-center">연차 요청일</th>
                                         <th class="text-center">결재자</th>
                                         <th class="text-center">참조자</th>
                                         <th class="text-center">결재상태</th>
