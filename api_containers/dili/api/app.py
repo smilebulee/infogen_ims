@@ -2094,7 +2094,7 @@ class updateWrkTimeConfirm(Resource):  # 근무시간 확정
             sql = "UPDATE TB_WRK_TM_MGMT_M M " \
                   "   SET M.APRV_STUS = '1' " \
                   "     , M.APRV_NM   = '" + th1AprvNm + "' " \
-                  "     , M.APRV_DT   = SYSDATE " \
+                  "     , M.APRV_DT   = NOW() " \
                   "   WHERE 1=1 " \
                   "     AND SUBSTR(M.WRK_DT, 1, 7) = '" + wrkDt + "'"
             if email != "" and email != "0":
