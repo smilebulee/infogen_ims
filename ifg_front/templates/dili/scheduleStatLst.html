@@ -152,7 +152,7 @@
             }
             $.ajaxCall( param, {
                  'method'           : 'POST',
-                 'url'              : "{% url 'dili_api:wrkTimeConfirm' %}",
+                 'url'              : "{% url 'dili_api:saveWrkTimeConfirm' %}",
                  'dataType'         : 'json',
                  'data'             : JSON.stringify(param),
                  'async'            : false,
