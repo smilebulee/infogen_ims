@@ -2257,7 +2257,7 @@ class scheduleStatLst(Resource):
                       "            ELSE 'N'" \
                       "        END AS APRV_STUS" \
                       "      ,NVL(A.APRV_NM, '') AS APRV_NM" \
-                      "      ,NVL((SELECT Z.EMP_NAME FROM TB_EMP_MGMT Z WHERE Z.EMP_EMAIL = M.APRV_NM), '') AS APRV_NAME" \
+                      "      ,NVL((SELECT Z.EMP_NAME FROM TB_EMP_MGMT Z WHERE Z.EMP_EMAIL = A.APRV_NM), '') AS APRV_NAME" \
                       "      ,NVL(A.APRV_DT, '') AS APRV_DT" \
                       "  FROM TB_WRK_TM_MGMT_M A" \
                       "  LEFT OUTER JOIN" \
