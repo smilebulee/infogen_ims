@@ -759,7 +759,7 @@
             monthTable += '<th class="text-center">총근무시간</th>';
             monthTable += '<th class="text-center">근무시간상세</th>';
             monthTable += '<th class="text-center">결재상태</th>';
-            monthTable += '<th style="display:none">근무확정상태</th>';
+            monthTable += '<th class="text-center">근무확정여부</th>';
             monthTable += '</tr>';
             monthTable += '</thead>';
             monthTable += '<tbody id="monthBoody">';
@@ -851,7 +851,6 @@
                             restTm = schdData[j].REST_TM;
                             dinnRestTm = schdData[j].DINN_REST_TM;
                             aprvStus = schdData[j].APRV_STUS;
-                            alert("aprvStus "+aprvStus);
                         }
 
                     }
@@ -894,7 +893,7 @@
                 }
 
                 monthTable += '<td class="pt-3-half" contenteditable="false">'+apvlStus+'</td>';
-                monthTable += '<td style="display:none">'+aprvStus+'</td>';
+                monthTable += '<td class="pt-3-half" contenteditable="false">'+aprvStus+'</td>';
                 monthTable += '</tr>';
                 monthGridStrtDate.setDate(monthGridStrtDate.getDate()+1);
             }
