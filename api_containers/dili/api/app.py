@@ -921,6 +921,7 @@ class apvlAcptHist(Resource):  # Mariadb 연결 진행
                           "  FROM TB_APVL_REQ_MGMT_M A, TB_EMP_MGMT B, TB_EMP_MGMT C " \
                           " WHERE A.EMP_EMAL_ADDR = C.EMP_EMAIL  " \
                           "   AND A.TH1_APRV_NM = B.EMP_EMAIL  " \
+                          "   AND A.APVL_DIVS = '01' " \
                           "   AND A.TH1_APRV_NM = '" + email + "' " \
                           "   AND A.TH1_APRV_STUS = '" + apvlStusDivs + "' " \
                           " ORDER BY APVL_REQ_DT ASC "
