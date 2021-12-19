@@ -596,6 +596,7 @@
             weekTable += '<th class="text-center">총근무시간</th>';
             weekTable += '<th class="text-center">근무시간상세</th>';
             weekTable += '<th class="text-center">결재상태</th>';
+            monthTable += '<th class="text-center">근무확정여부</th>';
             weekTable += '</tr>';
             weekTable += '</thead>';
             weekTable += '<tbody id="weekBoody">';
@@ -621,6 +622,7 @@
                 var normWrkTm = "-";
                 var overWrkTm = "-";
                 var apvlStus = "-"
+                var aprvStus = "N"
                 var chckHldy = 0;
                 var restTm = 0;
                 var dinnRestTm = 0;
@@ -683,6 +685,7 @@
 
                             restTm = schdData[j].REST_TM;
                             dinnRestTm = schdData[j].DINN_REST_TM;
+                            aprvStus = schdData[j].APRV_STUS;
                         }
                     }
                 }
@@ -725,6 +728,7 @@
                 }
 
                 weekTable += '<td class="pt-3-half" contenteditable="false">'+apvlStus+'</td>';
+                weekTable += '<td class="pt-3-half" contenteditable="false">'+aprvStus+'</td>';
                 weekTable += '</tr>';
                 weekGridStrtDate.setDate(weekGridStrtDate.getDate()+1);
             }
