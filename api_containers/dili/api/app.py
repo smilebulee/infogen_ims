@@ -2098,9 +2098,9 @@ class updateWrkTimeConfirm(Resource):  # 근무시간 확정
                       "     , M.APRV_DT   = NOW() " \
                       "   WHERE 1=1 " \
                       "     AND SUBSTR(M.WRK_DT, 1, 7) = '" + wrkDt + "'"
-                if email != "" and email != "0":
+                if email != "" and email != "00":
                     sql += "   AND M.EMP_EMAL_ADDR = '" + email + "' "
-                if dept != ""  and dept  != "0":
+                if dept != ""  and dept  != "00":
                     sql += "   AND EXISTS ( SELECT 'X' "
                     sql += "                  FROM TB_EMP_MGMT E "
                     sql += "                 WHERE E.EMP_EMAIL = M.EMP_EMAL_ADDR "
