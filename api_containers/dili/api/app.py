@@ -2253,6 +2253,12 @@ class scheduleStatLst(Resource):
                       "            WHEN NVL(B.PTO_KD_CD, '') = '02' THEN CONCAT(SUBSTRING(DATE_SUB(STR_TO_DATE(A.ALL_WRK_TM, '%H%i'), INTERVAL (A.REST_TM+A.DINN_REST_TM) MINUTE) ,1,2), ':', SUBSTRING(DATE_SUB(STR_TO_DATE(A.ALL_WRK_TM, '%H%i'), INTERVAL (A.REST_TM+A.DINN_REST_TM) MINUTE) ,4,2))" \
                       "            ELSE ''" \
                       "             END PTO_KD_YN" \
+                      "      ,CASE WHEN A.APRV_STUS = '1' THEN 'Y'" \
+                      "            ELSE 'N'" \
+                      "        END AS APRV_STUS" \
+                      "      ,NVL(A.APRV_NM, '') AS APRV_NM" \
+                      "      ,NVL((SELECT Z.EMP_NAME FROM TB_EMP_MGMT Z WHERE Z.EMP_EMAIL = M.APRV_NM), '') AS APRV_NAME" \
+                      "      ,NVL(A.APRV_DT, '') AS APRV_DT" \
                       "  FROM TB_WRK_TM_MGMT_M A" \
                       "  LEFT OUTER JOIN" \
                       "       TB_APVL_REQ_MGMT_M B" \
