@@ -759,6 +759,7 @@
             monthTable += '<th class="text-center">총근무시간</th>';
             monthTable += '<th class="text-center">근무시간상세</th>';
             monthTable += '<th class="text-center">결재상태</th>';
+            monthTable += '<th style="display:none">근무확정상태</th>';
             monthTable += '</tr>';
             monthTable += '</thead>';
             monthTable += '<tbody id="monthBoody">';
@@ -784,6 +785,7 @@
                 var normWrkTm = "-";
                 var overWrkTm = "-";
                 var apvlStus = "-"
+                var aprvStus = "N"
                 var chckHldy = 0;
                 var restTm = 0;
                 var dinnRestTm = 0;
@@ -793,7 +795,6 @@
 				if(schdData.length > 0){
                     for(var j = 0; j < schdData.length; j++){
                         if(tempSetMonth == schdData[j].WRK_DT){
-
                             if(schdData[j].APVL_REQ_DIVS != "03"){
 
                                 jobStrtTm = schdData[j].JOB_STRT_TM;
@@ -849,6 +850,7 @@
 
                             restTm = schdData[j].REST_TM;
                             dinnRestTm = schdData[j].DINN_REST_TM;
+                            aprvStus = schdData[j].APRV_STUS;
                         }
 
                     }
@@ -891,6 +893,7 @@
                 }
 
                 monthTable += '<td class="pt-3-half" contenteditable="false">'+apvlStus+'</td>';
+                monthTable += '<td style="display:none">'+aprvStus+'</td>';
                 monthTable += '</tr>';
                 monthGridStrtDate.setDate(monthGridStrtDate.getDate()+1);
             }
@@ -955,6 +958,7 @@
                 $('#tmpPtoKdCd').text(ptoKdCd);
                 $('#tmpPopAllTm').text($('#'+trId.id).children().eq(4).text());
                 $('#tmpPopApvlStus').text($('#'+trId.id).children().eq(6).text());
+                $('#tmpPopAprvStus').text($('#'+trId.id).children().eq(7).text());
             }
             $('#clickDate').val(wClickDt);
 
@@ -1442,6 +1446,7 @@
 
                 <span id="tmpPopAllTm" class="model_layout" style="display:none;" ></span>
                 <span id="tmpPopApvlStus" class="model_layout" style="display:none;" ></span>
+                <span id="tmpPopAprvStus" class="model_layout" style="display:none;" ></span>
             </a>
         </div>
 

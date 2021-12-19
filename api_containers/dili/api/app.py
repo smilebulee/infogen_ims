@@ -479,7 +479,10 @@ class monthGridData(Resource): # Mariadb 연결 진행
                     + "       ,NVL(A.REST_TM,'') AS REST_TM "\
                     + "       ,NVL(A.DINN_REST_TM,'') AS DINN_REST_TM " \
                     + "       ,NVL(B.PTO_KD_CD, '') AS PTO_KD_CD" \
-                + "   FROM TB_WRK_TM_MGMT_M A "\
+                    + "       ,CASE WHEN A.APRV_STUS = '1' THEN 'Y'" \
+                    + "             ELSE 'N'" \
+                    + "         END AS APRV_STUS" \
+                    + "   FROM TB_WRK_TM_MGMT_M A "\
                     + "        LEFT OUTER JOIN TB_APVL_REQ_MGMT_M B"\
                     + "   ON A.WRK_DT BETWEEN B.HOLI_TERM1 AND B.HOLI_TERM2 "\
                     + "   AND A.EMP_EMAL_ADDR = B.EMP_EMAL_ADDR "\

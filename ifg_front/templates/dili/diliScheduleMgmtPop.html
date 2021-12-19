@@ -74,6 +74,7 @@
         var ptoKdCd = $('#tmpPtoKdCd').text();
         var allTm = $('#tmpPopAllTm').text();
         var apvlStus = $('#tmpPopApvlStus').text();
+        var aprvStus = $('#tmpPopAprvStus').text();
         var restTm = $('#tmpRestTm').text();
         var dinnRestTm = $('#tmpDinnRestTm').text();
 
@@ -89,85 +90,123 @@
 
         var nowDt = new Date();
         var strNowTm = fillZero(2, nowDt.getHours()) + ':' + fillZero(2, nowDt.getMinutes());
-
+alert(aprvStus);
         if(holi != "연차휴가" && holi != "반차휴가"){
-            if ($('#empEmailHidden').val() == null || $('#empEmailHidden').val() == "") {
-                document.getElementById('pop_strtJob').innerHTML = '<div style="float: left;"><input type="time" class="align-self-start align-self-center form-control" id="ipt_jobStrtTm"  style="width:125px;" name="ipt_jobStrtTm" /></div>'
-                + '<input type="button" class="button" onclick="onclickStrtTm()" value="출근버튼">';
+            if("N" == aprvStus){
 
-            }else if($('#empEmailHidden').val() == sessionStorage.getItem("email")){
-                document.getElementById('pop_strtJob').innerHTML = '<div style="float: left;"><input type="time" class="align-self-start align-self-center form-control" id="ipt_jobStrtTm"  style="width:125px;" name="ipt_jobStrtTm" /></div>'
-                + '<input type="button" class="button" onclick="onclickStrtTm()" value="출근버튼">';
+                if ($('#empEmailHidden').val() == null || $('#empEmailHidden').val() == "") {
+                    document.getElementById('pop_strtJob').innerHTML = '<div style="float: left;"><input type="time" class="align-self-start align-self-center form-control" id="ipt_jobStrtTm"  style="width:125px;" name="ipt_jobStrtTm" /></div>'
+                    + '<input type="button" class="button" onclick="onclickStrtTm()" value="출근버튼">';
 
-            }else {
-                $('#pop_strtJob').text("-");
-            }
+                }else if($('#empEmailHidden').val() == sessionStorage.getItem("email")){
+                    document.getElementById('pop_strtJob').innerHTML = '<div style="float: left;"><input type="time" class="align-self-start align-self-center form-control" id="ipt_jobStrtTm"  style="width:125px;" name="ipt_jobStrtTm" /></div>'
+                    + '<input type="button" class="button" onclick="onclickStrtTm()" value="출근버튼">';
 
-            if(strtTm != "") {
-                if(strtTm == "-") {
-                    $("#ipt_jobStrtTm").val(strNowTm);
-                } else {
-                    $("#ipt_jobStrtTm").val(strtTm);
+                }else {
+                    $('#pop_strtJob').text("-");
                 }
-            }
 
-            $('#pop_endJob').text(endTm);
-            $('#sbx_restTme').val(restTm);
-            $('#sbx_DinnRestTme').val(dinnRestTm);
-            document.getElementById('pop_schdDetlTm').innerHTML = '정상근무 : '+normWrkTm+' / 연장근무 : '+overWrkTm;
-            $('#pop_schdDetlAllTm').text(allTm);
-            $('#pop_apvlStus').text(apvlStus);
-
-            if ($('#empEmailHidden').val() == null || $('#empEmailHidden').val() == "") {
-
-                document.getElementById('pop_endJob').innerHTML = '<div style="float: left;"><input type="time" class="align-self-start align-self-center form-control" id="ipt_jobEndTm"  style="width:125px;" name="ipt_jobEndTm" /></div>'
-                + '<input type="button" class="button" onclick="onclickEndTm()" value="퇴근버튼">';
-
-                $("#ipt_jobEndTm").val(strNowTm);
-
-            }else if($('#empEmailHidden').val() == sessionStorage.getItem("email")){
-
-                document.getElementById('pop_endJob').innerHTML = '<div style="float: left;"><input type="time" class="align-self-start align-self-center form-control" id="ipt_jobEndTm"  style="width:125px;" name="ipt_jobEndTm" /></div>'
-                + '<input type="button" class="button" onclick="onclickEndTm()" value="퇴근버튼">';
-
-                $("#ipt_jobEndTm").val(strNowTm);
-
-            }else {
-                $('#pop_endJob').text("-");
-            }
-
-            if(endTm != "") {
-                if(endTm == "-") {
-                    $("#ipt_jobEndTm").val(strNowTm);
-                } else {
-                    $("#ipt_jobEndTm").val(endTm);
+                if(strtTm != "") {
+                    if(strtTm == "-") {
+                        $("#ipt_jobStrtTm").val(strNowTm);
+                    } else {
+                        $("#ipt_jobStrtTm").val(strtTm);
+                    }
                 }
-            }
 
-            document.getElementById('pop_schdDetlTm').innerHTML = '정상근무 : '+normWrkTm+' / 연장근무 : '+overWrkTm;
-            $('#pop_schdDetlAllTm').text(allTm);
-            $('#pop_apvlStus').text(apvlStus);
-            $('#sbx_restTme').val(restTm);
-            $('#btn_restTm').show();
-            $('#sbx_dinnRestTme').val(dinnRestTm);
-            $('#btn_dinnRestTm').show();
-
-            if(apvlStus == "미등록"){
+                $('#pop_endJob').text(endTm);
+                $('#sbx_restTme').val(restTm);
+                $('#sbx_DinnRestTme').val(dinnRestTm);
+                document.getElementById('pop_schdDetlTm').innerHTML = '정상근무 : '+normWrkTm+' / 연장근무 : '+overWrkTm;
+                $('#pop_schdDetlAllTm').text(allTm);
+                $('#pop_apvlStus').text(apvlStus);
 
                 if ($('#empEmailHidden').val() == null || $('#empEmailHidden').val() == "") {
 
-                    document.getElementById('pop_apvlStus').innerHTML = '<input type="button" class="button" onclick="onclickApvlUpld()" value="결재올리기">';
+                    document.getElementById('pop_endJob').innerHTML = '<div style="float: left;"><input type="time" class="align-self-start align-self-center form-control" id="ipt_jobEndTm"  style="width:125px;" name="ipt_jobEndTm" /></div>'
+                    + '<input type="button" class="button" onclick="onclickEndTm()" value="퇴근버튼">';
+
+                    $("#ipt_jobEndTm").val(strNowTm);
 
                 }else if($('#empEmailHidden').val() == sessionStorage.getItem("email")){
 
-                    document.getElementById('pop_apvlStus').innerHTML = '<input type="button" class="button" onclick="onclickApvlUpld()" value="결재올리기">';
+                    document.getElementById('pop_endJob').innerHTML = '<div style="float: left;"><input type="time" class="align-self-start align-self-center form-control" id="ipt_jobEndTm"  style="width:125px;" name="ipt_jobEndTm" /></div>'
+                    + '<input type="button" class="button" onclick="onclickEndTm()" value="퇴근버튼">';
 
+                    $("#ipt_jobEndTm").val(strNowTm);
+
+                }else {
+                    $('#pop_endJob').text("-");
                 }
-            }else {
+
+                if(endTm != "") {
+                    if(endTm == "-") {
+                        $("#ipt_jobEndTm").val(strNowTm);
+                    } else {
+                        $("#ipt_jobEndTm").val(endTm);
+                    }
+                }
+
+                document.getElementById('pop_schdDetlTm').innerHTML = '정상근무 : '+normWrkTm+' / 연장근무 : '+overWrkTm;
+                $('#pop_schdDetlAllTm').text(allTm);
                 $('#pop_apvlStus').text(apvlStus);
+                $('#sbx_restTme').val(restTm);
+                $('#btn_restTm').show();
+                $('#sbx_dinnRestTme').val(dinnRestTm);
+                $('#btn_dinnRestTm').show();
+
+                if(apvlStus == "미등록"){
+
+                    if ($('#empEmailHidden').val() == null || $('#empEmailHidden').val() == "") {
+
+                        document.getElementById('pop_apvlStus').innerHTML = '<input type="button" class="button" onclick="onclickApvlUpld()" value="결재올리기">';
+
+                    }else if($('#empEmailHidden').val() == sessionStorage.getItem("email")){
+
+                        document.getElementById('pop_apvlStus').innerHTML = '<input type="button" class="button" onclick="onclickApvlUpld()" value="결재올리기">';
+
+                    }
+                }else {
+                    $('#pop_apvlStus').text(apvlStus);
+                }
+
+            }else {
+
+                if (ptoKdCd == "02") {
+                    document.getElementById('pop_strtJob').innerHTML = '<div style="float: left;"><input type="time" class="align-self-start align-self-center form-control" id="ipt_jobStrtTm"  style="width:125px;" name="ipt_jobStrtTm" /></div>'
+                    + '<input type="button" class="button" onclick="onclickStrtTm()" value="출근버튼">';
+
+                    document.getElementById('pop_endJob').innerHTML = '<div style="float: left;"><input type="time" class="align-self-start align-self-center form-control" id="ipt_jobEndTm"  style="width:125px;" name="ipt_jobEndTm" /></div>'
+                    + '<input type="button" class="button" onclick="onclickEndTm()" value="퇴근버튼">';
+                    $("#ipt_jobEndTm").val(strNowTm);
+                }else {
+                    $('#pop_strtJob').text(strtTm);
+                    $('#pop_endJob').text(endTm);
+                }
+
+                $('#sbx_restTme').attr('disabled',true);
+                $('#sbx_restTme').val(restTm);
+                $('#btn_restTm').hide();
+                $('#sbx_dinnRestTme').attr('disabled',true);
+                $('#sbx_dinnRestTme').val(dinnRestTm);
+                $('#btn_dinnRestTm').hide();
+                document.getElementById('pop_schdDetlTm').innerHTML = '정상근무 : '+normWrkTm+' / 연장근무 : '+overWrkTm;
+                $('#pop_schdDetlAllTm').text(allTm);
+                if(apvlStus == "미등록"){
+
+                    if ($('#empEmailHidden').val() == null || $('#empEmailHidden').val() == "") {
+
+                        document.getElementById('pop_apvlStus').innerHTML = '<input type="button" class="button" onclick="onclickApvlUpld()" value="결재올리기">';
+
+                    }else if($('#empEmailHidden').val() == sessionStorage.getItem("email")){
+
+                        document.getElementById('pop_apvlStus').innerHTML = '<input type="button" class="button" onclick="onclickApvlUpld()" value="결재올리기">';
+
+                    }
+                }else {
+                    $('#pop_apvlStus').text(apvlStus);
+                }
             }
-
-
         }else {
             if (ptoKdCd == "02") {
                 document.getElementById('pop_strtJob').innerHTML = '<div style="float: left;"><input type="time" class="align-self-start align-self-center form-control" id="ipt_jobStrtTm"  style="width:125px;" name="ipt_jobStrtTm" /></div>'
