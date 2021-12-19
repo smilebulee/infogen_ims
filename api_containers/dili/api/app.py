@@ -2090,24 +2090,25 @@ class updateWrkTimeConfirm(Resource):  # 근무시간 확정
         mysql_con = pymysql.connect(host=getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
                                     charset='utf8', autocommit=False)
         try:
-            # 쿼리문 실행
-            sql = "UPDATE TB_WRK_TM_MGMT_M M " \
-                  "   SET M.APRV_STUS = '1' " \
-                  "     , M.APRV_NM   = '" + th1AprvNm + "' " \
-                  "     , M.APRV_DT   = NOW() " \
-                  "   WHERE 1=1 " \
-                  "     AND SUBSTR(M.WRK_DT, 1, 7) = '" + wrkDt + "'"
-            if email != "" and email != "0":
-                sql += "   AND M.EMP_EMAL_ADDR = '" + email + "' "
-            if dept != ""  and dept  != "0":
-                sql += "   AND EXISTS ( SELECT 'X' "
-                sql += "                  FROM TB_EMP_MGMT E "
-                sql += "                 WHERE E.EMP_EMAIL = M.EMP_EMAL_ADDR "
-                sql += "                   AND E.DEPT_CD = '" + dept + "'"
-                sql += "              ) "
-            logger.info(sql)
-            mysql_con.execute(sql)
-            mysql_con.commit()
+            with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+                # 쿼리문 실행
+                sql = "UPDATE TB_WRK_TM_MGMT_M M " \
+                      "   SET M.APRV_STUS = '1' " \
+                      "     , M.APRV_NM   = '" + th1AprvNm + "' " \
+                      "     , M.APRV_DT   = NOW() " \
+                      "   WHERE 1=1 " \
+                      "     AND SUBSTR(M.WRK_DT, 1, 7) = '" + wrkDt + "'"
+                if email != "" and email != "0":
+                    sql += "   AND M.EMP_EMAL_ADDR = '" + email + "' "
+                if dept != ""  and dept  != "0":
+                    sql += "   AND EXISTS ( SELECT 'X' "
+                    sql += "                  FROM TB_EMP_MGMT E "
+                    sql += "                 WHERE E.EMP_EMAIL = M.EMP_EMAL_ADDR "
+                    sql += "                   AND E.DEPT_CD = '" + dept + "'"
+                    sql += "              ) "
+                logger.info(sql)
+                cursor.execute(sql)
+                mysql_con.commit()
         finally:
             mysql_con.close()
 
