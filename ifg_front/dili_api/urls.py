@@ -82,6 +82,8 @@ urlpatterns = [
 
     url(r'^saveStrtTm/', views.saveStrtTm, name='saveStrtTm'),
     url(r'^saveEndTm/', views.saveEndTm, name='saveEndTm'),
+    # 근무시간확정
+    url(r'^wrkTimeConfirm/', views.saveWrkTimeConfirm, name='saveWrkTimeConfirm'),
     url(r'^updateRestTm/', views.updateRestTm, name='updateRestTm'),
     url(r'^updateDinnRestTm/', views.updateDinnRestTm, name='updateDinnRestTm'),
 

@@ -837,6 +837,21 @@ def saveEndTm(request):
     logger.info(r.json())
     return JsonResponse(r.json())
 
+#근무시간 확정
+def saveWrkTimeConfirm(request):
+    param = json.loads(request.POST['param'])
+
+    logger.info("Parameters Start")
+    logger.info(param)
+    logger.info("Parameters End")
+
+    r = requests.post('http://dili_api:5006/updateWrkTimeConfirm', data=json.dumps(param))
+
+    logger.info(r)
+    logger.info(r.text)
+    logger.info(r.json())
+    return JsonResponse(r.json())
+
 def getYryUseDays(request):
     param = json.loads(request.GET['param'])
 
