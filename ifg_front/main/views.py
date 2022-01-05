@@ -138,10 +138,10 @@ def signin(request):
     if user is None:
         logger.info('user fail')
         r = requests.post('http://emp_api:5001/SingIn', data=datas)
-        if not userCheck :
-            logger.info('usercheck fail')
-            user = User.objects.create_user(username=username,  password=password)  #임시 , email=email
-            logger.info('fail  >>>>>>>>>>>>>>>>>>>')
+        #if not userCheck :
+        logger.info('usercheck fail')
+        user = User.objects.create_user(username=username,  password=password)  #임시 , email=email
+        logger.info('fail  >>>>>>>>>>>>>>>>>>>')
     else:
         r = requests.post('http://emp_api:5001/SingIn', data=datas)
         # 사용자 없으면 직원관리 api 호출
