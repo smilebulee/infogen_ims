@@ -118,7 +118,7 @@
                 $('#sbx_DinnRestTme').val(dinnRestTm);
                 document.getElementById('pop_schdDetlTm').innerHTML = '정상근무 : '+normWrkTm+' / 연장근무 : '+overWrkTm;
                 $('#pop_schdDetlAllTm').text(allTm);
-                $('#pop_apvlStus').text(apvlStus);
+                //$('#pop_apvlStus').text(apvlStus);
 
                 if ($('#empEmailHidden').val() == null || $('#empEmailHidden').val() == "") {
 
@@ -148,12 +148,13 @@
 
                 document.getElementById('pop_schdDetlTm').innerHTML = '정상근무 : '+normWrkTm+' / 연장근무 : '+overWrkTm;
                 $('#pop_schdDetlAllTm').text(allTm);
-                $('#pop_apvlStus').text(apvlStus);
+                //$('#pop_apvlStus').text(apvlStus);
                 $('#sbx_restTme').val(restTm);
                 $('#btn_restTm').show();
                 $('#sbx_dinnRestTme').val(dinnRestTm);
                 $('#btn_dinnRestTm').show();
 
+                /*
                 if(apvlStus == "미등록"){
 
                     if ($('#empEmailHidden').val() == null || $('#empEmailHidden').val() == "") {
@@ -168,6 +169,7 @@
                 }else {
                     $('#pop_apvlStus').text(apvlStus);
                 }
+                */
 
             }else {
 
@@ -191,6 +193,8 @@
                 $('#btn_dinnRestTm').hide();
                 document.getElementById('pop_schdDetlTm').innerHTML = '정상근무 : '+normWrkTm+' / 연장근무 : '+overWrkTm;
                 $('#pop_schdDetlAllTm').text(allTm);
+
+                /*
                 if(apvlStus == "미등록"){
 
                     if ($('#empEmailHidden').val() == null || $('#empEmailHidden').val() == "") {
@@ -205,6 +209,7 @@
                 }else {
                     $('#pop_apvlStus').text(apvlStus);
                 }
+                */
             }
         }else {
             if (ptoKdCd == "02") {
@@ -239,7 +244,7 @@
             $('#sbx_dinnRestTme').val(dinnRestTm);
             $('#pop_schdDetlTm').text(holi);
             $('#pop_schdDetlAllTm').text(allTm);
-            $('#pop_apvlStus').text(apvlStus);
+            //$('#pop_apvlStus').text(apvlStus);
         }
 
         var param = {
@@ -331,11 +336,13 @@
         //$('#ipt_restTme').attr('disabled',true);
         document.getElementById('pop_schdDetlTm').innerHTML = '정상근무 : '+normWrkTm+' / 연장근무 : '+overWrkTm;
         $('#pop_schdDetlAllTm').text(allWrkTm);
+        /*
         if(overWrkTm != "00:00"){
             document.getElementById('pop_apvlStus').innerHTML = '<input type="button" class="button" onclick="onclickApvlUpld()" value="결재올리기">';
         }else {
             $('#pop_apvlStus').text("-");
         }
+        */
     }
     /*********************************************************************
     *   결재 버튼클릭
@@ -424,6 +431,7 @@
     *   결재상태변경
     *********************************************************************/
     function setApvlStusChg(apvlStus){
+        /*
         if(apvlStus.length > 0){
             if(apvlStus[0].TH1_APRV_STUS == "01"){
                 $('#pop_apvlStus').text("진행중");
@@ -435,6 +443,7 @@
                 $('#pop_apvlStus').text("반려");
             }
         }
+        */
     }
 
     /*********************************************************************
@@ -552,8 +561,8 @@
         <th class="text-center">총근무시간</th>
         <td class="pt-3-half" contenteditable="false" id="pop_schdDetlAllTm"></td>
     </tr>
-    <tr>
-        <th class="text-center">결재상태</th>
-        <td class="pt-3-half" contenteditable="false" id="pop_apvlStus"></td>
-    </tr>
+<!--    <tr>-->
+<!--        <th class="text-center">결재상태</th>-->
+<!--        <td class="pt-3-half" contenteditable="false" id="pop_apvlStus"></td>-->
+<!--    </tr>-->
 </table>
