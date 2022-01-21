@@ -377,7 +377,7 @@ class weekGridData(Resource): # Mariadb 연결 진행
                     + "       ,NVL(DATE_FORMAT(A.JOB_STRT_TM, '%H:%i'),'-') AS JOB_STRT_TM "\
                     + "       ,NVL(DATE_FORMAT(A.JOB_END_TM, '%H:%i'),'-') AS JOB_END_TM "\
                     + "       ,CONCAT(SUBSTRING(A.NORM_WRK_TM,1,2),':',SUBSTRING(A.NORM_WRK_TM,3,2)) AS NORM_WRK_TM "\
-                    + "       ,CONCAT(SUBSTRING(DATE_SUB(STR_TO_DATE(A.ALL_WRK_TM, '%H%i'), INTERVAL (A.REST_TM+A.DINN_REST_TM) MINUTE) ,1,2), ':', SUBSTRING(DATE_SUB(STR_TO_DATE(A.ALL_WRK_TM, '%H%i'), INTERVAL (A.REST_TM+A.DINN_REST_TM) MINUTE) ,4,2)) AS ALL_WRK_TM "\
+                    + "       ,CONCAT(SUBSTRING(STR_TO_DATE(A.ALL_WRK_TM, '%H%i') ,1,2), ':', SUBSTRING(STR_TO_DATE(A.ALL_WRK_TM, '%H%i') ,4,2)) AS ALL_WRK_TM "\
                     + "       ,DATE_FORMAT(SEC_TO_TIME(TIME_TO_SEC(STR_TO_DATE( CONCAT(SUBSTRING(A.ALL_WRK_TM,1,2),':',SUBSTRING(A.ALL_WRK_TM,3,2)) ,'%H:%i')) "\
                     + "                   - TIME_TO_SEC(STR_TO_DATE( CONCAT(SUBSTRING(A.NORM_WRK_TM,1,2),':',SUBSTRING(A.NORM_WRK_TM,3,2)) ,'%H:%i'))),'%H:%i') AS OVER_WRK_TM " \
                     + "       ,NVL(B.APVL_REQ_DIVS, 'N/A') AS APVL_REQ_DIVS " \
@@ -473,7 +473,7 @@ class monthGridData(Resource): # Mariadb 연결 진행
                     + "       ,NVL(DATE_FORMAT(A.JOB_STRT_TM, '%H:%i'),'-') AS JOB_STRT_TM "\
                     + "       ,NVL(DATE_FORMAT(A.JOB_END_TM, '%H:%i'),'-') AS JOB_END_TM "\
                     + "       ,CONCAT(SUBSTRING(A.NORM_WRK_TM,1,2),':',SUBSTRING(A.NORM_WRK_TM,3,2)) AS NORM_WRK_TM "\
-                    + "       ,CONCAT(SUBSTRING(DATE_SUB(STR_TO_DATE(A.ALL_WRK_TM, '%H%i'), INTERVAL (A.REST_TM+A.DINN_REST_TM) MINUTE) ,1,2), ':', SUBSTRING(DATE_SUB(STR_TO_DATE(A.ALL_WRK_TM, '%H%i'), INTERVAL (A.REST_TM+A.DINN_REST_TM) MINUTE) ,4,2)) AS ALL_WRK_TM "\
+                    + "       ,CONCAT(SUBSTRING(STR_TO_DATE(A.ALL_WRK_TM, '%H%i') ,1,2), ':', SUBSTRING(STR_TO_DATE(A.ALL_WRK_TM, '%H%i') ,4,2)) AS ALL_WRK_TM "\
                     + "       ,DATE_FORMAT(SEC_TO_TIME(TIME_TO_SEC(STR_TO_DATE( CONCAT(SUBSTRING(A.ALL_WRK_TM,1,2),':',SUBSTRING(A.ALL_WRK_TM,3,2)) ,'%H:%i')) "\
                     + "                   - TIME_TO_SEC(STR_TO_DATE( CONCAT(SUBSTRING(A.NORM_WRK_TM,1,2),':',SUBSTRING(A.NORM_WRK_TM,3,2)) ,'%H:%i:%S'))),'%H:%i') AS OVER_WRK_TM "\
                     + "       ,NVL(B.APVL_REQ_DIVS, 'N/A') AS APVL_REQ_DIVS "\
@@ -2246,7 +2246,7 @@ class scheduleStatLst(Resource):
                       "		       ELSE NVL(B.JOB_STRT_TM, '') END WRK_STRT_TM" \
                       "		 ,CASE WHEN NVL(B.APVL_REQ_DIVS, '') = '' THEN NVL(A.JOB_END_TM, '')" \
                       "		       ELSE NVL(B.JOB_END_TM, '') END WRK_END_TM" \
-                      "		 ,CONCAT(SUBSTRING(DATE_SUB(STR_TO_DATE(A.ALL_WRK_TM, '%H%i'), INTERVAL (A.REST_TM+A.DINN_REST_TM) MINUTE) ,1,2), ':', SUBSTRING(DATE_SUB(STR_TO_DATE(A.ALL_WRK_TM, '%H%i'), INTERVAL (A.REST_TM+A.DINN_REST_TM) MINUTE) ,4,2)) ALL_WRK_TM" \
+                      "		 ,CONCAT(SUBSTRING(STR_TO_DATE(A.ALL_WRK_TM, '%H%i') ,1,2), ':', SUBSTRING(STR_TO_DATE(A.ALL_WRK_TM, '%H%i') ,4,2)) ALL_WRK_TM" \
                       "      ,CASE WHEN B.EMP_EMAL_ADDR IS NULL AND (A.HLDY_WRK_TM != '000000' OR A.NGHT_WRK_TM != '000000') THEN 'N'" \
                       "            ELSE 'Y' END APVL_REQ_YN" \
                       "      ,CASE WHEN NVL(A.NGHT_WRK_TM, '') != '' AND NVL(A.NGHT_WRK_TM, '') != '000000' THEN CONCAT(SUBSTRING(NVL(A.NGHT_WRK_TM, ''), 1, 2), ':', SUBSTRING(NVL(A.NGHT_WRK_TM, ''), 3, 2))" \
@@ -2255,8 +2255,8 @@ class scheduleStatLst(Resource):
                       "      ,CASE WHEN NVL(A.HLDY_WRK_TM, '') != '' AND NVL(A.HLDY_WRK_TM, '') != '000000' THEN CONCAT(SUBSTRING(NVL(A.HLDY_WRK_TM, ''), 1, 2), ':', SUBSTRING(NVL(A.HLDY_WRK_TM, ''), 3, 2))" \
                       "            ELSE ''" \
                       "             END HLDY_WRK_YN" \
-                      "      ,CASE WHEN NVL(B.PTO_KD_CD, '') = '01' THEN CONCAT(SUBSTRING(DATE_SUB(STR_TO_DATE(A.ALL_WRK_TM, '%H%i'), INTERVAL (A.REST_TM+A.DINN_REST_TM) MINUTE) ,1,2), ':', SUBSTRING(DATE_SUB(STR_TO_DATE(A.ALL_WRK_TM, '%H%i'), INTERVAL (A.REST_TM+A.DINN_REST_TM) MINUTE) ,4,2))" \
-                      "            WHEN NVL(B.PTO_KD_CD, '') = '02' THEN CONCAT(SUBSTRING(DATE_SUB(STR_TO_DATE(A.ALL_WRK_TM, '%H%i'), INTERVAL (A.REST_TM+A.DINN_REST_TM) MINUTE) ,1,2), ':', SUBSTRING(DATE_SUB(STR_TO_DATE(A.ALL_WRK_TM, '%H%i'), INTERVAL (A.REST_TM+A.DINN_REST_TM) MINUTE) ,4,2))" \
+                      "      ,CASE WHEN NVL(B.PTO_KD_CD, '') = '01' THEN CONCAT(SUBSTRING(STR_TO_DATE(A.ALL_WRK_TM, '%H%i') ,1,2), ':', SUBSTRING(STR_TO_DATE(A.ALL_WRK_TM, '%H%i') ,4,2))" \
+                      "            WHEN NVL(B.PTO_KD_CD, '') = '02' THEN CONCAT(SUBSTRING(STR_TO_DATE(A.ALL_WRK_TM, '%H%i') ,1,2), ':', SUBSTRING(STR_TO_DATE(A.ALL_WRK_TM, '%H%i') ,4,2))" \
                       "            ELSE ''" \
                       "             END PTO_KD_YN" \
                       "      ,CASE WHEN A.APRV_STUS = '1' THEN 'Y'" \
@@ -3496,9 +3496,9 @@ class diliScheduleTotalMgmt(Resource):
                       "	     ,(SELECT C.EMP_NAME " \
                       "	         FROM TB_EMP_MGMT C" \
                       "	        WHERE C.EMP_EMAIL = NVL(A.EMP_EMAL_ADDR, B.EMP_EMAL_ADDR)) OCEM_NAME" \
-                      "      ,(SUM(SUBSTRING(DATE_SUB(STR_TO_DATE(A.ALL_WRK_TM, '%H%i'), INTERVAL (A.REST_TM+A.DINN_REST_TM) MINUTE) ,1,2))" \
-                      "       + FLOOR(SUM(SUBSTRING(DATE_SUB(STR_TO_DATE(A.ALL_WRK_TM, '%H%i'), INTERVAL (A.REST_TM+A.DINN_REST_TM) MINUTE) ,4,2))/60)) ALL_WRK_TM_T" \
-                      "      ,MOD(SUM(SUBSTRING(DATE_SUB(STR_TO_DATE(A.ALL_WRK_TM, '%H%i'), INTERVAL (A.REST_TM+A.DINN_REST_TM) MINUTE) ,4,2)),60) ALL_WRK_TM_M" \
+                      "      ,(SUM(SUBSTRING(STR_TO_DATE(A.ALL_WRK_TM, '%H%i') ,1,2))" \
+                      "       + FLOOR(SUM(SUBSTRING(STR_TO_DATE(A.ALL_WRK_TM, '%H%i') ,4,2))/60)) ALL_WRK_TM_T" \
+                      "      ,MOD(SUM(SUBSTRING(STR_TO_DATE(A.ALL_WRK_TM, '%H%i') ,4,2)),60) ALL_WRK_TM_M" \
                       "      ,(SUM(CASE WHEN NVL(A.NGHT_WRK_TM, '') != '' AND NVL(A.NGHT_WRK_TM, '') != '000000' THEN SUBSTRING(NVL(A.NGHT_WRK_TM, ''), 1, 2)" \
                       "                                                                                          ELSE ''" \
                       "                                                                                          END )" \
