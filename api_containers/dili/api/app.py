@@ -616,7 +616,6 @@ class saveApvlReq(Resource): # Mariadb 연결 진행
         wrkReqRsn       = request.form['wrkReqRsn']
         th1AprvStus     = request.form['th1AprvStus']
         th1AprvNm       = request.form['th1AprvNm']
-        refNm           = request.form['refNm']
 
         #requirements pymysql import 후 커넥트 사용
         #mysql_con = pymysql.connect(host=getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
