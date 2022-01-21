@@ -639,9 +639,8 @@ class saveApvlReq(Resource): # Mariadb 연결 진행
                                                           "`APVL_REQ_DT`," \
                                                           "`TH1_APRV_STUS`," \
                                                           "`TH1_APRV_NM`," \
-                                                          "`REF_NM`," \
                                                           "`APVL_LAST_APRV_DT`)" \
-                                                " VALUES (   '" + email       + "'"\
+                                                " VALUES (   '" + th1AprvNm   + "'"\
                                                           ", '" + apvlDivs    + "'"\
                                                           ", '" + apvlReqDivs + "'"\
                                                           ", '" + wrkDt       + "'"\
@@ -651,8 +650,7 @@ class saveApvlReq(Resource): # Mariadb 연결 진행
                                                           ", '" + wrkReqRsn   + "'"\
                                                           ",      NOW()" \
                                                           ", '" + th1AprvStus + "'"\
-                                                          ", '" + th1AprvNm   + "'"\
-                                                          ", '" + refNm       + "'"\
+                                                          ", '" + email       + "'"\
                                                           ",      NOW())"
                 if currReqPopStts == "modify":
                     sql = "UPDATE TB_APVL_REQ_MGMT_M " \
@@ -660,10 +658,10 @@ class saveApvlReq(Resource): # Mariadb 연결 진행
                           "     , JOB_END_TM    = '"  + jobEndTm    + "' " \
                           "     , WRK_TME       = '"  + wrkTme      + "' " \
                           "     , WRK_REQ_RSN   = '"  + wrkReqRsn   + "' " \
-                          "     , TH1_APRV_NM   = '"  + th1AprvNm   + "' " \
+                          "     , TH1_APRV_NM   = '"  + email       + "' " \
                           "     , REF_NM        = '"  + refNm       + "' " \
                           "     , APVL_UPD_DT   =       NOW() " \
-                          " WHERE EMP_EMAL_ADDR = '"  + email       + "' " \
+                          " WHERE EMP_EMAL_ADDR = '"  + th1AprvNm   + "' " \
                           "   AND WRK_DT        = '"  + wrkDt       + "' "
 
                 logger.info(sql)
@@ -681,7 +679,7 @@ class saveApvlReq(Resource): # Mariadb 연결 진행
                     "				, UPDT_DT " \
                     "				) " \
                     "VALUES 		" \
-                    "				('"  + email        + "' " \
+                    "				('"  + th1AprvNm    + "' " \
                     "				, '" + wrkDt        + "' " \
                     "				, '" + jobStrtTm    + "' " \
                     "				, '" + jobStrtTm    + "' " \
