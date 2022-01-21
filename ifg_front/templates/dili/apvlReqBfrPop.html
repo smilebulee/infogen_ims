@@ -34,7 +34,7 @@
                 if(data.length > 0) {
                     $('#ipt_apvlLnSearchNamePop').val(data[0].DEPT_PR_NAME);
                     $("#ipt_apvlLnSearchEmailPop").val(data[0].DEPT_PR_EMAIL);
-                    $('#ipt_apvlLnSearchNamePop').prop('readonly', true);
+                    //$('#ipt_apvlLnSearchNamePop').prop('readonly', true);
 
                     // 로그인한 사용자 소속 사업부장 이름, 이메일 조회 후 값 세팅
                     retrieveEmpDeptGmByEmail(sessionStorage.getItem("email"), function(data) {
@@ -184,7 +184,7 @@
         submissionCallList( param, 'GET', url, function(data) {
             var nowDt       = new Date();
             var strNowTm    = fillZero(2, nowDt.getHours()) + ':' + fillZero(2, nowDt.getMinutes());
-            if(data.length > 0 && data[0].WRK_CNT > 0) {
+            /*if(data.length > 0 && data[0].WRK_CNT > 0) {
                 //동일 날짜에 결재요청건이 있는 경우
                 var msg = '일자 : ' + param.wrkDt + '\n근무 내역을 불러옵니다.';
                 // 후결재로 상태 변경
@@ -201,14 +201,14 @@
                     }
                 });
             }
-            else {
+            else {*/
                 // 선결재로 상태 변경
                 $("#currApvlDivsStts").val("01");
                 //현재 접속시간으로 설정
                 $("#ipt_jobStrtTm1").val(strNowTm);
                 $('#ipt_jobStrtTm1').attr('disabled', false);
                 $("#ipt_jobEndTm1").val(strNowTm);
-            }
+            //}
         });
 
     });
@@ -499,7 +499,7 @@
                                         <div class="card-body flex-height d-flex m-0 p-2">
                                             <!-- 결재자 -->
                                             <div class="align-self-center mr-5 " style="font-weight:bold">
-                                                <span class="mr-3"><span class="requiredTag mr-1">*</span>결재자</span>
+                                                <span class="mr-3"><span class="requiredTag mr-1">*</span>등록자</span>
                                             </div>
 
                                             <div class="align-self-center mr-3">
@@ -511,22 +511,22 @@
 
                                         </div>
 
-                                        <div class="card-body flex-height d-flex m-0 p-2">
-                                            <!-- 결재자 -->
-                                            <div class="align-self-center mr-5 " style="font-weight:bold">
-                                                <span class="mr-4">참조자&nbsp;</span>
-                                            </div>
+<!--                                        <div class="card-body flex-height d-flex m-0 p-2">-->
+<!--                                            &lt;!&ndash; 참조자 &ndash;&gt;-->
+<!--                                            <div class="align-self-center mr-5 " style="font-weight:bold">-->
+<!--                                                <span class="mr-4">참조자&nbsp;</span>-->
+<!--                                            </div>-->
 
-                                            <div class="align-self-center mr-1">
-                                                <div class="align-self-center mr-1">
-                                                    <input type="text" class="align-self-start align-self-center mr-1 form-control" id="ipt_refSearchNamePop" name="ipt_refSearchNamePop" placeholder="이름을 입력해주세요." maxlength="10" readonly/>
-                                                    <input type="text" class="align-self-start align-self-center mr-1 form-control" id="ipt_refSearchEmailPop" name="ipt_refSearchEmailPop" style="width:235px; display:none;" readonly/>
-                                                </div>
-                                            </div>
-                                            <div class="align-self-center mr-5">
-                                                <button type="button" id="btn_delRefSearchNamePop" class="delInptButton">x</button>
-                                            </div>
-                                        </div>
+<!--                                            <div class="align-self-center mr-1">-->
+<!--                                                <div class="align-self-center mr-1">-->
+<!--                                                    <input type="text" class="align-self-start align-self-center mr-1 form-control" id="ipt_refSearchNamePop" name="ipt_refSearchNamePop" placeholder="이름을 입력해주세요." maxlength="10" readonly/>-->
+<!--                                                    <input type="text" class="align-self-start align-self-center mr-1 form-control" id="ipt_refSearchEmailPop" name="ipt_refSearchEmailPop" style="width:235px; display:none;" readonly/>-->
+<!--                                                </div>-->
+<!--                                            </div>-->
+<!--                                            <div class="align-self-center mr-5">-->
+<!--                                                <button type="button" id="btn_delRefSearchNamePop" class="delInptButton">x</button>-->
+<!--                                            </div>-->
+<!--                                        </div>-->
 
                                         <div class="card-body flex-height d-flex m-0 p-2">
                                             <!-- 기안자 -->
