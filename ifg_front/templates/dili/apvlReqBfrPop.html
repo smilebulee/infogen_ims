@@ -276,12 +276,12 @@
                 }
                 else {
                     //현재 날짜가 결재 요청 일자 이후인 경우,
-                    if( strCurrDt > strInptDt ) {
+                    /*if( strCurrDt > strInptDt ) {
                         alertMsg("근무 일자는 현재 일자 이후로 선택해주세요.", function() {
                             $('#ipt_wrkDt').val(currDt.getFullYear() + "-" + fillZero(2, (currDt.getMonth() + 1)) + "-" + (currDt.getDate() + 1)).focus();
                         });
                         return;
-                    }
+                    }*/
 
                     //현재 날짜가 결재 요청 일자 이후인 경우,
                     if( inptStrtDtTm > inptEndDtTm ) {
