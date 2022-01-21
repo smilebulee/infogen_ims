@@ -34,7 +34,7 @@
                 if(data.length > 0) {
                     $('#ipt_apvlLnSearchNamePop').val(data[0].DEPT_PR_NAME);
                     $("#ipt_apvlLnSearchEmailPop").val(data[0].DEPT_PR_EMAIL);
-                    //$('#ipt_apvlLnSearchNamePop').prop('readonly', true);
+                    $('#ipt_apvlLnSearchNamePop').prop('readonly', true);
 
                     // 로그인한 사용자 소속 사업부장 이름, 이메일 조회 후 값 세팅
                     retrieveEmpDeptGmByEmail(sessionStorage.getItem("email"), function(data) {
@@ -419,9 +419,38 @@
         });
     }
 
+    //결재등록대상 선택
+    $("#ipt_apvlLnSearchNamePop").click(function(){
+        $('#apvlReqHidden').text('apvlReqBfr');
+        var url = "{% url 'dili_api:empMgmtPop' %}" ;
+        modal('empModalDiv3');
+        $('#empModal3').load(url);
+        $('#empModalDiv3').css("z-index", 15);
+    });
+
+    function fncClose3() {
+        document.getElementById('layempModalDiv3').remove();
+        $('#empModalDiv3').hide();
+    }
 
 </script>
 
+<!--직원조회 모달 영역 - 사업부장 -->
+<div id="empModalDiv3" class="modalUi">
+    <div id="empModal3">
+    </div>
+        <a id="exitDeptModalBtn3" onclick="fncClose3()" style="position: absolute;top: 10px;right: 10px;">
+        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-x-circle" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+           <path fill-rule="evenodd" d="
+           M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+           <path fill-rule="evenodd" d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+        </svg>
+<!-- 직원조회 모달 param -->
+        <span id="apvlEmpEmailHidden"   style="display:none;" ></span>
+        <span id="apvlReqHidden"        style="display:none;" >apvlReqBfr</span>
+        <span id="apvlReqIptFlagHidden" style="display:none;" ></span>
+    </a>
+</div>
 <!-- 선결재 / 후결재 체크용 변수 -->
 <input type="hidden" id="currApvlDivsStts" value="01"></input>
 
@@ -499,7 +528,7 @@
                                         <div class="card-body flex-height d-flex m-0 p-2">
                                             <!-- 결재자 -->
                                             <div class="align-self-center mr-5 " style="font-weight:bold">
-                                                <span class="mr-3"><span class="requiredTag mr-1">*</span>등록자</span>
+                                                <span class="mr-3"><span class="requiredTag mr-1">*</span>결재등록대상</span>
                                             </div>
 
                                             <div class="align-self-center mr-3">

@@ -167,6 +167,19 @@ function onClickselectBtn() {
             $('#exitDeptModalBtn3').click();
             ///////////////////////////////////////////////////////////////////////////////////
         }
+    } else if ( $("#apvlReqHidden").text() == "apvlReqBfr" ) {
+        if($("#apvlEmpEmailHidden").text() == null || $("#apvlEmpEmailHidden").text() == ""){
+            alertMsg("직원을 선택해 주세요.");
+        }else{
+            var email = $(i).children().eq(1).text(); // 그리드에서 선택한 email 값
+            var name = $(i).children().eq(0).text(); // 그리드에서 선택한 name 값
+
+            $('#ipt_apvlLnSearchEmailPop').val(email);
+            $('#ipt_apvlLnSearchNamePop').val(name);
+            $("#apvlEmpEmailHidden").text('');
+            $('#exitDeptModalBtn3').click();
+            ///////////////////////////////////////////////////////////////////////////////////
+        }
     } else {
         if($("#empEmailHidden").val() == null || $("#empEmailHidden").val() == ""){
             alertMsg("직원을 선택해 주세요.");
@@ -267,6 +280,19 @@ function onDblClickEvt(i){
 
             $('#ipt_gmId').val(email);
             $('#ipt_gmNm').val(name);
+            $("#apvlEmpEmailHidden").text('');
+            $('#exitDeptModalBtn3').click();
+            ///////////////////////////////////////////////////////////////////////////////////
+        }
+    } else if ( $("#apvlReqHidden").text() == "apvlReqBfr" ) {
+        if($("#apvlEmpEmailHidden").text() == null || $("#apvlEmpEmailHidden").text() == ""){
+            alertMsg("직원을 선택해 주세요.");
+        }else{
+            var email = $(i).children().eq(1).text(); // 그리드에서 선택한 email 값
+            var name = $(i).children().eq(0).text(); // 그리드에서 선택한 name 값
+
+            $('#ipt_apvlLnSearchEmailPop').val(email);
+            $('#ipt_apvlLnSearchNamePop').val(name);
             $("#apvlEmpEmailHidden").text('');
             $('#exitDeptModalBtn3').click();
             ///////////////////////////////////////////////////////////////////////////////////
@@ -409,6 +435,14 @@ function onClickSearchBtn(ipt_searchName) {
                     } else {
                         empListGrd(data);
                     }
+                }  else if ( scrDivs == "apvlReqBfr" ) {
+                    if (data.length == 1) {
+                        $('#ipt_apvlLnSearchEmailPop').val(data[0].EMP_EMAIL);
+                        $('#ipt_apvlLnSearchNamePop').val(data[0].EMP_NAME);
+                        $('#exitDeptModalBtn3').click();
+                    } else {
+                        empListGrd(data);
+                    }
                 } else {
                     if (data.length == 1) {
                         dataCustomArray = new Array();
@@ -523,6 +557,14 @@ $('#ipt_searchName').keydown(function(e){
                                 if (data.length == 1) {
                                     $('#ipt_gmId').val(data[0].EMP_EMAIL);
                                     $('#ipt_gmNm').val(data[0].EMP_NAME);
+                                    $('#exitDeptModalBtn3').click();
+                                } else {
+                                    empListGrd(data);
+                                }
+                            }  else if ( scrDivs == "apvlReqBfr" ) {
+                                if (data.length == 1) {
+                                    $('#ipt_apvlLnSearchEmailPop').val(data[0].EMP_EMAIL);
+                                    $('#ipt_apvlLnSearchNamePop').val(data[0].EMP_NAME);
                                     $('#exitDeptModalBtn3').click();
                                 } else {
                                     empListGrd(data);
