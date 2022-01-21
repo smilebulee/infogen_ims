@@ -22,6 +22,12 @@
         $('#ipt_apvlSearchEmailPop').val(param.email);
         $("#ipt_apvlSearchEmail").val(param.email);
 
+        if( param.email == 'jsshin' || param.email == 'ywlee' || param.email == 'hjkwon' || param.email == 'hjulee' ){
+            $('#apvlReqBtn').css("display", 'block');
+        }else{
+            $('#apvlReqBtn').css("display", 'none');
+        }
+
         // 사용자 조회 > 이름 : SessionSetting email로 이름 조회하여 설정
         retrieveEmpNmByEmail(param.email, function(data) {
             $('#ipt_apvlSearchNamePop').val(data[0].EMP_NAME);
@@ -301,10 +307,10 @@
             apvlReqHistTable += '<th class="text-center">연차일</th>';
             apvlReqHistTable += '<th class="text-center">반차일</th>';
             apvlReqHistTable += '<th class="text-center">기안자</th>';
-            apvlReqHistTable += '<th class="text-center">연차 요청일시</th>';
+            apvlReqHistTable += '<th class="text-center">요청일시</th>';
             apvlReqHistTable += '<th class="text-center">결재상태</th>';
             apvlReqHistTable += '<th class="text-center">결재자</th>';
-            apvlReqHistTable += '<th class="text-center">연차요청사유</th>';
+            apvlReqHistTable += '<th class="text-center">결재요청사유</th>';
             apvlReqHistTable += '</tr>';
             apvlReqHistTable += '</thead>';
             apvlReqHistTable += '<tbody>';
@@ -344,7 +350,7 @@
             }
         } else {
             apvlReqHistTable += '<tr>';
-            apvlReqHistTable += '<td colspan="6" class="pt-3-half">연차 요청 내역이 없습니다.</td>';
+            apvlReqHistTable += '<td colspan="6" class="pt-3-half">결재 요청 내역이 없습니다.</td>';
             apvlReqHistTable += '</tr>';
 
         }
@@ -541,7 +547,7 @@
         <div class="align-self-start flex-height d-flex m-0 p-2" role="alert">
             <div class="align-self-start align-self-center mr-3">
                 <h5>
-                    <b>연차요청관리</b>
+                    <b>결재요청관리</b>
                 </h5>
             </div>
 
@@ -594,14 +600,12 @@
                         <div class="align-self-center mr-3">
                             <button class="button" id="yryReqBtn">연차등록</button>
                         </div>
-                        <div class="align-self-center mr-3">
-                            <button class="button" id="apvlReqBtn">결재등록</button>
-                        </div>
                         <div class="align-self-end align-self-center">
                             <button class="button" id="apvlAcptBtn">연차승인</button>
                         </div>
-
-
+                        <div class="align-self-center mr-3">
+                            <button class="button" id="apvlReqBtn">결재등록</button>
+                        </div>
                     </div>
                 </div>
             </div>
