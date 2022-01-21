@@ -650,7 +650,14 @@ class saveApvlReq(Resource): # Mariadb 연결 진행
                                                           ",      NOW()" \
                                                           ", '" + th1AprvStus + "'"\
                                                           ", '" + email       + "'"\
-                                                          ",      NOW())"
+                                                          ",      NOW()) ON DUPLICATE KEY " \
+                          "UPDATE JOB_STRT_TM   = '"  + jobStrtTm   + "' " \
+                          "     , JOB_END_TM    = '"  + jobEndTm    + "' " \
+                          "     , WRK_TME       = '"  + wrkTme      + "' " \
+                          "     , WRK_REQ_RSN   = '"  + wrkReqRsn   + "' " \
+                          "     , TH1_APRV_NM   = '"  + email       + "' " \
+                          "     , REF_NM        = '"  + refNm       + "' " \
+                          "     , APVL_UPD_DT   =       NOW() "
                 if currReqPopStts == "modify":
                     sql = "UPDATE TB_APVL_REQ_MGMT_M " \
                           "   SET JOB_STRT_TM   = '"  + jobStrtTm   + "' " \
