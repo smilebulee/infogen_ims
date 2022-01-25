@@ -228,11 +228,7 @@
         *********************************************************************/
         function ondblclickOcemNmEvt(getOcemName, getOcemEmail){
             var dt;
-            if($('#sbx_wrkDtMm').val().length == 1){
-                dt = $('#sbx_wrkDtYy').val() + "-" + "0" + $('#sbx_wrkDtMm').val();
-             } else {
-                dt = $('#sbx_wrkDtYy').val() + "-" + $('#sbx_wrkDtMm').val();
-            }
+            dt = $('#sbx_wrkDtYy').val() + "-" + $('#sbx_wrkDtMm').val();
 
             $('#hidden_selectDt').val(dt);
             $('#hidden_selectDept').val($('#sbx_dept').val());
