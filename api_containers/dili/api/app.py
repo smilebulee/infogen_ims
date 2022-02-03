@@ -3138,7 +3138,7 @@ class updateRestTm(Resource):  # Mariadb 연결 진행
                       "   SET REST_TM  = %s " \
                       "     , ALL_WRK_TM =  CASE WHEN IFNULL(ALL_WRK_TM, '0') <> '0' OR ALL_WRK_TM <> '000000' " \
                       "                          THEN DATE_FORMAT(DATE_SUB(DATE_SUB(STR_TO_DATE(JOB_END_TM-JOB_STRT_TM, '%H%i%s'), INTERVAL 60 MINUTE), INTERVAL %s MINUTE), '%H%i%s') " \
-                      "                          ELSE ALL_WRK_TM " \ 
+                      "                          ELSE ALL_WRK_TM " \
                       "                      END " \
                       "   WHERE EMP_EMAL_ADDR = %s " \
                       "   AND WRK_DT = %s "
