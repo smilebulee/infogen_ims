@@ -3136,10 +3136,14 @@ class updateRestTm(Resource):  # Mariadb 연결 진행
                 # 쿼리문 실행
                 sql = "UPDATE TB_WRK_TM_MGMT_M " \
                       "   SET REST_TM  = %s " \
+                      "     , ALL_WRK_TM =  CASE WHEN IFNULL(ALL_WRK_TM, '0') <> '0' OR ALL_WRK_TM <> '000000' " \
+                      "                          THEN DATE_FORMAT(DATE_SUB(DATE_SUB(STR_TO_DATE(JOB_END_TM-JOB_STRT_TM, '%H%i%s'), INTERVAL 60 MINUTE), INTERVAL %s MINUTE), '%H%i%s') " \
+                      "                          ELSE ALL_WRK_TM " \ 
+                      "                      END " \
                       "   WHERE EMP_EMAL_ADDR = %s " \
                       "   AND WRK_DT = %s "
                 logger.info(sql)
-                cursor.execute(sql, (restTm, email, dt))
+                cursor.execute(sql, (restTm, restTm, email, dt))
                 mysql_con.commit()
 
         finally:
@@ -3172,10 +3176,14 @@ class updateDinnRestTm(Resource):  # Mariadb 연결 진행
                 # 쿼리문 실행
                 sql = "UPDATE TB_WRK_TM_MGMT_M " \
                       "   SET DINN_REST_TM  = %s " \
+                      "     , ALL_WRK_TM =  CASE WHEN IFNULL(ALL_WRK_TM, '0') <> '0' OR ALL_WRK_TM <> '000000' " \
+                      "                          THEN DATE_FORMAT(DATE_SUB(DATE_SUB(STR_TO_DATE(JOB_END_TM-JOB_STRT_TM, '%H%i%s'), INTERVAL 60 MINUTE), INTERVAL %s MINUTE), '%H%i%s') " \
+                      "                          ELSE ALL_WRK_TM " \ 
+                      "                      END " \
                       "   WHERE EMP_EMAL_ADDR = %s " \
                       "   AND WRK_DT = %s "
                 logger.info(sql)
-                cursor.execute(sql, (dinnRestTm, email, dt))
+                cursor.execute(sql, (dinnRestTm, dinnRestTm, email, dt))
                 mysql_con.commit()
 
         finally:
