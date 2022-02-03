@@ -3135,15 +3135,15 @@ class updateRestTm(Resource):  # Mariadb 연결 진행
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 # 쿼리문 실행
                 sql = "UPDATE TB_WRK_TM_MGMT_M " \
-                      "   SET REST_TM  = %s " \
-                      "     , ALL_WRK_TM =  CASE WHEN IFNULL(ALL_WRK_TM, '0') <> '0' OR ALL_WRK_TM <> '000000' " \
-                      "                          THEN DATE_FORMAT(DATE_SUB(DATE_SUB(STR_TO_DATE(JOB_END_TM-JOB_STRT_TM, '%H%i%s'), INTERVAL 60 MINUTE), INTERVAL %s MINUTE), '%H%i%s') " \
+                      "   SET REST_TM  = '" + restTm + "' " \
+                      "     , ALL_WRK_TM =  CASE WHEN IFNULL(ALL_WRK_TM, '0') <> '0' AND ALL_WRK_TM <> '000000' " \
+                      "                          THEN DATE_FORMAT(DATE_SUB(DATE_SUB(STR_TO_DATE(JOB_END_TM-JOB_STRT_TM, '%H%i%s'), INTERVAL 60 MINUTE), INTERVAL '" + restTm + "' MINUTE), '%H%i%s') " \
                       "                          ELSE ALL_WRK_TM " \
                       "                      END " \
-                      "   WHERE EMP_EMAL_ADDR = %s " \
-                      "   AND WRK_DT = %s "
+                      "   WHERE EMP_EMAL_ADDR = '" + email + "' " \
+                      "   AND WRK_DT = '" + dt + "' "
                 logger.info(sql)
-                cursor.execute(sql, (restTm, restTm, email, dt))
+                cursor.execute(sql)
                 mysql_con.commit()
 
         finally:
@@ -3175,15 +3175,15 @@ class updateDinnRestTm(Resource):  # Mariadb 연결 진행
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 # 쿼리문 실행
                 sql = "UPDATE TB_WRK_TM_MGMT_M " \
-                      "   SET DINN_REST_TM  = %s " \
-                      "     , ALL_WRK_TM =  CASE WHEN IFNULL(ALL_WRK_TM, '0') <> '0' OR ALL_WRK_TM <> '000000' " \
-                      "                          THEN DATE_FORMAT(DATE_SUB(DATE_SUB(STR_TO_DATE(JOB_END_TM-JOB_STRT_TM, '%H%i%s'), INTERVAL 60 MINUTE), INTERVAL %s MINUTE), '%H%i%s') " \
+                      "   SET DINN_REST_TM  = '" + dinnRestTm + "' " \
+                      "     , ALL_WRK_TM =  CASE WHEN IFNULL(ALL_WRK_TM, '0') <> '0' AND ALL_WRK_TM <> '000000' " \
+                      "                          THEN DATE_FORMAT(DATE_SUB(DATE_SUB(STR_TO_DATE(JOB_END_TM-JOB_STRT_TM, '%H%i%s'), INTERVAL 60 MINUTE), INTERVAL '" + dinnRestTm + "' MINUTE), '%H%i%s') " \
                       "                          ELSE ALL_WRK_TM " \
                       "                      END " \
-                      "   WHERE EMP_EMAL_ADDR = %s " \
-                      "   AND WRK_DT = %s "
+                      "   WHERE EMP_EMAL_ADDR = '" + email + "' " \
+                      "   AND WRK_DT = '" + dt + "' "
                 logger.info(sql)
-                cursor.execute(sql, (dinnRestTm, dinnRestTm, email, dt))
+                cursor.execute(sql)
                 mysql_con.commit()
 
         finally:
