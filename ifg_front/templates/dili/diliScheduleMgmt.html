@@ -612,9 +612,23 @@
             var tempSetWeek = "";
             var sumRestTm = 0;
             var tmpSumTotalWkrTm = 0;
+
             for(var i = 0; i < 7; i++){
 
                 tdDate = weekGridStrtDate.getDate();
+
+                console.log("tdDate : "+tdDate);
+                var dd = new Date(tdDate);
+                var day = dd.getDay();
+                console.log("day = "+day);
+
+                var sExtStr = ""; //연장근무 / 주휴근무 문자열 지정
+                if(day == "0" || day == "6"){
+                    sExtStr = "주휴근무";
+                }else{
+                    sExtStr = "연장근무";
+                }
+
                 tempSetWeek = dateConverting1(setWeek(weekGridStrtDate).baseDate);
                 console.log("ㅋㅋㅋ weekGridStrtDate : "+weekGridStrtDate);
 
@@ -726,7 +740,7 @@
 
                 if(chckHldy == 0){
 
-                    weekTable += '<td class="pt-3-half" contenteditable="false">정상근무 : '+normWrkTm+' / 연장근무 : '+overWrkTm+'</td>';
+                    weekTable += '<td class="pt-3-half" contenteditable="false">정상근무 : '+normWrkTm+' / ' + sExtStr + ' : '+overWrkTm+'</td>';
                 }else {
                     if(ptoKdCd == "01"){
                         weekTable += '<td class="pt-3-half" contenteditable="false">연차휴가</td>';
@@ -794,9 +808,24 @@
             var sumRestTm = 0;
             var tmpSumTotalWkrTm = 0;
 
+
+
             for(var i = 0; i < monthEndDate.getDate(); i++){
 
                 mTdDate = monthGridStrtDate.getDate();
+
+                console.log("mTdDate : "+mTdDate);
+                var dd = new Date(mTdDate);
+                var day = dd.getDay();
+                console.log("day = "+day);
+
+                var sExtStr = ""; //연장근무 / 주휴근무 문자열 지정
+                if(day == "0" || day == "6"){
+                    sExtStr = "주휴근무";
+                }else{
+                    sExtStr = "연장근무";
+                }
+
                 tempSetMonth = dateConverting1(setWeek(monthGridStrtDate).baseDate);
 				var jobStrtTm = "-";
                 var jobEndTm = "-";
@@ -908,7 +937,7 @@
 
                 if(chckHldy == 0){
 
-                    monthTable += '<td class="pt-3-half" contenteditable="false">정상근무 : '+normWrkTm+' / 연장근무 : '+overWrkTm+'</td>';
+                    monthTable += '<td class="pt-3-half" contenteditable="false">정상근무 : '+normWrkTm+' / ' + sExtStr + ' : '+overWrkTm+'</td>';
                 }else {
                     if(ptoKdCd == "01"){
                         monthTable += '<td class="pt-3-half" contenteditable="false">연차휴가</td>';

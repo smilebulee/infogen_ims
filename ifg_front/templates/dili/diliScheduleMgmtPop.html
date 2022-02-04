@@ -86,10 +86,19 @@
         var aa = new Date(dt);
         var dayLabel = aa.getDay();
 
+        console.log("dayLabel = "+dayLabel);
+        var sExtStr = ""; //연장근무 / 주휴근무 문자열 지정
+        if(dayLabel == "0" || dayLabel == "6"){
+            sExtStr = "주휴근무";
+        }else{
+            sExtStr = "연장근무";
+        }
+
         $('#pop_dt').text(dt+" ("+getDayLabel(dayLabel)+")");
 
         var nowDt = new Date();
         var strNowTm = fillZero(2, nowDt.getHours()) + ':' + fillZero(2, nowDt.getMinutes());
+
         if(holi != "연차휴가" && holi != "반차휴가"){
             if("N" == aprvStus){
 
@@ -116,7 +125,7 @@
                 $('#pop_endJob').text(endTm);
                 $('#sbx_restTme').val(restTm);
                 $('#sbx_DinnRestTme').val(dinnRestTm);
-                document.getElementById('pop_schdDetlTm').innerHTML = '정상근무 : '+normWrkTm+' / 연장근무 : '+overWrkTm;
+                document.getElementById('pop_schdDetlTm').innerHTML = '정상근무 : '+normWrkTm+' / '+ sExtStr +' : '+overWrkTm;
                 $('#pop_schdDetlAllTm').text(allTm);
                 //$('#pop_apvlStus').text(apvlStus);
 
@@ -146,7 +155,7 @@
                     }
                 }
 
-                document.getElementById('pop_schdDetlTm').innerHTML = '정상근무 : '+normWrkTm+' / 연장근무 : '+overWrkTm;
+                document.getElementById('pop_schdDetlTm').innerHTML = '정상근무 : '+normWrkTm+' / '+ sExtStr +' : '+overWrkTm;
                 $('#pop_schdDetlAllTm').text(allTm);
                 //$('#pop_apvlStus').text(apvlStus);
                 $('#sbx_restTme').val(restTm);
@@ -191,7 +200,7 @@
                 $('#sbx_dinnRestTme').attr('disabled',true);
                 $('#sbx_dinnRestTme').val(dinnRestTm);
                 $('#btn_dinnRestTm').hide();
-                document.getElementById('pop_schdDetlTm').innerHTML = '정상근무 : '+normWrkTm+' / 연장근무 : '+overWrkTm;
+                document.getElementById('pop_schdDetlTm').innerHTML = '정상근무 : '+normWrkTm+' / '+ sExtStr +' : '+overWrkTm;
                 $('#pop_schdDetlAllTm').text(allTm);
 
                 /*
@@ -303,7 +312,17 @@
     function onclickEndTm() {
         var email = sessionStorage.getItem("email");
         var dt = $('#tmpPopDt').text();
-        //var dt = $("#pop_dt").text();
+
+        var aa = new Date(dt);
+        var dayLabel = aa.getDay();
+        console.log("dayLabel = "+dayLabel);
+        var sExtStr = ""; //연장근무 / 주휴근무 문자열 지정
+        if(dayLabel == "0" || dayLabel == "6"){
+            sExtStr = "주휴근무";
+        }else{
+            sExtStr = "연장근무";
+        }
+
         var tm = $("#ipt_jobEndTm").val();
         var strtTm = $('#ipt_jobStrtTm').val();
         var restTm = $("#sbx_restTme").val();
@@ -334,7 +353,7 @@
 
         $('#pop_endJob').text(tm);
         //$('#ipt_restTme').attr('disabled',true);
-        document.getElementById('pop_schdDetlTm').innerHTML = '정상근무 : '+normWrkTm+' / 연장근무 : '+overWrkTm;
+        document.getElementById('pop_schdDetlTm').innerHTML = '정상근무 : '+normWrkTm+' / '+ sExtStr +' : '+overWrkTm;
         $('#pop_schdDetlAllTm').text(allWrkTm);
         /*
         if(overWrkTm != "00:00"){
