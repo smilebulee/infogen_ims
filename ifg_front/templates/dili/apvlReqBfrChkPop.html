@@ -79,20 +79,20 @@
             if(arrWrkDt[4] != '01' || (arrWrkDt[4] == '01' && arrWrkDt[0] != sessionStorage.getItem("email"))) {
                 if(arrWrkDt[4] != '01' && arrWrkDt[0] == sessionStorage.getItem("email")) {
                     $('#apvlReqAcptDiv').addClass('d-block');
-                    $('#sp_apvlReqBfr').html("<b>근무결재요청 수정은 '미승인' 상태에서만 가능합니다.</b>");
+                    $('#sp_apvlReqBfr').html("<b>연차결재요청 수정은 '미승인' 상태에서만 가능합니다.</b>");
                 }
 				else {
-                    $('#sp_apvlReqBfr').html("<b>근무결재요청 수정은 본인만 가능합니다.</b>");
+                    $('#sp_apvlReqBfr').html("<b>연차결재요청 수정은 본인만 가능합니다.</b>");
                 }
 
                 var strApvlStts = arrWrkDt[4] == '01' ? '미승인' : arrWrkDt[4] == '02' ? '승인' : '반려' ;
                 $('#sp_apvlStts').html(strApvlStts);
-                $('#reqAcptRsnTit').html('근무' + strApvlStts + '사유');
+                $('#reqAcptRsnTit').html('연차' + strApvlStts + '사유');
                 $('#acptDtTit').html(strApvlStts + '일&nbsp;&nbsp;');
 
                 $('#currReqPopStts').val("detail")
 
-                $('#h5_apvlReqBfrTit').html("<b>근무결재요청 상세</b>");
+                $('#h5_apvlReqBfrTit').html("<b>연차결재요청 상세</b>");
                 $('#btn_apvlBfrReq').text("");
                 $('#btn_apvlBfrReq').css('display', 'none');
                 $('#ipt_refSearchNamePop').prop('placeholder', '')
@@ -107,7 +107,7 @@
 			else if(arrWrkDt[4] == '01' && arrWrkDt[0] == sessionStorage.getItem("email")) {
                 $('#apvlReqAcptDiv').addClass('d-none');
 
-                $('#h5_apvlReqBfrTit').html("<b>근무결재요청 수정</b>");
+                $('#h5_apvlReqBfrTit').html("<b>연차결재요청 수정</b>");
                 $('#btn_apvlBfrReq').text("수정");
                 $('#ipt_wrkDt').prop('readonly', true);
 
@@ -116,7 +116,7 @@
             // 결재 요청 정보 PK 트랜잭션
             var params = {
                 "email"      : arrWrkDt[0],     // 기안자
-                "wrkDt"      : arrWrkDt[1],     // 근무요청일시
+                "wrkDt"      : arrWrkDt[1],     // 연차요청일시
             }
             var url = "{% url 'dili_api:getApvlReqHistDetl' %}";
 
@@ -169,14 +169,14 @@
         */
     });
 
-    // 근무일자 변경 시 근무 시간 값 세팅 처리
+    // 연차일자 변경 시 연차 시간 값 세팅 처리
     $(document).off("change", "#ipt_wrkDt");
     $(document).on( "change", "#ipt_wrkDt", function() {
 
         //동일 일자 스케줄 등록 전 유효성 검증
         var param = {
             "email"         : sessionStorage.getItem("email"),      //로그인한 사용자 아이디
-            "wrkDt"         : $("#ipt_wrkDt").val(),                //근무일자
+            "wrkDt"         : $("#ipt_wrkDt").val(),                //연차일자
         }
         //console.log("###########param::", param);
 
@@ -186,7 +186,7 @@
             var strNowTm    = fillZero(2, nowDt.getHours()) + ':' + fillZero(2, nowDt.getMinutes());
             if(data.length > 0 && data[0].WRK_CNT > 0) {
                 //동일 날짜에 결재요청건이 있는 경우
-                var msg = '일자 : ' + param.wrkDt + '\n근무 내역을 불러옵니다.';
+                var msg = '일자 : ' + param.wrkDt + '\n연차 내역을 불러옵니다.';
                 // 후결재로 상태 변경
                 $("#currApvlDivsStts").val("02");
                 cf_dialog.confirm(msg, function() {
@@ -218,31 +218,31 @@
     //$(document).on("click","#btn_apvlBfrReq",function() {
     $('#btn_apvlBfrReq').click(function() {
         //공란 여부 검증
-        //근무일자 유효성 검증
+        //연차일자 유효성 검증
         if($("#ipt_wrkDt").val() == "") {
-            alertMsg("근무요청일시를 선택해주세요.", function() {
+            alertMsg("연차요청일시를 선택해주세요.", function() {
                 $('#ipt_wrkDt').focus();
             });
             return;
         }
-        //근무 시작 시간 유효성 검증
+        //연차 시작 시간 유효성 검증
         if($("#ipt_jobStrtTm1").val() == "") {
-            alertMsg("근무 시작 시간을 선택해주세요.", function() {
+            alertMsg("연차 시작 시간을 선택해주세요.", function() {
                 $('#ipt_jobStrtTm1').focus();
             });
             return;
         }
-        //근무 종료 시간 유효성 검증
+        //연차 종료 시간 유효성 검증
         if($("#ipt_jobEndTm1").val() == "") {
-            alertMsg("근무 종료 시간을 선택해주세요.", function() {
+            alertMsg("연차 종료 시간을 선택해주세요.", function() {
                 $('#ipt_jobEndTm1').focus();
             });
             return;
         }
 
-        //근무요청사유 유효성 검증
+        //연차요청사유 유효성 검증
         if($("#txa_reqBfrRsn").val().trim() == "") {
-            alertMsg("근무요청사유를 입력해주세요.", function() {
+            alertMsg("연차요청사유를 입력해주세요.", function() {
                 $('#txa_reqBfrRsn').focus();
             });
             return;
@@ -259,7 +259,7 @@
         //신규 저장 + 선결재 시, 입력받은 데이터 유효성 검증
         if($('#currReqPopStts').val() == "register") {
             if($("#currApvlDivsStts").val() == "01") {
-                //근무요청일시
+                //연차요청일시
                 var currDt = new Date();
                 var inptDt = new Date($('#ipt_wrkDt').val());
                 var inptStrtDtTm = new Date($('#ipt_wrkDt').val() + " " +  $("#ipt_jobStrtTm1").val());
@@ -269,7 +269,7 @@
                 var strCurrDt = currDt.getFullYear() + "-" + fillZero(2, (currDt.getMonth() + 1)) + "-" + currDt.getDate();
                 var strInptDt = inptDt.getFullYear() + "-" + fillZero(2, (inptDt.getMonth() + 1)) + "-" + inptDt.getDate();
                 if( strCurrDt == strInptDt && currDtTm > inptStrtDtTm) {
-                    alertMsg("근무 시간은 현재 시각 이후로 선택해주세요.", function() {
+                    alertMsg("연차 시간은 현재 시각 이후로 선택해주세요.", function() {
                         $('#ipt_jobStrtTm1').val(currDt.getHours() + ":" + currDt.getMinutes()).focus();
                     });
                     return;
@@ -277,7 +277,7 @@
                 else {
                     //현재 날짜가 결재 요청 일자 이후인 경우,
                     if( strCurrDt > strInptDt ) {
-                        alertMsg("근무 일자는 현재 일자 이후로 선택해주세요.", function() {
+                        alertMsg("연차 일자는 현재 일자 이후로 선택해주세요.", function() {
                             $('#ipt_wrkDt').val(currDt.getFullYear() + "-" + fillZero(2, (currDt.getMonth() + 1)) + "-" + (currDt.getDate() + 1)).focus();
                         });
                         return;
@@ -285,7 +285,7 @@
 
                     //현재 날짜가 결재 요청 일자 이후인 경우,
                     if( inptStrtDtTm > inptEndDtTm ) {
-                        alertMsg("근무 종료 시간은 근무 시작 시간 이후로 선택해주세요.", function() {
+                        alertMsg("연차 종료 시간은 연차 시작 시간 이후로 선택해주세요.", function() {
                             $('#ipt_jobEndTm1').val($('#ipt_jobStrtTm1').val().substring(0, 4) + (parseInt($('#ipt_jobStrtTm1').val().substring(4, 5)) + 1)).focus();
                         });
                         return;
@@ -297,7 +297,7 @@
             //동일 일자 결재 진행건 유효성 검증
             var param = {
                 "email"         : sessionStorage.getItem("email"),      //로그인한 사용자 아이디
-                "wrkDt"         : $("#ipt_wrkDt").val(),                //근무일자
+                "wrkDt"         : $("#ipt_wrkDt").val(),                //연차일자
             }
             //console.log("###########param::", param);
 
@@ -317,7 +317,7 @@
                 }
 				else {
                     //동일 날짜에 결재요청건이 없는 경우
-                    cf_dialog.confirm('근무결재요청을 ' + $('#btn_apvlBfrReq').text() + '하시겠습니까?', function() {
+                    cf_dialog.confirm('연차결재요청을 ' + $('#btn_apvlBfrReq').text() + '하시겠습니까?', function() {
                         if(this.key == 'ok') {
                             saveApvlReq();
                         }
@@ -355,7 +355,7 @@
                 var nowDt = new Date();
                 var strUpdDt = nowDt.getFullYear() + '-' + fillZero(2, (nowDt.getMonth() + 1) + '') + '-' + fillZero(2, nowDt.getDate() + '');
                 var msg = $('#currReqPopStts').val() == "modify" ? '수정일' : '등록일';
-                cf_dialog.confirm(msg + ' : ' + strUpdDt + '\n근무결재요청을 ' + $('#btn_apvlBfrReq').text() + '하시겠습니까?', function() {
+                cf_dialog.confirm(msg + ' : ' + strUpdDt + '\n연차결재요청을 ' + $('#btn_apvlBfrReq').text() + '하시겠습니까?', function() {
                     if(this.key == 'ok') {
                         saveApvlReq();
                     }
@@ -394,11 +394,11 @@
             "email"          : sessionStorage.getItem("email"),      // 로그인한 사용자 아이디
             "apvlDivs"       : $("#currApvlDivsStts").val(),         // 01: 선결재, 02: 후결재
             "apvlReqDivs"    : apvlReqDivs,                          // 01: 야간근무, 02: 휴일근무
-            "wrkDt"          : $("#ipt_wrkDt").val(),                // 근무일자
-            "jobStrtTm"      : inptStrtTm,                           // 근무 시작 시간
-            "jobEndTm"       : inptEndTm,                            // 근무 종료 시간
+            "wrkDt"          : $("#ipt_wrkDt").val(),                // 연차일자
+            "jobStrtTm"      : inptStrtTm,                           // 연차 시작 시간
+            "jobEndTm"       : inptEndTm,                            // 연차 종료 시간
             "wrkTme"         : wrkTme || '000000',                   // $("#ipt_wrkDt").val().substring(11,13) +""+ $("#ipt_wrkDt").val().substring(14,16) +"" + $("#ipt_wrkDt").val().substring(17,19),
-            "wrkReqRsn"      : inptWrkReqRsn,                        // 근무요청사유
+            "wrkReqRsn"      : inptWrkReqRsn,                        // 연차요청사유
             "th1AprvStus"    : "01",                                 // 01: 미승인
             "th1AprvNm"      : $("#ipt_apvlLnSearchEmailPop").val(), // 결재자
             "refNm"          : $('#ipt_refSearchEmailPop').val()     // 참조자
@@ -411,7 +411,7 @@
                             'data'          : JSON.stringify(param),
                             'async'         : false,
                             'callbackFn'    : function(data) {
-                                g_toast.push('근무결재요청 ' + $('#btn_apvlBfrReq').text() + '이 완료되었습니다.');
+                                g_toast.push('연차결재요청 ' + $('#btn_apvlBfrReq').text() + '이 완료되었습니다.');
 
                                 $('#exitApvlReqModalBtn').click();
                                 $('#apvlHistSearchBtn').click();
@@ -428,7 +428,7 @@
 <div style="width :600px;">
         <div class="mb-4" role="alert">
             <h5 id="h5_apvlReqBfrTit">
-                <b>근무결재요청 등록</b>
+                <b>연차결재요청 등록</b>
             </h5>
             <div role="alert">
                 <h6 style="text-align: right">
@@ -448,7 +448,7 @@
                             <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-caret-down-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z"/>
                             </svg>
-                            근무결재 요청
+                            연차결재 요청
                         </button>
                     </h2>
                 </div>
@@ -471,7 +471,7 @@
                                         -->
 
                                         <div class="flex-height d-flex m-0 p-2">
-                                            <div class="align-self-start align-self-center mr-3" style="font-weight:bold"><span class="requiredTag mr-1">*</span>근무요청일시</div>
+                                            <div class="align-self-start align-self-center mr-3" style="font-weight:bold"><span class="requiredTag mr-1">*</span>연차요청일시</div>
                                             <div class="align-self-center mr-1">
                                                 <div style="float: left;" class="mr-2">
                                                      <input type="date" class="align-self-start align-self-center mr-1 form-control" id="ipt_wrkDt"   style="width:150px;"    name="ipt_wrkDt"      max="9999-12-31" />
@@ -489,7 +489,7 @@
                                         </div>
 
                                         <div class="flex-height d-flex m-0 p-2">
-                                            <div class="align-self-start align-self-center mr-3" style="font-weight:bold"><span class="requiredTag mr-1">*</span>근무요청사유</div>
+                                            <div class="align-self-start align-self-center mr-3" style="font-weight:bold"><span class="requiredTag mr-1">*</span>연차요청사유</div>
                                             <div class="align-self-center mr-7">
                                                 <textarea id="txa_reqBfrRsn" class="form-control" name="reqRsn" maxlength="210" style="resize: none; width:440px; height:70px;" placeholder="사유를 입력해주세요.(200자 이하)" onkeyup="chkLength(this, 200)"></textarea>
                                             </div>
