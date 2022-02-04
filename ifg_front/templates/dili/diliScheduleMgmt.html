@@ -618,9 +618,9 @@
                 tdDate = weekGridStrtDate.getDate();
 
                 console.log("tdDate : "+tdDate);
-                var dd = new Date(tdDate);
+                var dd = new Date(weekGridStrtYy, weekGridStrtMm, tdDate);
                 var day = dd.getDay();
-                console.log("day = "+day);
+                console.log("crteWeekGrid day = "+day);
 
                 var sExtStr = ""; //연장근무 / 주휴근무 문자열 지정
                 if(day == "0" || day == "6"){
@@ -815,7 +815,7 @@
                 mTdDate = monthGridStrtDate.getDate();
 
                 console.log("mTdDate : "+mTdDate);
-                var dd = new Date(mTdDate);
+                var dd = new Date(monthGridStrtYy, monthGridStrtMm, mTdDate);
                 var day = dd.getDay();
                 console.log("day = "+day);
 
@@ -999,7 +999,7 @@
                 if(detlSchd != "연차휴가" && detlSchd != "반차휴가"){
 
                     normWrkTm = detlSchd.split('/')[0].replace('정상근무 : ','').trim();
-                    overWrkTm = detlSchd.split('/')[1].replace('연장근무 : ','').trim();
+                    overWrkTm = detlSchd.split('/')[1].replace('연장근무 : ','').replace('주휴근무 : ','').trim();
                 }else {
                     if(detlSchd=="연차휴가"){
                         ptoKdCd = "01";
@@ -1051,7 +1051,7 @@
                 if(detlSchd != "연차휴가" && detlSchd != "반차휴가"){
 
                     normWrkTm = detlSchd.split('/')[0].replace('정상근무 : ','').trim();
-                    overWrkTm = detlSchd.split('/')[1].replace('연장근무 : ','').trim();
+                    overWrkTm = detlSchd.split('/')[1].replace('연장근무 : ','').replace('주휴근무 : ','').trim();
                 }else {
                     if(detlSchd=="연차휴가"){
                         ptoKdCd = "01";
