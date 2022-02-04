@@ -812,7 +812,7 @@ class apvlReqHist(Resource): # Mariadb 연결 진행
                       "     , A.TH1_APRV_STUS" \
                       "     , C.EMP_NAME AS REF_NM" \
                       "     , IFNULL(A.APVL_REQ_DT, '') AS APVL_REQ_DT" \
-                      "     , IFNULL(A.WRK_REQ_RSN, '') AS WRK_REQ_RSN" \
+                      "     , CONCAT(IFNULL(A.WRK_REQ_RSN, ''), IFNULL(A.HOLI_REQ_RSN, '')) AS WRK_REQ_RSN" \
                       "     , CASE WHEN A.APVL_REQ_DIVS = '03'" \
                       "            THEN IFNULL(CONCAT(A.HOLI_TERM1, ' ~ ', A.HOLI_TERM2), '') " \
                       "            ELSE ''" \
