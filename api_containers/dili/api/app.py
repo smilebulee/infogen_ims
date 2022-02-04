@@ -376,6 +376,8 @@ class weekGridData(Resource): # Mariadb 연결 진행
                     + "       ,A.WRK_DT "\
                     + "       ,NVL(DATE_FORMAT(A.JOB_STRT_TM, '%H:%i'),'-') AS JOB_STRT_TM "\
                     + "       ,NVL(DATE_FORMAT(A.JOB_END_TM, '%H:%i'),'-') AS JOB_END_TM "\
+                    + "       ,NVL(DATE_FORMAT(B.JOB_STRT_TM, '%H:%i'),'-') AS JOB_APRV_STRT_TM "\
+                    + "       ,NVL(DATE_FORMAT(B.JOB_END_TM, '%H:%i'),'-') AS JOB_APRV_END_TM "\
                     + "       ,CONCAT(SUBSTRING(A.NORM_WRK_TM,1,2),':',SUBSTRING(A.NORM_WRK_TM,3,2)) AS NORM_WRK_TM "\
                     + "       ,CONCAT(SUBSTRING(STR_TO_DATE(A.ALL_WRK_TM, '%H%i') ,1,2), ':', SUBSTRING(STR_TO_DATE(A.ALL_WRK_TM, '%H%i') ,4,2)) AS ALL_WRK_TM "\
                     + "       ,DATE_FORMAT(SEC_TO_TIME(TIME_TO_SEC(STR_TO_DATE( CONCAT(SUBSTRING(A.ALL_WRK_TM,1,2),':',SUBSTRING(A.ALL_WRK_TM,3,2)) ,'%H:%i')) "\
@@ -1367,6 +1369,8 @@ class calendarData(Resource): # Mariadb 연결 진행
                       + "       ,A.WRK_DT " \
                       + "       ,NVL(DATE_FORMAT(A.JOB_STRT_TM, '%H:%i'),'-') AS JOB_STRT_TM " \
                       + "       ,NVL(DATE_FORMAT(A.JOB_END_TM, '%H:%i'),'-') AS JOB_END_TM " \
+                      + "       ,NVL(DATE_FORMAT(B.JOB_STRT_TM, '%H:%i'),'-') AS JOB_APRV_STRT_TM " \
+                      + "       ,NVL(DATE_FORMAT(B.JOB_END_TM, '%H:%i'),'-') AS JOB_APRV_END_TM " \
                       + "       ,A.NORM_WRK_TM " \
                       + "       ,A.ALL_WRK_TM " \
                       + "       ,NVL(B.APVL_REQ_DIVS, 'N/A') AS APVL_REQ_DIVS " \
