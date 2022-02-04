@@ -3143,7 +3143,7 @@ class updateRestTm(Resource):  # Mariadb 연결 진행
                 sql = "UPDATE TB_WRK_TM_MGMT_M " \
                       "   SET REST_TM  = '" + restTm + "' " \
                       "     , ALL_WRK_TM =  CASE WHEN IFNULL(ALL_WRK_TM, '0') <> '0' AND ALL_WRK_TM <> '000000' " \
-                      "                          THEN DATE_FORMAT(DATE_SUB(DATE_SUB(STR_TO_DATE(JOB_END_TM-JOB_STRT_TM, '%H%i%s'), INTERVAL 60 MINUTE), INTERVAL (DINN_REST_TM + " + restTm + ") MINUTE), '%H%i%s') " \
+                      "                          THEN DATE_FORMAT(DATE_SUB(DATE_SUB(STR_TO_DATE(SUBDATE(JOB_END_TM, INTERVAL JOB_STRT_TM hour_second), '%H%i%s'), INTERVAL 60 MINUTE), INTERVAL (DINN_REST_TM + " + restTm + ") MINUTE), '%H%i%s') " \
                       "                          ELSE ALL_WRK_TM " \
                       "                      END " \
                       "   WHERE EMP_EMAL_ADDR = '" + email + "' " \
@@ -3183,7 +3183,7 @@ class updateDinnRestTm(Resource):  # Mariadb 연결 진행
                 sql = "UPDATE TB_WRK_TM_MGMT_M " \
                       "   SET DINN_REST_TM  = '" + dinnRestTm + "' " \
                       "     , ALL_WRK_TM =  CASE WHEN IFNULL(ALL_WRK_TM, '0') <> '0' AND ALL_WRK_TM <> '000000' " \
-                      "                          THEN DATE_FORMAT(DATE_SUB(DATE_SUB(STR_TO_DATE(JOB_END_TM-JOB_STRT_TM, '%H%i%s'), INTERVAL 60 MINUTE), INTERVAL (REST_TM+" + dinnRestTm + ") MINUTE), '%H%i%s') " \
+                      "                          THEN DATE_FORMAT(DATE_SUB(DATE_SUB(STR_TO_DATE(SUBDATE(JOB_END_TM, INTERVAL JOB_STRT_TM hour_second), '%H%i%s'), INTERVAL 60 MINUTE), INTERVAL (REST_TM+" + dinnRestTm + ") MINUTE), '%H%i%s') " \
                       "                          ELSE ALL_WRK_TM " \
                       "                      END " \
                       "   WHERE EMP_EMAL_ADDR = '" + email + "' " \
