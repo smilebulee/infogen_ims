@@ -321,6 +321,11 @@ class apvlReqBfrPop(generic.TemplateView):
 
         return render(request, template_name)
 
+class apvlReqBfrChkPop(generic.TemplateView):
+    def get(self, request, *args, **kwargs):
+        template_name = 'dili/apvlReqBfrChkPop.html'
+
+        return render(request, template_name)
 
 def getDuplApvlReqCnt(request):
     param = json.loads(request.GET['param'])

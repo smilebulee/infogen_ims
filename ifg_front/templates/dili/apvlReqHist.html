@@ -425,13 +425,18 @@
         $('#currReqPopStts').val("modify");
         $('#currReqPopParamArr').val($(trId).children().eq(9).html());
 
-
-        alert($(trId).children().eq(0).html());
-        return false;
+        var sSelStr = $(trId).children().eq(0).html();
         // 결재 상세 모달 오픈
         var url;
 
-        url = "{% url 'dili_api:apvlReqBfrPop' %}" ;
+        if(sSelStr == "야간근무" || sSelStr == "휴일근무") {
+            url = "{% url 'dili_api:apvlReqBfrPop' %}" ;
+        } else if (sSelStr == "반차결재" || sSelStr == "연차결재") {
+            url = "{% url 'dili_api:apvlReqBfrChkPop' %}" ;
+        } else {
+            alert("오류발생, 관리자에게 문의하세요.");
+            return false;
+        }
         modal('apvlReqModalDiv');
         $('#apvlReqModal').load(url);
     }
