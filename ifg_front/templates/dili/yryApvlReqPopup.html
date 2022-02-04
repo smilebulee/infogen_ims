@@ -440,7 +440,7 @@
                 var param = {
                     "email"         : sessionStorage.getItem("email"),              // 로그인한 사용자 아이디
                     "apvlDivs"      : "01",                                         // 01: 선결재, 02: 후결재
-                    "apvlReqDivs"   : "03",                                         // 01: 야근, 02:휴일, 03: 연차
+                    "apvlReqDivs"   : $('input[name="ptoKdCd"]:checked').val()=="01"?"03":"04",    // 01: 야근, 02:휴일, 03: 연차, 04: 반차
                     "ptoKdCd"       : $('input[name="ptoKdCd"]:checked').val(),     // 01: 연차, 02:반차
                     "hdoKdCd"       : $('input[name="hdoKdCd"]:checked').val(),     // 01: 오전반차, 02:오후반차
                     "jobStrtTm"     : $('input[name="ptoKdCd"]:checked').val() == "01" ? "090000" : $('input[name="hdoKdCd"]:checked').val() == "01" ?  "090000" : "140000",
