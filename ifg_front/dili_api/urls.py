@@ -28,6 +28,7 @@ urlpatterns = [
     url(r'^apvlReqPop/', views.apvlReqPop.as_view(), name='apvlReqPop'),
     url(r'^yryApvlReqPop/'      , views.yryApvlReqPop.as_view()   , name='yryApvlReqPop'),        # 연차등록 팝업
     url(r'^apvlReqBfrPop/'      , views.apvlReqBfrPop.as_view()   , name='apvlReqBfrPop'),        # 선결재 팝업
+    url(r'^apvlReqBfrChkPop/'   , views.apvlReqBfrChkPop.as_view()   , name='apvlReqBfrChkPop'),        # 선결재 팝업
     url(r'^getDuplApvlReqCnt/'  , views.getDuplApvlReqCnt         , name='getDuplApvlReqCnt'),    # 선결재 동일 일자 결재 건수 조회
     url(r'^getDuplWrkCnt/'      , views.getDuplWrkCnt             , name='getDuplWrkCnt'),        # 선결재 동일 일자 스케줄 등록 건수 조회
     url(r'^getWrkTm/'           , views.getWrkTm                  , name='getWrkTm'),             # 선결재 동일 일자 스케줄 조회(정규 근무 시간정보)
