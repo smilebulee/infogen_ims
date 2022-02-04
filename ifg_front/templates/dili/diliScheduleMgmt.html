@@ -748,6 +748,8 @@
             weekTable += '<tr><td>합계</td>';
             weekTable += '<td>-</td>';
             weekTable += '<td>-</td>';
+            weekTable += '<td>-</td>';
+            weekTable += '<td>-</td>';
             weekTable += '<td>'+sumRestTm+'</td>';
             weekTable += '<td>'+ sumTotalWkrTm +'</td>';
             weekTable += '<td>-</td>';
@@ -960,7 +962,7 @@
 
                 //$('#tmpRestTm').text($('#'+trId.id).children().eq(3).text());
                 //$('#tmpDinnRestTm').text($('#'+trId.id).children().eq(4).text());
-                var detlSchd = $('#'+trId.id).children().eq(5).text();
+                var detlSchd = $('#'+trId.id).children().eq(7).text();
                 var normWrkTm = "-";
                 var overWrkTm = "-";
                 var holi = "-";
@@ -1013,7 +1015,7 @@
                 //$('#tmpRestTm').text($('#'+trId.id).children().eq(3).text());
                 //$('#tmpDinnRestTm').text($('#'+trId.id).children().eq(4).text());
 
-                var detlSchd = $('#'+trId.id).children().eq(6).text();
+                var detlSchd = $('#'+trId.id).children().eq(7).text();
                 var normWrkTm = "-";
                 var overWrkTm = "-";
                 var holi = "-";
@@ -1032,9 +1034,9 @@
                 $('#tmpNormWrkTm').text(normWrkTm);
                 $('#tmpOverWrkTm').text(overWrkTm);
                 $('#tmpHoli').text(holi);
-                $('#tmpPopAllTm').text($('#'+trId.id).children().eq(5).text());
-                $('#tmpPopApvlStus').text($('#'+trId.id).children().eq(7).text());
-                $('#tmpPopAprvStus').text($('#'+trId.id).children().eq(8).text());
+                $('#tmpPopAllTm').text($('#'+trId.id).children().eq(6).text());
+                $('#tmpPopApvlStus').text($('#'+trId.id).children().eq(8).text());
+                $('#tmpPopAprvStus').text($('#'+trId.id).children().eq(9).text());
             }
             $('#clickDate').val(mClickDt);
 
