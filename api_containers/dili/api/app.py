@@ -885,7 +885,7 @@ class apvlAcptHist(Resource):  # Mariadb 연결 진행
                           "       	   WHEN A.TH1_APRV_STUS = '02' THEN '승인'  " \
                           "            ELSE '반려' END APRV_STUS_NM " \
                           "     , NVL(A.APVL_REQ_DT, '') APVL_REQ_DT " \
-                          "     , NVL(A.WRK_REQ_RSN, '') WRK_REQ_RSN " \
+                          "     , CONCAT(NVL(A.WRK_REQ_RSN, ''), NVL(A.HOLI_REQ_RSN, ''))  WRK_REQ_RSN " \
                           "     , A.TH1_APRV_STUS" \
                           "     , CASE WHEN A.APVL_REQ_DIVS = '03'" \
                           "            THEN IFNULL(CONCAT(A.HOLI_TERM1, ' ~ ', A.HOLI_TERM2), '') " \
@@ -916,7 +916,7 @@ class apvlAcptHist(Resource):  # Mariadb 연결 진행
                           "       	   WHEN A.TH1_APRV_STUS = '02' THEN '승인'  " \
                           "            ELSE '반려' END APRV_STUS_NM " \
                           "     , NVL(A.APVL_REQ_DT, '') APVL_REQ_DT " \
-                          "     , NVL(A.WRK_REQ_RSN, '') WRK_REQ_RSN " \
+                          "     , CONCAT(NVL(A.WRK_REQ_RSN, ''), NVL(A.HOLI_REQ_RSN, '')) WRK_REQ_RSN " \
                           "     , A.TH1_APRV_STUS" \
                           "     , CASE WHEN A.APVL_REQ_DIVS = '03'" \
                           "            THEN IFNULL(CONCAT(A.HOLI_TERM1, ' ~ ', A.HOLI_TERM2), '') " \
@@ -1318,7 +1318,7 @@ class apvlReqHistDetl(Resource): # Mariadb 연결 진행
                       "                 , DATE_FORMAT(A.WRK_DT, '%Y-%m-%d') WRK_DT" \
                       "                 , DATE_FORMAT(A.JOB_STRT_TM, '%H:%i:%s') JOB_STRT_TM" \
                       "                 , DATE_FORMAT(A.JOB_END_TM, '%H:%i:%s') JOB_END_TM" \
-                      "                 , NVL(A.WRK_REQ_RSN, '') WRK_REQ_RSN" \
+                      "                 , CONCAT(NVL(A.WRK_REQ_RSN, ''), NVL(A.HOLI_REQ_RSN, '')) WRK_REQ_RSN" \
                       "                 , NVL(DATE_FORMAT(A.APVL_UPD_DT, '%Y-%m-%d'), '') APVL_UPD_DT" \
                       "                 , NVL(A.TH1_APRV_RSN,'') TH1_APRV_RSN " \
                       "                 , NVL(DATE_FORMAT(A.TH1_APRV_DT, '%Y-%m-%d'), '') TH1_APRV_DT" \
