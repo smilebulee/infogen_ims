@@ -373,7 +373,7 @@
         $(trId).css("background-color","lightGrey");
 
         // 연차 요청 정보 PK
-        var arrWrkDt =$(trId).children().eq(4).html().split(';');
+        var arrWrkDt =$(trId).children().eq(5).html().split(';');
 
         // 트랜잭션
         var params = {
@@ -425,7 +425,7 @@
         // 결재 상세 모달 오픈
         var url = "{% url 'dili_api:apvlReqBfrPop' %}" ;
         $('#currReqPopStts').val("modify");
-        $('#currReqPopParamArr').val($(trId).children().eq(9).html());
+        $('#currReqPopParamArr').val($(trId).children().eq(8).html());
 
         modal('apvlReqModalDiv');
         $('#apvlReqModal').load(url);
