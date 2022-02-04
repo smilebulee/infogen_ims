@@ -421,11 +421,19 @@
         $(trId).prevAll().css("background-color","");
         $(trId).nextAll().css("background-color","");
         $(trId).css("background-color","lightGrey");
-        
-        // 결재 상세 모달 오픈
-        var url = "{% url 'dili_api:apvlReqBfrPop' %}" ;
+
         $('#currReqPopStts').val("modify");
         $('#currReqPopParamArr').val($(trId).children().eq(9).html());
+
+
+        alert($(trId).children().eq(0).html());
+        return false;
+        // 결재 상세 모달 오픈
+        var url;
+
+        url = "{% url 'dili_api:apvlReqBfrPop' %}" ;
+
+        url = "{% url 'dili_api:apvlReqBfrChkPop' %}" ;
 
         modal('apvlReqModalDiv');
         $('#apvlReqModal').load(url);
