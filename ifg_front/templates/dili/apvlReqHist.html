@@ -305,7 +305,7 @@
             apvlReqHistTable += '<th class="text-center">구분</th>';
             apvlReqHistTable += '<th class="text-center">기안일</th>';
             apvlReqHistTable += '<th class="text-center">연차일</th>';
-            //apvlReqHistTable += '<th class="text-center">반차일</th>';
+            apvlReqHistTable += '<th class="text-center">반차일</th>';
             apvlReqHistTable += '<th class="text-center">기안자</th>';
             apvlReqHistTable += '<th class="text-center">요청일시</th>';
             apvlReqHistTable += '<th class="text-center">결재상태</th>';
@@ -336,7 +336,7 @@
                 apvlReqHistTable += '<td class="pt-3-half">'+data[i].APVL_REQ_NM+'</td>';
                 apvlReqHistTable += '<td class="pt-3-half">'+data[i].APVL_REQ_DT+'</td>';
                 apvlReqHistTable += '<td class="pt-3-half">'+data[i].YEONCHA+'</td>';
-                //apvlReqHistTable += '<td class="pt-3-half">'+data[i].BANCHA+'</td>';
+                apvlReqHistTable += '<td class="pt-3-half">'+data[i].BANCHA+'</td>';
                 apvlReqHistTable += '<td class="pt-3-half">'+data[i].EMP_NAME+'</td>';
                 apvlReqHistTable += '<td class="pt-3-half">'+wrkDtm+'</td>';
                 apvlReqHistTable += '<td class="pt-3-half">'+data[i].APRV_STUS_NM+'</td>';
@@ -425,7 +425,7 @@
         // 결재 상세 모달 오픈
         var url = "{% url 'dili_api:apvlReqBfrPop' %}" ;
         $('#currReqPopStts').val("modify");
-        $('#currReqPopParamArr').val($(trId).children().eq(8).html());
+        $('#currReqPopParamArr').val($(trId).children().eq(9).html());
 
         modal('apvlReqModalDiv');
         $('#apvlReqModal').load(url);
