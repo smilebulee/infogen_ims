@@ -2260,8 +2260,8 @@ class scheduleStatLst(Resource):
                       "      ,CASE WHEN NVL(A.NGHT_WRK_TM, '') != '' AND NVL(A.NGHT_WRK_TM, '') != '000000' THEN CONCAT(SUBSTRING(NVL(A.NGHT_WRK_TM, ''), 1, 2), ':', SUBSTRING(NVL(A.NGHT_WRK_TM, ''), 3, 2))" \
                       "            ELSE ''" \
                       "             END NGHT_WRK_YN" \
-                      "     , CASE WHEN DATE_SUB(A.JOB_END_TM, INTERVAL STR_TO_DATE('220000','%H%I%S') DAY_SECOND) > 0 " \
-                      "            THEN CONCAT(SUBSTRING(DATE_FORMAT(DATE_SUB(A.JOB_END_TM, INTERVAL STR_TO_DATE('220000','%H%I%S') DAY_SECOND),'%H%I%S'), 1, 2), ':', SUBSTRING(DATE_FORMAT(DATE_SUB(A.JOB_END_TM, INTERVAL STR_TO_DATE('220000','%H%I%S') DAY_SECOND),'%H%I%S'), 3, 2))" \
+                      "     , CASE WHEN DATE_SUB(STR_TO_DATE(DATE_FORMAT(CASE WHEN NVL(B.APVL_REQ_DIVS,'') = '' THEN A.JOB_END_TM ELSE B.JOB_END_TM END, '%H%i%s'), '%H%i%s'), INTERVAL STR_TO_DATE('220000', '%H%i%s') DAY_SECOND) > 0 " \
+                      "            THEN CONCAT(SUBSTRING(NVL(DATE_SUB(STR_TO_DATE(DATE_FORMAT(CASE WHEN NVL(B.APVL_REQ_DIVS,'') = '' THEN A.JOB_END_TM ELSE B.JOB_END_TM END, '%H%i%s'), '%H%i%s'), INTERVAL STR_TO_DATE('220000', '%H%i%s') DAY_SECOND), ''), 1, 2), ':', SUBSTRING(NVL(DATE_SUB(STR_TO_DATE(DATE_FORMAT(CASE WHEN NVL(B.APVL_REQ_DIVS,'') = '' THEN A.JOB_END_TM ELSE B.JOB_END_TM END, '%H%i%s'), '%H%i%s'), INTERVAL STR_TO_DATE('220000', '%H%i%s') DAY_SECOND), ''), 4, 2))" \
                       "            ELSE '' " \
                       "        END AS NGHT_SFT_YN" \
                       "      ,CASE WHEN NVL(A.HLDY_WRK_TM, '') != '' AND NVL(A.HLDY_WRK_TM, '') != '000000' THEN CONCAT(SUBSTRING(NVL(A.HLDY_WRK_TM, ''), 1, 2), ':', SUBSTRING(NVL(A.HLDY_WRK_TM, ''), 3, 2))" \
