@@ -2260,6 +2260,10 @@ class scheduleStatLst(Resource):
                       "      ,CASE WHEN NVL(A.NGHT_WRK_TM, '') != '' AND NVL(A.NGHT_WRK_TM, '') != '000000' THEN CONCAT(SUBSTRING(NVL(A.NGHT_WRK_TM, ''), 1, 2), ':', SUBSTRING(NVL(A.NGHT_WRK_TM, ''), 3, 2))" \
                       "            ELSE ''" \
                       "             END NGHT_WRK_YN" \
+                      "     , CASE WHEN DATE_SUB(JOB_END_TM, INTERVAL STR_TO_DATE('220000','%H%I%S') DAY_SECOND) > 0 " \
+                      "            THEN CONCAT(SUBSTRING(DATE_FORMAT(DATE_SUB(JOB_END_TM, INTERVAL STR_TO_DATE('220000','%H%I%S') DAY_SECOND),'%H%I%S'), 1, 2), ':', SUBSTRING(DATE_FORMAT(DATE_SUB(JOB_END_TM, INTERVAL STR_TO_DATE('220000','%H%I%S') DAY_SECOND),'%H%I%S'), 3, 2))" \
+                      "            ELSE '' " \
+                      "        END AS NGHT_SFT_YN" \
                       "      ,CASE WHEN NVL(A.HLDY_WRK_TM, '') != '' AND NVL(A.HLDY_WRK_TM, '') != '000000' THEN CONCAT(SUBSTRING(NVL(A.HLDY_WRK_TM, ''), 1, 2), ':', SUBSTRING(NVL(A.HLDY_WRK_TM, ''), 3, 2))" \
                       "            ELSE ''" \
                       "             END HLDY_WRK_YN" \
