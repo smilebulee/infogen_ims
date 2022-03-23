@@ -232,10 +232,18 @@
             scheduleStatLstTable += '</thead>';
             scheduleStatLstTable += '<tbody>';
 
-            var totalRestTm;
+            var nghtWrkYn = 0; //연장
+            var nghtSftYn = 0; //야간
+            var hldyWrkYn = 0; //주휴
+            var allWrkTm = 0; //총근무시간
+            var tmpSumTotalWkrTm = 0;
+            var tmpSumTotalnghtWrkTm = 0;
+            var tmpSumTotalnghtSftTm = 0;
+            var tmpSumTotalhldyWrkTm = 0;
 
             if(data.length > 0) {
                 $('#ipt_gridCnt').val(data.length);
+
                 for(var i = 0; i < data.length; i++){
                     scheduleStatLstTable += '<tr>';
                     scheduleStatLstTable += '<td id="no'+i+'" class="pt-3-half">'+(i+1)+'</td>';
@@ -255,19 +263,83 @@
                     } else {
                         totalRestTm = Number(data[i].REST_TM) + Number(data[i].DINN_REST_TM)
                     }
-                    scheduleStatLstTable += '<td id="totalRestTm" class="pt-3-half">'+totalRestTm+ '</td>';
-                    scheduleStatLstTable += '<td id="nghtWrkYn" class="pt-3-half">'+data[i].NGHT_WRK_YN+ '</td>'; //야근근무시간
-                    scheduleStatLstTable += '<td id="nghtSftYn" class="pt-3-half">'+data[i].NGHT_SFT_YN+ '</td>'; //야간근무시간 (22시 이후)
-                    scheduleStatLstTable += '<td id="hldyWrkYn" class="pt-3-half">'+data[i].HLDY_WRK_YN+ '</td>';
-                    scheduleStatLstTable += '<td id="ptoKdYn" class="pt-3-half">'+data[i].PTO_KD_YN+ '</td>';
-                    scheduleStatLstTable += '<td id="allWrkTm" class="pt-3-half">'+data[i].ALL_WRK_TM + '</td>';
-                    scheduleStatLstTable += '<td id="apvlStus" class="pt-3-half">'+data[i].APVL_STUS+'</td>';
-                    scheduleStatLstTable += '<td id="aprvStus" class="pt-3-half">'+data[i].APRV_STUS+'</td>';
-                    scheduleStatLstTable += '<td id="aprvName" class="pt-3-half">'+data[i].APRV_NAME+'</td>';
-                    scheduleStatLstTable += '<td id="aprvDt" class="pt-3-half">'+data[i].APRV_DT+'</td>';
+                    scheduleStatLstTable += '<td id="totalRestTm" class="pt-3-half">'+totalRestTm+ '</td>'; //휴게
+                    scheduleStatLstTable += '<td id="nghtWrkYn" class="pt-3-half">'+data[i].NGHT_WRK_YN+ '</td>'; //야근근무시간(연장)
+                    scheduleStatLstTable += '<td id="nghtSftYn" class="pt-3-half">'+data[i].NGHT_SFT_YN+ '</td>'; //야간근무시간 (22시 이후)(야간)
+                    scheduleStatLstTable += '<td id="hldyWrkYn" class="pt-3-half">'+data[i].HLDY_WRK_YN+ '</td>'; //주휴
+                    scheduleStatLstTable += '<td id="ptoKdYn" class="pt-3-half">'+data[i].PTO_KD_YN+ '</td>'; //연차
+                    scheduleStatLstTable += '<td id="allWrkTm" class="pt-3-half">'+data[i].ALL_WRK_TM + '</td>'; //총근무시간
+                    scheduleStatLstTable += '<td id="apvlStus" class="pt-3-half">'+data[i].APVL_STUS+'</td>'; //승인상태
+                    scheduleStatLstTable += '<td id="aprvStus" class="pt-3-half">'+data[i].APRV_STUS+'</td>'; //근무확정여부
+                    scheduleStatLstTable += '<td id="aprvName" class="pt-3-half">'+data[i].APRV_NAME+'</td>'; //근무확정자
+                    scheduleStatLstTable += '<td id="aprvDt" class="pt-3-half">'+data[i].APRV_DT+'</td>'; //근무확정일자
                     scheduleStatLstTable += '</tr>';
+
+                    if(data[i].NGHT_WRK_YN != "00:00"){
+                        nghtWrkYn = data[i].NGHT_WRK_YN;
+                        var tmpnght = Number(nghtWrkYn.substr(0,2) * 60 ) + Number(nghtWrkYn.substr(3,6));
+                        tmpSumTotalnghtWrkTm += Number(tmpnght);
+                    } //연장
+
+                    if(data[i].NGHT_SFT_YN != "00:00"){
+                        nghtSftYn = data[i].NGHT_SFT_YN;
+                        var tmpSft = Number(nghtSftYn.substr(0,2) * 60 ) + Number(nghtSftYn.substr(3,6));
+                        tmpSumTotalnghtSftTm += Number(tmpSft);
+                    } //야간
+
+                    if(data[i].HLDY_WRK_YN != "00:00"){
+                        hldyWrkYn = data[i].HLDY_WRK_YN;
+                        var tmphldy = Number(hldyWrkYn.substr(0,2) * 60 ) + Number(hldyWrkYn.substr(3,6));
+                        tmpSumTotalhldyWrkTm += Number(tmphldy);
+                    } //주휴
+
+                    if(data[i].ALL_WRK_TM != "00:00"){
+                        allWrkTm = data[i].ALL_WRK_TM;
+                        var tmpAll = Number(allWrkTm.substr(0,2) * 60 ) + Number(allWrkTm.substr(3,6));
+                        tmpSumTotalWkrTm += Number(tmpAll);
+                    } //총근무시간
+
                 }
             }
+
+            var hour = Math.floor(tmpSumTotalnghtWrkTm/60);
+            var minute = Math.floor(tmpSumTotalnghtWrkTm%60);
+            var nghtWrkYn = lpad((hour).toString(),2,"0")+":"+lpad((minute).toString(),2,"0"); //연장 합계
+
+            hour = Math.floor(tmpSumTotalnghtSftTm/60);
+            minute = Math.floor(tmpSumTotalnghtSftTm%60);
+            var nghtSftYn = lpad((hour).toString(),2,"0")+":"+lpad((minute).toString(),2,"0"); //야간 합계
+
+            hour = Math.floor(tmpSumTotalhldyWrkTm/60);
+            minute = Math.floor(tmpSumTotalhldyWrkTm%60);
+            var hldyWrkYn = lpad((hour).toString(),2,"0")+":"+lpad((minute).toString(),2,"0"); //주휴 합계
+
+            var hour = Math.floor(tmpSumTotalWkrTm/60);
+            var minute = Math.floor(tmpSumTotalWkrTm%60);
+            var sumTotalWkrTm = lpad((hour).toString(),2,"0")+":"+lpad((minute).toString(),2,"0"); //총근무시간 합계
+
+
+            //합계 표시
+            scheduleStatLstTable += '<tr>';
+            scheduleStatLstTable += '<td>합계</td>';
+            scheduleStatLstTable += '<td>-</td>';
+            scheduleStatLstTable += '<td>-</td>';
+            scheduleStatLstTable += '<td>-</td>';
+            scheduleStatLstTable += '<td>-</td>';
+            scheduleStatLstTable += '<td>-</td>';
+            scheduleStatLstTable += '<td>-</td>';
+            scheduleStatLstTable += '<td>-</td>';
+            scheduleStatLstTable += '<td>'+nghtWrkYn+'</td>'; //연장
+            scheduleStatLstTable += '<td>'+nghtSftYn+'</td>'; //야간
+            scheduleStatLstTable += '<td>'+hldyWrkYn+'</td>'; //주휴
+            scheduleStatLstTable += '<td>-</td>';
+            scheduleStatLstTable += '<td>'+sumTotalWkrTm+'</td>'; //총근무시간
+            scheduleStatLstTable += '<td>-</td>';
+            scheduleStatLstTable += '<td>-</td>';
+            scheduleStatLstTable += '<td>-</td>';
+            scheduleStatLstTable += '<td>-</td>';
+            scheduleStatLstTable += '</tr>';
+            scheduleStatLstTable += '</thead>';
             scheduleStatLstTable += '</tbody>';
 
             document.getElementById('grid_stat').innerHTML = scheduleStatLstTable;
