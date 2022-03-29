@@ -253,6 +253,7 @@
                 var tempData = $('#datepickerData2').val();
 
                 $("#ipt_holiTerm2").val(tempData);
+
                 dateCalcu();
             }
         });
@@ -360,9 +361,17 @@
 
                 $('#ipt_holiTerm2').val($('#ipt_holiTerm1').val());
                 $('#ipt_holiTerm2').prop("readOnly", "readOnly");
+
+                $(document).on("change","#ipt_holiTerm1",function(){
+                        $('#ipt_holiTerm2').val($('#ipt_holiTerm1').val());
+                });
             }
             dateCalcu();
     });
+
+
+
+
 
 
     /*********************************************************************
