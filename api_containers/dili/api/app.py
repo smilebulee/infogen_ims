@@ -391,7 +391,7 @@ class weekGridData(Resource): # Mariadb 연결 진행
                     + "                             , '%H:%i') " \
                     + "             ELSE CASE WHEN NVL(B.PTO_KD_CD, 'X') IN ('01', '02') /* 01 연차, 02 반차 */" \
                     + "                       THEN '00:00'" \
-                    + "                       ELSE CONCAT(SUBSTRING(LPAD(NVL(B.WRK_TME, A.NGHT_WRK_TM), 6, '0'), 1, 2), ':', SUBSTRING(LPAD(NVL(B.WRK_TME, A.NGHT_WRK_TM), 6 , '0'), 3, 2))" \
+                    + "                       ELSE CONCAT(SUBSTRING(DATE_SUB(STR_TO_DATE(LPAD(NVL(B.WRK_TME, A.NGHT_WRK_TM), 6, '0'), '%H%i%s'), INTERVAL A.REST_TM + A.DINN_REST_TM MINUTE), 1, 2), ':', SUBSTRING(DATE_SUB(STR_TO_DATE(LPAD(NVL(B.WRK_TME, A.NGHT_WRK_TM), 6 , '0'), '%H%i%s'), INTERVAL A.REST_TM + A.DINN_REST_TM MINUTE), 4, 2))" \
                     + "                  END" \
                     + "         END AS OVER_WRK_TM " \
                     + "       ,NVL(B.APVL_REQ_DIVS, 'N/A') AS APVL_REQ_DIVS " \
@@ -501,7 +501,7 @@ class monthGridData(Resource): # Mariadb 연결 진행
                     + "                             , '%H:%i') " \
                     + "             ELSE CASE WHEN NVL(B.PTO_KD_CD, 'X') IN ('01', '02') /* 01 연차, 02 반차 */" \
                     + "                       THEN '00:00'" \
-                    + "                       ELSE CONCAT(SUBSTRING(LPAD(NVL(B.WRK_TME, A.NGHT_WRK_TM), 6, '0'), 1, 2), ':', SUBSTRING(LPAD(NVL(B.WRK_TME, A.NGHT_WRK_TM), 6 , '0'), 3, 2))" \
+                    + "                       ELSE CONCAT(SUBSTRING(DATE_SUB(STR_TO_DATE(LPAD(NVL(B.WRK_TME, A.NGHT_WRK_TM), 6, '0'), '%H%i%s'), INTERVAL A.REST_TM + A.DINN_REST_TM MINUTE), 1, 2), ':', SUBSTRING(DATE_SUB(STR_TO_DATE(LPAD(NVL(B.WRK_TME, A.NGHT_WRK_TM), 6 , '0'), '%H%i%s'), INTERVAL A.REST_TM + A.DINN_REST_TM MINUTE), 4, 2))" \
                     + "              END" \
                     + "         END AS OVER_WRK_TM " \
                     + "       ,NVL(B.APVL_REQ_DIVS, 'N/A') AS APVL_REQ_DIVS "\
@@ -1403,7 +1403,7 @@ class calendarData(Resource): # Mariadb 연결 진행
                       + "                   - TIME_TO_SEC(STR_TO_DATE( CONCAT(SUBSTRING(LPAD(NVL(A.NORM_WRK_TM, '000000')+ NVL(B.WRK_TME, '000000'), 6, '0'),1,2),':',SUBSTRING(LPAD(NVL(A.NORM_WRK_TM, '000000')+ NVL(B.WRK_TME, '000000'), 6, '0'),3,2)) ,'%H:%i'))),'%H:%i') AS OVER_WRK_TM " \
                       + "   FROM TB_WRK_TM_MGMT_M A " \
                       + "        LEFT OUTER JOIN TB_APVL_REQ_MGMT_M B" \
-                      + "     ON A.WRK_DT = B.WRK_DT " \
+                      + "     ON (A.WRK_DT = B.WRK_DT OR A.WRK_DT BETWEEN B.HOLI_TERM1 AND B.HOLI_TERM2) " \
                       + "    AND A.EMP_EMAL_ADDR = B.EMP_EMAL_ADDR " \
                       + "  WHERE 1 = 1 " \
                       + "    AND A.EMP_EMAL_ADDR = '" + data["email"] + "'"\
