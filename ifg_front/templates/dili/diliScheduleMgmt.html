@@ -814,10 +814,10 @@
 
                 mTdDate = monthGridStrtDate.getDate();
 
-                console.log("mTdDate : "+mTdDate);
+                //console.log(" : "+mTdDate);
                 var dd = new Date(monthGridStrtYy, monthGridStrtMm, mTdDate);
                 var day = dd.getDay();
-                console.log("day = "+day);
+                //console.log("day = "+day);
 
                 var sExtStr = ""; //연장근무 / 주휴근무 문자열 지정
                 if(day == "0" || day == "6"){
@@ -1271,7 +1271,7 @@
         *********************************************************************/
         function setCalendar(data){
             console.log("setCalendar Start");
-            console.log("calendarData1 : ",data);
+            //console.log("calendarData1 : ",data);
 
             var calendarData = JSON.parse(data);
 

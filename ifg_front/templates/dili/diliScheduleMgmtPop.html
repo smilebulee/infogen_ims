@@ -327,12 +327,13 @@
         var strtTm = $('#ipt_jobStrtTm').val();
         var restTm = $("#sbx_restTme").val();
         var dinnRestTm = $("#sbx_dinnRestTme").val();
-        var totalRestTm = Number(restTm) + Number(dinnRestTm);
+        var totalRestTm = 0; //Number(restTm) + Number(dinnRestTm); /*휴게시간은 총 근무시간에 적용하지 않도록 수정, 2022-06-28*/
 
         var allWrkTm = allWrkTmCall(dateConverting2(dt), strtTm, tm, totalRestTm);
         var overWrkTm = overWrkTmCall(dateConverting2(dt), allWrkTm);
         var normWrkTm = "";
 
+        /* 휴일이거나, 주말인 경우 */
         if($('#hldyDivsCd').val() != "01" || $('#dowDivsCd').val() == "01" || $('#dowDivsCd').val() == "07"){
 
             normWrkTm = "00:00";
@@ -543,7 +544,7 @@
         <td class="pt-3-half" contenteditable="false" id="pop_endJob"></td>
     </tr>
     <tr>
-        <th class="text-center">휴게시간(단위 : 분)</th>
+        <th class="text-center">중식휴게시간(단위 : 분)</th>
         <td><div style="float: left;">
             <select id="sbx_restTme" class="form-control" name="type" style="width:200px;">
                 <option value = "0" selected>0</option>

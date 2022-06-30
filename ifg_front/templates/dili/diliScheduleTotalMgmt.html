@@ -227,11 +227,11 @@
         *   그리드 이름 더블클릭 이벤트
         *********************************************************************/
         function ondblclickOcemNmEvt(getOcemName, getOcemEmail){
-            var dt;
-            dt = $('#sbx_wrkDtYy').val() + "-" + $('#sbx_wrkDtMm').val();
+            var dt = $('#sbx_wrkDtYy').val() + "-" + $('#sbx_wrkDtMm').val();
+            var dept = $('#sbx_dept').val();
 
             $('#hidden_selectDt').val(dt);
-            $('#hidden_selectDept').val($('#sbx_dept').val());
+            $('#hidden_selectDept').val(dept);
             $('#hidden_selectName').val(getOcemName);
             $('#hidden_selectEmail').val(getOcemEmail);
 

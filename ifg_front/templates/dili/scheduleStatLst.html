@@ -122,17 +122,22 @@
         });
 
         /* 근무시간확정 버튼 클릭
-
         */
         $("#wrkTimeConfirm").click(function(){
             var gridCnt = $('#ipt_gridCnt').val();
+
+            var deptCd   = $("#sbx_dept").val();
+            var deptNm   = $("#sbx_dept option:checked").text();
+            var email    = $("#ipt_searchOcemEmail").val();
+            var emailNm  = $("#ipt_searchOcemName").val();
+            var wrkDivs  = $("#sbx_wrkKind").val();
+            var apvlStus = $("#sbx_apvlStatus").val();
 
             console.log( " gridCnt : "+gridCnt);
             if(gridCnt < 1) {
                 alertMsg('근무시간 확정 대상을 조회하십시오.');
                 return false;
             }
-
             var strTh1AprvNm = sessionStorage.getItem("email");
             var monthChk;
             if($('#sbx_wrkDtMm').val().length == 1){
@@ -141,12 +146,34 @@
                 monthChk = $('#sbx_wrkDtMm').val();
             }
             var setMDt = $('#sbx_wrkDtYy').val() + "-" + monthChk;
+            console.log("deptCd : "+deptCd + ", email : " + email+", monthChk : "+monthChk);
+            if(deptCd == "00" && email == ""){
+                cf_dialog.confirm('['+monthChk+']월 전체 인원의 근무시간을 확정하시겠습니까?', function(){
+                    if(this.key == 'ok') {
+                        fnWrkTimeSave(deptCd, email, wrkDivs, apvlStus, strTh1AprvNm, setMDt);
+                    }
+                });
+            }else if(deptCd != "00" && email == ""){
+                cf_dialog.confirm('['+deptNm+'] 부서의 '+monthChk+'월 근무시간을 확정하시겠습니까?', function(){
+                    if(this.key == 'ok') {
+                        fnWrkTimeSave(deptCd, email, wrkDivs, apvlStus, strTh1AprvNm, setMDt);
+                    }
+                });
+            }else if(email != ""){
+                cf_dialog.confirm('['+emailNm+'] 직원의 '+monthChk+'월 근무시간을 확정하시겠습니까?', function(){
+                    if(this.key == 'ok') {
+                        fnWrkTimeSave(deptCd, email, wrkDivs, apvlStus, strTh1AprvNm, setMDt);
+                    }
+                });
+            }
+        });
 
+        function fnWrkTimeSave(deptCd, email, wrkDivs, apvlStus, strTh1AprvNm, setMDt){
             var param = {
-                "dept" : $("#sbx_dept").val(),
-                "email" : $("#ipt_searchOcemEmail").val(),
-                "wrkDivs" : $("#sbx_wrkKind").val(),
-                "apvlStus" : $("#sbx_apvlStatus").val(),
+                "dept" : deptCd,
+                "email" : email,
+                "wrkDivs" : wrkDivs,
+                "apvlStus" : apvlStus,
                 "th1AprvNm" : strTh1AprvNm,
                 "wrkDt" : setMDt
             }
@@ -161,7 +188,7 @@
                     $("#searchBtn").click();
                  }
             });
-        });
+        }
 
 
         function fnExcelReport(id, title) {

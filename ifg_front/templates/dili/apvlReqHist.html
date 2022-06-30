@@ -433,6 +433,12 @@
             url = "{% url 'dili_api:apvlReqBfrPop' %}" ;
         } else if (sSelStr == "반차결재" || sSelStr == "연차결재") {
             url = "{% url 'dili_api:apvlReqBfrChkPop' %}" ;
+        /*} else if (sSelStr == "연차결재") {
+            url = "{% url 'dili_api:yryApvlReqPop' %}" ;
+            $('#currYryPopStts').val("modify");
+            modal('yryReqModalDiv');
+            $('#yryReqModal').load(url);
+        */
         } else {
             alert("오류발생, 관리자에게 문의하세요.");
             return false;
