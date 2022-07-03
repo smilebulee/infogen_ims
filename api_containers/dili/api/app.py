@@ -1348,6 +1348,10 @@ class apvlReqHistDetl(Resource): # Mariadb 연결 진행
                       "                 , NVL(DATE_FORMAT(A.APVL_UPD_DT, '%Y-%m-%d'), '') APVL_UPD_DT" \
                       "                 , NVL(A.TH1_APRV_RSN,'') TH1_APRV_RSN " \
                       "                 , NVL(DATE_FORMAT(A.TH1_APRV_DT, '%Y-%m-%d'), '') TH1_APRV_DT" \
+                      "                 , NVL(A.HOLI_TERM1, '') AS HOLI_TERM1 " \
+                      "                 , NVL(A.HOLI_TERM2, '') AS HOLI_TERM2 " \
+                      "                 , NVL(A.PTO_KD_CD, '') AS PTO_KD_CD " \
+                      "                 , NVL(A.HDO_KD_CD, '') AS HDO_KD_CD " \
                       "              FROM TB_APVL_REQ_MGMT_M A " \
                       "   LEFT OUTER JOIN TB_EMP_MGMT B " \
                       "                ON A.TH1_APRV_NM = B.EMP_EMAIL " \
@@ -1356,7 +1360,9 @@ class apvlReqHistDetl(Resource): # Mariadb 연결 진행
                       "   LEFT OUTER JOIN TB_EMP_MGMT D " \
                       "                ON A.EMP_EMAL_ADDR = D.EMP_EMAIL " \
                       "             WHERE A.EMP_EMAL_ADDR = '" + data["email"]     + "'" \
-                      "               AND A.WRK_DT = '"        + data["wrkDt"]     + "'"
+                      "               AND DATE_FORMAT(APVL_REQ_DT, '%Y-%m-%d') = '" + data["apvlReqDt"] + "'" \
+                      "               AND '" + data["wrkDt"] + "' BETWEEN A.HOLI_TERM1 AND A.HOLI_TERM2"
+
                 logging.debug("apvlReqHistDetl SQL문" + sql)
                 cursor.execute(sql)
 
@@ -1816,7 +1822,6 @@ class noticeDelete(Resource):
         }
 
         return jsonify(retJson)
-
 
 class saveYryApvlReq(Resource):  # Mariadb 연결 진행
     def post(self):
@@ -3613,7 +3618,7 @@ api.add_resource(empName,'/empName')                        #이메일로 사용
 api.add_resource(empDept,'/empDept')                        #이메일로 사용자 부서 정보 조회
 api.add_resource(empDeptGm,'/empDeptGm')                      #이메일로 사용자 부서 사업부장(GM) 정보 조회
 api.add_resource(empDeptPr,'/empDeptPr')                      #이메일로 사용자 부서 현장대리인(PR) 정보 조회
-api.add_resource(saveYryApvlReq,'/saveYryApvlReq')          #_
+api.add_resource(saveYryApvlReq,'/saveYryApvlReq')          #연차요청등록
 api.add_resource(weekGridData,'/weekGridData') #api 선언
 api.add_resource(apvlInfo,'/apvlInfo') #api 선언
 api.add_resource(monthGridData,'/monthGridData') #api 선언

@@ -106,105 +106,90 @@
             // 기안일
             $('#sp_yryReqDt').text(strNowDt);
 
-        }
-		else if($('#currYryPopStts').val() == "modify") {
+        } else if($('#currYryPopStts').val() == "modify") {
+		    //arrWrkDt 0 기안자 1 근무요청일시
             var arrWrkDt =$('#currYryPopParamArr').val().split(';');
-            if(arrWrkDt[4] != '01') {
-                $('#apvlYryAcptDiv').addClass('d-block');
-            }
-			else {
-                $('#apvlYryAcptDiv').addClass('d-none');
-            }
 
-            // 결재상태가 승인, 반려상태일 때, 혹은 결재상태가 미승인 + 작성자가 sessionSetting Email 값과 다를 때
-            if(arrWrkDt[4] != '01' || (arrWrkDt[4] == '01' && arrWrkDt[0] != sessionStorage.getItem("email"))) {
-                if(arrWrkDt[4] != '01' && arrWrkDt[0] == sessionStorage.getItem("email")) {
-                    $('#apvlYryAcptDiv').addClass('d-block');
-                    $('#sp_yryReq').html("<b>연차결재요청 수정은 '미승인' 상태에서만 가능합니다.</b>");
-                }
-				else {
-                    $('#sp_yryReq').html("<b>연차결재요청 수정은 본인만 가능합니다.</b>");
-                }
-
-                var strApvlStts = arrWrkDt[4] == '01' ? '미승인' : arrWrkDt[4] == '02' ? '승인' : '반려' ;
-                $('#sp_apvlYryStts').html(strApvlStts);
-                $('#yryAcptRsnTit').html('연차' + strApvlStts + '사유');
-                $('#yryAcptDtTit').html(strApvlStts + '일&nbsp;&nbsp;');
-
-                $('#currYryPopStts').val("detail")
-
-                $('#h5_apvlYryTit').html("<b>연차결재요청 상세</b>");
-                $('#btn_apvlYryReq').text("");
-                $('#btn_apvlYryReq').css('display', 'none');
-                $('#ipt_yryRefSearchNamePop').prop('placeholder', '')
-                //$('#btn_delYryRefSearchNamePop').addClass('d-none');
-                $('#ipt_wrkDt').prop('readOnly', true);
-                $('#ipt_jobStrtTm').prop('readOnly', true);
-                $('#ipt_jobEndTm').prop('readOnly', true);
-                $('#txa_holiRsn').prop('readOnly', true);
-                $('#ipt_yryRefSearchNamePop').prop('readOnly', true);
-
-            }
-			else if(arrWrkDt[4] == '01' && arrWrkDt[0] == sessionStorage.getItem("email")) {
-                $('#apvlYryAcptDiv').addClass('d-none');
-
-                $('#h5_apvlYryTit').html("<b>연차결재요청 수정</b>");
-                $('#btn_apvlYryReq').text("수정");
-                $('#ipt_wrkDt').prop('readOnly', true);
-
-            }
+            $('#h5_apvlYryTit').html("<b>연차결재요청 수정</b>");
+            $('#btn_apvlYryReq').text("수정");
+            $('#apvlYryUpdDtDiv').addClass('d-none');
+            $('#apvlYryAcptDiv' ).addClass('d-none');
 
             // 결재 요청 정보 PK 트랜잭션
             var params = {
                 "email"      : arrWrkDt[0],     // 기안자
-                "wrkDt"      : arrWrkDt[1],     // 근무요청일시
+                "wrkDt"      : arrWrkDt[1],     // 연차시작일
+                "apvlReqDt"  : arrWrkDt[5]      // 근무요청일시
             }
             var url = "{% url 'dili_api:getApvlReqHistDetl' %}";
 
             submissionCallList( params, "GET", url, function(data) {
-                setApvlReqHistDetl2(data);
+                console.log(data);
+                setApvlReqHistDetl(data);
             });
+        }
+
+        /*********************************************************************
+        *   Grid 선택한 행에 따라 상세보기
+        *********************************************************************/
+        function setApvlReqHistDetl(data) {
+            if(data == undefined || data == null || data.length == 0) {
+
+            } else {
+                var reqEmail  = data[0].EMP_EMAIL;     //기안자
+                var reqName   = data[0].EMP_NAME;      //기안명
+                var reqDt     = data[0].APVL_REQ_DT;   //기안일자
+                var ptoKdCd   = data[0].PTO_KD_CD;     //휴가종류
+                var holiTerm1 = data[0].HOLI_TERM1;    //휴가시작일자
+                var holiTerm2 = data[0].HOLI_TERM2;    //휴가종료일자
+                var holiRsn   = data[0].WRK_REQ_RSN;   //휴가요청사유
+                var apvlEmail = data[0].TH1_APRV_NM;   //결재자 email
+                var apvlName  = data[0].TH1_APRV_NAME; //결재자 명
+                var refEmail  = data[0].REF_NM;        //참조자 email
+                var refName   = data[0].REF_NAME;      //참조자 명
+                console.log("ptoKdCd : "+ptoKdCd);
+
+                /* 휴가종류 01 연차 02 반차 - 수정 불가 */
+                if( ptoKdCd == "01" ) {
+                    $('input[name="ptoKdCd"]:input[value="01"]').attr('checked', true);
+                } else if( ptoKdCd == "02" ) {
+                    $('input[name="ptoKdCd"]:input[value="02"]').attr('checked', true);
+                }
+                $('input[name="ptoKdCd"]').attr("disabled", true);
+
+                /* 휴가 기간, */
+                $("#ipt_holiTerm1").val(holiTerm1);
+                $("#ipt_holiTerm2").val(holiTerm2);
+
+                /* 결재자 */
+                $("#ipt_yryApvlLnSearchEmailPop").val(apvlEmail);
+                $("#ipt_yryApvlLnSearchNamePop").val(apvlName);
+
+                /* 참조자 */
+                $("#ipt_yryRefSearchEmailPop").val(refEmail);
+                $("#ipt_yryRefSearchNamePop").val(refName);
+
+                /* 휴가요청사유 */
+                $("#txa_holiRsn").val(holiRsn);
+
+                // 기안자
+                $('#sp_yryReqName').text(reqName);
+                // 기안일
+                $('#sp_yryReqDt').text(reqDt);
+
+                // 휴가일수 계산
+                dateCalcu();
+            }
         }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
-        // 공통 코드 조회 - '결재 구분'
-        //retrieveCmmCd("ptoKdCd", 'PTO_KD_CD');
-
-        // 결재 구분 기본 선택 값 지정 - '야간근무'
-        //$('input[name="APVL_REQ_DIVS_CD"][value="01"]').prop("checked", true)
-        //$("input:radio[name='APVL_REQ_DIVS_CD']:radio[value='01']").prop('checked', true);
-
         // 휴가 일자 시작일, 종료일 값 지정
-        /*
-        var nowDt = new Date();
-        var strNowDt = nowDt.getFullYear() + '-' + fillZero(2, (nowDt.getMonth() + 1) + '') + '-' + fillZero(2, nowDt.getDate() + '');
 
-        $('#ipt_holiTerm1').val(strNowDt);
-        $('#ipt_holiTerm2').val(strNowDt);
-        */
         /*********************************************************************
         *   남은 연차 조회
         *********************************************************************/
         setAnhoMgmt();
-/*
-        var param = {
-            "email" : sessionStorage.getItem("email")
-        }
 
-        $.ajaxCall( param, {
-            'method' : 'GET',
-            'url' : "{% url 'dili_api:getYryUseDays' %}",
-            'dataType' : 'json',
-            'data' : JSON.stringify(param),
-            'async' : false,
-            'callbackFn' : function(data){
-
-            // 리턴
-            useYryYn(data);
-            }
-        });
-*/
         function useYryYn(data) {
             if(data[0].USE_YRY_YN == 'N') {
                 $('#exitSchdModal').click();
@@ -369,7 +354,9 @@
     *   연차 시작일 값 변경 시 휴가 일수 계산
     *********************************************************************/
     $(document).on("change","#ipt_holiTerm1",function(){
-        if ($('#ipt_holiTerm1').val() > $('#ipt_holiTerm2').val()) {
+        if ( $("input[name='ptoKdCd']:checked").val() == '02' ) { /*휴가종류가 반차인 경우, 휴가요청기간을 변경할때 항상 2개 값이 동일하게 동작하도록*/
+            $('#ipt_holiTerm2').val($('#ipt_holiTerm1').val());
+        } else if ($('#ipt_holiTerm1').val() > $('#ipt_holiTerm2').val()) {
             $('#ipt_holiTerm2').val($('#ipt_holiTerm1').val());
         }
         dateCalcu();
@@ -424,19 +411,9 @@
     });
 
     function btnReqEvt2() {
-        n_dialog.confirm('저장하시겠습니까?',function(){
+        var msgText = $('#btn_apvlYryReq').text();
+        n_dialog.confirm(msgText+'하시겠습니까?',function(){
             if(this.key == 'ok'){
-                if(Number($('#txt_rmnAnhoDays').val()) == 0){
-                    alertMsg("남은연차가 없습니다.");
-                    return;
-                }
-                if(Number($('#txt_rmnAnhoDays').val()) < Number(calcWrkDate())){
-                    alertMsg("남은연차일수 보다 등록하실 연차일수가 더 큽니다.");
-                    return;
-                }
-                //var param = [];
-
-                //var tmpParam = {
                 var param = {
                     "email"         : sessionStorage.getItem("email"),              // 로그인한 사용자 아이디
                     "apvlDivs"      : "01",                                         // 01: 선결재, 02: 후결재
@@ -453,42 +430,9 @@
                     "th1AprvStus"   : "01",                                         // 01: 미승인
                     "th1AprvNm"     : $("#ipt_yryApvlLnSearchEmailPop").val(),      // 결재자
                     "refNm"          : $('#ipt_yryRefSearchEmailPop').val(),        // 참조자
-                    //"th2AprvStus"   : "01",
-                    //"th2AprvNm"     : "yblee1987@infogen.co.kr",
                     "holiDays"      : calcWrkDate() + "",
                     "emerCtpl"      : $("#ipt_emerCtpl").val(),
-
                 }
-
-                //param.push(tmpParam);
-/*
-                if($("#ipt_holiDays").val()-1 > 0) {
-                    var date = new Date($("#ipt_holiTerm1").val().substring(0,4), $("#ipt_holiTerm1").val().substring(5,7)-1,$("#ipt_holiTerm1").val().substring(8,10));
-                    for (var i = 0; i < $("#ipt_holiDays").val() - 1; i++) {
-
-                        date.setDate(date.getDate() + 1)
-
-                        var tmpParam = {
-                            "email"         : sessionStorage.getItem("email"),
-                            "apvlDivs"       :"01",                                         // 01: 선결재, 02: 후결재
-                            "apvlReqDivs"   : "03",                                         // 01: 야근, 02:휴일, 03: 연차
-                            "ptoKdCd"       : $('input[name="ptoKdCd"]:checked').val(),     // 01: 연차, 02:반차
-                            "hdoKdCd"       : $('input[name="hdoKdCd"]:checked').val(),     // 01: 오전반차, 02:오후반차
-                            "wrkDt"         : setWeek(date).baseDate,
-                            "wrkTme"        : "000000",
-                            "wrkReqRsn"     : $("#txa_holiRsn").val(),
-                            "th1AprvStus"   : "01",
-                            "th1AprvNm"     : "hykim@infogen.co.kr",
-                            "th2AprvStus"   : "01",
-                            "th2AprvNm"     : "yblee1987@infogen.co.kr",
-                            "holiDays"      : calcWrkDate() + "",
-                            "emerCtpl"      : $("#ipt_emerCtpl").val()
-
-                        }
-                        param.push(tmpParam);
-                    }
-                }
-*/
                 $.ajaxCall( param, {
                      method : 'POST',
                      'url' : '/dili/saveYryApvlReq/post',
@@ -498,17 +442,17 @@
                      'callbackFn' : function(data){
 
                         // 리턴
-                        g_toast.push('저장 되었습니다.');
+                        g_toast.push(msgText+" 되었습니다.");
                         $('#exitYryReqModalBtn').click();
                      }
                 });
             }
         });
+
     }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // 요청 버튼 선택 시, 유효성 검증 및 데이터 저장
-    //$(document).on("click","#btn_apvlYryReq",function() {
     $('#btn_apvlYryReq').click(function() {
         //공란 여부 검증
         if($("input[name='ptoKdCd']:checked").val() == "") {
@@ -564,6 +508,14 @@
             return;
         }
 
+        if(Number($('#txt_rmnAnhoDays').val()) == 0){
+            alertMsg("남은연차가 없습니다.");
+            return;
+        }
+        if(Number($('#txt_rmnAnhoDays').val()) < Number(calcWrkDate())){
+            alertMsg("남은연차일수 보다 등록하실 연차일수가 더 큽니다.");
+            return;
+        }
 
 btnReqEvt2();   //임시 저장 로직 처리
 return;
@@ -689,58 +641,6 @@ return;
     <table>
         <tr>
             <td>
-<!--
-                 <div class="card-body flex-height d-flex">
-                    <div class="align-self-start align-self-center mr-3">휴가기간</div>
-                    <input type="hidden" name="date" id="datepickerData1"/>
-                    <div id="btn_datepicker1" class="align-self-center mr-5" >
-                        <input type="text" class="form-control" id="ipt_holiTerm1" name="ipt_holiTerm" placeholder="" maxlength="24"/>
-                    </div>
-                    ~
-                    <input type="hidden" name="date" id="datepickerData2"/>
-                    <div id="btn_datepicker2" class="align-self-center mr-5" >
-                        <input type="text" class="form-control" id="ipt_holiTerm2" name="ipt_holiTerm" placeholder="" maxlength="24"/>
-                    </div>
-                </div>
-
-                <div class="card-body flex-height d-flex">
-                    <div class="align-self-start align-self-center mr-3">휴가일수</div>
-                    <div class="align-self-center mr-5">
-                        <input type="text" class="form-control" id="ipt_holiDays" name="ipt_holiDays" maxlength="4" readonly/>
-                    </div>
-                </div>
-
-                <div class="card-body flex-height d-flex">
-                    <div class="align-self-start align-self-center mr-5">사유</div>
-                    <div class="align-self-center mr-5">
-                        <textarea id="txa_holiRsn" name="holiRsn" maxlength="500" placeholder="휴가 사유를 입력해주세요."></textarea>
-                    </div>
-                </div>
-
-                <div class="card-body flex-height d-flex">
-                    <div class="align-self-start align-self-center mr-2">비상연락망</div>
-                   <div class="align-self-center mr-5">
-                        <input type="text" class="form-control" id="ipt_emerCtpl" name="ipt_emerCtpl" placeholder="01012345678" maxlength="11"/>
-                    </div>
-                </div>
-
-                 전체연차일수/ 남은연차일수 표기
-                <div class="card-body flex-height d-flex">
-                    <span> 남은 연차 일수 : </span>
-                    <span id="txt_rmnAnhoDays">0</span>
-                    <span> 일 / 총 연차 일수 : </span>
-                    <span id="txt_allAnhoDays">0</span>
-                    <span> 일</span>
-                </div>
-
-                <div class="card-body flex-height d-flex">
-                    <div class="align-self-start align-self-center mr-3"></div>
-                    <div class="align-self-center mr-7">
-                        <button type="button" class="button" id="btn_req" onclick="btnReqEvt2()">요청</button>
-                    </div>
-                </div>
--->
-
                 <div class="accordion mb-4" id="grp_yryApvlReq">
                     <div class="p-0" id="head_yryApvlReq">
                         <!-- Body -->
@@ -932,7 +832,6 @@ return;
                             </div>
                         </div>
 
-                    </div>
                 </div>
             </td>
         </tr>
