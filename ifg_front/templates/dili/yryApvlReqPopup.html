@@ -66,21 +66,19 @@
             // 해당 날짜 스케줄관리 정보 있는지 확인 후 불러옴
             //$("#ipt_wrkDt").change();
 
-
-            // 로그인한 사용자 소속 현장대리인 이름, 이메일 조회 후 값 세팅
+            // 로그인한 사용자 소속 현장대리인 이름, 이메일 조회 후 값 세팅 ( 1, 2차 결재자 세팅 )
             retrieveEmpDeptPrByEmail(sessionStorage.getItem("email"), function(data) {
                 if(data.length > 0) {
-                    $('#ipt_yryApvlLnSearchNamePop').val(data[0].DEPT_PR_NAME);
-                    $("#ipt_yryApvlLnSearchEmailPop").val(data[0].DEPT_PR_EMAIL);
-                    $('#ipt_yryApvlLnSearchNamePop').prop('readOnly', true);
+                    $('#ipt_yry1ApvlLnSearchNamePop').val(data[0].DEPT_PR_NAME);
+                    $("#ipt_yry1ApvlLnSearchEmailPop").val(data[0].DEPT_PR_EMAIL);
+                    $('#ipt_yry1ApvlLnSearchNamePop').prop('readOnly', true);
 
                     // 로그인한 사용자 소속 사업부장 이름, 이메일 조회 후 값 세팅
-
                     retrieveEmpDeptGmByEmail(sessionStorage.getItem("email"), function(data) {
                         if(data.length > 0) {
-                            $('#ipt_yryRefSearchNamePop').val(data[0].DEPT_GM_NAME);
-                            $("#ipt_yryRefSearchEmailPop").val(data[0].DEPT_GM_EMAIL);
-                            $('#ipt_yryRefSearchNamePop').prop('readOnly', true);
+                            $('#ipt_yry2ApvlLnSearchNamePop').val(data[0].DEPT_GM_NAME);
+                            $("#ipt_yry2ApvlLnSearchEmailPop").val(data[0].DEPT_GM_EMAIL);
+                            $('#ipt_yry2ApvlLnSearchNamePop').prop('readOnly', true);
                         } else {
                             alertMsg("소속 부서 사업부장 정보가 존재하지 않습니다. 경영지원실에 문의해주세요.", function() {
                                 $('#exitYryReqModalBtn').click();
@@ -98,10 +96,17 @@
                 }
             });
 
+            // 참조자 1, 2 세팅 (추후 수정대상으로 수정전까지 하드코딩)
+            $('#ipt_yry1RefSearchNamePop').val('김지은');
+            $("#ipt_yry1RefSearchEmailPop").val('jekim');
+
+            $('#ipt_yry2RefSearchNamePop').val('이현주');
+            $("#ipt_yry2RefSearchEmailPop").val('hjulee');
 
             // 기안자
             retrieveEmpNmByEmail(sessionStorage.getItem("email"), function(data) {
                 $('#sp_yryReqName').text(data[0].EMP_NAME);
+                $('#ipt_yryApvlReqEmail').val(sessionStorage.getItem("email"));
             });
             // 기안일
             $('#sp_yryReqDt').text(strNowDt);
@@ -143,10 +148,14 @@
                 var holiTerm1 = data[0].HOLI_TERM1;    //휴가시작일자
                 var holiTerm2 = data[0].HOLI_TERM2;    //휴가종료일자
                 var holiRsn   = data[0].WRK_REQ_RSN;   //휴가요청사유
-                var apvlEmail = data[0].TH1_APRV_NM;   //결재자 email
-                var apvlName  = data[0].TH1_APRV_NAME; //결재자 명
-                var refEmail  = data[0].REF_NM;        //참조자 email
-                var refName   = data[0].REF_NAME;      //참조자 명
+                var apvlEmail = data[0].TH1_APRV_NM;   //1차결재자 email
+                var apvlName  = data[0].TH1_APRV_NAME; //1차결재자 명
+                var apvl2Email= data[0].TH2_APRV_NM;   //2차결재자 email
+                var apvl2Name = data[0].TH2_APRV_NAME; //2차결재자 명
+                var refEmail  = data[0].REF_NM;        //참조자1 email
+                var refName   = data[0].REF_NAME;      //참조자1 명
+                var ref2Email = data[0].REF2_NM;       //참조자2 email
+                var ref2Name  = data[0].REF2_NAME;     //참조자2 명
                 console.log("ptoKdCd : "+ptoKdCd);
 
                 /* 휴가종류 01 연차 02 반차 - 수정 불가 */
@@ -161,13 +170,21 @@
                 $("#ipt_holiTerm1").val(holiTerm1);
                 $("#ipt_holiTerm2").val(holiTerm2);
 
-                /* 결재자 */
-                $("#ipt_yryApvlLnSearchEmailPop").val(apvlEmail);
-                $("#ipt_yryApvlLnSearchNamePop").val(apvlName);
+                /* 1차 결재자 */
+                $("#ipt_yry1ApvlLnSearchEmailPop").val(apvlEmail);
+                $("#ipt_yry1ApvlLnSearchNamePop").val(apvlName);
 
-                /* 참조자 */
-                $("#ipt_yryRefSearchEmailPop").val(refEmail);
-                $("#ipt_yryRefSearchNamePop").val(refName);
+                /* 2차 결재자 */
+                $("#ipt_yry2ApvlLnSearchEmailPop").val(apvl2Email);
+                $("#ipt_yry2ApvlLnSearchNamePop").val(apvl2Name);
+
+                /* 참조자1 */
+                $("#ipt_yry1RefSearchEmailPop").val(refEmail);
+                $("#ipt_yry1RefSearchNamePop").val(refName);
+
+                /* 참조자2 */
+                $("#ipt_yry2RefSearchEmailPop").val(ref2Email);
+                $("#ipt_yry2RefSearchNamePop").val(ref2Name);
 
                 /* 휴가요청사유 */
                 $("#txa_holiRsn").val(holiRsn);
@@ -436,9 +453,12 @@
                     "wrkDt"         : $("#ipt_holiTerm1").val(),                    // 근무일 환산
                     "wrkTme"        : $('input[name="ptoKdCd"]:checked').val() == "01" ? "080000" : "040000",   // 근무시간 환산
                     "wrkReqRsn"     : $("#txa_holiRsn").val().trim(),               // 연차요청사유
-                    "th1AprvStus"   : "01",                                         // 01: 미승인
-                    "th1AprvNm"     : $("#ipt_yryApvlLnSearchEmailPop").val(),      // 결재자
-                    "refNm"          : $('#ipt_yryRefSearchEmailPop').val(),        // 참조자
+                    "th1AprvStus"   : $("#ipt_yryApvlReqEmail").val()==$("#ipt_yry1ApvlLnSearchEmailPop").val()?"02":"01", // 01: 미승인, 기안자와 1차 결재자가 같은경우 승인으로 처리
+                    "th1AprvNm"     : $("#ipt_yry1ApvlLnSearchEmailPop").val(),     // 1차 결재자
+                    "th2AprvStus"   : "01",                                         // 01: 미승인
+                    "th2AprvNm"     : $("#ipt_yry2ApvlLnSearchEmailPop").val(),     // 2차 결재자
+                    "refNm"         : $('#ipt_yry1RefSearchEmailPop').val(),        // 참조자1
+                    "ref2Nm"        : $('#ipt_yry2RefSearchEmailPop').val(),        // 참조자2
                     "holiDays"      : calcWrkDate() + "",
                     "emerCtpl"      : $("#ipt_emerCtpl").val(),
                 }
@@ -510,9 +530,9 @@
         }
         */
 
-        if($("#ipt_yryApvlLnSearchNamePop").val().trim() == "" || $("#ipt_yryApvlLnSearchEmailPop").val().trim() == "") {
+        if($("#ipt_yry1ApvlLnSearchNamePop").val().trim() == "" || $("#ipt_yry1ApvlLnSearchEmailPop").val().trim() == "") {
             alertMsg("결재자를 선택해주세요.", function() {
-                $('#ipt_yryApvlLnSearchNamePop').focus();
+                $('#ipt_yry1ApvlLnSearchNamePop').focus();
             });
             return;
         }
@@ -599,10 +619,10 @@ return;
             var postReqInfo = {
                 'EMP_EMAIL'             : $("#ipt_apvlReqEmail").val(),
                 'EMP_NAME'              : $("#sp_apvlReqName").text(),
-                'TH1_APRV_NM'           : $("#ipt_yryApvlLnSearchEmailPop").val(),
-                'TH1_APRV_NAME'         : $("#ipt_yryApvlLnSearchNamePop").val(),
-                'REF_NM'                : $("#ipt_yryRefSearchEmailPop").val(),
-                'REF_NAME'              : $("#ipt_yryRefSearchNamePop").val(),
+                'TH1_APRV_NM'           : $("#ipt_yry1ApvlLnSearchEmailPop").val(),
+                'TH1_APRV_NAME'         : $("#ipt_yry1ApvlLnSearchNamePop").val(),
+                'REF_NM'                : $("#ipt_yry1RefSearchEmailPop").val(),
+                'REF_NAME'              : $("#ipt_yry1RefSearchNamePop").val(),
                 'APVL_REQ_DT'           : $("#sp_yryReqDt").text(),
                 'HOLI_TERM1'   		    : $("#ipt_holiTerm1").val(),
                 'HOLI_TERM2'           	: $("#ipt_holiTerm2").val(),
@@ -712,34 +732,72 @@ return;
 
                         <!-- 결재선 지정 영역 -->
                         <div class="card-body flex-height d-flex m-0 p-2">
-                            <!-- 결재자 -->
-                            <div class="align-self-center mr-5 " style="font-weight:bold">
-                                <span class="mr-3"><span class="requiredTag mr-1">*</span>결재자</span>
-                            </div>
-
-                            <div class="align-self-center mr-3">
-                                <div class="align-self-center mr-3">
-                                    <input type="text" class="align-self-start align-self-center mr-1 form-control" id="ipt_yryApvlLnSearchNamePop" name="ipt_yryApvlLnSearchNamePop" placeholder="이름을 입력해주세요." maxlength="10" readOnly/>
-                                    <input type="text" class="align-self-start align-self-center mr-1 form-control" id="ipt_yryApvlLnSearchEmailPop" name="ipt_yryApvlLnSearchEmailPop" style="width:235px; display:none;" readOnly/>
-                                </div>
-                            </div>
-
-                        </div>
-
-                        <div class="card-body flex-height d-flex m-0 p-2">
-                            <!-- 결재자 -->
-                            <div class="align-self-center mr-5 " style="font-weight:bold">
-                                <span class="mr-4">참조자&nbsp;</span>
+                            <!-- 1차 결재자 -->
+                            <div class="align-self-center mr-4 " style="font-weight:bold">
+                                <span class="mr-4"><span class="requiredTag mr-1">*</span>1차 결재자</span>
                             </div>
 
                             <div class="align-self-center mr-1">
                                 <div class="align-self-center mr-1">
-                                    <input type="text" class="align-self-start align-self-center mr-1 form-control" id="ipt_yryRefSearchNamePop" name="ipt_yryRefSearchNamePop" placeholder="이름을 입력해주세요." maxlength="10" readOnly/>
-                                    <input type="text" class="align-self-start align-self-center mr-1 form-control" id="ipt_yryRefSearchEmailPop" name="ipt_yryRefSearchEmailPop" style="width:235px; display:none;" readOnly/>
+                                    <input type="text" class="align-self-start align-self-center mr-1 form-control" id="ipt_yry1ApvlLnSearchNamePop" name="ipt_yry1ApvlLnSearchNamePop" placeholder="이름을 입력해주세요." maxlength="10" readOnly/>
+                                    <input type="text" class="align-self-start align-self-center mr-1 form-control" id="ipt_yry1ApvlLnSearchEmailPop" name="ipt_yry1ApvlLnSearchEmailPop" style="width:235px; display:none;" readOnly/>
                                 </div>
                             </div>
                             <div class="align-self-center mr-5">
-                                <button type="button" id="btn_delYryRefSearchNamePop" class="delInptButton" style="display:none;">x</button>
+                                <button type="button" class="delInptButton" style="display:none;">x</button>
+                            </div>
+                        </div>
+
+                        <!-- 결재선 지정 영역 -->
+                        <div class="card-body flex-height d-flex m-0 p-2">
+                            <!-- 2차 결재자 -->
+                            <div class="align-self-center mr-4 " style="font-weight:bold">
+                                <span class="mr-4"><span class="requiredTag mr-1">*</span>2차 결재자</span>
+                            </div>
+
+                            <div class="align-self-center mr-1">
+                                <div class="align-self-center mr-1">
+                                    <input type="text" class="align-self-start align-self-center mr-1 form-control" id="ipt_yry2ApvlLnSearchNamePop" name="ipt_yry2ApvlLnSearchNamePop" placeholder="이름을 입력해주세요." maxlength="10" readOnly/>
+                                    <input type="text" class="align-self-start align-self-center mr-1 form-control" id="ipt_yry2ApvlLnSearchEmailPop" name="ipt_yry2ApvlLnSearchEmailPop" style="width:235px; display:none;" readOnly/>
+                                </div>
+                            </div>
+                            <div class="align-self-center mr-5">
+                                <button type="button" class="delInptButton" style="display:none;">x</button>
+                            </div>
+                        </div>
+
+
+                        <div class="card-body flex-height d-flex m-0 p-2">
+                            <!-- 참조자1 -->
+                            <div class="align-self-center mr-5 " style="font-weight:bold">
+                                <span class="mr-4">참조자1&nbsp;</span>
+                            </div>
+
+                            <div class="align-self-center mr-1">
+                                <div class="align-self-center mr-1">
+                                    <input type="text" class="align-self-start align-self-center mr-1 form-control" id="ipt_yry1RefSearchNamePop" name="ipt_yry1RefSearchNamePop" placeholder="이름을 입력해주세요." maxlength="10" readOnly/>
+                                    <input type="text" class="align-self-start align-self-center mr-1 form-control" id="ipt_yry1RefSearchEmailPop" name="ipt_yry1RefSearchEmailPop" style="width:235px; display:none;" readOnly/>
+                                </div>
+                            </div>
+                            <div class="align-self-center mr-5">
+                                <button type="button" id="btn_del1YryRefSearchNamePop" class="delInptButton" style="display:none;">x</button>
+                            </div>
+                        </div>
+                    
+                        <div class="card-body flex-height d-flex m-0 p-2">
+                            <!-- 참조자2 -->
+                            <div class="align-self-center mr-5 " style="font-weight:bold">
+                                <span class="mr-4">참조자2&nbsp;</span>
+                            </div>
+
+                            <div class="align-self-center mr-1">
+                                <div class="align-self-center mr-1">
+                                    <input type="text" class="align-self-start align-self-center mr-1 form-control" id="ipt_yry2RefSearchNamePop" name="ipt_yry2RefSearchNamePop" placeholder="이름을 입력해주세요." maxlength="10" readOnly/>
+                                    <input type="text" class="align-self-start align-self-center mr-1 form-control" id="ipt_yry2RefSearchEmailPop" name="ipt_yry2RefSearchEmailPop" style="width:235px; display:none;" readOnly/>
+                                </div>
+                            </div>
+                            <div class="align-self-center mr-5">
+                                <button type="button" id="btn_del2YryRefSearchNamePop" class="delInptButton" style="display:none;">x</button>
                             </div>
                         </div>
 

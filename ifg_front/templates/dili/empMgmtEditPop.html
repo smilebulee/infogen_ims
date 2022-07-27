@@ -69,7 +69,7 @@
              'async' : false,
              'callbackFn' : function(data){
                 // 로그
-                console.log("data : ",data);
+                //console.log("data : ",data);
                 // 리턴
                 empInfoSet(data);
              }
@@ -87,6 +87,8 @@
         var get_empAId = data[0].AUTH_ID.split("|");
         var get_empName = data[0].EMP_NAME;
         var get_empDCd = data[0].DEPT_CD;
+        var get_empJobStrtTm = data[0].JOB_STRT_TM;
+        var get_empJobEndTm = data[0].JOB_END_TM;
         exPW = get_empPw;
 
         if(initFlag) {
@@ -122,6 +124,8 @@
         $('#ipt_empId').val(get_empId);
         $('#ipt_empPw').val(get_empPw);
         $('#ipt_empNm').val(get_empName);
+        $('#sbx_jobStrtTm').val(get_empJobStrtTm);
+        $('#sbx_jobEndTm').val(get_empJobEndTm);
 
         /* 성명관련 버튼 초기화 */
         $('#ipt_empNm').attr('readonly', true);
@@ -153,7 +157,7 @@
                  'async' : false,
                  'callbackFn' : function(data){
                     // 로그
-                    console.log("data : ",data);
+                    //console.log("data : ",data);
                     // 리턴
                     isExistNmResult(data);
                  }
@@ -200,6 +204,8 @@
         /*var ipt_empAuthId = $('[name="sbx_empAuthId"] option:selected').val();*/
         var ipt_empNm = $('[name="ipt_empNm"]').val();
         var ipt_empDept = $('[name="sbx_empDept"] option:selected').val();
+        var ipt_jobStrtTm = $('[name="sbx_jobStrtTm"] option:selected').val();
+        var ipt_jobEndTm = $('[name="sbx_jobEndTm"] option:selected').val();
 
         var query = "input[name='AUTH_CD']:checked";
         var selectedEls = document.querySelectorAll(query);
@@ -234,6 +240,11 @@
                 $('#ipt_empNm').focus();
             });
             return false;
+        } else if (ipt_jobStrtTm == null || ipt_jobStrtTm == "00") {
+            alertMsg("근무시간을 입력해 주세요.", function() {
+                $('#sbx_jobStrtTm').focus();
+            });
+            return false;
         } else if (ipt_empDept == "00" || ipt_empDept == null ){
             alertMsg("직원 부서를 선택해 주세요.", function() {
                 $('#ipt_empDept').focus();
@@ -252,6 +263,8 @@
             "ipt_empAuthId" : ipt_empAuthId,
             "ipt_empNm"     : ipt_empNm,
             "ipt_empDept"   : ipt_empDept,
+            "ipt_jobStrtTm" : ipt_jobStrtTm,
+            "ipt_jobEndTm"  : ipt_jobEndTm,
             "sessionId"     : sessionStorage.getItem("email")      //로그인한 사용자 아이디
         }
 
@@ -361,6 +374,16 @@
         }
     }
 
+    /* 업무시작시간 selectBox 변경 이벤트 */
+    function onChangeJobStrtTm(obj) {
+        var iIndex = obj.selectedIndex;
+        //var sVal = obj.options[iIndex].value;
+        //var sText = obj.options[iIndex].text;
+        var oJobEndTm = eval(document.getElementById('sbx_jobEndTm'));
+
+        oJobEndTm.value = oJobEndTm.options[iIndex-1].value;
+    }
+
 </script>
 
 <div style="width :500px;">
@@ -445,6 +468,39 @@
                             </div>
                         </td>
                     </tr>
+                    <!-- 근무시간 -->
+                    <tr>
+                        <td>
+                            <div class="align-self-start align-self-center mr-7"><span class="requiredTag mr-1">*</span><label for="sbx_jobStrtTm">근무시간</label></div>
+                        </td>
+                        <td>
+                            <div class="align-self-center mr-3 pb-2">
+                                <select id="sbx_jobStrtTm" name="sbx_jobStrtTm" class="form-control" onchange="onChangeJobStrtTm(this)">
+                                    <option value="00">선택</option>
+                                    <option value="070000">07시</option>
+                                    <option value="073000">07시 30분</option>
+                                    <option value="080000">08시</option>
+                                    <option value="083000">08시 30분</option>
+                                    <option value="090000">09시</option>
+                                    <option value="093000">09시 30분</option>
+                                    <option value="100000">10시</option>
+                                </select>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="align-self-center mr-9 pb-2">
+                                <select id="sbx_jobEndTm" name="sbx_jobEndTm" class="form-control" readonly>
+                                    <option value="160000">16시</option>
+                                    <option value="163000">16시 30분</option>
+                                    <option value="170000">17시</option>
+                                    <option value="173000">17시 30분</option>
+                                    <option value="180000">18시</option>
+                                    <option value="183000">18시 30분</option>
+                                    <option value="190000">19시</option>
+                                </select>
+                            </div>
+                        </td>
+                    </tr>
                     <!-- 권한 -->
                     <tr>
                         <td>
@@ -462,7 +518,7 @@
                             <div class="align-self-start align-self-center mr-5"><span class="requiredTag mr-1">*</span><label for="sbx_empDept">부서</label></div>
                         </td>
                         <td>
-                            <div class="align-self-center mr-5 pb-2">
+                            <div class="align-self-center mr-3 pb-2">
                                 <select id="sbx_empDept" name="sbx_empDept" class="form-control">
                                     <option value="00">선택</option>
                                 </select>
