@@ -758,6 +758,7 @@ class saveApvlAcpt(Resource): # Mariadb 연결 진행
         th1AprvStus = request.form['th1AprvStus']
         th1AprvRsn = request.form['th1AprvRsn']
         th2AprvStus = request.form['th2AprvStus']
+        authFlag = request.form['authFlag']
 
         #requirements pymysql import 후 커넥트 사용
         #mysql_con = pymysql.connect(host=getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
@@ -767,7 +768,7 @@ class saveApvlAcpt(Resource): # Mariadb 연결 진행
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 #쿼리문 실행
-                if th1AprvStus == "01" and th2AprvStus == "01":
+                if authFlag == "1" or authFlag == "3":
                     #쿼리문 실행
                     sql = " UPDATE TB_APVL_REQ_MGMT_M /*1차승인*/ " \
                           "    SET TH1_APRV_STUS     = '" + th1AprvStus + "'" \
@@ -779,10 +780,10 @@ class saveApvlAcpt(Resource): # Mariadb 연결 진행
                           "    AND JOB_STRT_TM       = '" + jobStrtTm + "' " \
                           "    AND JOB_END_TM        = '" + jobEndTm + "' "
 
-                elif th1AprvStus == "02" and th2AprvStus == "01":
+                elif authFlag == "2":
                     #쿼리문 실행
                     sql = " UPDATE TB_APVL_REQ_MGMT_M /*2차승인*/ " \
-                          "    SET TH2_APRV_STUS     = '" + th1AprvStus + "'" \
+                          "    SET TH2_APRV_STUS     = '" + th2AprvStus + "'" \
                           "      , TH2_APRV_RSN      = '" + th1AprvRsn + "'" \
                           "      , TH2_APRV_DT       = NOW() " \
                           "      , APVL_LAST_APRV_DT = NOW() " \
@@ -849,7 +850,8 @@ class apvlReqHist(Resource): # Mariadb 연결 진행
                       "            ELSE '' END APVL_REQ_NM  " \
                       "     , CASE WHEN A.TH1_APRV_STUS = '01' AND NVL(A.TH2_APRV_STUS, '01') = '01' THEN '미승인'" \
                       "            WHEN A.TH1_APRV_STUS = '02' AND NVL(A.TH2_APRV_STUS, '01') = '01' THEN '1차 승인'" \
-                      "            WHEN A.TH1_APRV_STUS = '02' AND NVL(A.TH2_APRV_STUS, '01') = '02' THEN '2차 승인'" \
+                      "            WHEN A.TH1_APRV_STUS = '01' AND NVL(A.TH2_APRV_STUS, '02') = '02' THEN '2차 승인'" \
+                      "            WHEN A.TH1_APRV_STUS = '02' AND NVL(A.TH2_APRV_STUS, '02') = '02' THEN '2차 승인'" \
                       "            ELSE '반려' END APRV_STUS_NM" \
                       "     , A.TH1_APRV_STUS" \
                       "     , C.EMP_NAME AS REF_NM" \
@@ -863,6 +865,8 @@ class apvlReqHist(Resource): # Mariadb 연결 진행
                       "            THEN IFNULL(A.HOLI_TERM2, '') " \
                       "            ELSE ''" \
                       "        END AS BANCHA" \
+                      "     , NVL(A.TH1_APRV_NM, '') AS TH1_APRV_NM " \
+                      "     , NVL(A.TH2_APRV_NM, '') AS TH2_APRV_NM " \
                       "  FROM TB_APVL_REQ_MGMT_M A, TB_EMP_MGMT B, TB_EMP_MGMT C" \
                       " WHERE A.EMP_EMAL_ADDR = B.EMP_EMAIL" \
                       "   AND A.TH1_APRV_NM = C.EMP_EMAIL " \
@@ -925,7 +929,8 @@ class apvlAcptHist(Resource):  # Mariadb 연결 진행
                           "     , CASE WHEN A.APVL_REQ_DIVS = '01' THEN '야간근무' WHEN A.APVL_REQ_DIVS = '02' THEN '휴일근무' WHEN A.APVL_REQ_DIVS = '03' THEN '연차결재' WHEN A.APVL_REQ_DIVS = '04' THEN '반차결재' ELSE '' END APVL_REQ_NM  " \
                           "     , CASE WHEN A.TH1_APRV_STUS = '01' AND NVL(A.TH2_APRV_STUS, '01') = '01' THEN '미승인'" \
                           "            WHEN A.TH1_APRV_STUS = '02' AND NVL(A.TH2_APRV_STUS, '01') = '01' THEN '1차 승인'" \
-                          "            WHEN A.TH1_APRV_STUS = '02' AND NVL(A.TH2_APRV_STUS, '01') = '02' THEN '2차 승인'" \
+                          "            WHEN A.TH1_APRV_STUS = '01' AND NVL(A.TH2_APRV_STUS, '02') = '02' THEN '2차 승인'" \
+                          "            WHEN A.TH1_APRV_STUS = '02' AND NVL(A.TH2_APRV_STUS, '02') = '02' THEN '2차 승인'" \
                           "            ELSE '반려' END APRV_STUS_NM " \
                           "     , NVL(A.APVL_REQ_DT, '') APVL_REQ_DT " \
                           "     , CONCAT(NVL(A.WRK_REQ_RSN, ''), NVL(A.HOLI_REQ_RSN, ''))  WRK_REQ_RSN " \
@@ -938,6 +943,8 @@ class apvlAcptHist(Resource):  # Mariadb 연결 진행
                           "            THEN IFNULL(A.HOLI_TERM2, '') " \
                           "            ELSE ''" \
                           "        END AS BANCHA" \
+                          "     , NVL(A.TH1_APRV_NM, '') AS TH1_APRV_NM " \
+                          "     , NVL(A.TH2_APRV_NM, '') AS TH2_APRV_NM " \
                           "  FROM TB_APVL_REQ_MGMT_M A, TB_EMP_MGMT B, TB_EMP_MGMT C " \
                           " WHERE A.EMP_EMAL_ADDR = C.EMP_EMAIL  " \
                           "   AND A.TH1_APRV_NM = B.EMP_EMAIL  " \
@@ -957,6 +964,7 @@ class apvlAcptHist(Resource):  # Mariadb 연결 진행
                           "     , CASE WHEN A.APVL_REQ_DIVS = '01' THEN '야간근무' WHEN A.APVL_REQ_DIVS = '02' THEN '휴일근무' WHEN A.APVL_REQ_DIVS = '03' THEN '연차결재' WHEN A.APVL_REQ_DIVS = '04' THEN '반차결재' ELSE '' END APVL_REQ_NM  " \
                           "     , CASE WHEN A.TH1_APRV_STUS = '01' AND NVL(A.TH2_APRV_STUS, '01') = '01' THEN '미승인'" \
                           "            WHEN A.TH1_APRV_STUS = '02' AND NVL(A.TH2_APRV_STUS, '01') = '01' THEN '1차 승인'" \
+                          "            WHEN A.TH1_APRV_STUS = '01' AND NVL(A.TH2_APRV_STUS, '01') = '02' THEN '2차 승인'" \
                           "            WHEN A.TH1_APRV_STUS = '02' AND NVL(A.TH2_APRV_STUS, '01') = '02' THEN '2차 승인'" \
                           "       ELSE '반려' END APRV_STUS_NM " \
                           "     , NVL(A.APVL_REQ_DT, '') APVL_REQ_DT " \
@@ -971,6 +979,8 @@ class apvlAcptHist(Resource):  # Mariadb 연결 진행
                           "            THEN IFNULL(A.HOLI_TERM2, '') " \
                           "            ELSE ''" \
                           "        END AS BANCHA" \
+                          "     , NVL(A.TH1_APRV_NM, '') AS TH1_APRV_NM " \
+                          "     , NVL(A.TH2_APRV_NM, '') AS TH2_APRV_NM " \
                           "  FROM TB_APVL_REQ_MGMT_M A, TB_EMP_MGMT B, TB_EMP_MGMT C " \
                           " WHERE A.EMP_EMAL_ADDR = C.EMP_EMAIL  " \
                           "   AND A.TH1_APRV_NM = B.EMP_EMAIL  " \

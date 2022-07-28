@@ -96,7 +96,7 @@
                 wrkApvlTable += '<td class="pt-3-half">' + data[i].BANCHA  + '</td>';
                 wrkApvlTable += '<td style="display:none">' + wrkDtm               + '</td>';
                 wrkApvlTable += '<td class="pt-3-half">' + data[i].EMP_NAME     +'</td>';
-                wrkApvlTable += '<td class="pt-3-half" style="display: none;">' + data[i].WRK_DT + ";" + data[i].JOB_STRT_TM + ";" + data[i].JOB_END_TM + ";" + data[i].WRK_REQ_RSN + ";" + data[i].EMP_EMAL_ADDR  + ';' + data[i].TH1_APRV_STUS + ';' + data[i].TH2_APRV_STUS + '</td>';
+                wrkApvlTable += '<td class="pt-3-half" style="display: none;">' + data[i].WRK_DT + ";" + data[i].JOB_STRT_TM + ";" + data[i].JOB_END_TM + ";" + data[i].WRK_REQ_RSN + ";" + data[i].EMP_EMAL_ADDR  + ';' + data[i].TH1_APRV_STUS + ';' + data[i].TH2_APRV_STUS + ';' + data[i].TH1_APRV_NM + ';' + data[i].TH2_APRV_NM + '</td>';
                 wrkApvlTable += '</tr>';
             }
         } else {
@@ -139,7 +139,6 @@
 
     }
 
-
     // 연차 요청 상세 값 초기화
     function initApvlAcptDetl() {
         $('#ipt_reqAcptWrkDt').val('')
@@ -151,29 +150,25 @@
         $('#txa_reqAcptRsn').val('')
     }
 
-
     // 승인, 반려 버튼 클릭 시 로직
     function btnReqEvt(thisId) {
         var apvlAcptStus = '';
         var msg = $('#' + thisId).html();
+
+        var sSessionId = sessionStorage.getItem("email"); //세션사용자ID - email
+
+        var sTh1AprvNm   = $('#ipt_reqAcptTh1AprvNm').val();   //1차승인자 - email
+        var sTh2AprvNm   = $('#ipt_reqAcptTh2AprvNm').val();   //2차승인자 - email
+        var sTh1AprvStus = $("#ipt_reqAcptTh1AprvStus").val(); //1차승인상태코드
+        var sTh2AprvStus = $("#ipt_reqAcptTh2AprvStus").val(); //2차승인상태코드
+
+        var authFlag = ""; //승인플래그, 1:1차승인, 2:2차승인, 3:반려
 
         if(thisId == 'btn_acpt') {
             //승인 버튼을 선택할 경우
             apvlAcptStus = '02';
         } else {
             apvlAcptStus = '03';
-        }
-
-        if($("#ipt_reqAcptTh1AprvStus").val() == '') {
-            alertMsg(msg + "하실 결재건을 선택하세요!");
-            return;
-
-        }
-
-        if($("#ipt_reqAcptTh2AprvStus").val() == '') {
-            alertMsg(msg + "하실 결재건을 선택하세요!");
-            return;
-
         }
 
         //결재/승인사유 유효성 검증
@@ -184,28 +179,47 @@
             return;
         }
 
-        //1차승인상태가 빈 값이 아니고, 02 승인상태인 경우
-        if( $("#ipt_reqAcptTh1AprvStus").val() != '' && $("#ipt_reqAcptTh1AprvStus").val() == '02' ){
-            //2차승인상태가 빈 값이 아니고, 01 미승인이 아닌 경우
-            if( $("#ipt_reqAcptTh2AprvStus").val() != '' && $("#ipt_reqAcptTh2AprvStus").val() != '01' ) {
-                alertMsg("2차 결재 상태 '미승인'인 경우에만 " + msg + " 가능합니다!");
+        if(apvlAcptStus == "02"){ //승인 버튼으로 들어온 경우만 체크
+            if(sSessionId == sTh1AprvNm) { //접속사용자와 1차승인자가 같은경우 = 접속자는 1차승인자
+                if(sTh1AprvStus == '') {
+                    alertMsg(msg + "하실 결재건을 선택하세요!");
+                    return;
+                }
+
+                if( sTh1AprvStus == "01" && sTh2AprvStus == "02" ) { // 1차승인자 미승인, 2차승인자 승인   = 존재하면 안되는 경우
+                    alertMsg("2차 승인 완료 상태입니다.");
+                    return;
+                }
+
+                if( sTh1AprvStus == "02" && sTh2AprvStus == "01" ) { // 1차승인자 승인, 2차승인자 미승인   = 존재하면 안되는 경우
+                    alertMsg("1차 승인 완료 상태입니다.");
+                    return;
+                }
+
+                authFlag = "1"; //승인플래그 1, 1차승인
+            } else if(sSessionId == sTh2AprvNm) { //접속사용자와 2차승인자가 같은경우 = 접속자는 2차승인자
+                if(sTh2AprvStus == '') {
+                    alertMsg(msg + "하실 결재건을 선택하세요!");
+                    return;
+                }
+
+                if( sTh1AprvStus == "01" && sTh2AprvStus == "01" ) { // 1차승인자 미승인, 2차승인자 미승인 = 1차승인자 승인대상
+                    alertMsg("1차 승인이 완료되지 않았습니다.");
+                    return;
+                } else if ( sTh1AprvStus == "01" && sTh2AprvStus == "02" ) { // 1차승인자 미승인, 2차승인자 승인 = 이상데이터, 일단 1차승인 미완료 메시지
+                    alertMsg("1차 승인이 완료되지 않았습니다.");
+                    return;
+                } else if ( sTh1AprvStus == "02" && sTh2AprvStus == "02" ) { // 1차승인자 승인,   2차승인자 승인   = 승인완료상태
+                    alertMsg("2차 승인 완료 상태입니다.");
+                    return;
+                }
+                authFlag = "2"; //승인플래그 1, 2차승인
+            } else { //접속사용자는 승인 권한이 없음
+                alertMsg("결재 권한이 없습니다.");
                 return;
             }
-        } else if ( $("#ipt_reqAcptTh1AprvStus").val() != '' && $("#ipt_reqAcptTh1AprvStus").val() != '01' ) {
-            //1차 승인상태가 01 미승인이 아닌 경우
-            alertMsg("1차 결재 상태 '미승인'인 경우에만 " + msg + " 가능합니다!");
-            return;
-        }
-
-        // 1차승인자 미승인, 2차승인자 미승인 = 1차승인자 승인대상
-        // 1차승인자 미승인, 2차승인자 승인   = 존재하면 안되는 경우
-        // 1차승인자 승인,   2차승인자 미승인 = 2차승인자 승인대상
-        // 1차승인자 승인,   2차승인자 승인   = 승인완료상태
-        if( $("#ipt_reqAcptTh1AprvStus").val() == "01" && $("#ipt_reqAcptTh2AprvStus").val() == "01 ) {
-
-        } else if( $("#ipt_reqAcptTh1AprvStus").val() == "01" && $("#ipt_reqAcptTh2AprvStus").val() == "01 ) {
-        } else if( $("#ipt_reqAcptTh1AprvStus").val() == "01" && $("#ipt_reqAcptTh2AprvStus").val() == "01 ) {
-        } else if( $("#ipt_reqAcptTh1AprvStus").val() == "01" && $("#ipt_reqAcptTh2AprvStus").val() == "01 ) {
+        } else {
+            authFlag = "3"; //승인플래그 3 반려
         }
 
         cf_dialog.confirm(msg + '하시겠습니까?', function(){
@@ -221,7 +235,8 @@
                     "th1AprvStus"   : apvlAcptStus,                         //1차승인상태 01: 미승인, 02: 승인, 03: 반려
                     "th1AprvRsn"    : $("#txa_reqAcptRsnAcpt").val(),       //연차승인사유
                     //"th1AprvNm"     : sessionStorage.getItem("email"),    //결재자 : 로그인한 사용자 아이디
-                    "th2AprvStus"   : $("#ipt_reqAcptTh2AprvStus").val(),   //2차승인상태 01: 미승인, 02: 승인, 03: 반려
+                    "th2AprvStus"   : apvlAcptStus,                         //2차승인상태 01: 미승인, 02: 승인, 03: 반려
+                    "authFlag"      : authFlag,                             //승인플래그, 1:1차승인, 2:2차승인, 3:반려 update SQL 구분용
                 }
 
                 //param["th1AprvStus"] = thisId == 'btn_acpt' ? '02' : '03';
@@ -267,6 +282,9 @@
 
         $("#ipt_reqAcptTh1AprvStus").val(arrWrkDt[5]);
         $("#ipt_reqAcptTh2AprvStus").val(arrWrkDt[6]);
+
+        $("#ipt_reqAcptTh1AprvNm").val(arrWrkDt[7]);
+        $("#ipt_reqAcptTh2AprvNm").val(arrWrkDt[8]);
 
         /* 임시주석 윤상은 disabled 상태가 눈에 안띔 => 알림창으로 처리 변경
         if(arrWrkDt[5] != '01') {
@@ -400,6 +418,8 @@
                                         <input type="hidden" id="ipt_reqAcptEmpEmalAddr" name="ipt_reqAcptEmpEmalAddr" />
                                         <input type="hidden" id="ipt_reqAcptTh1AprvStus" name="ipt_reqAcptTh1AprvStus" />
                                         <input type="hidden" id="ipt_reqAcptTh2AprvStus" name="ipt_reqAcptTh2AprvStus" />
+                                        <input type="hidden" id="ipt_reqAcptTh1AprvNm"   name="ipt_reqAcptTh1AprvNm" />
+                                        <input type="hidden" id="ipt_reqAcptTh2AprvNm"   name="ipt_reqAcptTh2AprvNm" />
 
                                         <div class="flex-height d-flex m-0 p-2">
                                             <div class="align-self-start align-self-center mr-3" style="font-weight:bold">연차요청사유&nbsp;&nbsp;&nbsp;&nbsp;</div>

@@ -46,7 +46,7 @@
             *********************************************************************/
             $('#btn_weekGridDtDfr').click(function(){
 
-                console.log("weekGridDtDfr Btn Click Event");
+                //console.log("weekGridDtDfr Btn Click Event");
 
                 var dfrWeekEndYy = $('#txt_weekEndYy').text(); //현재 종료 년도
                 var dfrWeekEndMm = $('#txt_weekEndMm').text()-1; //현재 종료 월
@@ -92,7 +92,7 @@
             *********************************************************************/
             $('#btn_weekGridDtNxt').click(function(){
 
-                console.log("weekGridDtNxt Btn Click Event");
+                //console.log("weekGridDtNxt Btn Click Event");
 
                 var nxtWeekEndYy = $('#txt_weekEndYy').text(); //현재 종료 년도
                 var nxtWeekEndMm = $('#txt_weekEndMm').text()-1; //현재 종료 월
@@ -137,7 +137,7 @@
             *********************************************************************/
             $('#btn_mmGridDtDfr').click(function(){
 
-                console.log("mmGridDtDfr Btn Click Event");
+                //console.log("mmGridDtDfr Btn Click Event");
 
                 var txt_mmYyDfr = $('#txt_mmYy').text();
                 var txt_mmMmDfr = $('#txt_mmMm').text()-2;
@@ -168,7 +168,7 @@
             *********************************************************************/
             $('#btn_mmGridDtNxt').click(function(){
 
-                console.log("mmGridDtNxt Btn Click Event");
+                //console.log("mmGridDtNxt Btn Click Event");
 
                 var txt_mmYyDfr = $('#txt_mmYy').text();
                 var txt_mmMmDfr = $('#txt_mmMm').text();
@@ -200,7 +200,7 @@
             *********************************************************************/
             $('#btn_showGrd').click(function(){
 
-                console.log("Grid Btn Click Event");
+                //console.log("Grid Btn Click Event");
                 document.getElementById("btn_showGrd").style.backgroundColor = "lightgrey";
                 document.getElementById("btn_showCal").style.backgroundColor = "";
                 $('#grp_grid').show('');
@@ -215,7 +215,7 @@
             *********************************************************************/
             $('#btn_showCal').click(function(){
 
-                console.log("Calendar Btn Click Event");
+                //console.log("Calendar Btn Click Event");
                 document.getElementById("btn_showCal").style.backgroundColor = "lightgrey";
                 document.getElementById("btn_showGrd").style.backgroundColor = "";
                 $('#grp_grid').hide();
@@ -236,7 +236,7 @@
             *********************************************************************/
             $('#btn_showWeek').click(function(){
 
-                console.log("Week Btn Click Event");
+                //console.log("Week Btn Click Event");
                 document.getElementById("btn_showWeek").style.backgroundColor = "#81DAF5";
                 document.getElementById("btn_showWeek").style.color = "white";
                 document.getElementById("btn_showMonth").style.backgroundColor = "white";
@@ -275,7 +275,7 @@
             *********************************************************************/
             $('#btn_showMonth').click(function(){
 
-                console.log("Month Btn Click Event");
+                //console.log("Month Btn Click Event");
                 document.getElementById("btn_showMonth").style.backgroundColor = "#81DAF5";
                 document.getElementById("btn_showMonth").style.color = "white";
                 document.getElementById("btn_showWeek").style.backgroundColor = "white";
@@ -617,10 +617,10 @@
 
                 tdDate = weekGridStrtDate.getDate();
 
-                console.log("tdDate : "+tdDate);
+                //console.log("tdDate : "+tdDate);
                 var dd = new Date(weekGridStrtYy, weekGridStrtMm, tdDate);
                 var day = dd.getDay();
-                console.log("crteWeekGrid day = "+day);
+                //console.log("crteWeekGrid day = "+day);
 
                 var sExtStr = ""; //연장근무 / 주휴근무 문자열 지정
                 if(day == "0" || day == "6"){
@@ -630,7 +630,7 @@
                 }
 
                 tempSetWeek = dateConverting1(setWeek(weekGridStrtDate).baseDate);
-                console.log("ㅋㅋㅋ weekGridStrtDate : "+weekGridStrtDate);
+                //console.log("ㅋㅋㅋ weekGridStrtDate : "+weekGridStrtDate);
 
                 var jobStrtTm = "-";
                 var jobEndTm = "-";
@@ -704,7 +704,7 @@
                             if(schdData[j].TH1_APRV_STUS == "03"){
                                 apvlStus = "반려"
                             }
-                            console.log(schdData[j]);
+                            //console.log(schdData[j]);
                             aprvStus = schdData[j].APRV_STUS;
 
                             restTm = schdData[j].REST_TM;
@@ -1082,8 +1082,8 @@
         *********************************************************************/
        function getWrkTimeByIml(email, dt) {
 
-            console.log(' Debug [Email] : '+email );
-            console.log(' Debug [dt] : '+dt );
+            //console.log(' Debug [Email] : '+email );
+            //console.log(' Debug [dt] : '+dt );
 
             //var baseEndDate = $('#baseEndDate').text();
 
@@ -1192,7 +1192,7 @@
                 };
 
 
-                console.log("asdsad"+schedule.end.getFullYear()+"-"+(schedule.end.getMonth()+1)+"-"+schedule.end.getDate());
+                //console.log("asdsad"+schedule.end.getFullYear()+"-"+(schedule.end.getMonth()+1)+"-"+schedule.end.getDate());
                 var tmp = schedule.end.getFullYear()+"/"+(schedule.end.getMonth()+1)+"/"+schedule.end.getDate();
 
                 var tmpDtbase = setWeek(tmp).baseDate;
