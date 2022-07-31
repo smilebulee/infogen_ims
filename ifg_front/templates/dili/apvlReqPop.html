@@ -1,245 +1,719 @@
 <script type="text/javascript">
-    // 후결재 판단 변수
-    currReqMthd = $('#currReqMthd').val() || '';
-    currDt = $('#pop_dt').val() || '';
+    $(document).ready(function() {
+        /* 사용자 권한 셋팅 */
+        checkEmpAuthsByEmail(sessionStorage.getItem("email"), ["ADMIN", "GM", "USER"]);
 
-    function checkApvlReqMthdCd(currReqMthd) {
-            $("input:radio[name='APVL_REQ_MTHD_CD']:radio[value='" + currReqMthd + "']").prop('checked', true);
-            $("input[name='APVL_REQ_MTHD_CD']:not(:checked)").prop('disabled', 'disabled');
-            $("input[name='APVL_REQ_MTHD_CD']:checked").prop('disabled', false);
-    }
+        //TO DO : h5_apvlReqBfrTit 등록/수정/상세 제목 변경
+        //TO DO : btn_apvlBfrReq 저장/수정 버튼 변경
+        if ($('#currReqPopStts').val() == "register") {
+            $('#h5_apvlReqBfrTit').html("<b>근무결재요청 등록</b>");
+            $('#btn_apvlBfrReq').text("저장");
+            $('#ipt_wrkDt').prop('readonly', false);
+            $('#apvlReqUpdDtDiv').addClass('d-none');
+            $('#apvlReqAcptDiv' ).addClass('d-none');
 
-    function retrieveApvlReqMthdCd() {
-        // 결재 방법에 따른 화면 분기
-        if ( currReqMthd == '01' ) {
-            // 선결재
-            $('#ipt_wrkDt').prop('readOnly', false);
-            checkApvlReqMthdCd(currReqMthd);
-            $("#grid-parent").css('display', 'none');
-        } else {
-            // 후결재
-            $('#ipt_wrkDt').prop('readOnly', true);
-            checkApvlReqMthdCd(currReqMthd);
-            $("#grid-parent").css('display', 'none');
+            // 후결재의 경우 스케줄 상세 팝업의 날짜, 출근, 퇴근 시간 세팅, 수정 불가 처리
+            if ($('#currReqMthd').val() == "02") {
 
+            }
+            var nowDt = new Date();
+            var strNowDt = nowDt.getFullYear() + '-' + fillZero(2, (nowDt.getMonth() + 1) + '') + '-' + fillZero(2, nowDt.getDate() + '');
+            var strNowTm = fillZero(2, nowDt.getHours()) + ':' + fillZero(2, nowDt.getMinutes());
+
+            // 기본 선택 날짜 접속일, 접속시간으로 설정
+            $("#ipt_wrkDt").val(strNowDt);
+            $("#ipt_jobStrtTm1").val(strNowTm);
+            $("#ipt_jobEndTm1").val(strNowTm);
+
+            // 해당 날짜 스케줄관리 정보 있는지 확인 후 불러옴
+            $("#ipt_wrkDt").change();
+
+
+            // 로그인한 사용자 소속 현장대리인 이름, 이메일 조회 후 값 세팅
+            retrieveEmpDeptPrByEmail(sessionStorage.getItem("email"), function(data) {
+                if(data.length > 0) {
+                    $('#ipt_apvl1LnSearchNamePop').val(data[0].DEPT_PR_NAME);
+                    $("#ipt_apvl1LnSearchEmailPop").val(data[0].DEPT_PR_EMAIL);
+                    $('#ipt_apvl1LnSearchNamePop').prop('readonly', true);
+
+                    // 로그인한 사용자 소속 사업부장 이름, 이메일 조회 후 값 세팅
+                    retrieveEmpDeptGmByEmail(sessionStorage.getItem("email"), function(data) {
+                        if(data.length > 0) {
+                            $('#ipt_apvl2LnSearchNamePop').val(data[0].DEPT_GM_NAME);
+                            $("#ipt_apvl2LnSearchEmailPop").val(data[0].DEPT_GM_EMAIL);
+                            $('#ipt_apvl2LnSearchNamePop').prop('readonly', true);
+                        } else {
+                            alertMsg("소속 부서 사업부장 정보가 존재하지 않습니다. 경영지원실에 문의해주세요.", function() {
+                                $('#exitApvlReqModalBtn').click();
+                            });
+                            return;
+                        }
+                    });
+                }
+				else {
+                    alertMsg("소속 부서 현장대리인 정보가 존재하지 않습니다. 경영지원실에 문의해주세요.", function() {
+                        $('#exitApvlReqModalBtn').click();
+                    });
+                    return;
+                }
+            });
+
+            // 참조자 1, 2 세팅 (추후 수정대상으로 수정전까지 하드코딩)
+            $('#ipt_ref1SearchNamePop').val('김지은');
+            $("#ipt_ref1SearchEmailPop").val('jekim');
+
+            $('#ipt_ref2SearchNamePop').val('이현주');
+            $("#ipt_ref2SearchEmailPop").val('hjulee');
+
+            // 기안자
+            retrieveEmpNmByEmail(sessionStorage.getItem("email"), function(data) {
+                $('#sp_apvlReqName').text(data[0].EMP_NAME);
+            });
+            // 기안일
+            $('#sp_reqDt').text(strNowDt);
         }
-    }
+		else if($('#currReqPopStts').val() == "modify") {
+            var arrWrkDt =$('#currReqPopParamArr').val().split(';');
+            if(arrWrkDt[4] != '01') {
+                $('#apvlReqAcptDiv').addClass('d-block');
+            }
+			else {
+                $('#apvlReqAcptDiv').addClass('d-none');
+            }
 
+            // 결재상태가 승인, 반려상태일 때, 혹은 결재상태가 미승인 + 작성자가 sessionSetting Email 값과 다를 때
+            if(arrWrkDt[4] != '01' || (arrWrkDt[4] == '01' && arrWrkDt[0] != sessionStorage.getItem("email"))) {
+                if(arrWrkDt[4] != '01' && arrWrkDt[0] == sessionStorage.getItem("email")) {
+                    $('#apvlReqAcptDiv').addClass('d-block');
+                    $('#sp_apvlReqBfr').html("<b>근무결재요청 수정은 '미승인' 상태에서만 가능합니다.</b>");
+                }
+				else {
+                    $('#sp_apvlReqBfr').html("<b>근무결재요청 수정은 본인만 가능합니다.</b>");
+                }
 
-    var empIptNm;
-    var empIptEmail;
+                var strApvlStts = arrWrkDt[4] == '01' ? '미승인' : arrWrkDt[4] == '02' ? '승인' : '반려' ;
+                $('#sp_apvlStts').html(strApvlStts);
+                $('#reqAcptRsnTit').html('근무' + strApvlStts + '사유');
+                $('#acptDtTit').html(strApvlStts + '일&nbsp;&nbsp;');
 
-    $(document).ready(function(){
-        // 공통 코드 조회 - '결재 유형'
-        retrieveCmmCd("rb_apvlReqDivsCd", 'APVL_DIVS_CD');
+                $('#currReqPopStts').val("detail")
 
-        // 공통 코드 조회 - '결재 구분'
-        // retrieveCmmCd("rb_apvlReqMthdCd", 'APVL_REQ_MTHD_CD', 'retrieveApvlReqMthdCd');
+                $('#h5_apvlReqBfrTit').html("<b>근무결재요청 상세</b>");
+                $('#btn_apvlBfrReq').text("");
+                $('#btn_apvlBfrReq').css('display', 'none');
+                $('#ipt_ref1SearchNamePop').prop('placeholder', '')
+                $('#btn_del1RefSearchNamePop').addClass('d-none');
+                $('#btn_del2RefSearchNamePop').addClass('d-none');
+                $('#ipt_wrkDt').prop('readonly', true);
+                $('#ipt_jobStrtTm1').prop('readonly', true);
+                $('#ipt_jobEndTm1').prop('readonly', true);
+                $('#txa_reqBfrRsn').prop('readonly', true);
+                $('#ipt_ref1SearchNamePop').prop('readonly', true);
 
-        //결재 방법
-        if(currReqMthd == null || currReqMthd == '') {
-            // 기본 결재 방법 = 선결재
-            currReqMthd = '01';
+            }
+			else if(arrWrkDt[4] == '01' && arrWrkDt[0] == sessionStorage.getItem("email")) {
+                $('#apvlReqAcptDiv').addClass('d-none');
+
+                $('#h5_apvlReqBfrTit').html("<b>근무결재요청 수정</b>");
+                $('#btn_apvlBfrReq').text("수정");
+                $('#ipt_wrkDt').prop('readonly', true);
+
+            }
+            console.log(arrWrkDt);
+            // 결재 요청 정보 PK 트랜잭션
+            var params = {
+                "email"      : arrWrkDt[0],     // 기안자
+                "wrkDt"      : arrWrkDt[1],     // 근무요청일시
+                "apvlReqDt"  : arrWrkDt[5],     // 기안일시
+            }
+            var url = "{% url 'dili_api:getApvlWrkReqHistDetl' %}";
+
+            submissionCallList( params, "GET", url, function(data) {
+                setApvlReqHistDetl2(data);
+            });
         }
 
+        /*********************************************************************
+        *   Grid 선택한 행에 따라 상세보기
+        *********************************************************************/
+        function setApvlReqHistDetl2(data) {
+            if(data == undefined || data == null || data.length == 0) {
+                // 결재 상세 input 값 초기화
+                g_toast.push('서버 에러로 팝업창을 닫습니다. 다시 선택해주십시오.');
+                $('#exitApvlReqModalBtn').click();
+            } else {
+                // 결재 상세 input 값 초기화
+                $("#ipt_wrkDt").val(data[0].WRK_DT);
+                $("#ipt_jobStrtTm1").val(data[0].JOB_STRT_TM);
+                $("#ipt_jobEndTm1").val(data[0].JOB_END_TM);
+                $("#txa_reqBfrRsn").val(data[0].WRK_REQ_RSN);
+                $("#ipt_apvl1LnSearchNamePop").val(data[0].TH1_APRV_NAME);
+                $("#ipt_apvl1LnSearchEmailPop").val(data[0].TH1_APRV_NM);
+                $("#ipt_apvl2LnSearchNamePop").val(data[0].TH2_APRV_NAME);
+                $("#ipt_apvl2LnSearchEmailPop").val(data[0].TH2_APRV_NM);
+                $("#ipt_ref1SearchNamePop").val(data[0].REF_NAME);
+                $("#ipt_ref1SearchEmailPop").val(data[0].REF_NM);
+                $("#ipt_ref2SearchNamePop").val(data[0].REF_NAME);
+                $("#ipt_ref2SearchEmailPop").val(data[0].REF_NM);
+                $("#sp_apvlReqName").text(data[0].EMP_NAME);
+                $("#ipt_apvlReqEmail").val(data[0].EMP_EMAIL);
+                $("#sp_reqDt").text(data[0].APVL_REQ_DT);
+                data[0].APVL_UPD_DT = data[0].APVL_UPD_DT == '' ? '-' : data[0].APVL_UPD_DT;
+                data[0].TH1_APRV_RSN = data[0].TH1_APRV_RSN == '' ? '' : data[0].TH1_APRV_RSN;
+                data[0].TH1_APRV_DT = data[0].TH1_APRV_DT == '' ? '-' : data[0].TH1_APRV_DT;
+                $("#sp_updDt").text(data[0].APVL_UPD_DT);
+                $("#txa_reqAcptRsnR").val(data[0].TH1_APRV_RSN);
+                $("#sp_acptDt").text(data[0].TH1_APRV_DT);
+                $('#currReqPopInfoArr').val(JSON.stringify(data[0]));
+            }
+        }
 
-        // '결재 구분' radio 값 선택 불가 처리 - 로직으로 선택 기간이 현재 날짜보다 이후인 경우 선결재, 이전인 경우 후결재 처리
-        $("input[name='APVL_REQ_MTHD_CD']:not(:checked)").prop('disabled', 'disabled');
-
-        // 공통 코드 조회 - '결재선 구분'
-        retrieveCmmCd("sbx_apvlLnDivsCd", 'APVL_LN_DIVS_CD');
-
-        // 결재 구분 기본 선택 값 지정 - '야간근무'
-        //$("input:radio[name='APVL_DIVS_CD']:radio[value='01']").prop('checked', true);
-        $('#apvlReqDiv').load("{% url 'dili_api:wrkApvlReq' %}");
-
-        //////////////////////테스트 중
-        //세팅할 empName, empEmail 지정
-        //var empIptNm;
-        //var empIptEmail;
 
         // 결재자 검색 - 직원조회 모달 오픈
-        $("#ipt_apvlLnSearchNamePop").click(function(){
-            empIptNm = 'ipt_apvlLnSearchNamePop';
-            empIptEmail = 'ipt_apvlLnSearchEmailPop';
+        /* 결재자 - 시스템상 자동 세팅으로 조회 불가 처리
+        $("#ipt_apvl1LnSearchNamePop").click(function() {
+            //자식창에서 여는 결재자 조회 팝업임을 표시
+            $('#apvlReqIptFlagHidden').text("apvlLnReqBfrPop");
+
             openEmpMgmtPop();
         });
+        */
 
         // 참조자 검색 - 직원조회 모달 오픈
-        $("#ipt_apvlLnRfSearchNamePop").click(function(){
-            empIptNm = 'ipt_apvlLnRfSearchNamePop';
-            empIptEmail = 'ipt_apvlLnRfSearchEmailPop';
-            openEmpMgmtPop();
-        });
+        /* 참조자 - 시스템상 자동 세팅으로 조회 불가 처리
+        if($('#currReqPopStts').val() == "register" || $('#currReqPopStts').val() == "modify") {
+            $("#ipt_ref1SearchNamePop").click(function() {
+                //자식창에서 여는 참조자 조회 팝업임을 표시
+                $('#apvlReqIptFlagHidden').text("refReqBfrPop");
 
-        // 직원조회 모달 닫기 - 후처리
-        $("#ipt_apvlSearchNamePop").change(function(){
-            $('#' + empIptNm).val($('#ipt_apvlSearchNamePop').val());
-            $('#' + empIptEmail).val($('#ipt_apvlSearchEmailPop').val());
-            empIptNm = '';
-            empIptEmail = '';
-        });
-
+                openEmpMgmtPop();
+            });
+        }
+        */
 
         // 직원 조회 모달 팝업 오픈
         function openEmpMgmtPop(ipt_id) {
-            // 전달할 직원명 param 세팅
-            $('#ipt_searchNamePop').val($('#' + ipt_id).val());
             // 팝업 오픈
             var url = "{% url 'dili_api:empMgmtPop' %}" ;
-
             modal('empModalDiv');
-
             $('#empModal').load(url);
-
-            $('#empModalDiv').css("width", "40%");
-            $('#empModalDiv').css("z-index", 10);
+            $('#empModalDiv').css("z-index", 15);
         }
 
+        // 성명 삭제 버튼 클릭 이벤트
+        // 참조자 - 시스템상 자동 세팅으로 삭제 불가 처리
+         $('#btn_del1RefSearchNamePop').css('display', 'none');
+         $('#btn_del2RefSearchNamePop').css('display', 'none');
+        /*
+        $('#btn_del1RefSearchNamePop').click(function() {
+            $('#ipt_ref1SearchNamePop').val('');
+            $('#ipt_ref1SearchEmailPop').val('');
+        });
+        */
+    });
+
+    // 근무일자 변경 시 근무 시간 값 세팅 처리
+    $(document).off("change", "#ipt_wrkDt");
+    $(document).on( "change", "#ipt_wrkDt", function() {
+
+        //동일 일자 스케줄 등록 전 유효성 검증
+        var param = {
+            "email"         : sessionStorage.getItem("email"),      //로그인한 사용자 아이디
+            "wrkDt"         : $("#ipt_wrkDt").val(),                //근무일자
+        }
+        //console.log("###########param::", param);
+
+        var url = "{% url 'dili_api:getDuplWrkCnt' %}";
+        submissionCallList( param, 'GET', url, function(data) {
+            var nowDt       = new Date();
+            var strNowTm    = fillZero(2, nowDt.getHours()) + ':' + fillZero(2, nowDt.getMinutes());
+            if(data.length > 0 && data[0].WRK_CNT > 0) {
+                //동일 날짜에 결재요청건이 있는 경우
+                var msg = '일자 : ' + param.wrkDt + '\n근무 내역을 불러옵니다.';
+                // 후결재로 상태 변경
+                $("#currApvlDivsStts").val("02");
+                cf_dialog.confirm(msg, function() {
+                    if(this.key == 'ok') {
+                        url = "{% url 'dili_api:getWrkTm' %}";
+                        submissionCallList( param, 'GET', url, function(data) {
+
+                            $("#ipt_jobStrtTm1").val(data[0].NGHT_WRK_STRT_TM);
+                            $('#ipt_jobStrtTm1').attr('disabled', true);
+                            $("#ipt_jobEndTm1").val(data[0].JOB_END_TM);
+                        });
+                    }
+                });
+            }
+            else {
+                // 선결재로 상태 변경
+                $("#currApvlDivsStts").val("01");
+                //현재 접속시간으로 설정
+                $("#ipt_jobStrtTm1").val(strNowTm);
+                $('#ipt_jobStrtTm1').attr('disabled', false);
+                $("#ipt_jobEndTm1").val(strNowTm);
+            }
+        });
 
     });
 
 
-    $(document).on("change","input:radio[name='APVL_DIVS_CD']",function(){
-        var url = "";
-        if($("input[name='APVL_DIVS_CD']:checked").val() == '01') {
-            //야간근무
-            url = "{% url 'dili_api:wrkApvlReq' %}" ;
-        } else if($("input[name='APVL_DIVS_CD']:checked").val() == '02') {
-            //휴일근무
-            url = "{% url 'dili_api:wrkApvlReq' %}" ;
-        } else if($("input[name='APVL_DIVS_CD']:checked").val() == '03') {
-            //연차
-            url = "{% url 'dili_api:yryApvlReq' %}" ;
+    // 요청 버튼 선택 시, 유효성 검증 및 데이터 저장
+    //$(document).on("click","#btn_apvlBfrReq",function() {
+    $('#btn_apvlBfrReq').click(function() {
+        //공란 여부 검증
+        //근무일자 유효성 검증
+        if($("#ipt_wrkDt").val() == "") {
+            alertMsg("근무요청일시를 선택해주세요.", function() {
+                $('#ipt_wrkDt').focus();
+            });
+            return;
         }
-        $('#apvlReqDiv').load(url);
+        //근무 시작 시간 유효성 검증
+        if($("#ipt_jobStrtTm1").val() == "") {
+            alertMsg("근무 시작 시간을 선택해주세요.", function() {
+                $('#ipt_jobStrtTm1').focus();
+            });
+            return;
+        }
+        //근무 종료 시간 유효성 검증
+        if($("#ipt_jobEndTm1").val() == "") {
+            alertMsg("근무 종료 시간을 선택해주세요.", function() {
+                $('#ipt_jobEndTm1').focus();
+            });
+            return;
+        }
 
+        //근무요청사유 유효성 검증
+        if($("#txa_reqBfrRsn").val().trim() == "") {
+            alertMsg("근무요청사유를 입력해주세요.", function() {
+                $('#txa_reqBfrRsn').focus();
+            });
+            return;
+        }
+
+        //결재자 유효성 검증
+        if($("#ipt_apvl1LnSearchNamePop").val().trim() == "" || $("#ipt_apvl1LnSearchEmailPop").val().trim() == "") {
+            alertMsg("결재자를 선택해주세요.", function() {
+                $('#ipt_apvl1LnSearchNamePop').focus();
+            });
+            return;
+        }
+
+        //신규 저장 + 선결재 시, 입력받은 데이터 유효성 검증
+        if($('#currReqPopStts').val() == "register") {
+            if($("#currApvlDivsStts").val() == "01") {
+                //근무요청일시
+                var currDt = new Date();
+                var inptDt = new Date($('#ipt_wrkDt').val());
+                var inptStrtDtTm = new Date($('#ipt_wrkDt').val() + " " +  $("#ipt_jobStrtTm1").val());
+                var inptEndDtTm  = new Date($('#ipt_wrkDt').val() + " " +  $("#ipt_jobEndTm1").val());
+                var currDtTm  = new Date(currDt.getFullYear() + "-" + fillZero(2, (currDt.getMonth() + 1)) + "-" + currDt.getDate()
+                                         + " " + currDt.getHours() + ":" + currDt.getMinutes());
+                var strCurrDt = currDt.getFullYear() + "-" + fillZero(2, (currDt.getMonth() + 1)) + "-" + currDt.getDate();
+                var strInptDt = inptDt.getFullYear() + "-" + fillZero(2, (inptDt.getMonth() + 1)) + "-" + inptDt.getDate();
+                if( strCurrDt == strInptDt && currDtTm > inptStrtDtTm) {
+                    alertMsg("근무 시간은 현재 시각 이후로 선택해주세요.", function() {
+                        $('#ipt_jobStrtTm1').val(currDt.getHours() + ":" + currDt.getMinutes()).focus();
+                    });
+                    return;
+                }
+                else {
+                    //현재 날짜가 결재 요청 일자 이후인 경우,
+                    if( strCurrDt > strInptDt ) {
+                        alertMsg("근무 일자는 현재 일자 이후로 선택해주세요.", function() {
+                            $('#ipt_wrkDt').val(currDt.getFullYear() + "-" + fillZero(2, (currDt.getMonth() + 1)) + "-" + (currDt.getDate() + 1)).focus();
+                        });
+                        return;
+                    }
+
+                    //현재 날짜가 결재 요청 일자 이후인 경우,
+                    if( inptStrtDtTm > inptEndDtTm ) {
+                        alertMsg("근무 종료 시간은 근무 시작 시간 이후로 선택해주세요.", function() {
+                            $('#ipt_jobEndTm1').val($('#ipt_jobStrtTm1').val().substring(0, 4) + (parseInt($('#ipt_jobStrtTm1').val().substring(4, 5)) + 1)).focus();
+                        });
+                        return;
+                    }
+
+                }
+            }
+
+            //동일 일자 결재 진행건 유효성 검증
+            var param = {
+                "email"         : sessionStorage.getItem("email"),      //로그인한 사용자 아이디
+                "wrkDt"         : $("#ipt_wrkDt").val(),                //근무일자
+            }
+            //console.log("###########param::", param);
+
+            var url = "{% url 'dili_api:getDuplApvlReqCnt' %}";
+            submissionCallList( param, 'GET', url, function(data) {
+                if(data.length > 0 && data[0].APVL_REQ_CNT > 0) {
+                    //동일 날짜에 결재요청건이 있는 경우
+                    /*var msg = '일자 : ' + param.wrkDt + '\n결재요청건이 ' + data[0].APVL_REQ_CNT + '건 있습니다.\n 결재 요청하시겠습니까?';
+                    cf_dialog.confirm(msg, function() {
+                        if(this.key == 'ok') {
+                            saveApvlReq();
+                        }
+                    });*/
+                    var msg = '일자 : ' + param.wrkDt + '\n결재요청건이 ' + data[0].APVL_REQ_CNT + '건 있습니다! \n결재 수정하십시오.';
+                    alertMsg(msg);
+                    return;
+                }
+				else {
+                    //동일 날짜에 결재요청건이 없는 경우
+                    cf_dialog.confirm('근무결재요청을 ' + $('#btn_apvlBfrReq').text() + '하시겠습니까?', function() {
+                        if(this.key == 'ok') {
+                            saveApvlReq();
+                        }
+                    });
+                }
+            });
+        }
+        else if($('#currReqPopStts').val() == "modify") {
+
+            //JSON.parse($('#currReqPopParamArr').val());
+            var preReqInfo = $('#currReqPopInfoArr').val();
+
+            var postReqInfo = {
+                'EMP_EMAIL'             : $("#ipt_apvlReqEmail").val(),
+                'EMP_NAME'              : $("#sp_apvlReqName").text(),
+                'TH1_APRV_NM'           : $("#ipt_apvl1LnSearchEmailPop").val(),
+                'TH1_APRV_NAME'         : $("#ipt_apvl1LnSearchNamePop").val(),
+                'REF_NM'                : $("#ipt_ref1SearchEmailPop").val(),
+                'REF_NAME'              : $("#ipt_ref1SearchNamePop").val(),
+                'APVL_REQ_DT'           : $("#sp_reqDt").text(),
+                'WRK_DT'                : $("#ipt_wrkDt").val(),
+                'JOB_STRT_TM'   		: $("#ipt_jobStrtTm1").val(),
+                'NGHT_WRK_STRT_TM'   	: $("#ipt_jobStrtTm1").val(),
+                'JOB_END_TM'    		: $("#ipt_jobEndTm1").val(),
+                'WRK_REQ_RSN'   		: $("#txa_reqBfrRsn").val().trim(),
+                'APVL_UPD_DT'   		: $("#sp_updDt").text(),
+                'TH1_APRV_RSN'  		: $("#txa_reqAcptRsn").text(),
+                'TH1_APRV_DT'   		: $("#sp_acptDt").text()
+            }
+            postReqInfo = JSON.stringify(postReqInfo);
+            console.log("preReqInfo::", preReqInfo);
+            console.log("postReqInfo::", postReqInfo);
+
+            if(preReqInfo != postReqInfo) {
+                var nowDt = new Date();
+                var strUpdDt = nowDt.getFullYear() + '-' + fillZero(2, (nowDt.getMonth() + 1) + '') + '-' + fillZero(2, nowDt.getDate() + '');
+                var msg = $('#currReqPopStts').val() == "modify" ? '수정일' : '등록일';
+                cf_dialog.confirm(msg + ' : ' + strUpdDt + '\n근무결재요청을 ' + $('#btn_apvlBfrReq').text() + '하시겠습니까?', function() {
+                    if(this.key == 'ok') {
+                        saveApvlReq();
+                    }
+                });
+            }
+			else {
+                alertMsg('수정사항이 없습니다!');
+                return;
+            }
+        }
     });
+
+    //선결재 저장
+    function saveApvlReq() {
+        var inptWrkDt     = $("#ipt_wrkDt").val();
+        var inptStrtTm    = $("#ipt_jobStrtTm1").val().substring(0,2) + "" + $("#ipt_jobStrtTm1").val().substring(3,5) + "00";
+        var inptEndTm     = $("#ipt_jobEndTm1" ).val().substring(0,2) + "" + $("#ipt_jobEndTm1" ).val().substring(3,5) + "00";
+        var inptWrkReqRsn = $("#txa_reqBfrRsn").val().trim();
+        var wrkTme        = getTimeDiff($("#ipt_wrkDt").val() + ' ' +  $("#ipt_jobStrtTm1").val() + ':00'
+                                      , $("#ipt_wrkDt").val() + ' ' +  $("#ipt_jobEndTm1" ).val() + ':00');
+
+        console.log("inptWrkDt : "+inptWrkDt);
+        var dd = new Date(inptWrkDt);
+        var day = dd.getDay();
+        console.log("day = "+day);
+
+        var apvlReqDivs = "";
+        if(day == "0" || day == "6"){
+            apvlReqDivs = "02";
+        }else{
+            apvlReqDivs = "01";
+        }
+
+        param = {
+            "currReqPopStts" : $("#currReqPopStts").val(),           // 현재 팝업 상태 - 신규 / 수정
+            "email"          : sessionStorage.getItem("email"),      // 로그인한 사용자 아이디
+            "apvlDivs"       : $("#currApvlDivsStts").val(),         // 01: 선결재, 02: 후결재
+            "apvlReqDivs"    : apvlReqDivs,                          // 01: 야간근무, 02: 휴일근무
+            "wrkDt"          : $("#ipt_wrkDt").val(),                // 근무일자
+            "jobStrtTm"      : inptStrtTm,                           // 근무 시작 시간
+            "jobEndTm"       : inptEndTm,                            // 근무 종료 시간
+            "wrkTme"         : wrkTme || '000000',                   // $("#ipt_wrkDt").val().substring(11,13) +""+ $("#ipt_wrkDt").val().substring(14,16) +"" + $("#ipt_wrkDt").val().substring(17,19),
+            "wrkReqRsn"      : inptWrkReqRsn,                        // 근무요청사유
+            "th1AprvStus"    : sessionStorage.getItem("email")==$("#ipt_apvl1LnSearchEmailPop").val()?"02":"01", // 01: 미승인, 기안자와 1차 결재자가 같은경우 승인으로 처리
+            "th1AprvNm"      : $("#ipt_apvl1LnSearchEmailPop").val(),     // 1차 결재자
+            "th2AprvStus"    : "01",                                      // 01: 미승인
+            "th2AprvNm"      : $("#ipt_apvl2LnSearchEmailPop").val(),     // 2차 결재자
+            "refNm"          : $('#ipt_ref1SearchEmailPop').val(),     // 참조자1
+            "ref2Nm"         : $('#ipt_ref2SearchEmailPop').val(),     // 참조자2
+        }
+
+        $.ajaxCall( param, {
+                            method          : 'POST',
+                            'url'           : '/dili/saveApvlReq/post',
+                            'dataType'      : 'json',
+                            'data'          : JSON.stringify(param),
+                            'async'         : false,
+                            'callbackFn'    : function(data) {
+                                g_toast.push('근무결재요청 ' + $('#btn_apvlBfrReq').text() + '이 완료되었습니다.');
+
+                                $('#exitApvlReqModalBtn').click();
+                                $('#apvlHistSearchBtn').click();
+                            }
+        });
+    }
+
 
 </script>
 
+<!-- 선결재 / 후결재 체크용 변수 -->
+<input type="hidden" id="currApvlDivsStts" value="01"></input>
 
-<!--직원조회 모달 영역 -->
-<!--
-<div style="width:100%">
-    <div id="apvlEmpModalDiv" class="modalUi">
-        <div id="apvlEmpModal">
-        </div>
-        <a class="modal_close_btn" id="exitEmpModalBtn">
-            <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-x-circle" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-               <path fill-rule="evenodd" d="
-               M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
-               <path fill-rule="evenodd" d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
-            </svg>
-            <span id="apvlEmpEmailHidden" style="display:none;" ></span>
-            <span id="apvlReqHidden" style="display:none;" >apvlReq</span>
-        </a>
-    </div>
-</div>
--->
-
-<div class="row">
-    <div class="col-sm-12">
+<div style="width :600px;">
         <div class="mb-4" role="alert">
-            <h5>
-                <b>결재 요청</b>
+            <h5 id="h5_apvlReqBfrTit">
+                <b>근무결재요청 등록</b>
             </h5>
+            <div role="alert">
+                <h6 style="text-align: right">
+                    <span id="sp_apvlReqBfr" class="requiredText"><b>* 는 필수 입력 항목입니다.</b></span>
+                </h6>
+            </div>
         </div>
+        <table>
+            <tr>
+                <td>
 
-        <div class="accordion mb-4" id="grp_yryApvlReq">
+        <!--<div class="accordion mb-4" id="grp_apvlReqBfr">
             <div class="card">
-                <!-- Card Title -->
-                <div class="card-header p-0" id="head_yryApvlReq">
+                <div class="card-header p-0" id="head_apvlReqBfr">
                     <h2 class="mb-0">
-                        <button class="btn btn-link btn-block text-left text-dark" type="button" data-toggle="collapse" data-target="#col_yryApvlReq" aria-expanded="true" aria-controls="collapseOne">
+                        <button class="btn btn-link btn-block text-left text-dark" type="button" data-toggle="collapse" data-target="#col_wrkApvlReq" aria-expanded="true" aria-controls="collapseOne">
                             <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-caret-down-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z"/>
                             </svg>
-                            결재 요청
+                            근무결재 요청
                         </button>
                     </h2>
                 </div>
 
-                <!-- Card Body -->
-                <div id="col_yryApvlReq" class="collapse show" aria-labelledby="head_yryApvlReq" data-parent="#grp_yryApvlReq">
-                    <div class="card-body flex-height d-flex mb-4 col-sm-12">
-                        <div class="align-self-center mr-5">
-                            <div class="align-self-start align-self-center mr-3">결재 유형</div>
-                            <div class="align-self-center mr-5">
-                                <input id="rb_apvlReqDivsCd" type="radio" name="APVL_DIVS_CD" value="00" style="display : none;">
-                            </div>
-                        </div>
-                        <div class="align-self-center mr-5">
-                            <div class="align-self-start align-self-center mr-3">결재 구분</div>
-                            <div class="align-self-center mr-5">
-                                <input id="rb_apvlReqMthdCd" type="radio" name="APVL_REQ_MTHD_CD" value="00" style="display : none;">
-                            </div>
-                        </div>
-                    </div>
+                <div id="col_wrkApvlReq" class="collapse show" aria-labelledby="head_wrkApvlReq" data-parent="#grp_wrkApvlReq">
+                    <div id="apvlAcptDiv" class="card-body flex-height d-flex">
+                        <div class="row" style="width :640px;">
+                            <div class="col-sm-12">-->
 
+                                <div class="accordion mb-4" id="grp_wrkApvlReq">
+                                    <div class="p-0" id="head_wrkApvlReq">
+                                        <!-- Body -->
+                                        <!--
+                                        <div class="flex-height d-flex m-0 p-2">
+                                            <div class="align-self-start align-self-center mr-3">결재 유형</div>
+                                            <div class="align-self-center">
+                                                <span class="align-self-start align-self-center">선결재</span>
+                                            </div>
+                                        </div>
+                                        -->
 
-                    <!-- 결재유형 radioButton 선택 값에 따라 변경되는 영역 -->
-                    <div id="apvlReqDiv" class="card-body flex-height d-flex">
-                        <h5>
-                            <b>Div Change</b>
-                        </h5>
-                    </div>
+                                        <div class="flex-height d-flex m-0 p-2">
+                                            <div class="align-self-start align-self-center mr-3" style="font-weight:bold"><span class="requiredTag mr-1">*</span>근무요청일시</div>
+                                            <div class="align-self-center mr-1">
+                                                <div style="float: left;" class="mr-2">
+                                                     <input type="date" class="align-self-start align-self-center mr-1 form-control" id="ipt_wrkDt"   style="width:150px;"    name="ipt_wrkDt"      max="9999-12-31" />
+                                                </div>
+                                                <div style="float: left;">
+                                                   <input type="time" class="align-self-start align-self-center form-control"       id="ipt_jobStrtTm1"  style="width:125px;" name="ipt_jobStrtTm1" />
+                                                </div>
+                                                <div style="float: left;">
+                                                    <span class="align-self-start align-self-center">&nbsp;~&nbsp;</span>
+                                                </div>
+                                                <div style="float: left;">
+                                                    <input type="time" class="align-self-start align-self-center mr-1 form-control"  id="ipt_jobEndTm1"   style="width:125px;"  name="ipt_jobEndTm1" />
+                                                </div>
+                                            </div>
+                                        </div>
 
-                    <!-- 결재선 지정 영역 -->
-                    <div id="apvlLnDiv" class="col-sm-12">
-                        <div class="mb-4" role="alert">
-                            <h6 id="apvlReqTit">
-                                <b>결재선 선택</b>
-                            </h6>
-                        </div>
+                                        <div class="flex-height d-flex m-0 p-2">
+                                            <div class="align-self-start align-self-center mr-3" style="font-weight:bold"><span class="requiredTag mr-1">*</span>근무요청사유</div>
+                                            <div class="align-self-center mr-7">
+                                                <textarea id="txa_reqBfrRsn" class="form-control" name="reqRsn" maxlength="210" style="resize: none; width:440px; height:70px;" placeholder="사유를 입력해주세요.(200자 이하)" onkeyup="chkLength(this, 200)"></textarea>
+                                            </div>
+                                        </div>
 
-                        <div id="col_search" class="collapse show" aria-labelledby="head_search" data-parent="#grp_searchApvlLn">
-                            <div class="card-body flex-height d-flex m-0 p-2">
-                                <!-- 결재순서 -->
-                                <!--<div class="align-self-start align-self-center mr-3">구분</div>-->
-                                <div class="align-self-center mr-3">
-                                    <select id="sbx_apvlLnDivsCd" name="APVL_LN_DIVS_CD" class="form-control">
-                                    </select>
-                                </div>
+                                        <!-- 결재선 지정 영역 -->
+                                        <div class="card-body flex-height d-flex m-0 p-2">
+                                            <!-- 1차 결재자 -->
+                                            <div class="align-self-center mr-4 " style="font-weight:bold">
+                                                <span class="mr-4"><span class="requiredTag mr-1">*</span>1차 결재자</span>
+                                            </div>
 
-                                <!--<div class="align-self-start align-self-center mr-3">성명</div>-->
-                                <div class="align-self-center mr-3">
-                                    <div class="align-self-center mr-3">
-                                        <input type="text" class="form-control" id="ipt_apvlLnSearchNamePop" name="ipt_apvlLnSearchNamePop" placeholder="이름을 입력해주세요." maxlength="10" readonly/>
-                                        <input type="text" class="form-control" id="ipt_apvlLnSearchEmailPop" name="ipt_apvlLnSearchEmailPop" readonly/>
+                                            <div class="align-self-center mr-1">
+                                                <div class="align-self-center mr-1">
+                                                    <input type="text" class="align-self-start align-self-center mr-1 form-control" id="ipt_apvl1LnSearchNamePop" name="ipt_apvl1LnSearchNamePop" placeholder="이름을 입력해주세요." maxlength="10" readonly/>
+                                                    <input type="text" class="align-self-start align-self-center mr-1 form-control" id="ipt_apvl1LnSearchEmailPop" name="ipt_apvl1LnSearchEmailPop" style="width:235px; display:none;" readonly/>
+                                                </div>
+                                            </div>
+
+                                            <div class="align-self-center mr-5">
+                                                <button type="button" class="delInptButton" style="display:none;">x</button>
+                                            </div>
+
+                                        </div>
+
+                                         <!-- 결재선 지정 영역 -->
+                                        <div class="card-body flex-height d-flex m-0 p-2">
+                                            <!-- 2차 결재자 -->
+                                            <div class="align-self-center mr-4 " style="font-weight:bold">
+                                                <span class="mr-4"><span class="requiredTag mr-1">*</span>2차 결재자</span>
+                                            </div>
+
+                                            <div class="align-self-center mr-1">
+                                                <div class="align-self-center mr-1">
+                                                    <input type="text" class="align-self-start align-self-center mr-1 form-control" id="ipt_apvl2LnSearchNamePop" name="ipt_apvl2LnSearchNamePop" placeholder="이름을 입력해주세요." maxlength="10" readonly/>
+                                                    <input type="text" class="align-self-start align-self-center mr-1 form-control" id="ipt_apvl2LnSearchEmailPop" name="ipt_apvl2LnSearchEmailPop" style="width:235px; display:none;" readonly/>
+                                                </div>
+                                            </div>
+
+                                            <div class="align-self-center mr-5">
+                                                <button type="button" class="delInptButton" style="display:none;">x</button>
+                                            </div>
+
+                                        </div>
+
+                                        <div class="card-body flex-height d-flex m-0 p-2">
+                                            <!-- 결재자 -->
+                                            <div class="align-self-center mr-5 " style="font-weight:bold">
+                                                <span class="mr-4">참조자1&nbsp;</span>
+                                            </div>
+
+                                            <div class="align-self-center mr-1">
+                                                <div class="align-self-center mr-1">
+                                                    <input type="text" class="align-self-start align-self-center mr-1 form-control" id="ipt_ref1SearchNamePop" name="ipt_ref1SearchNamePop" placeholder="이름을 입력해주세요." maxlength="10" readonly/>
+                                                    <input type="text" class="align-self-start align-self-center mr-1 form-control" id="ipt_ref1SearchEmailPop" name="ipt_ref1SearchEmailPop" style="width:235px; display:none;" readonly/>
+                                                </div>
+                                            </div>
+                                            <div class="align-self-center mr-5">
+                                                <button type="button" id="btn_del1RefSearchNamePop" class="delInptButton">x</button>
+                                            </div>
+                                        </div>
+
+                                        <div class="card-body flex-height d-flex m-0 p-2">
+                                            <!-- 결재자 -->
+                                            <div class="align-self-center mr-5 " style="font-weight:bold">
+                                                <span class="mr-4">참조자2&nbsp;</span>
+                                            </div>
+
+                                            <div class="align-self-center mr-1">
+                                                <div class="align-self-center mr-1">
+                                                    <input type="text" class="align-self-start align-self-center mr-1 form-control" id="ipt_ref2SearchNamePop" name="ipt_ref2SearchNamePop" placeholder="이름을 입력해주세요." maxlength="10" readonly/>
+                                                    <input type="text" class="align-self-start align-self-center mr-1 form-control" id="ipt_ref2SearchEmailPop" name="ipt_ref2SearchEmailPop" style="width:235px; display:none;" readonly/>
+                                                </div>
+                                            </div>
+                                            <div class="align-self-center mr-5">
+                                                <button type="button" id="btn_del2RefSearchNamePop" class="delInptButton">x</button>
+                                            </div>
+                                        </div>
+
+                                        <div class="card-body flex-height d-flex m-0 p-2">
+                                            <!-- 기안자 -->
+                                            <div class="align-self-center mr-5 " style="font-weight:bold">
+                                                <span class="mr-3">기안자&nbsp;&nbsp;</span>
+                                            </div>
+
+                                            <div class="align-self-center mr-3">
+                                                <div class="align-self-center mr-3">
+                                                    <span id="sp_apvlReqName"></span>
+                                                    <input type="text" class="align-self-start align-self-center mr-1 form-control" id="ipt_apvlReqEmail" 	name="ipt_apvlReqEmail" style="width:235px; display:none;" readonly/>
+                                                    <input type="text" class="align-self-start align-self-center mr-1 form-control" id="ipt_reqEmail" 		name="ipt_reqEmail" style="width:235px; display:none;" readonly/>
+                                                </div>
+                                            </div>
+
+                                        </div>
+
+                                        <div class="card-body flex-height d-flex m-0 p-2">
+                                            <!-- 기안일 -->
+                                            <div class="align-self-center mr-5 " style="font-weight:bold">
+                                                <span class="mr-3">기안일&nbsp;&nbsp;</span>
+                                            </div>
+
+                                            <div class="align-self-center mr-3">
+                                                <div class="align-self-center mr-3">
+                                                    <span id="sp_reqDt"></span>
+                                                </div>
+                                            </div>
+
+                                        </div>
+
+                                        <div id="apvlReqUpdDtDiv">
+                                            <div class="card-body flex-height d-flex m-0 p-2">
+                                                <!-- 수정일 -->
+                                                <div class="align-self-center mr-5 " style="font-weight:bold">
+                                                    <span class="mr-3">수정일&nbsp;&nbsp;</span>
+                                                </div>
+
+                                                <div class="align-self-center mr-3">
+                                                    <div class="align-self-center mr-3">
+                                                        <span id="sp_updDt"></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div id="apvlReqAcptDiv">
+                                            <hr/>
+                                             <div class="card-body flex-height d-flex m-0 p-2">
+                                                <!-- 결재상태 -->
+                                                <div class="align-self-center mr-2 " style="font-weight:bold">
+                                                    <span class="mr-5">결재상태</span>
+                                                </div>
+
+                                                <div class="align-self-center mr-3">
+                                                    <div class="align-self-center mr-3">
+                                                        <span id="sp_apvlStts"></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!-- 승인/반려사유 -->
+                                            <div class="flex-height d-flex m-0 p-2">
+                                                <div id="reqAcptRsnTit" class="align-self-start align-self-center mr-4" style="font-weight:bold">승인/반려사유</div>
+                                                <div class="align-self-center mr-7">
+                                                    <textarea id="txa_reqAcptRsnR" class="form-control" name="txa_reqAcptRsnR" maxlength="210" style="resize: none; width:440px;height:70px;" readonly></textarea>
+                                                </div>
+                                            </div>
+                                            <div class="card-body flex-height d-flex m-0 p-2">
+                                                <!-- 승인/반려일 -->
+                                                <div class="align-self-center mr-5 " style="font-weight:bold">
+                                                    <span id="acptDtTit" class="mr-3">승인/반려일</span>
+                                                </div>
+
+                                                <div class="align-self-center mr-3">
+                                                    <div class="align-self-center mr-3">
+                                                        <span id="sp_acptDt"></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+
+                                        <!-- 결재 요청 버튼 영역 -->
+                                        <div class="flex-height d-flex m-0 p-2">
+                                            <div class="align-self-start align-self-center mr-3"></div>
+                                            <div class="align-self-center mr-7">
+                                                <button class="button" id="btn_apvlBfrReq">저장</button>
+                                            </div>
+                                        </div>
+
                                     </div>
                                 </div>
-
-                            </div>
-
-                            <div class="card-body flex-height d-flex m-0 p-2">
-                                <!-- 참조자 -->
-                                <div class="align-self-center mr-5">
-                                    <span>참조 &nbsp;&nbsp;</span>
-                                </div>
-                                <!--<div class="align-self-start align-self-center mr-3">성명</div>-->
-                                <div class="align-self-center mr-3">
-                                    <div class="align-self-center mr-3">
-                                        <input type="text" class="form-control" id="ipt_apvlLnRfSearchNamePop" name="ipt_apvlLnSearchNamePop" placeholder="이름을 입력해주세요." maxlength="10" readonly/>
-                                        <input type="text" class="form-control" id="ipt_apvlLnRfSearchEmailPop" name="ipt_apvlLnRfSearchEmailPop" readonly/>
-                                    </div>
-                                </div>
-                            </div>
-                            <input type="hidden" class="form-control" id="ipt_searchNamePop" name="ipt_searchNamePop" readonly/>
-                            <!--<input type="hidden" class="form-control" id="apvlEmpEmailHidden" name="apvlEmpEmailHidden" readonly/>-->
-                        </div>
-                    </div>
-
-                    <!-- 결재 요청 버튼 영역 -->
-                    <div class="flex-height d-flex m-0 p-2">
-                        <div class="align-self-start align-self-center mr-3"></div>
-                        <div class="align-self-center mr-7">
-                            <button class="button" id="btn_req">요청</button>
+                            <!--</div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
-</div>
+        </div>-->
+                </td>
+            </tr>
+        </table>
 
+</div>

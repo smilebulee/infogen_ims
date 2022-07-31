@@ -87,6 +87,17 @@
 
             }
 
+            var userEmail = sessionStorage.getItem("email");
+            if( userEmail == "jsshin"
+             || userEmail == "hjulee"
+             || userEmail == "ywlee") {
+                $('#wrkTimeConfirm').css("display", '');
+                $('#wrkTimeGen').css("display", '');
+            } else {
+                $('#wrkTimeConfirm').css("display", 'none');
+                $('#wrkTimeGen').css("display", 'none');
+            }
+
          });
 
 
@@ -121,8 +132,7 @@
             fnExcelReport('selData', '근무현황관리');
         });
 
-        /* 근무시간확정 버튼 클릭
-        */
+        /* 근무시간확정 버튼 클릭 */
         $("#wrkTimeConfirm").click(function(){
             var gridCnt = $('#ipt_gridCnt').val();
 
@@ -190,6 +200,63 @@
             });
         }
 
+        /* 근무시간생성 버튼 클릭 */
+        $("#wrkTimeGen").click(function(){
+            var today = new Date();
+            var todayMon = (today.getMonth()+1);
+
+            var deptCd   = $("#sbx_dept").val();
+            var deptNm   = $("#sbx_dept option:checked").text();
+            var email    = $("#ipt_searchOcemEmail").val();
+            var emailNm  = $("#ipt_searchOcemName").val();
+            var wrkDivs  = $("#sbx_wrkKind").val();
+            var apvlStus = $("#sbx_apvlStatus").val();
+
+            var strTh1AprvNm = sessionStorage.getItem("email");
+            var monthChk;
+
+            if(todayMon.length == 1){
+                todayMon = "0"+todayMon;
+            }
+
+            if($('#sbx_wrkDtMm').val().length == 1){
+                monthChk = "0"+$('#sbx_wrkDtMm').val();
+            } else {
+                monthChk = $('#sbx_wrkDtMm').val();
+            }
+            var setMDt = $('#sbx_wrkDtYy').val() + "-" + monthChk;
+            console.log("deptCd : "+deptCd + ", email : " + email+", monthChk : "+monthChk);
+            console.log("monthChk : "+monthChk+", todayMon : "+todayMon);
+
+
+            if(monthChk < todayMon){
+                alertMsg('이번달 이후 데이터만 생성 가능합니다.');
+                return false;
+            }
+
+            cf_dialog.confirm('['+monthChk+']월 근무시간을 생성하시겠습니까?\n기등록된 데이터는 삭제됩니다.', function(){
+                if(this.key == 'ok') {
+                    fnWrkTimeGen(setMDt);
+                }
+            });
+        });
+
+        function fnWrkTimeGen(setMDt){
+            var param = {
+                "wrkDt" : setMDt
+            }
+            $.ajaxCall( param, {
+                 'method'           : 'POST',
+                 'url'              : "{% url 'dili_api:saveWrkTimeGen' %}",
+                 'dataType'         : 'json',
+                 'data'             : JSON.stringify(param),
+                 'async'            : false,
+                 'callbackFn'       : function(data){
+                    alertMsg('근무시간이 생성 되었습니다.');
+                    $("#searchBtn").click();
+                 }
+            });
+        }
 
         function fnExcelReport(id, title) {
             var tab_text = '<html xmlns:x="urn:schemas-microsoft-com:office:excel">';
@@ -493,7 +560,6 @@
                             <div class="align-self-end align-self-center">
                                 <button class="button" id="searchBtn">조회</button>
                                 <button class="button" id="excelDownBtn">엑셀다운로드</button>
-                                <button class="button" id="wrkTimeConfirm">근무시간확정</button>
                             </div>
                         </div>
                         <div class="card-body flex-height d-flex m-0 p-2">
@@ -519,6 +585,11 @@
                                 </select>
                             </div>
                             <span>★ : 결재미요청건으로 결재요청이 필요한 근무기록입니다.</span>
+                            <div class="align-self-center mr-5">　　　　　　　　　　　　　　　　　　　　　</div>
+                            <div class="align-self-end align-self-center">
+                                <button class="button" id="wrkTimeConfirm">근무시간확정</button>
+                                <button class="button" id="wrkTimeGen">근무시간생성</button>
+                            </div>
                         </div>
                     </div>
                 </div>

@@ -22,11 +22,11 @@
         $('#ipt_apvlSearchEmailPop').val(param.email);
         $("#ipt_apvlSearchEmail").val(param.email);
 
-        if( param.email == 'jsshin' || param.email == 'ywlee' || param.email == 'hjkwon' || param.email == 'hjulee' ){
+        /*if( param.email == 'jsshin' || param.email == 'ywlee' || param.email == 'hjkwon' || param.email == 'hjulee' ){
             $('#apvlReqBtn').css("display", 'block');
         }else{
             $('#apvlReqBtn').css("display", 'none');
-        }
+        }*/
 
         // 사용자 조회 > 이름 : SessionSetting email로 이름 조회하여 설정
         retrieveEmpNmByEmail(param.email, function(data) {
@@ -252,13 +252,20 @@
         });
 
         // 결재등록 모달 오픈
-        $("#apvlReqBtn").click(function(){
+        /*$("#apvlReqBtn").click(function(){
             var url = "{% url 'dili_api:apvlReqBfrPop' %}" ;
             $('#currReqPopStts').val("register");
             modal('apvlReqModalDiv');
             $('#apvlReqModal').load(url);
-        });
+        });*/
 
+        // 결재요청 모달 오픈
+        $("#apvlReq2Btn").click(function(){
+            var url = "{% url 'dili_api:apvlReqPop' %}" ;
+            $('#currReqPopStts').val("register");
+            modal('apvlReqModalDiv');
+            $('#apvlReqModal').load(url);
+        });
 
         // 결재승인 모달 오픈
         $("#apvlAcptBtn").click(function(){
@@ -437,7 +444,7 @@
         }
 
         if(sSelStr == "야간근무" || sSelStr == "휴일근무") {
-            url = "{% url 'dili_api:apvlReqBfrPop' %}" ;
+            url = "{% url 'dili_api:apvlReqPop' %}" ;
         } else if (sSelStr == "반차결재" ) { //|| sSelStr == "연차결재") {
             url = "{% url 'dili_api:apvlReqBfrChkPop' %}" ;
         } else if (sSelStr == "연차결재") {
@@ -625,11 +632,14 @@
                         <div class="align-self-center mr-3">
                             <button class="button" id="yryReqBtn">연차등록</button>
                         </div>
+                        <!--<div class="align-self-end align-self-center">
+                            <button class="button" id="apvlReqBtn">결재등록</button>
+                        </div>-->
                         <div class="align-self-center mr-3">
-                            <button class="button" id="apvlAcptBtn">연차승인</button>
+                            <button class="button" id="apvlReq2Btn">초과근무요청</button>
                         </div>
                         <div class="align-self-end align-self-center">
-                            <button class="button" id="apvlReqBtn">결재등록</button>
+                            <button class="button" id="apvlAcptBtn">결재승인</button>
                         </div>
                     </div>
                 </div>

@@ -18,7 +18,7 @@
 
 
         /*********************************************************************
-        *   Session Email 값 기준 연차 결재요청 리스트 조회
+        *   Session Email 값 기준 결재요청 리스트 조회
         *********************************************************************/
         var param = {
             "email" : sessionStorage.getItem("email"),
@@ -36,14 +36,8 @@
              }
         });
 
-
-
-
-
-
-
         /*********************************************************************
-        *   srchAcptHistBtn 버튼 클릭 이벤트 - 연차결재요청 내역 조회
+        *   srchAcptHistBtn 버튼 클릭 이벤트 - 결재요청 내역 조회
         *********************************************************************/
         $('#srchAcptHistBtn').click(function() {
             initApvlAcptDetl();
@@ -53,7 +47,7 @@
     });
 
     /*********************************************************************
-    *   연차결재요청 Grid 생성
+    *   결재요청 Grid 생성
     *********************************************************************/
     function wrkApvlAcptGrd(data){
         // div 초기화
@@ -66,6 +60,7 @@
             //wrkApvlTable += '<th class="text-center">순번</th>';
             wrkApvlTable += '<th class="text-center">구분</th>';
             wrkApvlTable += '<th class="text-center">기안일</th>';
+            wrkApvlTable += '<th class="text-center">초과근무시간</th>';
             wrkApvlTable += '<th class="text-center">연차일</th>';
             wrkApvlTable += '<th class="text-center">반차일</th>';
             wrkApvlTable += '<th style="display:none">요청일시</th>';
@@ -92,6 +87,11 @@
                 //wrkApvlTable += '<td class="pt-3-half">' + (i+1)                + '</td>';
                 wrkApvlTable += '<td class="pt-3-half">' + data[i].APVL_REQ_NM  + '</td>';
                 wrkApvlTable += '<td class="pt-3-half">' + data[i].APVL_REQ_DT  + '</td>';
+                if(data[i].APVL_REQ_NM == "야간근무" || data[i].APVL_REQ_NM == "주휴근무"){
+                    wrkApvlTable += '<td class="pt-3-half">' + data[i].JOB_STRT_TM.substring(0,5) +" ~ "+ data[i].JOB_END_TM.substring(0,5) + '</td>';
+                }else{
+                    wrkApvlTable += '<td class="pt-3-half"></td>';
+                }
                 wrkApvlTable += '<td class="pt-3-half">' + data[i].YEONCHA  + '</td>';
                 wrkApvlTable += '<td class="pt-3-half">' + data[i].BANCHA  + '</td>';
                 wrkApvlTable += '<td style="display:none">' + wrkDtm               + '</td>';
@@ -173,12 +173,12 @@
 
         //결재/승인사유 유효성 검증
         if($("#txa_reqAcptRsnAcpt").val().trim() == "") {
-            alertMsg("연차요청 " + msg + " 사유를 입력해주세요.", function() {
+            alertMsg("결재요청 " + msg + " 사유를 입력해주세요.", function() {
                 $("#txa_reqAcptRsnAcpt").focus();
             });
             return;
         }
-
+        console.log(sSessionId+", "+sTh1AprvNm+", "+sTh2AprvNm);
         if(apvlAcptStus == "02"){ //승인 버튼으로 들어온 경우만 체크
             if(sSessionId == sTh1AprvNm) { //접속사용자와 1차승인자가 같은경우 = 접속자는 1차승인자
                 if(sTh1AprvStus == '') {
@@ -272,7 +272,7 @@
         trId.css('backgroundColor', 'lightgrey');
 
 
-        var arrWrkDt = trId.children().eq(6).html().split(';');
+        var arrWrkDt = trId.children().eq(7).html().split(';');
 
         $("#ipt_reqAcptWrkDt").val(arrWrkDt[0]);
         $("#ipt_reqAcptJobStrtTm").val(arrWrkDt[1]);
@@ -334,7 +334,7 @@
 <div style="width :600px;">
         <div class="mb-4" role="alert">
             <h5>
-                <b>연차승인</b>
+                <b>결재승인</b>
             </h5>
             <div role="alert">
                 <h6 style="text-align: right">
@@ -392,7 +392,7 @@
                                         </div>
 
                                         <div style="position: relative;" id="grid-parent">
-                                            <div id="grd_wrkApvlAcpt" style="overflow:auto; max-height:300px;">grid</div>
+                                            <div id="grd_wrkApvlAcpt" style="overflow:auto; max-height:300px; max-">grid</div>
                                         </div>
 
                                         <!--<div class="flex-height d-flex m-0 p-2">
@@ -422,7 +422,7 @@
                                         <input type="hidden" id="ipt_reqAcptTh2AprvNm"   name="ipt_reqAcptTh2AprvNm" />
 
                                         <div class="flex-height d-flex m-0 p-2">
-                                            <div class="align-self-start align-self-center mr-3" style="font-weight:bold">연차요청사유&nbsp;&nbsp;&nbsp;&nbsp;</div>
+                                            <div class="align-self-start align-self-center mr-3" style="font-weight:bold">결재요청사유&nbsp;&nbsp;&nbsp;&nbsp;</div>
                                             <div class="align-self-center mr-7">
                                                 <textarea id="txa_reqAcptRsn" name="txa_reqAcptRsn" maxlength="500" style="resize: none; width:440px;height:70px;" placeholder="사유를 입력해주세요.(200자 이하)" disabled></textarea>
                                             </div>

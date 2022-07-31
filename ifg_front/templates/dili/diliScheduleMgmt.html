@@ -613,14 +613,15 @@
             var sumRestTm = 0;
             var tmpSumTotalWkrTm = 0;
 
+            var sWrkDt = "";
+            var dd = "";
+            var day = "";
+
             for(var i = 0; i < 7; i++){
 
                 tdDate = weekGridStrtDate.getDate();
-
-                //console.log("tdDate : "+tdDate);
-                var dd = new Date(weekGridStrtYy, weekGridStrtMm, tdDate);
-                var day = dd.getDay();
-                //console.log("crteWeekGrid day = "+day);
+                dd = new Date(weekGridStrtYy, weekGridStrtMm, tdDate);
+                day = dd.getDay();
 
                 var sExtStr = ""; //연장근무 / 주휴근무 문자열 지정
                 if(day == "0" || day == "6"){
@@ -647,10 +648,24 @@
                 var totalRestTm = 0;
                 var ptoKdCd = ""; //휴가구분 01 연차 02 반차
 
+
                 if(schdData.length > 0){
                     for(var j = 0; j < schdData.length; j++){
                         if(tempSetWeek == schdData[j].WRK_DT){
                             if(schdData[j].APVL_REQ_DIVS != "03"){
+
+                                tdDate = weekGridStrtDate.getDate();
+                                sWrkDt = schdData[j].WRK_DT;
+                                dd = new Date(sWrkDt.substring(0,4), (sWrkDt.substring(5,7)-1), sWrkDt.substring(8,10));
+                                day = dd.getDay();
+                                console.log("crteWeekGrid day = "+day+", "+sWrkDt.substring(0,4)+", "+(sWrkDt.substring(5,7)-1)+", "+sWrkDt.substring(8,10)+", "+dd+", "+day);
+
+                                var sExtStr = ""; //연장근무 / 주휴근무 문자열 지정
+                                if(day == "0" || day == "6"){
+                                    sExtStr = "주휴근무";
+                                }else{
+                                    sExtStr = "연장근무";
+                                }
 
                                 jobStrtTm = schdData[j].JOB_STRT_TM;
                                 jobEndTm = schdData[j].JOB_END_TM;

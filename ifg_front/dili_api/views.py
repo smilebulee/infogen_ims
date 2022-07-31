@@ -746,6 +746,21 @@ def getApvlReqHistDetl(request):
     logger.info(json.loads(r.text))
     return JsonResponse(ast.literal_eval(r.json()), safe=False)
 
+def getApvlWrkReqHistDetl(request):
+    param = json.loads(request.GET['param'])
+
+    logger.info("Parameters Start")
+    logger.info(param)
+    logger.info("Parameters End")
+
+    # api 호출
+    r = requests.get('http://dili_api:5006/apvlReqWrkHistDetl', json=param)
+    logger.info(r)
+    logger.info(r.text)
+    logger.info(logger.info(ast.literal_eval(r.json())))
+    logger.info(json.loads(r.text))
+    return JsonResponse(ast.literal_eval(r.json()), safe=False)
+
 def getApvlAcptHist(request):
     param = json.loads(request.GET['param'])
 
@@ -857,6 +872,21 @@ def saveWrkTimeConfirm(request):
     logger.info("Parameters End")
 
     r = requests.post('http://dili_api:5006/updateWrkTimeConfirm', data=json.dumps(param))
+
+    logger.info(r)
+    logger.info(r.text)
+    logger.info(r.json())
+    return JsonResponse(r.json())
+
+#근무시간 생성
+def saveWrkGen(request):
+    param = json.loads(request.POST['param'])
+
+    logger.info("Parameters Start")
+    logger.info(param)
+    logger.info("Parameters End")
+
+    r = requests.post('http://dili_api:5006/insertWrkTimeGen', data=json.dumps(param))
 
     logger.info(r)
     logger.info(r.text)

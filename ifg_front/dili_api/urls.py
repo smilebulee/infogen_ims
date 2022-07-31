@@ -48,6 +48,7 @@ urlpatterns = [
     url(r'^saveApvlAcpt/post', views.saveApvlAcpt, name='saveApvlAcpt'),
     url(r'^apvlReqHist/', views.apvlReqHist.as_view(), name='apvlReqHist'),
     url(r'^getApvlReqHistDetl/', views.getApvlReqHistDetl, name='getApvlReqHistDetl'),
+    url(r'^getApvlWrkReqHistDetl/', views.getApvlWrkReqHistDetl, name='getApvlWrkReqHistDetl'),
     url(r'^getApvlReqHist/', views.getApvlReqHist, name='getApvlReqHist'),
     url(r'^getApvlAcptHist/', views.getApvlAcptHist, name='getApvlAcptHist'),
     
@@ -85,6 +86,8 @@ urlpatterns = [
     url(r'^saveEndTm/', views.saveEndTm, name='saveEndTm'),
     # 근무시간확정
     url(r'^saveWrkTimeConfirm/', views.saveWrkTimeConfirm, name='saveWrkTimeConfirm'),
+    # 근무시간생성
+    url(r'^saveWrkTimeGen/', views.saveWrkGen, name='saveWrkTimeGen'),
     url(r'^updateRestTm/', views.updateRestTm, name='updateRestTm'),
     url(r'^updateDinnRestTm/', views.updateDinnRestTm, name='updateDinnRestTm'),
 
