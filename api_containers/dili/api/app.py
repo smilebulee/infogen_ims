@@ -2340,6 +2340,7 @@ class insertWrkTimeGen(Resource):  # 근무시간 생성
                       "              , TB_DATE D " \
                       "          WHERE D.ymd_date like '" + wrkDt + "%'"\
                       "            AND D.HOLY_GB = 'N'" \
+                      "            AND E.WORK_YN = 'Y'" \
                       "       ) S " \
                       " ON DUPLICATE KEY " \
                       "UPDATE JOB_STRT_TM = S.JOB_STRT_TM"\
