@@ -62,6 +62,7 @@ urlpatterns = [
     url(r'^getEmpDeptPr/', views.getEmpDeptPr, name='getEmpDeptPr'),
     url(r'^getCalendarData/', views.getCalendarData, name='getCalendarData'),
     url(r'^saveYryApvlReq/post', views.saveYryApvlReq, name='saveYryApvlReq'),
+    url(r'^saveYryApvlCncl/post', views.saveYryApvlCncl, name='saveYryApvlCncl'),
     url(r'^getWeekGridData/', views.getWeekGridData, name='getWeekGridData'),
     url(r'^getMonthGridData/', views.getMonthGridData, name='getMonthGridData'),
     url(r'^empMgmtRegPop', views.empMgmtRegPop.as_view(), name='empMgmtRegPop'),

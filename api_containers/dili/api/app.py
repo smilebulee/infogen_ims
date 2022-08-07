@@ -379,7 +379,7 @@ class weekGridData(Resource): # Mariadb 연결 진행
                     + "       ,NVL(DATE_FORMAT(B.JOB_STRT_TM, '%H:%i'),'-') AS JOB_APRV_STRT_TM "\
                     + "       ,NVL(DATE_FORMAT(B.JOB_END_TM, '%H:%i'),'-') AS JOB_APRV_END_TM "\
                     + "       ,CONCAT(SUBSTRING(LPAD(NVL(A.NORM_WRK_TM, '000000'), 6, '0'), 1, 2), ':', SUBSTRING(LPAD(NVL(A.NORM_WRK_TM, '000000'), 6, '0'), 3, 2)) AS NORM_WRK_TM "\
-                    + "       ,CASE WHEN NVL(B.PTO_KD_CD, 'X') = '01' /*01 연차,02 반차*/ " \
+                    + "       ,CASE WHEN NVL(B.PTO_KD_CD, 'X') IN ('01', '03') /*01 연차,02 반차,03 기타*/ " \
                     + "             THEN CONCAT(SUBSTRING(B.WRK_TME, 1, 2), ':', SUBSTRING(B.WRK_TME, 3, 2))" \
                     + "             WHEN NVL(B.PTO_KD_CD, 'X') = '02' /*02 반차*/" \
                     + "             THEN CONCAT(SUBSTRING(DATE_SUB(STR_TO_DATE(LPAD(A.ALL_WRK_TM + CASE WHEN A.JOB_STRT_TM = B.JOB_STRT_TM THEN '000000' ELSE NVL(B.WRK_TME, '000000') END, 6 , '0'), '%H%i%s'), INTERVAL A.REST_TM + A.DINN_REST_TM MINUTE), 1, 2), ':', SUBSTRING(DATE_SUB(STR_TO_DATE(LPAD(A.ALL_WRK_TM + CASE WHEN A.JOB_STRT_TM = B.JOB_STRT_TM THEN '000000' ELSE NVL(B.WRK_TME, '000000') END, 6 , '0'), '%H%i%s'), INTERVAL A.REST_TM + A.DINN_REST_TM MINUTE), 4, 2))" \
@@ -389,7 +389,7 @@ class weekGridData(Resource): # Mariadb 연결 진행
                     + "             THEN DATE_FORMAT(DATE_SUB( SEC_TO_TIME(TIME_TO_SEC(STR_TO_DATE( CONCAT(SUBSTRING(LPAD(NVL(A.ALL_WRK_TM, '000000')-NVL(A.NGHT_WRK_TM, '000000')+ NVL(B.WRK_TME, '000000'), 6, '0'), 1, 2), ':', SUBSTRING(LPAD(NVL(A.ALL_WRK_TM, '000000')+ NVL(B.WRK_TME, '000000'), 6, '0'), 3, 2)) , '%H:%i')) - TIME_TO_SEC(STR_TO_DATE( CONCAT(SUBSTRING(LPAD(NVL(A.NORM_WRK_TM, '000000')+ NVL(B.WRK_TME, '000000'), 6, '0'), 1, 2), ':', SUBSTRING(LPAD(NVL(A.NORM_WRK_TM, '000000')+ NVL(B.WRK_TME, '000000'), 6, '0'), 3, 2)) , '%H:%i')))" \
                     + "                                      , INTERVAL A.REST_TM + A.DINN_REST_TM MINUTE)" \
                     + "                             , '%H:%i') " \
-                    + "             ELSE CASE WHEN NVL(B.PTO_KD_CD, 'X') IN ('01', '02') /* 01 연차, 02 반차 */" \
+                    + "             ELSE CASE WHEN NVL(B.PTO_KD_CD, 'X') IN ('01', '02', '03') /* 01 연차, 02 반차, 03 기타 */" \
                     + "                       THEN '00:00'" \
                     + "                       ELSE CONCAT(SUBSTRING(STR_TO_DATE(LPAD(NVL(B.WRK_TME, A.NGHT_WRK_TM), 6, '0'), '%H%i%s'), 1, 2), ':', SUBSTRING(STR_TO_DATE(LPAD(NVL(B.WRK_TME, A.NGHT_WRK_TM), 6 , '0'), '%H%i%s'), 4, 2))" \
                     + "                  END" \
@@ -408,6 +408,7 @@ class weekGridData(Resource): # Mariadb 연결 진행
                     + "        LEFT OUTER JOIN TB_APVL_REQ_MGMT_M B"\
                     + "   ON (A.WRK_DT = B.WRK_DT OR A.WRK_DT BETWEEN B.HOLI_TERM1 AND B.HOLI_TERM2) "\
                     + "   AND A.EMP_EMAL_ADDR = B.EMP_EMAL_ADDR "\
+                    + "   AND B.APVL_REQ_DIVS <> '99'" \
                     + "  WHERE 1 = 1 "\
                     + "  AND A.EMP_EMAL_ADDR = '" + data["email"] + "' "\
                     + "  AND A.WRK_DT >= '" + data["strtDt"] + "' "\
@@ -489,7 +490,7 @@ class monthGridData(Resource): # Mariadb 연결 진행
                     + "       ,NVL(DATE_FORMAT(B.JOB_STRT_TM, '%H:%i'),'-') AS JOB_APRV_STRT_TM "\
                     + "       ,NVL(DATE_FORMAT(B.JOB_END_TM, '%H:%i'),'-') AS JOB_APRV_END_TM "\
                     + "       ,CONCAT(SUBSTRING(LPAD(NVL(A.NORM_WRK_TM, '000000'), 6, '0'), 1, 2), ':', SUBSTRING(LPAD(NVL(A.NORM_WRK_TM, '000000'), 6, '0'), 3, 2)) AS NORM_WRK_TM "\
-                    + "       ,CASE WHEN NVL(B.PTO_KD_CD, 'X') = '01' /*01 연차*/ " \
+                    + "       ,CASE WHEN NVL(B.PTO_KD_CD, 'X') IN ('01', '03') /*01 연차, 03 기타*/ " \
                     + "             THEN CONCAT(SUBSTRING(B.WRK_TME, 1, 2), ':', SUBSTRING(B.WRK_TME, 3, 2))" \
                     + "             WHEN NVL(B.PTO_KD_CD, 'X') = '02' /*02 반차*/" \
                     + "             THEN CONCAT(SUBSTRING(DATE_SUB(STR_TO_DATE(LPAD(A.ALL_WRK_TM + CASE WHEN A.JOB_STRT_TM = B.JOB_STRT_TM THEN '000000' ELSE NVL(B.WRK_TME, '000000') END, 6 , '0'), '%H%i%s'), INTERVAL A.REST_TM + A.DINN_REST_TM MINUTE), 1, 2), ':', SUBSTRING(DATE_SUB(STR_TO_DATE(LPAD(A.ALL_WRK_TM + CASE WHEN A.JOB_STRT_TM = B.JOB_STRT_TM THEN '000000' ELSE NVL(B.WRK_TME, '000000') END, 6 , '0'), '%H%i%s'), INTERVAL A.REST_TM + A.DINN_REST_TM MINUTE), 4, 2))" \
@@ -499,7 +500,7 @@ class monthGridData(Resource): # Mariadb 연결 진행
                     + "             THEN DATE_FORMAT(DATE_SUB( SEC_TO_TIME(TIME_TO_SEC(STR_TO_DATE( CONCAT(SUBSTRING(LPAD(NVL(A.ALL_WRK_TM, '000000')-NVL(A.NGHT_WRK_TM, '000000')+ NVL(B.WRK_TME, '000000'), 6, '0'), 1, 2), ':', SUBSTRING(LPAD(NVL(A.ALL_WRK_TM, '000000')+ NVL(B.WRK_TME, '000000'), 6, '0'), 3, 2)) , '%H:%i')) - TIME_TO_SEC(STR_TO_DATE( CONCAT(SUBSTRING(LPAD(NVL(A.NORM_WRK_TM, '000000')+ NVL(B.WRK_TME, '000000'), 6, '0'), 1, 2), ':', SUBSTRING(LPAD(NVL(A.NORM_WRK_TM, '000000')+ NVL(B.WRK_TME, '000000'), 6, '0'), 3, 2)) , '%H:%i')))" \
                     + "                                      , INTERVAL A.REST_TM + A.DINN_REST_TM MINUTE)" \
                     + "                             , '%H:%i') " \
-                    + "             ELSE CASE WHEN NVL(B.PTO_KD_CD, 'X') IN ('01', '02') /* 01 연차, 02 반차 */" \
+                    + "             ELSE CASE WHEN NVL(B.PTO_KD_CD, 'X') IN ('01', '02', '03') /* 01 연차, 02 반차, 03 기타 */" \
                     + "                       THEN '00:00'" \
                     + "                       ELSE CONCAT(SUBSTRING(STR_TO_DATE(LPAD(NVL(B.WRK_TME, A.NGHT_WRK_TM), 6, '0'), '%H%i%s'), 1, 2), ':', SUBSTRING(STR_TO_DATE(LPAD(NVL(B.WRK_TME, A.NGHT_WRK_TM), 6 , '0'), '%H%i%s'), 4, 2))" \
                     + "              END" \
@@ -517,6 +518,7 @@ class monthGridData(Resource): # Mariadb 연결 진행
                     + "        LEFT OUTER JOIN TB_APVL_REQ_MGMT_M B"\
                     + "   ON (A.WRK_DT = B.WRK_DT OR A.WRK_DT BETWEEN B.HOLI_TERM1 AND B.HOLI_TERM2) "\
                     + "   AND A.EMP_EMAL_ADDR = B.EMP_EMAL_ADDR "\
+                    + "   AND B.APVL_REQ_DIVS <> '99'" \
                     + "  WHERE 1 = 1 " \
                     + "  AND A.EMP_EMAL_ADDR = '" + data["email"] + "' "\
                     + "  AND A.WRK_DT like '"+data["mDt"]+"%' "\
@@ -554,14 +556,16 @@ class wrkTimeInfoByEml(Resource): # Mariadb 연결 진행
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 #쿼리문 실행
                 sql = "SELECT A.EMP_EMAL_ADDR" \
-                    + "      ,A.WRK_DT" \
+                    + "      ,A.WRK_DT " \
                     + "      ,DATE_FORMAT(SEC_TO_TIME(SUM(TIME_TO_SEC(STR_TO_DATE( CONCAT(SUBSTRING(A.NORM_WRK_TM,1,2),':',SUBSTRING(A.NORM_WRK_TM,3,2),':',SUBSTRING(A.NORM_WRK_TM,5,2)) ,'%H:%i:%S')))),'%H.%i') NORM_WRK_TM" \
                     + "      ,DATE_FORMAT(SEC_TO_TIME((SUM(TIME_TO_SEC(STR_TO_DATE( CONCAT(SUBSTRING(A.HLDY_WRK_TM,1,2),':',SUBSTRING(A.HLDY_WRK_TM,3,2),':',SUBSTRING(A.HLDY_WRK_TM,5,2)) ,'%H:%i:%S'))) + SUM(TIME_TO_SEC(STR_TO_DATE( CONCAT(SUBSTRING(A.NGHT_WRK_TM,1,2),':',SUBSTRING(A.NGHT_WRK_TM,3,2),':',SUBSTRING(A.NGHT_WRK_TM,5,2)) ,'%H:%i:%S')))) - SUM(TIME_TO_SEC(STR_TO_DATE( CONCAT(SUBSTRING(IFNULL(B.WRK_TME,'000000'),1,2),':',SUBSTRING(IFNULL(B.WRK_TME,'000000'),3,2),':',SUBSTRING(IFNULL(B.WRK_TME,'000000'),5,2)) ,'%H:%i:%S')))),'%H.%i') NOT_APRV_OVER_WRK_TM" \
                     + "      ,DATE_FORMAT(SEC_TO_TIME(SUM(TIME_TO_SEC(STR_TO_DATE( CONCAT(SUBSTRING(IFNULL(B.WRK_TME,'000000'),1,2),':',SUBSTRING(IFNULL(B.WRK_TME,'000000'),3,2),':',SUBSTRING(IFNULL(B.WRK_TME,'000000'),5,2)) ,'%H:%i:%S')))),'%H.%i') APRV_OVER_WRK_TM" \
-                    + "  FROM TB_WRK_TM_MGMT_M A LEFT OUTER JOIN TB_APVL_REQ_MGMT_M B ON A.EMP_EMAL_ADDR = B.EMP_EMAL_ADDR AND A.WRK_DT = B.WRK_DT AND B.APVL_REQ_DIVS IN ('01','02')" \
+                    + "      ,MAX(DATE_FORMAT(E.JOB_STRT_TM, '%H:%i')) AS JOB_STRT_TM " \
+                    + "      ,MAX(DATE_FORMAT(E.JOB_END_TM, '%H:%i')) AS JOB_END_TM " \
+                    + "  FROM TB_WRK_TM_MGMT_M A INNER JOIN TB_EMP_MGMT E ON A.EMP_EMAL_ADDR = E.EMP_EMAIL LEFT OUTER JOIN TB_APVL_REQ_MGMT_M B ON A.EMP_EMAL_ADDR = B.EMP_EMAL_ADDR AND A.WRK_DT = B.WRK_DT AND B.APVL_REQ_DIVS IN ('01','02')" \
                     + " WHERE A.EMP_EMAL_ADDR = '" +data["email"] + "'" \
                     + "   AND A.WRK_DT LIKE '" + data["dt"] + "%'" \
-                    + " GROUP BY A.EMP_EMAL_ADDR"
+                    + " GROUP BY A.EMP_EMAL_ADDR, A.WRK_DT"
                 logging.debug(sql + "#####")
                 cursor.execute(sql)
 
@@ -570,7 +574,7 @@ class wrkTimeInfoByEml(Resource): # Mariadb 연결 진행
 
         result2 = cursor.fetchall()
         for row in result2:
-            logging.debug('====== row====')
+            logging.debug('======wrkTimeInfoByEml row====')
             logging.debug(row)
             logging.debug('===============')
         array = list(result2)  # 결과를 리스트로
@@ -892,6 +896,7 @@ class apvlReqHist(Resource): # Mariadb 연결 진행
                       "  FROM TB_APVL_REQ_MGMT_M A, TB_EMP_MGMT B, TB_EMP_MGMT C" \
                       " WHERE A.EMP_EMAL_ADDR = B.EMP_EMAIL" \
                       "   AND A.TH1_APRV_NM = C.EMP_EMAIL " \
+                      "   AND A.APVL_REQ_DIVS <> '99'" \
                       "   AND A.APVL_REQ_DT LIKE '" + apvlReqDtYm + "%' "
                 if apvlStusDivs != "" and apvlStusDivs != "00": #미승인, 승인, 반려
                     sql += "   AND A.TH1_APRV_STUS = '" + apvlStusDivs + "' "
@@ -1006,6 +1011,7 @@ class apvlAcptHist(Resource):  # Mariadb 연결 진행
                           "  FROM TB_APVL_REQ_MGMT_M A, TB_EMP_MGMT B, TB_EMP_MGMT C " \
                           " WHERE A.EMP_EMAL_ADDR = C.EMP_EMAIL  " \
                           "   AND A.TH1_APRV_NM = B.EMP_EMAIL  " \
+                          "   and A.APVL_REQ_DIVS <> '99'" \
                           "   AND ((A.TH1_APRV_NM = '" + email + "' OR A.TH2_APRV_NM = '" + email + "') " \
                           "       AND (A.TH1_APRV_STUS = '" + apvlStusDivs + "' OR A.TH2_APRV_STUS = '" + apvlStusDivs + "')) " \
                           " ORDER BY APVL_REQ_DT ASC "
@@ -1532,7 +1538,7 @@ class calendarData(Resource): # Mariadb 연결 진행
                       + "             THEN DATE_FORMAT(DATE_SUB( SEC_TO_TIME(TIME_TO_SEC(STR_TO_DATE( CONCAT(SUBSTRING(LPAD(NVL(A.ALL_WRK_TM, '000000')-NVL(A.NGHT_WRK_TM, '000000')+ NVL(B.WRK_TME, '000000'), 6, '0'), 1, 2), ':', SUBSTRING(LPAD(NVL(A.ALL_WRK_TM, '000000')+ NVL(B.WRK_TME, '000000'), 6, '0'), 3, 2)) , '%H:%i')) - TIME_TO_SEC(STR_TO_DATE( CONCAT(SUBSTRING(LPAD(NVL(A.NORM_WRK_TM, '000000')+ NVL(B.WRK_TME, '000000'), 6, '0'), 1, 2), ':', SUBSTRING(LPAD(NVL(A.NORM_WRK_TM, '000000')+ NVL(B.WRK_TME, '000000'), 6, '0'), 3, 2)) , '%H:%i')))" \
                       + "                                      , INTERVAL A.REST_TM + A.DINN_REST_TM MINUTE)" \
                       + "                             , '%H:%i') " \
-                      + "             ELSE CASE WHEN NVL(B.PTO_KD_CD, 'X') IN ('01', '02') /* 01 연차, 02 반차 */" \
+                      + "             ELSE CASE WHEN NVL(B.PTO_KD_CD, 'X') IN ('01', '02', '03') /* 01 연차, 02 반차, 03 기타 */" \
                       + "                       THEN '00:00'" \
                       + "                       ELSE CONCAT(SUBSTRING(STR_TO_DATE(LPAD(NVL(B.WRK_TME, A.NGHT_WRK_TM), 6, '0'), '%H%i%s'), 1, 2), ':', SUBSTRING(STR_TO_DATE(LPAD(NVL(B.WRK_TME, A.NGHT_WRK_TM), 6 , '0'), '%H%i%s'), 4, 2))" \
                       + "                  END" \
@@ -1541,6 +1547,7 @@ class calendarData(Resource): # Mariadb 연결 진행
                       + "        LEFT OUTER JOIN TB_APVL_REQ_MGMT_M B" \
                       + "     ON (A.WRK_DT = B.WRK_DT OR A.WRK_DT BETWEEN B.HOLI_TERM1 AND B.HOLI_TERM2) " \
                       + "    AND A.EMP_EMAL_ADDR = B.EMP_EMAL_ADDR " \
+                      + "    AND B.APVL_REQ_DIVS <> '99'" \
                       + "  WHERE 1 = 1 " \
                       + "    AND A.EMP_EMAL_ADDR = '" + data["email"] + "'"\
                       + "    AND A.WRK_DT LIKE '" + data["dt"] + "%'"
@@ -2128,6 +2135,54 @@ class saveYryApvlReq(Resource):  # Mariadb 연결 진행
 
         return jsonify(retJson)
 
+
+class saveYryApvlCncl(Resource):  # Mariadb 연결 진행
+    def post(self):
+
+        params = json.loads(request.data)
+        # params = request.get_json()
+        logger.info("App Parameters Start")
+        logger.info(params)
+        logger.info(type(params))
+        logger.info("App Parameters End")
+
+        for row in request.form:
+            logger.info(row + ':' + request.form[row])
+            globals()[row] = request.form[row]
+
+        email = params['email']
+        apvlReqDivs = params['apvlReqDivs']
+        wrkDt = params['wrkDt']
+        logging.debug("====Param data====")
+
+        logging.debug("email        = " + email)
+        logging.debug("apvlReqDivs  = " + apvlReqDivs)
+        logging.debug("wrkDt        = " + wrkDt)
+
+        # requirements pymysql import 후 커넥트 사용
+        mysql_con = getMariaConn()
+        try:
+            with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+                # 쿼리문 실행
+                sql1 = "UPDATE TB_APVL_REQ_MGMT_M " \
+                       "   SET APVL_REQ_DIVS = '"+apvlReqDivs+"'" \
+                       " WHERE EMP_EMAL_ADDR = '"+email+"'" \
+                       "   AND WRK_DT        = '"+wrkDt+"'"
+                logger.info(sql1)
+                cursor.execute(sql1)
+                mysql_con.commit()
+        except Exception as e:
+            logger.info("에러!!!!!!!!!!!!!!!!!!!!!!!" + e)
+        finally:
+            mysql_con.close()
+
+        retJson = {
+            "status": 200,
+            "msg": "Data has been saved successfully"
+        }
+
+        return jsonify(retJson)
+
 class insertStrtTm(Resource):  # Mariadb 연결 진행
     def post(self):
 
@@ -2489,7 +2544,7 @@ class scheduleStatLst(Resource):
                       "          FROM DUAL) APVL_STUS" \
                       "		 ,NVL(NVL(A.JOB_STRT_TM, B.JOB_STRT_TM), '') AS WRK_STRT_TM" \
                       "		 ,NVL(NVL(A.JOB_END_TM, B.JOB_END_TM), '') AS WRK_END_TM" \
-                      "      ,CASE WHEN NVL(B.PTO_KD_CD, 'X') = '01' /*01 연차*/ " \
+                      "      ,CASE WHEN NVL(B.PTO_KD_CD, 'X') IN ('01', '03') /*01 연차, 03 기타*/ " \
                       "            THEN CONCAT(SUBSTRING(B.WRK_TME, 1, 2), ':', SUBSTRING(B.WRK_TME, 3, 2))" \
                       "            WHEN NVL(B.PTO_KD_CD, 'X') = '02' /*02 반차*/" \
                       "            THEN CONCAT(SUBSTRING(DATE_SUB(STR_TO_DATE(LPAD(A.ALL_WRK_TM + CASE WHEN A.JOB_STRT_TM = B.JOB_STRT_TM THEN '000000' ELSE NVL(B.WRK_TME, '000000') END, 6 , '0'), '%H%i%s'), INTERVAL A.REST_TM + A.DINN_REST_TM MINUTE), 1, 2), ':', SUBSTRING(DATE_SUB(STR_TO_DATE(LPAD(A.ALL_WRK_TM + CASE WHEN A.JOB_STRT_TM = B.JOB_STRT_TM THEN '000000' ELSE NVL(B.WRK_TME, '000000') END, 6 , '0'), '%H%i%s'), INTERVAL A.REST_TM + A.DINN_REST_TM MINUTE), 4, 2))" \
@@ -2522,6 +2577,7 @@ class scheduleStatLst(Resource):
                       "       TB_APVL_REQ_MGMT_M B" \
                       "    ON A.EMP_EMAL_ADDR = B.EMP_EMAL_ADDR" \
                       "   AND (A.WRK_DT = B.WRK_DT OR A.WRK_DT BETWEEN B.HOLI_TERM1 AND B.HOLI_TERM2)" \
+                      "   AND B.APVL_REQ_DIVS <> '99'" \
                       " WHERE SUBSTRING(A.WRK_DT, 1, 7) = '" + data["wrkDt"] + "'"
                 if data["email"] != "":
                       sql += "    AND A.EMP_EMAL_ADDR = '" + data["email"] + "'" \
@@ -3845,9 +3901,10 @@ api.add_resource(empList,'/empList') #api 선언
 api.add_resource(empInfo,'/empInfo') #api 선언
 api.add_resource(empName,'/empName')                        #이메일로 사용자 이름 조회
 api.add_resource(empDept,'/empDept')                        #이메일로 사용자 부서 정보 조회
-api.add_resource(empDeptGm,'/empDeptGm')                      #이메일로 사용자 부서 사업부장(GM) 정보 조회
-api.add_resource(empDeptPr,'/empDeptPr')                      #이메일로 사용자 부서 현장대리인(PR) 정보 조회
+api.add_resource(empDeptGm,'/empDeptGm')                    #이메일로 사용자 부서 사업부장(GM) 정보 조회
+api.add_resource(empDeptPr,'/empDeptPr')                    #이메일로 사용자 부서 현장대리인(PR) 정보 조회
 api.add_resource(saveYryApvlReq,'/saveYryApvlReq')          #연차요청등록
+api.add_resource(saveYryApvlCncl,'/saveYryApvlCncl')        #연차요청취소
 api.add_resource(weekGridData,'/weekGridData') #api 선언
 api.add_resource(apvlInfo,'/apvlInfo') #api 선언
 api.add_resource(monthGridData,'/monthGridData') #api 선언

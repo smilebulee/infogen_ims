@@ -761,6 +761,8 @@
                         weekTable += '<td class="pt-3-half" contenteditable="false">연차휴가</td>';
                     }else if(ptoKdCd == "02"){
                         weekTable += '<td class="pt-3-half" contenteditable="false">반차휴가</td>';
+                    }else if(ptoKdCd == "03"){
+                        weekTable += '<td class="pt-3-half" contenteditable="false">기타휴가</td>';
                     }else{
                         weekTable += '<td class="pt-3-half" contenteditable="false">오류발생 담당자확인요청필요</td>';
                     }
@@ -958,6 +960,8 @@
                         monthTable += '<td class="pt-3-half" contenteditable="false">연차휴가</td>';
                     }else if(ptoKdCd == "02"){
                         monthTable += '<td class="pt-3-half" contenteditable="false">반차휴가</td>';
+                    }else if(ptoKdCd == "03"){
+                        monthTable += '<td class="pt-3-half" contenteditable="false">기타휴가</td>';
                     }else{
                         monthTable += '<td class="pt-3-half" contenteditable="false">오류발생 담당자확인요청필요</td>';
                     }
@@ -1011,7 +1015,7 @@
                 var overWrkTm = "-";
                 var holi = "-";
                 var ptoKdCd = "";
-                if(detlSchd != "연차휴가" && detlSchd != "반차휴가"){
+                if(detlSchd != "연차휴가" && detlSchd != "반차휴가" && detlSchd != "기타휴가"){
 
                     normWrkTm = detlSchd.split('/')[0].replace('정상근무 : ','').trim();
                     overWrkTm = detlSchd.split('/')[1].replace('연장근무 : ','').replace('주휴근무 : ','').trim();
@@ -1020,6 +1024,8 @@
                         ptoKdCd = "01";
                     }else if(detlSchd=="반차휴가"){
                         ptoKdCd = "02";
+                    }else if(detlSchd=="기타휴가"){
+                        ptoKdCd = "03";
                     }
                     holi = detlSchd;
                 }
@@ -1063,7 +1069,7 @@
                 var normWrkTm = "-";
                 var overWrkTm = "-";
                 var holi = "-";
-                if(detlSchd != "연차휴가" && detlSchd != "반차휴가"){
+                if(detlSchd != "연차휴가" && detlSchd != "반차휴가" && detlSchd != "기타휴가"){
 
                     normWrkTm = detlSchd.split('/')[0].replace('정상근무 : ','').trim();
                     overWrkTm = detlSchd.split('/')[1].replace('연장근무 : ','').replace('주휴근무 : ','').trim();
@@ -1072,6 +1078,8 @@
                         ptoKdCd = "01";
                     }else if(detlSchd=="반차휴가"){
                         ptoKdCd = "02";
+                    }else if(detlSchd=="기타휴가"){
+                        ptoKdCd = "03";
                     }
                     holi = detlSchd;
                 }
@@ -1133,16 +1141,22 @@
                  'data' : JSON.stringify(param),
                  'async' : false,
                  'callbackFn' : function(data, status, xhr){
-                    //console.log("data : ",data)
-
+                    console.log(data)
                     //$('#baseEndDate').text(endDate);                  // endDate가 변경되는 경우만 Server Call하기 위해 변수셋팅.
-
                     if(data.length > 0) {
                         var normWrkTm = Number(data[0].NORM_WRK_TM);
                         var notAprvOverWrkTm = Number(data[0].NOT_APRV_OVER_WRK_TM);
                         var aprvOverWrkTm = Number(data[0].APRV_OVER_WRK_TM);
                         var acumWrkTm = normWrkTm + notAprvOverWrkTm + aprvOverWrkTm;
+
                         $('#acumWrkTm').text("나의 근무시간 = " + acumWrkTm.toFixed(2) + "H");
+                        console.log(dt.substring(5,7));
+                        console.log(String(data[0].JOB_STRT_TM));
+                        console.log(String(data[0].JOB_END_TM));
+
+                        $('#monWrk').text(dt.substring(5,7)+"월 시작/종료 시간");
+                        var monWrkTm = "( "+String(data[0].JOB_STRT_TM)+" ~ "+String(data[0].JOB_END_TM)+" )";
+                        $('#monWrkTm').text(monWrkTm);
                     }
                  }
             });
@@ -1598,6 +1612,7 @@
                                     <!--<span id="baseEndDate" style="display:none;" ></span>-->
                                     <center><span id="totalTm" style="font-weight:bold;"></span></center>
                                     <center><span id="acumWrkTm" style="font-weight:bold;"></span></center>
+                                    <span class="requiredTag mr-1"> *</span><span id="monWrk" style="font-weight:bold;"></span><span id="monWrkTm" style="font-weight:bold;"></span>
                                 </div>
                             </div>
                         </div>

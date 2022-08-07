@@ -167,7 +167,6 @@ def getWrkTimeInfoByEml(request):
     r = requests.get('http://dili_api:5006/wrkTimeInfoByEml', json=param)
     logger.info(r)
     logger.info(r.text)
-    logger.info(logger.info(ast.literal_eval(r.json())))
     logger.info(json.loads(r.text))
     return JsonResponse(ast.literal_eval(r.json()), safe=False)
 
@@ -805,6 +804,18 @@ def saveYryApvlReq(request):
     logger.info(r.json())
     return JsonResponse(r.json())
 
+def saveYryApvlCncl(request):
+    param = json.loads(request.POST['param'])
+
+    logger.info("saveYryApvlCncl Parameters Start")
+    logger.info(type(json.dumps(param)))
+    logger.info("saveYryApvlCncl Parameters End")
+
+    r = requests.post('http://dili_api:5006/saveYryApvlCncl', data=json.dumps(param), headers = {'Content-Type': 'application/json; charset=utf-8'})
+    logger.info(r)
+    logger.info(r.text)
+    logger.info(r.json())
+    return JsonResponse(r.json())
 
 # 공지사항 파일업로드 임시추가
 def my_view(request):

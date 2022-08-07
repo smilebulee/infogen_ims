@@ -99,7 +99,7 @@
         var nowDt = new Date();
         var strNowTm = fillZero(2, nowDt.getHours()) + ':' + fillZero(2, nowDt.getMinutes());
 
-        if(holi != "연차휴가" && holi != "반차휴가"){
+        if(holi != "연차휴가" && holi != "반차휴가" && holi != "기타휴가"){
             if("N" == aprvStus){
 
                 if ($('#empEmailHidden').val() == null || $('#empEmailHidden').val() == "") {
