@@ -11,6 +11,7 @@
             $('#ipt_wrkDt').prop('readonly', false);
             $('#apvlReqUpdDtDiv').addClass('d-none');
             $('#apvlReqAcptDiv' ).addClass('d-none');
+            $('#btn_apvlWrkCncl').addClass('d-none');
 
             // 후결재의 경우 스케줄 상세 팝업의 날짜, 출근, 퇴근 시간 세팅, 수정 불가 처리
             if ($('#currReqMthd').val() == "02") {
@@ -162,7 +163,6 @@
                 data[0].APVL_UPD_DT = data[0].APVL_UPD_DT == '' ? '-' : data[0].APVL_UPD_DT;
                 data[0].TH1_APRV_RSN = data[0].TH1_APRV_RSN == '' ? '' : data[0].TH1_APRV_RSN;
                 data[0].TH1_APRV_DT = data[0].TH1_APRV_DT == '' ? '-' : data[0].TH1_APRV_DT;
-                $("#sp_updDt").text(data[0].APVL_UPD_DT);
                 $("#txa_reqAcptRsnR").val(data[0].TH1_APRV_RSN);
                 $("#sp_acptDt").text(data[0].TH1_APRV_DT);
                 $('#currReqPopInfoArr').val(JSON.stringify(data[0]));
@@ -395,7 +395,6 @@
                 'NGHT_WRK_STRT_TM'   	: $("#ipt_jobStrtTm1").val(),
                 'JOB_END_TM'    		: $("#ipt_jobEndTm1").val(),
                 'WRK_REQ_RSN'   		: $("#txa_reqBfrRsn").val().trim(),
-                'APVL_UPD_DT'   		: $("#sp_updDt").text(),
                 'TH1_APRV_RSN'  		: $("#txa_reqAcptRsn").text(),
                 'TH1_APRV_DT'   		: $("#sp_acptDt").text()
             }
@@ -474,6 +473,30 @@
         });
     }
 
+    // 취소 버튼 선택 시, 결재요청 데이터 취소
+    $('#btn_apvlWrkCncl').click(function() {
+        n_dialog.confirm('초과근무 요청을 취소하시겠습니까?',function(){
+            if(this.key == 'ok'){
+                var param = {
+                    "email"         : sessionStorage.getItem("email"),              // 로그인한 사용자 아이디
+                    "apvlReqDivs"   : "99",    // 01: 야근, 02:휴일, 03: 연차, 04: 반차, 99:취소
+                    "wrkDt"         : $("#ipt_wrkDt").val(),                    // 근무일
+                }
+                $.ajaxCall( param, {
+                     method : 'POST',
+                     'url' : '/dili/saveYryApvlCncl/post',
+                     'dataType' : 'json',
+                     'data' : JSON.stringify(param),
+                     'async' : false,
+                     'callbackFn' : function(data){
+                        // 리턴
+                        g_toast.push("취소완료 되었습니다.");
+                        $('#exitApvlReqModalBtn').click();
+                     }
+                });
+            }
+        });
+    });
 
 </script>
 
@@ -661,21 +684,6 @@
 
                                         </div>
 
-                                        <div id="apvlReqUpdDtDiv">
-                                            <div class="card-body flex-height d-flex m-0 p-2">
-                                                <!-- 수정일 -->
-                                                <div class="align-self-center mr-5 " style="font-weight:bold">
-                                                    <span class="mr-3">수정일&nbsp;&nbsp;</span>
-                                                </div>
-
-                                                <div class="align-self-center mr-3">
-                                                    <div class="align-self-center mr-3">
-                                                        <span id="sp_updDt"></span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-
                                         <div id="apvlReqAcptDiv">
                                             <hr/>
                                              <div class="card-body flex-height d-flex m-0 p-2">
@@ -717,6 +725,7 @@
                                             <div class="align-self-start align-self-center mr-3"></div>
                                             <div class="align-self-center mr-7">
                                                 <button class="button" id="btn_apvlBfrReq">저장</button>
+                                                <button class="button" id="btn_apvlWrkCncl">취소</button>
                                             </div>
                                         </div>
 

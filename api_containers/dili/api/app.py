@@ -398,6 +398,7 @@ class weekGridData(Resource): # Mariadb 연결 진행
                     + "       ,NVL(B.APVL_REQ_DT, 'N/A') AS APVL_REQ_DT "\
                     + "       ,NVL(B.APVL_LAST_APRV_DT, 'N/A') AS APVL_LAST_APRV_DT "\
                     + "       ,NVL(B.TH1_APRV_STUS, 'N/A') AS TH1_APRV_STUS"\
+                    + "       ,NVL(B.TH2_APRV_STUS, 'N/A') AS TH2_APRV_STUS"\
                     + "       ,NVL(A.REST_TM,'') AS REST_TM"\
                     + "       ,NVL(A.DINN_REST_TM,'') AS DINN_REST_TM"\
                     + "       ,NVL(B.PTO_KD_CD, '') AS PTO_KD_CD"\
@@ -448,6 +449,7 @@ class apvlInfo(Resource): # Mariadb 연결 진행
                 sql = "SELECT  NVL(APVL_REQ_DT, 'N/A') AS APVL_REQ_DT "\
                     + "       ,NVL(APVL_LAST_APRV_DT, 'N/A') AS APVL_LAST_APRV_DT "\
                     + "       ,NVL(TH1_APRV_STUS, 'N/A') AS TH1_APRV_STUS "\
+                    + "       ,NVL(TH2_APRV_STUS, 'N/A') AS TH2_APRV_STUS "\
                     + "     FROM TB_APVL_REQ_MGMT_M "\
                     + "   WHERE EMP_EMAL_ADDR = '" + data["email"] + "' "\
                     + "   AND WRK_DT = '" + data["dt"] + "'"
@@ -874,12 +876,18 @@ class apvlReqHist(Resource): # Mariadb 연결 진행
                       "            WHEN A.APVL_REQ_DIVS = '04' THEN '반차결재'  " \
                       "            ELSE '' END APVL_REQ_NM  " \
                       "     , CASE WHEN A.TH1_APRV_STUS = '01' AND NVL(A.TH2_APRV_STUS, '01') = '01' THEN '미승인'" \
-                      "            WHEN A.TH1_APRV_STUS = '02' AND NVL(A.TH2_APRV_STUS, '01') = '01' THEN '1차 승인'" \
-                      "            WHEN A.TH1_APRV_STUS = '01' AND NVL(A.TH2_APRV_STUS, '02') = '02' THEN '2차 승인'" \
-                      "            WHEN A.TH1_APRV_STUS = '02' AND NVL(A.TH2_APRV_STUS, '02') = '02' THEN '2차 승인'" \
-                      "            ELSE '반려' END APRV_STUS_NM" \
-                      "     , A.TH1_APRV_STUS" \
-                      "     , C.EMP_NAME AS REF_NM" \
+                      "            WHEN A.TH1_APRV_STUS = '02' AND NVL(A.TH2_APRV_STUS, '01') = '01' THEN '1차승인'" \
+                      "            WHEN A.TH1_APRV_STUS = '02' AND NVL(A.TH2_APRV_STUS, '01') = '02' THEN '2차승인'" \
+                      "            WHEN A.TH1_APRV_STUS = '03'  OR NVL(A.TH2_APRV_STUS, '01') = '03' THEN '반려'" \
+                      "            ELSE '확인필요' END APRV_STUS_NM" \
+                      "     , NVL(A.TH1_APRV_STUS, '') AS TH1_APRV_STUS" \
+                      "     , NVL(A.TH2_APRV_STUS, '') AS TH2_APRV_STUS" \
+                      "     , CASE WHEN A.TH1_APRV_STUS = '01' AND NVL(A.TH2_APRV_STUS, '01') = '01' THEN C.EMP_NAME" \
+                      "            WHEN A.TH1_APRV_STUS = '02' AND NVL(A.TH2_APRV_STUS, '01') = '01' THEN C.EMP_NAME" \
+                      "            WHEN A.TH1_APRV_STUS = '02' AND NVL(A.TH2_APRV_STUS, '02') = '02' THEN D.EMP_NAME" \
+                      "            WHEN A.TH2_APRV_STUS = '03' THEN D.EMP_NAME" \
+                      "            WHEN A.TH1_APRV_STUS = '03' THEN C.EMP_NAME" \
+                      "            ELSE '반려' END REF_NM" \
                       "     , IFNULL(A.APVL_REQ_DT, '') AS APVL_REQ_DT" \
                       "     , CONCAT(IFNULL(A.WRK_REQ_RSN, ''), IFNULL(A.HOLI_REQ_RSN, '')) AS WRK_REQ_RSN" \
                       "     , CASE WHEN A.APVL_REQ_DIVS = '03'" \
@@ -892,13 +900,16 @@ class apvlReqHist(Resource): # Mariadb 연결 진행
                       "        END AS BANCHA" \
                       "     , NVL(A.TH1_APRV_NM, '') AS TH1_APRV_NM " \
                       "     , NVL(A.TH2_APRV_NM, '') AS TH2_APRV_NM " \
-                      "  FROM TB_APVL_REQ_MGMT_M A, TB_EMP_MGMT B, TB_EMP_MGMT C" \
+                      "  FROM TB_APVL_REQ_MGMT_M A, TB_EMP_MGMT B, TB_EMP_MGMT C, TB_EMP_MGMT D" \
                       " WHERE A.EMP_EMAL_ADDR = B.EMP_EMAIL" \
                       "   AND A.TH1_APRV_NM = C.EMP_EMAIL " \
+                      "   AND A.TH2_APRV_NM = D.EMP_EMAIL " \
                       "   AND A.APVL_REQ_DIVS <> '99'" \
                       "   AND A.APVL_REQ_DT LIKE '" + apvlReqDtYm + "%' "
-                if apvlStusDivs != "" and apvlStusDivs != "00": #미승인, 승인, 반려
-                    sql += "   AND A.TH1_APRV_STUS = '" + apvlStusDivs + "' "
+                if apvlStusDivs == "01": #미승인
+                    sql += "   AND A.TH1_APRV_STUS = '" + apvlStusDivs + "'"
+                elif apvlStusDivs == "02" or apvlStusDivs == "03": #승인, 반려
+                    sql += "   AND (A.TH1_APRV_STUS = '" + apvlStusDivs + "' OR A.TH2_APRV_STUS = '" + apvlStusDivs + "') "
                 if email != "":
                     sql += "   AND A.EMP_EMAL_ADDR = '" + email + "' "
                 if deptCd != "" and deptCd != "00":
@@ -954,13 +965,14 @@ class apvlAcptHist(Resource):  # Mariadb 연결 진행
                           "     , CASE WHEN A.APVL_REQ_DIVS = '01' THEN NVL(A.WRK_TME,'') WHEN A.APVL_REQ_DIVS = '02' THEN NVL(A.WRK_TME,'') ELSE '' END WRK_TME  " \
                           "     , CASE WHEN A.APVL_REQ_DIVS = '01' THEN '야간근무' WHEN A.APVL_REQ_DIVS = '02' THEN '휴일근무' WHEN A.APVL_REQ_DIVS = '03' THEN '연차결재' WHEN A.APVL_REQ_DIVS = '04' THEN '반차결재' ELSE '' END APVL_REQ_NM  " \
                           "     , CASE WHEN A.TH1_APRV_STUS = '01' AND NVL(A.TH2_APRV_STUS, '01') = '01' THEN '미승인'" \
-                          "            WHEN A.TH1_APRV_STUS = '02' AND NVL(A.TH2_APRV_STUS, '01') = '01' THEN '1차 승인'" \
-                          "            WHEN A.TH1_APRV_STUS = '01' AND NVL(A.TH2_APRV_STUS, '02') = '02' THEN '2차 승인'" \
-                          "            WHEN A.TH1_APRV_STUS = '02' AND NVL(A.TH2_APRV_STUS, '02') = '02' THEN '2차 승인'" \
-                          "            ELSE '반려' END APRV_STUS_NM " \
+                          "            WHEN A.TH1_APRV_STUS = '02' AND NVL(A.TH2_APRV_STUS, '01') = '01' THEN '1차승인'" \
+                          "            WHEN A.TH1_APRV_STUS = '02' AND NVL(A.TH2_APRV_STUS, '01') = '02' THEN '2차승인'" \
+                          "            WHEN A.TH1_APRV_STUS = '03'  OR NVL(A.TH2_APRV_STUS, '01') = '03' THEN '반려'" \
+                          "            ELSE '확인필요' END APRV_STUS_NM" \
                           "     , NVL(A.APVL_REQ_DT, '') APVL_REQ_DT " \
                           "     , CONCAT(NVL(A.WRK_REQ_RSN, ''), NVL(A.HOLI_REQ_RSN, ''))  WRK_REQ_RSN " \
-                          "     , A.TH1_APRV_STUS" \
+                          "     , NVL(A.TH1_APRV_STUS, '') AS TH1_APRV_STUS" \
+                          "     , NVL(A.TH2_APRV_STUS, '') AS TH2_APRV_STUS" \
                           "     , CASE WHEN A.APVL_REQ_DIVS = '03'" \
                           "            THEN IFNULL(CONCAT(A.HOLI_TERM1, ' ~ ', A.HOLI_TERM2), '') " \
                           "            ELSE ''" \
@@ -989,10 +1001,10 @@ class apvlAcptHist(Resource):  # Mariadb 연결 진행
                           "     , CASE WHEN A.APVL_REQ_DIVS = '01' THEN NVL(A.WRK_TME,'') WHEN A.APVL_REQ_DIVS = '02' THEN NVL(A.WRK_TME,'') ELSE '' END WRK_TME  " \
                           "     , CASE WHEN A.APVL_REQ_DIVS = '01' THEN '야간근무' WHEN A.APVL_REQ_DIVS = '02' THEN '휴일근무' WHEN A.APVL_REQ_DIVS = '03' THEN '연차결재' WHEN A.APVL_REQ_DIVS = '04' THEN '반차결재' ELSE '' END APVL_REQ_NM  " \
                           "     , CASE WHEN A.TH1_APRV_STUS = '01' AND NVL(A.TH2_APRV_STUS, '01') = '01' THEN '미승인'" \
-                          "            WHEN A.TH1_APRV_STUS = '02' AND NVL(A.TH2_APRV_STUS, '01') = '01' THEN '1차 승인'" \
-                          "            WHEN A.TH1_APRV_STUS = '01' AND NVL(A.TH2_APRV_STUS, '01') = '02' THEN '2차 승인'" \
-                          "            WHEN A.TH1_APRV_STUS = '02' AND NVL(A.TH2_APRV_STUS, '01') = '02' THEN '2차 승인'" \
-                          "       ELSE '반려' END APRV_STUS_NM " \
+                          "            WHEN A.TH1_APRV_STUS = '02' AND NVL(A.TH2_APRV_STUS, '01') = '01' THEN '1차승인'" \
+                          "            WHEN A.TH1_APRV_STUS = '02' AND NVL(A.TH2_APRV_STUS, '01') = '02' THEN '2차승인'" \
+                          "            WHEN A.TH1_APRV_STUS = '03'  OR NVL(A.TH2_APRV_STUS, '01') = '03' THEN '반려'" \
+                          "            ELSE '확인필요' END APRV_STUS_NM" \
                           "     , NVL(A.APVL_REQ_DT, '') APVL_REQ_DT " \
                           "     , CONCAT(NVL(A.WRK_REQ_RSN, ''), NVL(A.HOLI_REQ_RSN, '')) WRK_REQ_RSN " \
                           "     , NVL(A.TH1_APRV_STUS, '') AS TH1_APRV_STUS" \
@@ -1536,6 +1548,7 @@ class calendarData(Resource): # Mariadb 연결 진행
                       + "       ,NVL(B.APVL_REQ_DT, 'N/A') AS APVL_REQ_DT " \
                       + "       ,NVL(B.APVL_LAST_APRV_DT, 'N/A') AS APVL_LAST_APRV_DT " \
                       + "       ,NVL(B.TH1_APRV_STUS, 'N/A') AS TH1_APRV_STUS " \
+                      + "       ,NVL(B.TH2_APRV_STUS, 'N/A') AS TH2_APRV_STUS " \
                       + "       ,CASE WHEN DAYOFWEEK(A.WRK_DT) IN ('1', '7') " \
                       + "             THEN DATE_FORMAT(DATE_SUB( SEC_TO_TIME(TIME_TO_SEC(STR_TO_DATE( CONCAT(SUBSTRING(LPAD(NVL(A.ALL_WRK_TM, '000000')-NVL(A.NGHT_WRK_TM, '000000')+ NVL(B.WRK_TME, '000000'), 6, '0'), 1, 2), ':', SUBSTRING(LPAD(NVL(A.ALL_WRK_TM, '000000')+ NVL(B.WRK_TME, '000000'), 6, '0'), 3, 2)) , '%H:%i')) - TIME_TO_SEC(STR_TO_DATE( CONCAT(SUBSTRING(LPAD(NVL(A.NORM_WRK_TM, '000000')+ NVL(B.WRK_TME, '000000'), 6, '0'), 1, 2), ':', SUBSTRING(LPAD(NVL(A.NORM_WRK_TM, '000000')+ NVL(B.WRK_TME, '000000'), 6, '0'), 3, 2)) , '%H:%i')))" \
                       + "                                      , INTERVAL A.REST_TM + A.DINN_REST_TM MINUTE)" \
