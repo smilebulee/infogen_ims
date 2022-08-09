@@ -382,8 +382,8 @@ class weekGridData(Resource): # Mariadb 연결 진행
                     + "       ,CASE WHEN NVL(B.PTO_KD_CD, 'X') IN ('01', '03') /*01 연차,02 반차,03 기타*/ " \
                     + "             THEN CONCAT(SUBSTRING(B.WRK_TME, 1, 2), ':', SUBSTRING(B.WRK_TME, 3, 2))" \
                     + "             WHEN NVL(B.PTO_KD_CD, 'X') = '02' /*02 반차*/" \
-                    + "             THEN CONCAT(SUBSTRING(DATE_SUB(STR_TO_DATE(LPAD(A.ALL_WRK_TM + CASE WHEN A.JOB_STRT_TM = B.JOB_STRT_TM THEN '000000' ELSE NVL(B.WRK_TME, '000000') END, 6 , '0'), '%H%i%s'), INTERVAL A.REST_TM + A.DINN_REST_TM MINUTE), 1, 2), ':', SUBSTRING(DATE_SUB(STR_TO_DATE(LPAD(A.ALL_WRK_TM + CASE WHEN A.JOB_STRT_TM = B.JOB_STRT_TM THEN '000000' ELSE NVL(B.WRK_TME, '000000') END, 6 , '0'), '%H%i%s'), INTERVAL A.REST_TM + A.DINN_REST_TM MINUTE), 4, 2))" \
-                    + "             ELSE CONCAT(SUBSTRING(DATE_SUB(STR_TO_DATE(LPAD(NVL(A.ALL_WRK_TM, '000000') + NVL(B.WRK_TME, CASE WHEN A.NGHT_WRK_TM = '000000' AND A.NORM_WRK_TM = '000000' THEN A.ALL_WRK_TM ELSE '000000' END), 6, '0'), '%H%i%s'), INTERVAL A.REST_TM + A.DINN_REST_TM MINUTE) , 1, 2), ':', SUBSTRING(DATE_SUB(STR_TO_DATE(LPAD(NVL(A.NORM_WRK_TM, '000000') + NVL(B.WRK_TME, CASE WHEN A.NGHT_WRK_TM = '000000' AND A.NORM_WRK_TM = '000000' THEN A.ALL_WRK_TM ELSE A.NGHT_WRK_TM END), 6, '0'), '%H%i%s'), INTERVAL A.REST_TM + A.DINN_REST_TM MINUTE) , 4, 2))" \
+                    + "             THEN CONCAT(SUBSTRING(DATE_SUB(STR_TO_DATE(NVL(A.ALL_WRK_TM, '000000'), '%H%i%s'), INTERVAL A.REST_TM + A.DINN_REST_TM MINUTE), 1, 2), ':', SUBSTRING(DATE_SUB(STR_TO_DATE(NVL(A.ALL_WRK_TM, '000000'), '%H%i%s'), INTERVAL A.REST_TM + A.DINN_REST_TM MINUTE), 4, 2))" \
+                    + "             ELSE CONCAT(SUBSTRING(DATE_SUB(STR_TO_DATE(NVL(A.ALL_WRK_TM, '000000'), '%H%i%s'), INTERVAL A.REST_TM + A.DINN_REST_TM MINUTE), 1, 2), ':', SUBSTRING(DATE_SUB(STR_TO_DATE(NVL(A.ALL_WRK_TM, '000000'), '%H%i%s'), INTERVAL A.REST_TM + A.DINN_REST_TM MINUTE), 4, 2))" \
                     + "         END AS ALL_WRK_TM"\
                     + "       ,CASE WHEN DAYOFWEEK(A.WRK_DT) IN ('1', '7') " \
                     + "             THEN DATE_FORMAT(DATE_SUB( SEC_TO_TIME(TIME_TO_SEC(STR_TO_DATE( CONCAT(SUBSTRING(LPAD(NVL(A.ALL_WRK_TM, '000000')-NVL(A.NGHT_WRK_TM, '000000')+ NVL(B.WRK_TME, '000000'), 6, '0'), 1, 2), ':', SUBSTRING(LPAD(NVL(A.ALL_WRK_TM, '000000')+ NVL(B.WRK_TME, '000000'), 6, '0'), 3, 2)) , '%H:%i')) - TIME_TO_SEC(STR_TO_DATE( CONCAT(SUBSTRING(LPAD(NVL(A.NORM_WRK_TM, '000000')+ NVL(B.WRK_TME, '000000'), 6, '0'), 1, 2), ':', SUBSTRING(LPAD(NVL(A.NORM_WRK_TM, '000000')+ NVL(B.WRK_TME, '000000'), 6, '0'), 3, 2)) , '%H:%i')))" \
@@ -493,8 +493,8 @@ class monthGridData(Resource): # Mariadb 연결 진행
                     + "       ,CASE WHEN NVL(B.PTO_KD_CD, 'X') IN ('01', '03') /*01 연차, 03 기타*/ " \
                     + "             THEN CONCAT(SUBSTRING(B.WRK_TME, 1, 2), ':', SUBSTRING(B.WRK_TME, 3, 2))" \
                     + "             WHEN NVL(B.PTO_KD_CD, 'X') = '02' /*02 반차*/" \
-                    + "             THEN CONCAT(SUBSTRING(DATE_SUB(STR_TO_DATE(LPAD(A.ALL_WRK_TM + CASE WHEN A.JOB_STRT_TM = B.JOB_STRT_TM THEN '000000' ELSE NVL(B.WRK_TME, '000000') END, 6 , '0'), '%H%i%s'), INTERVAL A.REST_TM + A.DINN_REST_TM MINUTE), 1, 2), ':', SUBSTRING(DATE_SUB(STR_TO_DATE(LPAD(A.ALL_WRK_TM + CASE WHEN A.JOB_STRT_TM = B.JOB_STRT_TM THEN '000000' ELSE NVL(B.WRK_TME, '000000') END, 6 , '0'), '%H%i%s'), INTERVAL A.REST_TM + A.DINN_REST_TM MINUTE), 4, 2))" \
-                    + "             ELSE CONCAT(SUBSTRING(DATE_SUB(STR_TO_DATE(LPAD(NVL(A.ALL_WRK_TM, '000000') + NVL(B.WRK_TME, CASE WHEN A.NGHT_WRK_TM = '000000' AND A.NORM_WRK_TM = '000000' THEN A.ALL_WRK_TM ELSE '000000' END), 6, '0'), '%H%i%s'), INTERVAL A.REST_TM + A.DINN_REST_TM MINUTE) , 1, 2), ':', SUBSTRING(DATE_SUB(STR_TO_DATE(LPAD(NVL(A.NORM_WRK_TM, '000000') + NVL(B.WRK_TME, CASE WHEN A.NGHT_WRK_TM = '000000' AND A.NORM_WRK_TM = '000000' THEN '000000' ELSE A.NGHT_WRK_TM END), 6, '0'), '%H%i%s'), INTERVAL A.REST_TM + A.DINN_REST_TM MINUTE) , 4, 2))" \
+                    + "             THEN CONCAT(SUBSTRING(DATE_SUB(STR_TO_DATE(NVL(A.ALL_WRK_TM, '000000'), '%H%i%s'), INTERVAL A.REST_TM + A.DINN_REST_TM MINUTE), 1, 2), ':', SUBSTRING(DATE_SUB(STR_TO_DATE(NVL(A.ALL_WRK_TM, '000000'), '%H%i%s'), INTERVAL A.REST_TM + A.DINN_REST_TM MINUTE), 4, 2))" \
+                    + "             ELSE CONCAT(SUBSTRING(DATE_SUB(STR_TO_DATE(NVL(A.ALL_WRK_TM, '000000'), '%H%i%s'), INTERVAL A.REST_TM + A.DINN_REST_TM MINUTE), 1, 2), ':', SUBSTRING(DATE_SUB(STR_TO_DATE(NVL(A.ALL_WRK_TM, '000000'), '%H%i%s'), INTERVAL A.REST_TM + A.DINN_REST_TM MINUTE), 4, 2))" \
                     + "         END AS ALL_WRK_TM"\
                     + "       ,CASE WHEN DAYOFWEEK(A.WRK_DT) IN ('1', '7') " \
                     + "             THEN DATE_FORMAT(DATE_SUB( SEC_TO_TIME(TIME_TO_SEC(STR_TO_DATE( CONCAT(SUBSTRING(LPAD(NVL(A.ALL_WRK_TM, '000000')-NVL(A.NGHT_WRK_TM, '000000')+ NVL(B.WRK_TME, '000000'), 6, '0'), 1, 2), ':', SUBSTRING(LPAD(NVL(A.ALL_WRK_TM, '000000')+ NVL(B.WRK_TME, '000000'), 6, '0'), 3, 2)) , '%H:%i')) - TIME_TO_SEC(STR_TO_DATE( CONCAT(SUBSTRING(LPAD(NVL(A.NORM_WRK_TM, '000000')+ NVL(B.WRK_TME, '000000'), 6, '0'), 1, 2), ':', SUBSTRING(LPAD(NVL(A.NORM_WRK_TM, '000000')+ NVL(B.WRK_TME, '000000'), 6, '0'), 3, 2)) , '%H:%i')))" \
@@ -556,7 +556,6 @@ class wrkTimeInfoByEml(Resource): # Mariadb 연결 진행
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 #쿼리문 실행
                 sql = "SELECT A.EMP_EMAL_ADDR" \
-                    + "      ,A.WRK_DT " \
                     + "      ,DATE_FORMAT(SEC_TO_TIME(SUM(TIME_TO_SEC(STR_TO_DATE( CONCAT(SUBSTRING(A.NORM_WRK_TM,1,2),':',SUBSTRING(A.NORM_WRK_TM,3,2),':',SUBSTRING(A.NORM_WRK_TM,5,2)) ,'%H:%i:%S')))),'%H.%i') NORM_WRK_TM" \
                     + "      ,DATE_FORMAT(SEC_TO_TIME((SUM(TIME_TO_SEC(STR_TO_DATE( CONCAT(SUBSTRING(A.HLDY_WRK_TM,1,2),':',SUBSTRING(A.HLDY_WRK_TM,3,2),':',SUBSTRING(A.HLDY_WRK_TM,5,2)) ,'%H:%i:%S'))) + SUM(TIME_TO_SEC(STR_TO_DATE( CONCAT(SUBSTRING(A.NGHT_WRK_TM,1,2),':',SUBSTRING(A.NGHT_WRK_TM,3,2),':',SUBSTRING(A.NGHT_WRK_TM,5,2)) ,'%H:%i:%S')))) - SUM(TIME_TO_SEC(STR_TO_DATE( CONCAT(SUBSTRING(IFNULL(B.WRK_TME,'000000'),1,2),':',SUBSTRING(IFNULL(B.WRK_TME,'000000'),3,2),':',SUBSTRING(IFNULL(B.WRK_TME,'000000'),5,2)) ,'%H:%i:%S')))),'%H.%i') NOT_APRV_OVER_WRK_TM" \
                     + "      ,DATE_FORMAT(SEC_TO_TIME(SUM(TIME_TO_SEC(STR_TO_DATE( CONCAT(SUBSTRING(IFNULL(B.WRK_TME,'000000'),1,2),':',SUBSTRING(IFNULL(B.WRK_TME,'000000'),3,2),':',SUBSTRING(IFNULL(B.WRK_TME,'000000'),5,2)) ,'%H:%i:%S')))),'%H.%i') APRV_OVER_WRK_TM" \
@@ -565,7 +564,7 @@ class wrkTimeInfoByEml(Resource): # Mariadb 연결 진행
                     + "  FROM TB_WRK_TM_MGMT_M A INNER JOIN TB_EMP_MGMT E ON A.EMP_EMAL_ADDR = E.EMP_EMAIL LEFT OUTER JOIN TB_APVL_REQ_MGMT_M B ON A.EMP_EMAL_ADDR = B.EMP_EMAL_ADDR AND A.WRK_DT = B.WRK_DT AND B.APVL_REQ_DIVS IN ('01','02')" \
                     + " WHERE A.EMP_EMAL_ADDR = '" +data["email"] + "'" \
                     + "   AND A.WRK_DT LIKE '" + data["dt"] + "%'" \
-                    + " GROUP BY A.EMP_EMAL_ADDR, A.WRK_DT"
+                    + " GROUP BY A.EMP_EMAL_ADDR"
                 logging.debug(sql + "#####")
                 cursor.execute(sql)
 
@@ -1385,6 +1384,9 @@ class apvlReqHistDetl(Resource): # Mariadb 연결 진행
 
         data = request.get_json()
 
+        logging.debug('================== App Start ==================')
+        logging.debug(data)
+        logging.debug('===============================================')
         #requirements pymysql import 후 커넥트 사용
         mysql_con = getMariaConn()
         try:
@@ -1425,7 +1427,7 @@ class apvlReqHistDetl(Resource): # Mariadb 연결 진행
                       "                ON A.REF2_NM = F.EMP_EMAIL " \
                       "   LEFT OUTER JOIN TB_EMP_MGMT D " \
                       "                ON A.EMP_EMAL_ADDR = D.EMP_EMAIL " \
-                      "             WHERE A.EMP_EMAL_ADDR = '" + data["email"]     + "'" \
+                      "             WHERE A.EMP_EMAL_ADDR = '" + data["email"] + "'" \
                       "               AND DATE_FORMAT(APVL_REQ_DT, '%Y-%m-%d') = '" + data["apvlReqDt"] + "'" \
                       "               AND '" + data["wrkDt"] + "' BETWEEN A.HOLI_TERM1 AND A.HOLI_TERM2"
 
@@ -2537,18 +2539,23 @@ class scheduleStatLst(Resource):
                       "      										       WHERE F.CMM_CD_GRP_ID = 'APVL_DIVS_CD'" \
                       "      				     						     AND F.CMM_CD = B.APVL_REQ_DIVS)" \
                       "      		ELSE '정상근무' END WRK_DIVS" \
-                      "		 ,(SELECT NVL((SELECT F.CMM_CD_NAME" \
-                      "                      FROM TB_CMM_CD_DETL F" \
-                      "                     WHERE F.CMM_CD_GRP_ID = 'APVL_STTS_CD'" \
-                      "                       AND F.CMM_CD = B.TH1_APRV_STUS), '')" \
-                      "          FROM DUAL) APVL_STUS" \
+                      "		 ,CASE WHEN B.TH2_APRV_STUS = '02'" \
+                      "            THEN '승인완료'" \
+                      "            WHEN B.TH1_APRV_STUS = '02'" \
+                      "            THEN '1차승인'" \
+                      "            WHEN B.TH1_APRV_STUS = '03' OR B.TH2_APRV_STUS = '03'" \
+                      "            THEN '반려'"\
+                      "            WHEN B.TH1_APRV_STUS = '01'" \
+                      "            THEN '미승인'"\
+                      "            ELSE ''" \
+                      "        END AS APVL_STUS" \
                       "		 ,NVL(NVL(A.JOB_STRT_TM, B.JOB_STRT_TM), '') AS WRK_STRT_TM" \
                       "		 ,NVL(NVL(A.JOB_END_TM, B.JOB_END_TM), '') AS WRK_END_TM" \
                       "      ,CASE WHEN NVL(B.PTO_KD_CD, 'X') IN ('01', '03') /*01 연차, 03 기타*/ " \
                       "            THEN CONCAT(SUBSTRING(B.WRK_TME, 1, 2), ':', SUBSTRING(B.WRK_TME, 3, 2))" \
                       "            WHEN NVL(B.PTO_KD_CD, 'X') = '02' /*02 반차*/" \
-                      "            THEN CONCAT(SUBSTRING(DATE_SUB(STR_TO_DATE(LPAD(A.ALL_WRK_TM + CASE WHEN A.JOB_STRT_TM = B.JOB_STRT_TM THEN '000000' ELSE NVL(B.WRK_TME, '000000') END, 6 , '0'), '%H%i%s'), INTERVAL A.REST_TM + A.DINN_REST_TM MINUTE), 1, 2), ':', SUBSTRING(DATE_SUB(STR_TO_DATE(LPAD(A.ALL_WRK_TM + CASE WHEN A.JOB_STRT_TM = B.JOB_STRT_TM THEN '000000' ELSE NVL(B.WRK_TME, '000000') END, 6 , '0'), '%H%i%s'), INTERVAL A.REST_TM + A.DINN_REST_TM MINUTE), 4, 2))" \
-                      "            ELSE CONCAT(SUBSTRING(DATE_SUB(STR_TO_DATE(LPAD(NVL(A.ALL_WRK_TM, '000000') + NVL(B.WRK_TME, CASE WHEN A.NGHT_WRK_TM = '000000' AND A.NORM_WRK_TM = '000000' THEN A.ALL_WRK_TM ELSE '000000' END), 6, '0'), '%H%i%s'), INTERVAL A.REST_TM + A.DINN_REST_TM MINUTE) , 1, 2), ':', SUBSTRING(DATE_SUB(STR_TO_DATE(LPAD(NVL(A.NORM_WRK_TM, '000000') + NVL(B.WRK_TME, CASE WHEN A.NGHT_WRK_TM = '000000' AND A.NORM_WRK_TM = '000000' THEN A.ALL_WRK_TM ELSE A.NGHT_WRK_TM END), 6, '0'), '%H%i%s'), INTERVAL A.REST_TM + A.DINN_REST_TM MINUTE) , 4, 2))" \
+                      "            THEN CONCAT(SUBSTRING(DATE_SUB(STR_TO_DATE(NVL(A.ALL_WRK_TM, '000000'), '%H%i%s'), INTERVAL A.REST_TM + A.DINN_REST_TM MINUTE), 1, 2), ':', SUBSTRING(DATE_SUB(STR_TO_DATE(NVL(A.ALL_WRK_TM, '000000'), '%H%i%s'), INTERVAL A.REST_TM + A.DINN_REST_TM MINUTE), 4, 2))" \
+                      "            ELSE CONCAT(SUBSTRING(DATE_SUB(STR_TO_DATE(NVL(A.ALL_WRK_TM, '000000'), '%H%i%s'), INTERVAL A.REST_TM + A.DINN_REST_TM MINUTE), 1, 2), ':', SUBSTRING(DATE_SUB(STR_TO_DATE(NVL(A.ALL_WRK_TM, '000000'), '%H%i%s'), INTERVAL A.REST_TM + A.DINN_REST_TM MINUTE), 4, 2))" \
                       "        END AS ALL_WRK_TM"\
                       "      ,CASE WHEN B.EMP_EMAL_ADDR IS NULL AND (A.HLDY_WRK_TM != '000000' OR A.NGHT_WRK_TM != '000000') THEN 'N'" \
                       "            ELSE 'Y' END APVL_REQ_YN" \

@@ -442,12 +442,16 @@
             alertMsg("결재 진행중이거나 완료된 경우 수정이 불가능합니다.");
             return;
         }
+        if( sAprvStus == "반려" ) { // 결재상태가 반려인 경우
+            alertMsg("반려된 경우 수정이 불가능합니다.");
+            return;
+        }
 
         if(sSelStr == "야간근무" || sSelStr == "휴일근무") {
             url = "{% url 'dili_api:apvlReqPop' %}" ;
-        } else if (sSelStr == "반차결재" ) { //|| sSelStr == "연차결재") {
-            url = "{% url 'dili_api:apvlReqBfrChkPop' %}" ;
-        } else if (sSelStr == "연차결재") {
+        /*} else if (sSelStr == "반차결재" ) { //|| sSelStr == "연차결재") {
+            url = "{% url 'dili_api:apvlReqBfrChkPop' %}" ;*/
+        } else if (sSelStr == "연차결재" || sSelStr == "반차결재") {
             url = "{% url 'dili_api:yryApvlReqPop' %}" ;
             $('#currYryPopStts').val("modify");
             $('#currYryPopParamArr').val($(trId).children().eq(9).html());

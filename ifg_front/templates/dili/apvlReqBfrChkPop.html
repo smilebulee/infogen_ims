@@ -117,6 +117,7 @@
             var params = {
                 "email"      : arrWrkDt[0],     // 기안자
                 "wrkDt"      : arrWrkDt[1],     // 연차요청일시
+                "apvlReqDt"  : arrWrkDt[5],     // 승인요청일자
             }
             var url = "{% url 'dili_api:getApvlReqHistDetl' %}";
 
