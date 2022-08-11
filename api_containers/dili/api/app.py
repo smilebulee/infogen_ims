@@ -383,7 +383,7 @@ class weekGridData(Resource): # Mariadb 연결 진행
                     + "             THEN CONCAT(SUBSTRING(B.WRK_TME, 1, 2), ':', SUBSTRING(B.WRK_TME, 3, 2))" \
                     + "             WHEN NVL(B.PTO_KD_CD, 'X') = '02' /*02 반차*/" \
                     + "             THEN CONCAT(SUBSTRING(DATE_SUB(STR_TO_DATE(NVL(A.ALL_WRK_TM, '000000'), '%H%i%s'), INTERVAL A.REST_TM + A.DINN_REST_TM MINUTE), 1, 2), ':', SUBSTRING(DATE_SUB(STR_TO_DATE(NVL(A.ALL_WRK_TM, '000000'), '%H%i%s'), INTERVAL A.REST_TM + A.DINN_REST_TM MINUTE), 4, 2))" \
-                    + "             ELSE CONCAT(SUBSTRING(DATE_SUB(STR_TO_DATE(NVL(A.ALL_WRK_TM, '000000'), '%H%i%s'), INTERVAL A.REST_TM + A.DINN_REST_TM MINUTE), 1, 2), ':', SUBSTRING(DATE_SUB(STR_TO_DATE(NVL(A.ALL_WRK_TM, '000000'), '%H%i%s'), INTERVAL A.REST_TM + A.DINN_REST_TM MINUTE), 4, 2))" \
+                    + "             ELSE CONCAT(SUBSTRING(DATE_SUB(DATE_ADD(STR_TO_DATE(NVL(A.ALL_WRK_TM, '000000'), '%H%i%s'), INTERVAL TIME_TO_SEC(STR_TO_DATE(LPAD(NVL(B.WRK_TME, A.NGHT_WRK_TM), 6, '0'), '%H%i%s')) SECOND), INTERVAL A.REST_TM + A.DINN_REST_TM MINUTE), 1, 2), ':', SUBSTRING(DATE_SUB(DATE_ADD(STR_TO_DATE(NVL(A.ALL_WRK_TM, '000000'), '%H%i%s'), INTERVAL TIME_TO_SEC(STR_TO_DATE(LPAD(NVL(B.WRK_TME, A.NGHT_WRK_TM), 6, '0'), '%H%i%s')) SECOND), INTERVAL A.REST_TM + A.DINN_REST_TM MINUTE), 4, 2))" \
                     + "         END AS ALL_WRK_TM"\
                     + "       ,CASE WHEN DAYOFWEEK(A.WRK_DT) IN ('1', '7') " \
                     + "             THEN DATE_FORMAT(DATE_SUB( SEC_TO_TIME(TIME_TO_SEC(STR_TO_DATE( CONCAT(SUBSTRING(LPAD(NVL(A.ALL_WRK_TM, '000000')-NVL(A.NGHT_WRK_TM, '000000')+ NVL(B.WRK_TME, '000000'), 6, '0'), 1, 2), ':', SUBSTRING(LPAD(NVL(A.ALL_WRK_TM, '000000')+ NVL(B.WRK_TME, '000000'), 6, '0'), 3, 2)) , '%H:%i')) - TIME_TO_SEC(STR_TO_DATE( CONCAT(SUBSTRING(LPAD(NVL(A.NORM_WRK_TM, '000000')+ NVL(B.WRK_TME, '000000'), 6, '0'), 1, 2), ':', SUBSTRING(LPAD(NVL(A.NORM_WRK_TM, '000000')+ NVL(B.WRK_TME, '000000'), 6, '0'), 3, 2)) , '%H:%i')))" \
@@ -410,6 +410,7 @@ class weekGridData(Resource): # Mariadb 연결 진행
                     + "   ON (A.WRK_DT = B.WRK_DT OR A.WRK_DT BETWEEN B.HOLI_TERM1 AND B.HOLI_TERM2) "\
                     + "   AND A.EMP_EMAL_ADDR = B.EMP_EMAL_ADDR "\
                     + "   AND B.APVL_REQ_DIVS <> '99'" \
+                      "   AND NVL(B.TH2_APRV_STUS, '') = '02' /*2차승인건만*/" \
                     + "  WHERE 1 = 1 "\
                     + "  AND A.EMP_EMAL_ADDR = '" + data["email"] + "' "\
                     + "  AND A.WRK_DT >= '" + data["strtDt"] + "' "\
@@ -496,7 +497,7 @@ class monthGridData(Resource): # Mariadb 연결 진행
                     + "             THEN CONCAT(SUBSTRING(B.WRK_TME, 1, 2), ':', SUBSTRING(B.WRK_TME, 3, 2))" \
                     + "             WHEN NVL(B.PTO_KD_CD, 'X') = '02' /*02 반차*/" \
                     + "             THEN CONCAT(SUBSTRING(DATE_SUB(STR_TO_DATE(NVL(A.ALL_WRK_TM, '000000'), '%H%i%s'), INTERVAL A.REST_TM + A.DINN_REST_TM MINUTE), 1, 2), ':', SUBSTRING(DATE_SUB(STR_TO_DATE(NVL(A.ALL_WRK_TM, '000000'), '%H%i%s'), INTERVAL A.REST_TM + A.DINN_REST_TM MINUTE), 4, 2))" \
-                    + "             ELSE CONCAT(SUBSTRING(DATE_SUB(STR_TO_DATE(NVL(A.ALL_WRK_TM, '000000'), '%H%i%s'), INTERVAL A.REST_TM + A.DINN_REST_TM MINUTE), 1, 2), ':', SUBSTRING(DATE_SUB(STR_TO_DATE(NVL(A.ALL_WRK_TM, '000000'), '%H%i%s'), INTERVAL A.REST_TM + A.DINN_REST_TM MINUTE), 4, 2))" \
+                    + "             ELSE CONCAT(SUBSTRING(DATE_SUB(DATE_ADD(STR_TO_DATE(NVL(A.ALL_WRK_TM, '000000'), '%H%i%s'), INTERVAL TIME_TO_SEC(STR_TO_DATE(LPAD(NVL(B.WRK_TME, A.NGHT_WRK_TM), 6, '0'), '%H%i%s')) SECOND), INTERVAL A.REST_TM + A.DINN_REST_TM MINUTE), 1, 2), ':', SUBSTRING(DATE_SUB(DATE_ADD(STR_TO_DATE(NVL(A.ALL_WRK_TM, '000000'), '%H%i%s'), INTERVAL TIME_TO_SEC(STR_TO_DATE(LPAD(NVL(B.WRK_TME, A.NGHT_WRK_TM), 6, '0'), '%H%i%s')) SECOND), INTERVAL A.REST_TM + A.DINN_REST_TM MINUTE), 4, 2))" \
                     + "         END AS ALL_WRK_TM"\
                     + "       ,CASE WHEN DAYOFWEEK(A.WRK_DT) IN ('1', '7') " \
                     + "             THEN DATE_FORMAT(DATE_SUB( SEC_TO_TIME(TIME_TO_SEC(STR_TO_DATE( CONCAT(SUBSTRING(LPAD(NVL(A.ALL_WRK_TM, '000000')-NVL(A.NGHT_WRK_TM, '000000')+ NVL(B.WRK_TME, '000000'), 6, '0'), 1, 2), ':', SUBSTRING(LPAD(NVL(A.ALL_WRK_TM, '000000')+ NVL(B.WRK_TME, '000000'), 6, '0'), 3, 2)) , '%H:%i')) - TIME_TO_SEC(STR_TO_DATE( CONCAT(SUBSTRING(LPAD(NVL(A.NORM_WRK_TM, '000000')+ NVL(B.WRK_TME, '000000'), 6, '0'), 1, 2), ':', SUBSTRING(LPAD(NVL(A.NORM_WRK_TM, '000000')+ NVL(B.WRK_TME, '000000'), 6, '0'), 3, 2)) , '%H:%i')))" \
@@ -521,6 +522,7 @@ class monthGridData(Resource): # Mariadb 연결 진행
                     + "   ON (A.WRK_DT = B.WRK_DT OR A.WRK_DT BETWEEN B.HOLI_TERM1 AND B.HOLI_TERM2) "\
                     + "   AND A.EMP_EMAL_ADDR = B.EMP_EMAL_ADDR "\
                     + "   AND B.APVL_REQ_DIVS <> '99'" \
+                      "   AND NVL(B.TH2_APRV_STUS, '') = '02' /*2차승인건만*/" \
                     + "  WHERE 1 = 1 " \
                     + "  AND A.EMP_EMAL_ADDR = '" + data["email"] + "' "\
                     + "  AND A.WRK_DT like '"+data["mDt"]+"%' "\
@@ -895,7 +897,7 @@ class apvlReqHist(Resource): # Mariadb 연결 진행
                       "            ELSE ''" \
                       "        END AS YEONCHA" \
                       "     , CASE WHEN A.APVL_REQ_DIVS = '04'" \
-                      "            THEN IFNULL(A.HOLI_TERM2, '') " \
+                      "            THEN CONCAT(IFNULL(A.HOLI_TERM2, ''), '(', CASE WHEN A.HDO_KD_CD = '01' THEN '오전' ELSE '오후' END, ')') " \
                       "            ELSE ''" \
                       "        END AS BANCHA" \
                       "     , NVL(A.TH1_APRV_NM, '') AS TH1_APRV_NM " \
@@ -978,7 +980,7 @@ class apvlAcptHist(Resource):  # Mariadb 연결 진행
                           "            ELSE ''" \
                           "        END AS YEONCHA" \
                           "     , CASE WHEN A.APVL_REQ_DIVS = '04'" \
-                          "            THEN IFNULL(A.HOLI_TERM2, '') " \
+                          "            THEN CONCAT(IFNULL(A.HOLI_TERM2, ''), '(', CASE WHEN A.HDO_KD_CD = '01' THEN '오전' ELSE '오후' END, ')')  " \
                           "            ELSE ''" \
                           "        END AS BANCHA" \
                           "     , NVL(A.TH1_APRV_NM, '') AS TH1_APRV_NM " \
@@ -986,6 +988,7 @@ class apvlAcptHist(Resource):  # Mariadb 연결 진행
                           "  FROM TB_APVL_REQ_MGMT_M A, TB_EMP_MGMT B, TB_EMP_MGMT C " \
                           " WHERE A.EMP_EMAL_ADDR = C.EMP_EMAIL  " \
                           "   AND A.TH1_APRV_NM = B.EMP_EMAIL  " \
+                          "   AND A.APVL_REQ_DIVS <> '99'" \
                           "   AND A.TH1_APRV_NM = '" + email + "' " \
                           " ORDER BY APVL_REQ_DT ASC "
 
@@ -1014,7 +1017,7 @@ class apvlAcptHist(Resource):  # Mariadb 연결 진행
                           "            ELSE ''" \
                           "        END AS YEONCHA" \
                           "     , CASE WHEN A.APVL_REQ_DIVS = '04'" \
-                          "            THEN IFNULL(A.HOLI_TERM2, '') " \
+                          "            THEN CONCAT(IFNULL(A.HOLI_TERM2, ''), '(', CASE WHEN A.HDO_KD_CD = '01' THEN '오전' ELSE '오후' END, ')') " \
                           "            ELSE ''" \
                           "        END AS BANCHA" \
                           "     , NVL(A.TH1_APRV_NM, '') AS TH1_APRV_NM " \
@@ -1503,7 +1506,8 @@ class apvlReqWrkHistDetl(Resource): # Mariadb 연결 진행
                       "                ON A.REF2_NM = F.EMP_EMAIL " \
                       "   LEFT OUTER JOIN TB_EMP_MGMT D " \
                       "                ON A.EMP_EMAL_ADDR = D.EMP_EMAIL " \
-                      "             WHERE A.EMP_EMAL_ADDR = '" + data["email"]     + "'" \
+                      "             WHERE A.APVL_REQ_DIVS <> '99'" \
+                      "               AND A.EMP_EMAL_ADDR = '" + data["email"]     + "'" \
                       "               AND DATE_FORMAT(APVL_REQ_DT, '%Y-%m-%d') = '" + data["apvlReqDt"] + "'" \
 
                 logging.debug("apvlReqWrkHistDetl SQL문 : " + sql)
@@ -2277,6 +2281,7 @@ class updateEndTm(Resource):  # Mariadb 연결 진행
                                     charset='utf8', autocommit=False)
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+                # 주말근무케이스
                 if normWrkTm == "000000" and allWrkTm != "000000":
                     # 쿼리문 실행
                     sql = "UPDATE TB_WRK_TM_MGMT_M " \
@@ -2290,17 +2295,16 @@ class updateEndTm(Resource):  # Mariadb 연결 진행
                     cursor.execute(sql, (tm, nghtWrkStrtTm, overWrkTm, allWrkTm, email, dt))
 
                 else:
-                    # 쿼리문 실행
+                    # 쿼리문 실행, 주말 외
                     sql = "UPDATE TB_WRK_TM_MGMT_M " \
                           "   SET JOB_END_TM  = %s " \
                           "      ,NGHT_WRK_STRT_TM = %s " \
                           "      ,NORM_WRK_TM = %s " \
                           "      ,NGHT_WRK_TM = %s " \
-                          "      ,ALL_WRK_TM  = %s " \
                           "   WHERE EMP_EMAL_ADDR = %s " \
                           "   AND WRK_DT = %s "
                     logger.info(sql)
-                    cursor.execute(sql, (tm, nghtWrkStrtTm, normWrkTm, overWrkTm, allWrkTm, email, dt))
+                    cursor.execute(sql, (tm, nghtWrkStrtTm, normWrkTm, overWrkTm, email, dt))
                 
                 # 수정하려는 날짜의 미승인 결재 요청 건이 있을 경우, 해당 record 수정 2022-06-28 불필요 로직으로 보이며 제거
                 # sql = "UPDATE TB_APVL_REQ_MGMT_M " \
@@ -2568,18 +2572,20 @@ class scheduleStatLst(Resource):
                       "            THEN CONCAT(SUBSTRING(B.WRK_TME, 1, 2), ':', SUBSTRING(B.WRK_TME, 3, 2))" \
                       "            WHEN NVL(B.PTO_KD_CD, 'X') = '02' /*02 반차*/" \
                       "            THEN CONCAT(SUBSTRING(DATE_SUB(STR_TO_DATE(NVL(A.ALL_WRK_TM, '000000'), '%H%i%s'), INTERVAL A.REST_TM + A.DINN_REST_TM MINUTE), 1, 2), ':', SUBSTRING(DATE_SUB(STR_TO_DATE(NVL(A.ALL_WRK_TM, '000000'), '%H%i%s'), INTERVAL A.REST_TM + A.DINN_REST_TM MINUTE), 4, 2))" \
-                      "            ELSE CONCAT(SUBSTRING(DATE_SUB(STR_TO_DATE(NVL(A.ALL_WRK_TM, '000000'), '%H%i%s'), INTERVAL A.REST_TM + A.DINN_REST_TM MINUTE), 1, 2), ':', SUBSTRING(DATE_SUB(STR_TO_DATE(NVL(A.ALL_WRK_TM, '000000'), '%H%i%s'), INTERVAL A.REST_TM + A.DINN_REST_TM MINUTE), 4, 2))" \
+                      "            ELSE CONCAT(SUBSTRING(DATE_SUB(DATE_ADD(STR_TO_DATE(NVL(A.ALL_WRK_TM, '000000'), '%H%i%s'), INTERVAL TIME_TO_SEC(STR_TO_DATE(LPAD(NVL(B.WRK_TME, A.NGHT_WRK_TM), 6, '0'), '%H%i%s')) SECOND), INTERVAL A.REST_TM + A.DINN_REST_TM MINUTE), 1, 2), ':', SUBSTRING(DATE_SUB(DATE_ADD(STR_TO_DATE(NVL(A.ALL_WRK_TM, '000000'), '%H%i%s'), INTERVAL TIME_TO_SEC(STR_TO_DATE(LPAD(NVL(B.WRK_TME, A.NGHT_WRK_TM), 6, '0'), '%H%i%s')) SECOND), INTERVAL A.REST_TM + A.DINN_REST_TM MINUTE), 4, 2))" \
                       "        END AS ALL_WRK_TM"\
                       "      ,CASE WHEN B.EMP_EMAL_ADDR IS NULL AND (A.HLDY_WRK_TM != '000000' OR A.NGHT_WRK_TM != '000000') THEN 'N'" \
                       "            ELSE 'Y' END APVL_REQ_YN" \
-                      "      ,CASE WHEN NVL(A.NGHT_WRK_TM, '') != '' AND NVL(A.NGHT_WRK_TM, '') != '000000' THEN CONCAT(SUBSTRING(DATE_SUB(STR_TO_DATE(NVL(A.NGHT_WRK_TM, ''), '%H%i%s'), INTERVAL A.REST_TM + A.DINN_REST_TM MINUTE), 1, 2), ':', SUBSTRING(DATE_SUB(STR_TO_DATE(NVL(A.NGHT_WRK_TM, ''), '%H%i%s'), INTERVAL A.REST_TM + A.DINN_REST_TM MINUTE), 4, 2))" \
+                      "      ,CASE WHEN B.APVL_REQ_DIVS IN ('01', '02') AND NVL(NVL(B.WRK_TME, A.NGHT_WRK_TM), '') != '' AND NVL(NVL(B.WRK_TME, A.NGHT_WRK_TM), '') != '000000' " \
+                      "            THEN CONCAT(SUBSTRING(DATE_SUB(STR_TO_DATE(NVL(B.WRK_TME, A.NGHT_WRK_TM), '%H%i%s'), INTERVAL A.REST_TM + A.DINN_REST_TM MINUTE), 1, 2), ':', SUBSTRING(DATE_SUB(STR_TO_DATE(NVL(B.WRK_TME, A.NGHT_WRK_TM), '%H%i%s'), INTERVAL A.REST_TM + A.DINN_REST_TM MINUTE), 4, 2))" \
                       "            ELSE ''" \
                       "             END NGHT_WRK_YN" \
-                      "     , CASE WHEN DATE_SUB(STR_TO_DATE(DATE_FORMAT(CASE WHEN NVL(B.APVL_REQ_DIVS,'') = '' THEN A.JOB_END_TM ELSE B.JOB_END_TM END, '%H%i%s'), '%H%i%s'), INTERVAL STR_TO_DATE('220000', '%H%i%s') DAY_SECOND) > 0 " \
+                      "     , CASE WHEN B.APVL_REQ_DIVS IN ('01', '02') AND DATE_SUB(STR_TO_DATE(DATE_FORMAT(CASE WHEN NVL(B.APVL_REQ_DIVS,'') = '' THEN A.JOB_END_TM ELSE B.JOB_END_TM END, '%H%i%s'), '%H%i%s'), INTERVAL STR_TO_DATE('220000', '%H%i%s') DAY_SECOND) > 0 " \
                       "            THEN CONCAT(SUBSTRING(NVL(DATE_SUB(STR_TO_DATE(DATE_FORMAT(CASE WHEN NVL(B.APVL_REQ_DIVS,'') = '' THEN A.JOB_END_TM ELSE B.JOB_END_TM END, '%H%i%s'), '%H%i%s'), INTERVAL STR_TO_DATE('220000', '%H%i%s') DAY_SECOND), ''), 1, 2), ':', SUBSTRING(NVL(DATE_SUB(STR_TO_DATE(DATE_FORMAT(CASE WHEN NVL(B.APVL_REQ_DIVS,'') = '' THEN A.JOB_END_TM ELSE B.JOB_END_TM END, '%H%i%s'), '%H%i%s'), INTERVAL STR_TO_DATE('220000', '%H%i%s') DAY_SECOND), ''), 4, 2))" \
                       "            ELSE '' " \
                       "        END AS NGHT_SFT_YN" \
-                      "      ,CASE WHEN NVL(A.HLDY_WRK_TM, '') != '' AND NVL(A.HLDY_WRK_TM, '') != '000000' THEN CONCAT(SUBSTRING(DATE_SUB(STR_TO_DATE(NVL(A.HLDY_WRK_TM, ''), '%H%i%s'), INTERVAL A.REST_TM + A.DINN_REST_TM MINUTE), 1, 2), ':', SUBSTRING(DATE_SUB(STR_TO_DATE(NVL(A.HLDY_WRK_TM, ''), '%H%i%s'), INTERVAL A.REST_TM + A.DINN_REST_TM MINUTE), 4, 2))" \
+                      "      ,CASE WHEN NVL(A.HLDY_WRK_TM, '') != '' AND NVL(A.HLDY_WRK_TM, '') != '000000' " \
+                      "            THEN CONCAT(SUBSTRING(DATE_SUB(STR_TO_DATE(NVL(A.HLDY_WRK_TM, ''), '%H%i%s'), INTERVAL A.REST_TM + A.DINN_REST_TM MINUTE), 1, 2), ':', SUBSTRING(DATE_SUB(STR_TO_DATE(NVL(A.HLDY_WRK_TM, ''), '%H%i%s'), INTERVAL A.REST_TM + A.DINN_REST_TM MINUTE), 4, 2))" \
                       "            ELSE ''" \
                       "             END HLDY_WRK_YN" \
                       "      ,CASE WHEN PTO_KD_CD IS NOT NULL" \

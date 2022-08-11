@@ -438,7 +438,7 @@
 
         var sAprvStus = $(trId).children().eq(6).html();
         console.log("sAprvStus : "+sAprvStus);
-        if( sAprvStus == "1차 승인" || sAprvStus == "2차 승인" ) { // 결재상태가 1차 승인 이거나 2차 승인인 경우
+        if( sAprvStus == "1차승인" || sAprvStus == "2차승인" ) { // 결재상태가 1차 승인 이거나 2차 승인인 경우
             alertMsg("결재 진행중이거나 완료된 경우 수정이 불가능합니다.");
             return;
         }
