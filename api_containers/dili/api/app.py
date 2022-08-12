@@ -2556,7 +2556,9 @@ class scheduleStatLst(Resource):
                       "      										       WHERE F.CMM_CD_GRP_ID = 'APVL_DIVS_CD'" \
                       "      				     						     AND F.CMM_CD = B.APVL_REQ_DIVS)" \
                       "      		ELSE '정상근무' END WRK_DIVS" \
-                      "		 ,CASE WHEN B.TH2_APRV_STUS = '02'" \
+                      "		 ,CASE WHEN B.EMP_EMAL_ADDR IS NULL AND (A.HLDY_WRK_TM != '000000' OR A.NGHT_WRK_TM != '000000') " \
+                      "            THEN '미등록'" \
+                      "            WHEN B.TH2_APRV_STUS = '02'" \
                       "            THEN '승인완료'" \
                       "            WHEN B.TH1_APRV_STUS = '02'" \
                       "            THEN '1차승인'" \
