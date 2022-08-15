@@ -482,6 +482,7 @@
                         // 리턴
                         g_toast.push(msgText+" 되었습니다.");
                         $('#exitYryReqModalBtn').click();
+                        $("#apvlHistSearchBtn").click();
                      }
                 });
             }
@@ -555,50 +556,13 @@
             return;
         }
 
-btnReqEvt2();   //임시 저장 로직 처리
-return;
-        //신규 저장 + 선결재 시, 입력받은 데이터 유효성 검증
-        if($('#currReqPopStts').val() == "register") {
-            if($("#currApvlDivsStts").val() == "01") {
-                //근무요청일시
-                var currDt = new Date();
-                var inptDt = new Date($('#ipt_wrkDt').val());
-                var inptStrtDtTm = new Date($('#ipt_wrkDt').val() + " " +  $("#ipt_jobStrtTm").val());
-                var inptEndDtTm  = new Date($('#ipt_wrkDt').val() + " " +  $("#ipt_jobEndTm").val());
-                var currDtTm  = new Date(currDt.getFullYear() + "-" + fillZero(2, (currDt.getMonth() + 1)) + "-" + currDt.getDate()
-                                         + " " + currDt.getHours() + ":" + currDt.getMinutes());
-                var strCurrDt = currDt.getFullYear() + "-" + fillZero(2, (currDt.getMonth() + 1)) + "-" + currDt.getDate();
-                var strInptDt = inptDt.getFullYear() + "-" + fillZero(2, (inptDt.getMonth() + 1)) + "-" + inptDt.getDate();
-                if( strCurrDt == strInptDt && currDtTm > inptStrtDtTm) {
-                    alertMsg("근무 시간은 현재 시각 이후로 선택해주세요.", function() {
-                        $('#ipt_jobStrtTm').val(currDt.getHours() + ":" + currDt.getMinutes()).focus();
-                    });
-                    return;
-                }
-                else {
-                    //현재 날짜가 결재 요청 일자 이후인 경우,
-                    if( strCurrDt > strInptDt ) {
-                        alertMsg("근무 일자는 현재 일자 이후로 선택해주세요.", function() {
-                            $('#ipt_wrkDt').val(currDt.getFullYear() + "-" + fillZero(2, (currDt.getMonth() + 1)) + "-" + (currDt.getDate() + 1)).focus();
-                        });
-                        return;
-                    }
-
-                    //현재 날짜가 결재 요청 일자 이후인 경우,
-                    if( inptStrtDtTm > inptEndDtTm ) {
-                        alertMsg("근무 종료 시간은 근무 시작 시간 이후로 선택해주세요.", function() {
-                            $('#ipt_jobEndTm').val($('#ipt_jobStrtTm').val().substring(0, 4) + (parseInt($('#ipt_jobStrtTm').val().substring(4, 5)) + 1)).focus();
-                        });
-                        return;
-                    }
-
-                }
-            }
-
+        //신규 저장시, 입력받은 데이터 유효성 검증
+        if($('#currYryPopStts').val() == "register") {
             //동일 일자 결재 진행건 유효성 검증
             var param = {
                 "email"         : sessionStorage.getItem("email"),      //로그인한 사용자 아이디
-                "wrkDt"         : $("#ipt_wrkDt").val(),                //근무일자
+                "wrkDt"         : $('#ipt_holiTerm1').val(),                //근무일자
+                "holiTerm2"     : $('#ipt_holiTerm2').val(),                //근무일자(휴가종료일자)
             }
             //console.log("###########param::", param);
 
@@ -606,59 +570,17 @@ return;
             submissionCallList( param, 'GET', url, function(data) {
                 if(data.length > 0 && data[0].APVL_REQ_CNT > 0) {
                     //동일 날짜에 결재요청건이 있는 경우
-                    var msg = '일자 : ' + param.wrkDt + '\n' + data[0].APVL_DIVS + '결재요청건이 ' + data[0].APVL_REQ_CNT + '건 있습니다! \n결재 수정하십시오.';
+                    var msg = '휴가요청기간 중\n' + data[0].APVL_DIVS + ' 결재요청건이 ' + data[0].APVL_REQ_CNT + '건 있습니다! \n결재 수정하십시오.';
                     alertMsg(msg);
                     return;
-                }
-				else {
-                    //동일 날짜에 결재요청건이 없는 경우
-                    cf_dialog.confirm('근무결재요청을 ' + $('#btn_apvlYryReq').text() + '하시겠습니까?', function() {
-                        if(this.key == 'ok') {
-                            saveApvlReq();
-                        }
-                    });
+                } else {
+                    btnReqEvt2();   //임시 저장 로직 처리
                 }
             });
+        } else {
+            btnReqEvt2();   //임시 저장 로직 처리
         }
-        else if($('#currYryPopStts').val() == "modify") {
-
-            //JSON.parse($('#currYryPopParamArr').val());
-            var preReqInfo = $('#currYryPopInfoArr').val();
-
-            var postReqInfo = {
-                'EMP_EMAIL'             : $("#ipt_apvlReqEmail").val(),
-                'EMP_NAME'              : $("#sp_apvlReqName").text(),
-                'TH1_APRV_NM'           : $("#ipt_yry1ApvlLnSearchEmailPop").val(),
-                'TH1_APRV_NAME'         : $("#ipt_yry1ApvlLnSearchNamePop").val(),
-                'REF_NM'                : $("#ipt_yry1RefSearchEmailPop").val(),
-                'REF_NAME'              : $("#ipt_yry1RefSearchNamePop").val(),
-                'APVL_REQ_DT'           : $("#sp_yryReqDt").text(),
-                'HOLI_TERM1'   		    : $("#ipt_holiTerm1").val(),
-                'HOLI_TERM2'           	: $("#ipt_holiTerm2").val(),
-                'HOLI_REQ_RSN'   		: $("#txa_holiRsn").val().trim(),
-                'APVL_UPD_DT'   		: $("#sp_yryUpdDt").text(),
-                'TH1_APRV_RSN'  		: $("#txa_reqAcptRsn").text(),
-                'TH1_APRV_DT'   		: $("#sp_yryAcptDt").text()
-            }
-            postReqInfo = JSON.stringify(postReqInfo);
-            console.log("preReqInfo::", preReqInfo);
-            console.log("postReqInfo::", postReqInfo);
-
-            if(preReqInfo != postReqInfo) {
-                var nowDt = new Date();
-                var strUpdDt = nowDt.getFullYear() + '-' + fillZero(2, (nowDt.getMonth() + 1) + '') + '-' + fillZero(2, nowDt.getDate() + '');
-                var msg = $('#currYryPopStts').val() == "modify" ? '수정일' : '등록일';
-                cf_dialog.confirm(msg + ' : ' + strUpdDt + '\n연차결재요청을 ' + $('#btn_apvlYryReq').text() + '하시겠습니까?', function() {
-                    if(this.key == 'ok') {
-                        saveApvlReq();
-                    }
-                });
-            }
-			else {
-                alertMsg('수정사항이 없습니다!');
-                return;
-            }
-        }
+        return;
     });
 
     // 취소 버튼 선택 시, 결재요청 데이터 취소
@@ -680,6 +602,7 @@ return;
                         // 리턴
                         g_toast.push("취소완료 되었습니다.");
                         $('#exitYryReqModalBtn').click();
+                        $("#apvlHistSearchBtn").click();
                      }
                 });
             }

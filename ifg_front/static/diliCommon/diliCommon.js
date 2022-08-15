@@ -117,12 +117,13 @@ function allWrkTmCall(date, strtTm, endTm, restTm){
 /*********************************************************************
 *   초과근무시간 호출
 *********************************************************************/
-function overWrkTmCall(date, allTmData){
+function overWrkTmCall(date, strtTm, allTmData){
     var overTmChk = "";
-    var tmpStrtDate = date+" 08:00:00";
+    var tmpStrtDate = date+" 09:00:00";
     var tmpEndDate = date+" "+allTmData;
     var strtDate = new Date(tmpStrtDate);
     var endDate = new Date(tmpEndDate);
+    console.log("date, strtTm, strtDate, endDate  : "+date+", "+strtTm+", "+strtDate+", "+endDate);
 
     if(endDate > strtDate){
         var tmpSubtractTm = endDate - strtDate;
@@ -131,7 +132,7 @@ function overWrkTmCall(date, allTmData){
         var second = Math.floor((tmpSubtractTm % (1000 * 60)) / 1000);
         var subtractTm = lpad((hour).toString(),2,"0")+":"+lpad((minute).toString(),2,"0");
         overTmChk = subtractTm;
-    }else {
+    } else {
         overTmChk = "00:00";
     }
 

@@ -259,7 +259,6 @@
 
 
     // 요청 버튼 선택 시, 유효성 검증 및 데이터 저장
-    //$(document).on("click","#btn_apvlBfrReq",function() {
     $('#btn_apvlBfrReq').click(function() {
         //공란 여부 검증
         //근무일자 유효성 검증
@@ -350,6 +349,7 @@
             var param = {
                 "email"         : sessionStorage.getItem("email"),      //로그인한 사용자 아이디
                 "wrkDt"         : $("#ipt_wrkDt").val(),                //근무일자
+                "holiTerm2"     : $("#ipt_wrkDt").val(),                //근무일자와 같은 값 전달
             }
             //console.log("###########param::", param);
 
@@ -492,6 +492,7 @@
                         // 리턴
                         g_toast.push("취소완료 되었습니다.");
                         $('#exitApvlReqModalBtn').click();
+                        $('#apvlHistSearchBtn').click();
                      }
                 });
             }

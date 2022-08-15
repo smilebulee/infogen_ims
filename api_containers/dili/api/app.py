@@ -410,7 +410,6 @@ class weekGridData(Resource): # Mariadb 연결 진행
                     + "   ON (A.WRK_DT = B.WRK_DT OR A.WRK_DT BETWEEN B.HOLI_TERM1 AND B.HOLI_TERM2) "\
                     + "   AND A.EMP_EMAL_ADDR = B.EMP_EMAL_ADDR "\
                     + "   AND B.APVL_REQ_DIVS <> '99'" \
-                      "   AND NVL(B.TH2_APRV_STUS, '') = '02' /*2차승인건만*/" \
                     + "  WHERE 1 = 1 "\
                     + "  AND A.EMP_EMAL_ADDR = '" + data["email"] + "' "\
                     + "  AND A.WRK_DT >= '" + data["strtDt"] + "' "\
@@ -522,7 +521,6 @@ class monthGridData(Resource): # Mariadb 연결 진행
                     + "   ON (A.WRK_DT = B.WRK_DT OR A.WRK_DT BETWEEN B.HOLI_TERM1 AND B.HOLI_TERM2) "\
                     + "   AND A.EMP_EMAL_ADDR = B.EMP_EMAL_ADDR "\
                     + "   AND B.APVL_REQ_DIVS <> '99'" \
-                      "   AND NVL(B.TH2_APRV_STUS, '') = '02' /*2차승인건만*/" \
                     + "  WHERE 1 = 1 " \
                     + "  AND A.EMP_EMAL_ADDR = '" + data["email"] + "' "\
                     + "  AND A.WRK_DT like '"+data["mDt"]+"%' "\
@@ -1301,6 +1299,12 @@ class duplApvlReqCnt(Resource): # Mariadb 연결 진행
     def get(self):
 
         data = request.get_json()
+        logging.debug('================== duplApvlReqCnt App Start ==================')
+        logging.debug(data)
+        logging.debug(data["email"])
+        logging.debug(data["wrkDt"])
+        logging.debug(data["holiTerm2"])
+        logging.debug('================== duplApvlReqCnt App End ==================')
 
         #requirements pymysql import 후 커넥트 사용
         mysql_con = getMariaConn()
@@ -1308,13 +1312,18 @@ class duplApvlReqCnt(Resource): # Mariadb 연결 진행
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 # 쿼리문 실행
                 sql = "SELECT COUNT(*) AS APVL_REQ_CNT" \
-                      "     , CASE WHEN APVL_DIVS = '01' THEN '야간근무' " \
-                      "            WHEN APVL_DIVS = '02' THEN '휴일근무' " \
-                      "            WHEN APVL_DIVS = '03' THEN '연차' " \
-                      "            ELSE '' END APVL_DIVS " \
+                      "     , CASE WHEN APVL_REQ_DIVS = '01' THEN '야간근무' " \
+                      "            WHEN APVL_REQ_DIVS = '02' THEN '휴일근무' " \
+                      "            WHEN APVL_REQ_DIVS = '03' THEN '연차결재' " \
+                      "            WHEN APVL_REQ_DIVS = '04' THEN '반차결재' " \
+                      "            ELSE '' " \
+                      "       END APVL_DIVS   " \
                       "  FROM TB_APVL_REQ_MGMT_M " \
-                      " WHERE EMP_EMAL_ADDR = '" + data["email"] + "' " \
-                      "   AND WRK_DT = '"        + data["wrkDt"] + "' "
+                      " WHERE APVL_REQ_DIVS <> '99'" \
+                      "   AND EMP_EMAL_ADDR = '" + data["email"] + "' " \
+                      "   AND (WRK_DT BETWEEN '"       + data["wrkDt"] + "' AND '"+ data["holiTerm2"] +"'" \
+                      "       OR '" + data["wrkDt"] + "' BETWEEN HOLI_TERM1 AND HOLI_TERM2) "
+
                 logging.debug("duplApvlReqCnt SQL문" + sql)
                 cursor.execute(sql)
 
@@ -2579,7 +2588,7 @@ class scheduleStatLst(Resource):
                       "      ,CASE WHEN B.EMP_EMAL_ADDR IS NULL AND (A.HLDY_WRK_TM != '000000' OR A.NGHT_WRK_TM != '000000') THEN 'N'" \
                       "            ELSE 'Y' END APVL_REQ_YN" \
                       "      ,CASE WHEN B.APVL_REQ_DIVS IN ('01', '02') AND NVL(NVL(B.WRK_TME, A.NGHT_WRK_TM), '') != '' AND NVL(NVL(B.WRK_TME, A.NGHT_WRK_TM), '') != '000000' " \
-                      "            THEN CONCAT(SUBSTRING(DATE_SUB(STR_TO_DATE(NVL(B.WRK_TME, A.NGHT_WRK_TM), '%H%i%s'), INTERVAL A.REST_TM + A.DINN_REST_TM MINUTE), 1, 2), ':', SUBSTRING(DATE_SUB(STR_TO_DATE(NVL(B.WRK_TME, A.NGHT_WRK_TM), '%H%i%s'), INTERVAL A.REST_TM + A.DINN_REST_TM MINUTE), 4, 2))" \
+                      "            THEN CONCAT(SUBSTRING(STR_TO_DATE(NVL(B.WRK_TME, A.NGHT_WRK_TM), '%H%i%s'), 1, 2), ':', SUBSTRING(STR_TO_DATE(NVL(B.WRK_TME, A.NGHT_WRK_TM), '%H%i%s'), 4, 2))" \
                       "            ELSE ''" \
                       "             END NGHT_WRK_YN" \
                       "     , CASE WHEN B.APVL_REQ_DIVS IN ('01', '02') AND DATE_SUB(STR_TO_DATE(DATE_FORMAT(CASE WHEN NVL(B.APVL_REQ_DIVS,'') = '' THEN A.JOB_END_TM ELSE B.JOB_END_TM END, '%H%i%s'), '%H%i%s'), INTERVAL STR_TO_DATE('220000', '%H%i%s') DAY_SECOND) > 0 " \

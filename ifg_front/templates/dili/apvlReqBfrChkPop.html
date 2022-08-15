@@ -6,7 +6,7 @@
         //TO DO : h5_apvlReqBfrTit 등록/수정/상세 제목 변경
         //TO DO : btn_apvlBfrReq 저장/수정 버튼 변경
         if ($('#currReqPopStts').val() == "register") {
-            $('#h5_apvlReqBfrTit').html("<b>근무결재요청 등록</b>");
+            $('#h5_apvlReqBfrTit').html("<b>1근무결재요청 등록</b>");
             $('#btn_apvlBfrReq').text("저장");
             $('#ipt_wrkDt').prop('readonly', false);
             $('#apvlReqUpdDtDiv').addClass('d-none');
@@ -214,9 +214,7 @@
 
     });
 
-
     // 요청 버튼 선택 시, 유효성 검증 및 데이터 저장
-    //$(document).on("click","#btn_apvlBfrReq",function() {
     $('#btn_apvlBfrReq').click(function() {
         //공란 여부 검증
         //연차일자 유효성 검증
@@ -298,7 +296,8 @@
             //동일 일자 결재 진행건 유효성 검증
             var param = {
                 "email"         : sessionStorage.getItem("email"),      //로그인한 사용자 아이디
-                "wrkDt"         : $("#ipt_wrkDt").val(),                //연차일자
+                "wrkDt"         : $("#ipt_wrkDt").val(),                //근무일자
+                "holiTerm2"     : $("#ipt_wrkDt").val(),                //근무일자와 같은 값 전달
             }
             //console.log("###########param::", param);
 
@@ -306,27 +305,20 @@
             submissionCallList( param, 'GET', url, function(data) {
                 if(data.length > 0 && data[0].APVL_REQ_CNT > 0) {
                     //동일 날짜에 결재요청건이 있는 경우
-                    /*var msg = '일자 : ' + param.wrkDt + '\n결재요청건이 ' + data[0].APVL_REQ_CNT + '건 있습니다.\n 결재 요청하시겠습니까?';
-                    cf_dialog.confirm(msg, function() {
-                        if(this.key == 'ok') {
-                            saveApvlReq();
-                        }
-                    });*/
                     var msg = '일자 : ' + param.wrkDt + '\n결재요청건이 ' + data[0].APVL_REQ_CNT + '건 있습니다! \n결재 수정하십시오.';
                     alertMsg(msg);
                     return;
                 }
 				else {
                     //동일 날짜에 결재요청건이 없는 경우
-                    cf_dialog.confirm('연차결재요청을 ' + $('#btn_apvlBfrReq').text() + '하시겠습니까?', function() {
+                    cf_dialog.confirm('근무결재요청을 ' + $('#btn_apvlBfrReq').text() + '하시겠습니까?', function() {
                         if(this.key == 'ok') {
                             saveApvlReq();
                         }
                     });
                 }
             });
-        }
-        else if($('#currReqPopStts').val() == "modify") {
+        } else if($('#currReqPopStts').val() == "modify") {
 
             //JSON.parse($('#currReqPopParamArr').val());
             var preReqInfo = $('#currReqPopInfoArr').val();
