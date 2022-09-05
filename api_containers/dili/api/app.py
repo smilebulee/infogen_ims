@@ -301,13 +301,12 @@ class totalWrktm(Resource): # Mariadb 연결 진행
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 #쿼리문 실행
                 sql = "SELECT (SELECT CONCAT(COUNT(*) * 8)"\
-                      "          FROM TB_DT_INFO"\
-                      "         WHERE DT LIKE '" + data["dt"] + "%'"\
-                      "           AND HLDY_DIVS_CD = '01'"\
-                      "           AND DOW_DIVS_CD NOT IN ('01','07')) AS WRK_TOT_TM" \
+                      "          FROM TB_DATE"\
+                      "         WHERE YMD_DATE LIKE '" + data["dt"] + "%'"\
+                      "           AND HOLY_GB  = 'N') AS WRK_TOT_TM" \
                       "       ,(SELECT CONCAT(TRUNCATE((COUNT(*) / 7) * 12, 2))" \
-                      "          FROM TB_DT_INFO" \
-                      "         WHERE DT LIKE '" + data["dt"] + "%') AS EXTN_WRK_PSBL_TM"\
+                      "          FROM TB_DATE" \
+                      "         WHERE YMD_DATE LIKE '" + data["dt"] + "%') AS EXTN_WRK_PSBL_TM"\
                       "    FROM DUAL"
                 logging.debug(sql)
                 cursor.execute(sql)
@@ -3856,9 +3855,22 @@ class diliScheduleTotalMgmt(Resource):
                       "	     ,(SELECT C.EMP_NAME " \
                       "	         FROM TB_EMP_MGMT C" \
                       "	        WHERE C.EMP_EMAIL = NVL(A.EMP_EMAL_ADDR, B.EMP_EMAL_ADDR)) OCEM_NAME" \
-                      "      ,(SUM(SUBSTRING(STR_TO_DATE(LPAD(NVL(A.ALL_WRK_TM, '000000')-NVL(A.NGHT_WRK_TM, '000000')+NVL(B.WRK_TME, '000000'), 6, '0'), '%H%i') ,1,2))" \
-                      "       + FLOOR(SUM(SUBSTRING(STR_TO_DATE(LPAD(NVL(A.ALL_WRK_TM, '000000')-NVL(A.NGHT_WRK_TM, '000000')+NVL(B.WRK_TME, '000000'), 6, '0'), '%H%i') ,4,2))/60)) ALL_WRK_TM_T" \
-                      "      ,MOD(SUM(SUBSTRING(STR_TO_DATE(LPAD(NVL(A.ALL_WRK_TM, '000000')-NVL(A.NGHT_WRK_TM, '000000')+NVL(B.WRK_TME, '000000'), 6, '0'), '%H%i') ,4,2)),60) ALL_WRK_TM_M" \
+                      "      ,SUM(" \
+                      "            CASE WHEN NVL(B.PTO_KD_CD, 'X') IN ('01', '03') /*01 연차,02 반차,03 기타*/ " \
+                      "                 THEN SUBSTRING(B.WRK_TME, 1, 2)" \
+                      "                 WHEN NVL(B.PTO_KD_CD, 'X') = '02' /*02 반차*/" \
+                      "                 THEN SUBSTRING(DATE_SUB(STR_TO_DATE(NVL(A.ALL_WRK_TM, '000000'), '%H%i%s'), INTERVAL A.REST_TM + A.DINN_REST_TM MINUTE), 1, 2)" \
+                      "                 ELSE SUBSTRING(DATE_SUB(DATE_ADD(STR_TO_DATE(NVL(A.ALL_WRK_TM, '000000'), '%H%i%s'), INTERVAL TIME_TO_SEC(STR_TO_DATE(LPAD(NVL(B.WRK_TME, A.NGHT_WRK_TM), 6, '0'), '%H%i%s')) SECOND), INTERVAL A.REST_TM + A.DINN_REST_TM MINUTE), 1, 2)" \
+                      "             END" \
+                      "          ) ALL_WRK_TM_T" \
+                      "      ,SUM(" \
+                      "            CASE WHEN NVL(B.PTO_KD_CD, 'X') IN ('01', '03') /*01 연차,02 반차,03 기타*/ " \
+                      "                 THEN SUBSTRING(B.WRK_TME, 3, 2)" \
+                      "                 WHEN NVL(B.PTO_KD_CD, 'X') = '02' /*02 반차*/" \
+                      "                 THEN SUBSTRING(DATE_SUB(STR_TO_DATE(NVL(A.ALL_WRK_TM, '000000'), '%H%i%s'), INTERVAL A.REST_TM + A.DINN_REST_TM MINUTE), 4, 2)" \
+                      "                 ELSE SUBSTRING(DATE_SUB(DATE_ADD(STR_TO_DATE(NVL(A.ALL_WRK_TM, '000000'), '%H%i%s'), INTERVAL TIME_TO_SEC(STR_TO_DATE(LPAD(NVL(B.WRK_TME, A.NGHT_WRK_TM), 6, '0'), '%H%i%s')) SECOND), INTERVAL A.REST_TM + A.DINN_REST_TM MINUTE), 4, 2)" \
+                      "             END" \
+                      "          ) ALL_WRK_TM_M" \
                       "      ,(SUM(CASE WHEN NVL(A.NGHT_WRK_TM, '') != '' AND NVL(A.NGHT_WRK_TM, '') != '000000' THEN SUBSTRING(NVL(A.NGHT_WRK_TM, ''), 1, 2)" \
                       "                                                                                          ELSE ''" \
                       "                                                                                          END )" \
@@ -3880,8 +3892,9 @@ class diliScheduleTotalMgmt(Resource):
                       "  FROM TB_WRK_TM_MGMT_M A" \
                       "  LEFT OUTER JOIN" \
                       "       TB_APVL_REQ_MGMT_M B" \
-                      "    ON A.EMP_EMAL_ADDR = B.EMP_EMAL_ADDR" \
-                      "   AND A.WRK_DT = B.WRK_DT" \
+                      "   ON (A.WRK_DT = B.WRK_DT OR A.WRK_DT BETWEEN B.HOLI_TERM1 AND B.HOLI_TERM2) "\
+                      "   AND A.EMP_EMAL_ADDR = B.EMP_EMAL_ADDR "\
+                      "   AND B.APVL_REQ_DIVS <> '99'" \
                       " WHERE SUBSTRING(A.WRK_DT, 1, 7) = '" + data["wrkDt"] + "'"
                 if data["dept"] != "" and data["dept"] != "00":
                     sql += "    AND A.EMP_EMAL_ADDR IN (SELECT H.EMP_EMAIL" \
