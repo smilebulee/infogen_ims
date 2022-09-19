@@ -103,12 +103,12 @@
             if("N" == aprvStus){
 
                 if ($('#empEmailHidden').val() == null || $('#empEmailHidden').val() == "") {
-                    document.getElementById('pop_strtJob').innerHTML = '<div style="float: left;"><input type="time" class="align-self-start align-self-center form-control" id="ipt_jobStrtTm"  style="width:125px;" name="ipt_jobStrtTm" /></div>'
-                    + '<input type="button" class="button" onclick="onclickStrtTm()" value="출근버튼">';
+                    document.getElementById('pop_strtJob').innerHTML = '<div style="float: left;"><input type="time" class="align-self-start align-self-center form-control" id="ipt_jobStrtTm"  style="width:125px;" name="ipt_jobStrtTm" readonly/></div>';
+                    /*+ '<input type="button" class="button" onclick="onclickStrtTm()" value="출근버튼">';*/
 
                 }else if($('#empEmailHidden').val() == sessionStorage.getItem("email")){
-                    document.getElementById('pop_strtJob').innerHTML = '<div style="float: left;"><input type="time" class="align-self-start align-self-center form-control" id="ipt_jobStrtTm"  style="width:125px;" name="ipt_jobStrtTm" /></div>'
-                    + '<input type="button" class="button" onclick="onclickStrtTm()" value="출근버튼">';
+                    document.getElementById('pop_strtJob').innerHTML = '<div style="float: left;"><input type="time" class="align-self-start align-self-center form-control" id="ipt_jobStrtTm"  style="width:125px;" name="ipt_jobStrtTm" readonly/></div>';
+                    /*+ '<input type="button" class="button" onclick="onclickStrtTm()" value="출근버튼">';*/
 
                 }else {
                     $('#pop_strtJob').text("-");
@@ -131,15 +131,15 @@
 
                 if ($('#empEmailHidden').val() == null || $('#empEmailHidden').val() == "") {
 
-                    document.getElementById('pop_endJob').innerHTML = '<div style="float: left;"><input type="time" class="align-self-start align-self-center form-control" id="ipt_jobEndTm"  style="width:125px;" name="ipt_jobEndTm" /></div>'
-                    + '<input type="button" class="button" onclick="onclickEndTm(true)" value="퇴근버튼">';
+                    document.getElementById('pop_endJob').innerHTML = '<div style="float: left;"><input type="time" class="align-self-start align-self-center form-control" id="ipt_jobEndTm"  style="width:125px;" name="ipt_jobEndTm" readonly/></div>';
+                    /*+ '<input type="button" class="button" onclick="onclickEndTm(true)" value="퇴근버튼">';*/
 
                     $("#ipt_jobEndTm").val(strNowTm);
 
                 }else if($('#empEmailHidden').val() == sessionStorage.getItem("email")){
 
-                    document.getElementById('pop_endJob').innerHTML = '<div style="float: left;"><input type="time" class="align-self-start align-self-center form-control" id="ipt_jobEndTm"  style="width:125px;" name="ipt_jobEndTm" /></div>'
-                    + '<input type="button" class="button" onclick="onclickEndTm(true)" value="퇴근버튼">';
+                    document.getElementById('pop_endJob').innerHTML = '<div style="float: left;"><input type="time" class="align-self-start align-self-center form-control" id="ipt_jobEndTm"  style="width:125px;" name="ipt_jobEndTm" readonly/></div>';
+                    /*+ '<input type="button" class="button" onclick="onclickEndTm(true)" value="퇴근버튼">';*/
 
                     $("#ipt_jobEndTm").val(strNowTm);
 
@@ -183,11 +183,11 @@
             }else {
 
                 if (ptoKdCd == "02") {
-                    document.getElementById('pop_strtJob').innerHTML = '<div style="float: left;"><input type="time" class="align-self-start align-self-center form-control" id="ipt_jobStrtTm"  style="width:125px;" name="ipt_jobStrtTm" /></div>'
-                    + '<input type="button" class="button" onclick="onclickStrtTm()" value="출근버튼">';
+                    document.getElementById('pop_strtJob').innerHTML = '<div style="float: left;"><input type="time" class="align-self-start align-self-center form-control" id="ipt_jobStrtTm"  style="width:125px;" name="ipt_jobStrtTm" readonly/></div>';
+                    /*+ '<input type="button" class="button" onclick="onclickStrtTm()" value="출근버튼">';*/
 
-                    document.getElementById('pop_endJob').innerHTML = '<div style="float: left;"><input type="time" class="align-self-start align-self-center form-control" id="ipt_jobEndTm"  style="width:125px;" name="ipt_jobEndTm" /></div>'
-                    + '<input type="button" class="button" onclick="onclickEndTm(true)" value="퇴근버튼">';
+                    document.getElementById('pop_endJob').innerHTML = '<div style="float: left;"><input type="time" class="align-self-start align-self-center form-control" id="ipt_jobEndTm"  style="width:125px;" name="ipt_jobEndTm" readonly/></div>';
+                    /*+ '<input type="button" class="button" onclick="onclickEndTm(true)" value="퇴근버튼">';*/
                     $("#ipt_jobEndTm").val(strNowTm);
                 }else {
                     $('#pop_strtJob').text(strtTm);
@@ -222,13 +222,13 @@
             }
         }else {
             if (ptoKdCd == "02") {
-                document.getElementById('pop_strtJob').innerHTML = '<div style="float: left;"><input type="time" class="align-self-start align-self-center form-control" id="ipt_jobStrtTm"  style="width:125px;" name="ipt_jobStrtTm" /></div>'
-                + '<input type="button" class="button" onclick="onclickStrtTm()" value="출근버튼">';
+                document.getElementById('pop_strtJob').innerHTML = '<div style="float: left;"><input type="time" class="align-self-start align-self-center form-control" id="ipt_jobStrtTm"  style="width:125px;" name="ipt_jobStrtTm" readonly/></div>';
+                /*+ '<input type="button" class="button" onclick="onclickStrtTm()" value="출근버튼">';*/
 
-                document.getElementById('pop_endJob').innerHTML = '<div style="float: left;"><input type="time" class="align-self-start align-self-center form-control" id="ipt_jobEndTm"  style="width:125px;" name="ipt_jobEndTm" /></div>'
-                + '<input type="button" class="button" onclick="onclickEndTm(true)" value="퇴근버튼">';
+                document.getElementById('pop_endJob').innerHTML = '<div style="float: left;"><input type="time" class="align-self-start align-self-center form-control" id="ipt_jobEndTm"  style="width:125px;" name="ipt_jobEndTm" readonly/></div>';
+                /*+ '<input type="button" class="button" onclick="onclickEndTm(true)" value="퇴근버튼">';*/
                 $("#ipt_jobEndTm").val(strNowTm);
-            }else {
+            } else {
                 $('#pop_strtJob').text(strtTm);
                 $('#pop_endJob').text(endTm);
             }
