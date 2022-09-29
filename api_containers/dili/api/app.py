@@ -601,7 +601,7 @@ class wrkApvlReq(Resource): # Mariadb 연결 진행
                       "            THEN A.NGHT_WRK_TM" \
                       "            ELSE '' END WRK_TME" \
                       "     , CASE WHEN NVL(A.HLDY_WRK_TM,'') != 000000 AND NVL(A.NGHT_WRK_TM,'') = 000000 THEN '휴일근무' " \
-                      "            WHEN NVL(A.HLDY_WRK_TM,'') = 000000 AND NVL(A.NGHT_WRK_TM,'') != 000000 THEN '야간근무' " \
+                      "            WHEN NVL(A.HLDY_WRK_TM,'') = 000000 AND NVL(A.NGHT_WRK_TM,'') != 000000 THEN '연장근무' " \
                       "            ELSE '' END WRK_TYPE " \
                       "  FROM TB_WRK_TM_MGMT_M A" \
                       " WHERE A.EMP_EMAL_ADDR = '" + data["email"] + "'" \
@@ -869,7 +869,7 @@ class apvlReqHist(Resource): # Mariadb 연결 진행
                       "     , CASE WHEN A.APVL_REQ_DIVS = '01' THEN NVL(A.WRK_TME,'') " \
                       "            WHEN A.APVL_REQ_DIVS = '02' THEN NVL(A.WRK_TME,'') " \
                       "            ELSE '' END WRK_TME  " \
-                      "     , CASE WHEN A.APVL_REQ_DIVS = '01' THEN '야간근무' " \
+                      "     , CASE WHEN A.APVL_REQ_DIVS = '01' THEN '연장근무' " \
                       "            WHEN A.APVL_REQ_DIVS = '02' THEN '휴일근무' " \
                       "            WHEN A.APVL_REQ_DIVS = '03' THEN '연차결재'  " \
                       "            WHEN A.APVL_REQ_DIVS = '04' THEN '반차결재'  " \
@@ -962,7 +962,7 @@ class apvlAcptHist(Resource):  # Mariadb 연결 진행
                           "     , NVL(A.JOB_STRT_TM, '') JOB_STRT_TM " \
                           "     , NVL(A.JOB_END_TM, '') JOB_END_TM " \
                           "     , CASE WHEN A.APVL_REQ_DIVS = '01' THEN NVL(A.WRK_TME,'') WHEN A.APVL_REQ_DIVS = '02' THEN NVL(A.WRK_TME,'') ELSE '' END WRK_TME  " \
-                          "     , CASE WHEN A.APVL_REQ_DIVS = '01' THEN '야간근무' WHEN A.APVL_REQ_DIVS = '02' THEN '휴일근무' WHEN A.APVL_REQ_DIVS = '03' THEN '연차결재' WHEN A.APVL_REQ_DIVS = '04' THEN '반차결재' ELSE '' END APVL_REQ_NM  " \
+                          "     , CASE WHEN A.APVL_REQ_DIVS = '01' THEN '연장근무' WHEN A.APVL_REQ_DIVS = '02' THEN '휴일근무' WHEN A.APVL_REQ_DIVS = '03' THEN '연차결재' WHEN A.APVL_REQ_DIVS = '04' THEN '반차결재' ELSE '' END APVL_REQ_NM  " \
                           "     , CASE WHEN A.TH1_APRV_STUS = '01' AND NVL(A.TH2_APRV_STUS, '01') = '01' THEN '미승인'" \
                           "            WHEN A.TH1_APRV_STUS = '02' AND NVL(A.TH2_APRV_STUS, '01') = '01' THEN '1차승인'" \
                           "            WHEN A.TH1_APRV_STUS = '02' AND NVL(A.TH2_APRV_STUS, '01') = '02' THEN '2차승인'" \
@@ -999,7 +999,7 @@ class apvlAcptHist(Resource):  # Mariadb 연결 진행
                           "     , NVL(A.JOB_STRT_TM, '') JOB_STRT_TM " \
                           "     , NVL(A.JOB_END_TM, '') JOB_END_TM " \
                           "     , CASE WHEN A.APVL_REQ_DIVS = '01' THEN NVL(A.WRK_TME,'') WHEN A.APVL_REQ_DIVS = '02' THEN NVL(A.WRK_TME,'') ELSE '' END WRK_TME  " \
-                          "     , CASE WHEN A.APVL_REQ_DIVS = '01' THEN '야간근무' WHEN A.APVL_REQ_DIVS = '02' THEN '휴일근무' WHEN A.APVL_REQ_DIVS = '03' THEN '연차결재' WHEN A.APVL_REQ_DIVS = '04' THEN '반차결재' ELSE '' END APVL_REQ_NM  " \
+                          "     , CASE WHEN A.APVL_REQ_DIVS = '01' THEN '연장근무' WHEN A.APVL_REQ_DIVS = '02' THEN '휴일근무' WHEN A.APVL_REQ_DIVS = '03' THEN '연차결재' WHEN A.APVL_REQ_DIVS = '04' THEN '반차결재' ELSE '' END APVL_REQ_NM  " \
                           "     , CASE WHEN A.TH1_APRV_STUS = '01' AND NVL(A.TH2_APRV_STUS, '01') = '01' THEN '미승인'" \
                           "            WHEN A.TH1_APRV_STUS = '02' AND NVL(A.TH2_APRV_STUS, '01') = '01' THEN '1차승인'" \
                           "            WHEN A.TH1_APRV_STUS = '02' AND NVL(A.TH2_APRV_STUS, '01') = '02' THEN '2차승인'" \
@@ -1311,7 +1311,7 @@ class duplApvlReqCnt(Resource): # Mariadb 연결 진행
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 # 쿼리문 실행
                 sql = "SELECT COUNT(*) AS APVL_REQ_CNT" \
-                      "     , CASE WHEN APVL_REQ_DIVS = '01' THEN '야간근무' " \
+                      "     , CASE WHEN APVL_REQ_DIVS = '01' THEN '연장근무' " \
                       "            WHEN APVL_REQ_DIVS = '02' THEN '휴일근무' " \
                       "            WHEN APVL_REQ_DIVS = '03' THEN '연차결재' " \
                       "            WHEN APVL_REQ_DIVS = '04' THEN '반차결재' " \

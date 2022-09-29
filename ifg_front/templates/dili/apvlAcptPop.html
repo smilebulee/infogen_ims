@@ -87,7 +87,7 @@
                 //wrkApvlTable += '<td class="pt-3-half">' + (i+1)                + '</td>';
                 wrkApvlTable += '<td class="pt-3-half">' + data[i].APVL_REQ_NM  + '</td>';
                 wrkApvlTable += '<td class="pt-3-half">' + data[i].APVL_REQ_DT  + '</td>';
-                if(data[i].APVL_REQ_NM == "야간근무" || data[i].APVL_REQ_NM == "주휴근무"){
+                if(data[i].APVL_REQ_NM == "연장근무" || data[i].APVL_REQ_NM == "주휴근무"){
                     wrkApvlTable += '<td class="pt-3-half">' + data[i].JOB_STRT_TM.substring(0,5) +" ~ "+ data[i].JOB_END_TM.substring(0,5) + '</td>';
                 }else{
                     wrkApvlTable += '<td class="pt-3-half"></td>';

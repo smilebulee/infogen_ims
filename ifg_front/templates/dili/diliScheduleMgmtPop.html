@@ -402,7 +402,7 @@
         if ((overWrkTm.substr(0, 4) != '0000') && (normWrkTm.substr(0, 4) == '0000')) {
             nghtWrkStrtTm = strtTm;
         }
-        // 추가 근무 시간이 있고, 일반 업무 시간이 있을 떄 (야간근무)
+        // 추가 근무 시간이 있고, 일반 업무 시간이 있을 떄 (연장근무)
         else if ((overWrkTm.substr(0, 4) != '0000') && (normWrkTm.substr(0, 4) != '0000') && getTimeDiff(strtTm, endTm) >= '080000') {
             var tmpTm = new Date(Number(dateConverting3(dt)[0]),Number(dateConverting3(dt)[1]),Number(dateConverting3(dt)[2]),Number(dateConverting3($('#ipt_jobStrtTm').val())[0]),Number(dateConverting3($('#ipt_jobStrtTm').val())[1]));
             tmpTm.setHours(tmpTm.getHours() + 9);

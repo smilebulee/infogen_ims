@@ -30,7 +30,7 @@
         console.log("###apvlReqWrkSub 페이지 로드");
         //결재 소제목 지정
         if($('input:radio[name="APVL_DIVS_CD"]:checked').val() == '01') {
-            $('#apvlReqTit').html("<b>야간근무 결재 요청</b>");
+            $('#apvlReqTit').html("<b>연장근무 결재 요청</b>");
 
         } else if ($('input:radio[name="APVL_DIVS_CD"]:checked').val() == '02') {
             $('#apvlReqTit').html("<b>휴일근무 결재 요청</b>");
@@ -59,7 +59,7 @@
         });
 
         /*********************************************************************
-        *   근무결재요청 Grid 생성
+        *   연장근무품의 Grid 생성
         *********************************************************************/
         function wrkApvlGrd(data){
             var wrkApvlTable = '<table class="table table-bordered table-responsive-md text-center"  id="tblWrkApvl" >';
@@ -134,7 +134,7 @@
             $("#rb_apvlReqMthdCd option[value='00']").attr("selected", true);
         } else if($('#'+trId.id).children().eq(2).text() == "휴일근무") {
             $("#rb_apvlReqMthdCd option[value='01']").attr("selected", true);
-        } else if($('#'+trId.id).children().eq(2).text() == "야간근무") {
+        } else if($('#'+trId.id).children().eq(2).text() == "연장근무") {
             $("#rb_apvlReqMthdCd option[value='02']").attr("selected", true);
         }
 
@@ -162,7 +162,7 @@
             var param = {
                 "email" : sessionStorage.getItem("email"),
                 "apvlDivs" : $("input[name='APVL_DIVS_CD']:checked").val(),             //01: 선결재, 02: 후결재
-                "apvlReqDivs" : $("input[name='APVL_REQ_MTHD_CD']:checked").val(),     //01: 야간근무, 02: 휴일근무
+                "apvlReqDivs" : $("input[name='APVL_REQ_MTHD_CD']:checked").val(),     //01: 연장근무, 02: 휴일근무
                 "wrkDt" : $("#ipt_wrkDt").val(),
                 "jobStrtTm" : $("#ipt_jobStrtTm").val().substring(0,2) +""+ $("#ipt_jobStrtTm").val().substring(3,5) +"00",
                 "jobEndTm" : $("#ipt_jobEndTm").val().substring(0,2) +""+ $("#ipt_jobEndTm").val().substring(3,5) +"00",

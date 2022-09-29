@@ -6,7 +6,7 @@
         //TO DO : h5_apvlReqBfrTit 등록/수정/상세 제목 변경
         //TO DO : btn_apvlBfrReq 저장/수정 버튼 변경
         if ($('#currReqPopStts').val() == "register") {
-            $('#h5_apvlReqBfrTit').html("<b>1근무결재요청 등록</b>");
+            $('#h5_apvlReqBfrTit').html("<b>1연장근무품의 등록</b>");
             $('#btn_apvlBfrReq').text("저장");
             $('#ipt_wrkDt').prop('readonly', false);
             $('#apvlReqUpdDtDiv').addClass('d-none');
@@ -311,7 +311,7 @@
                 }
 				else {
                     //동일 날짜에 결재요청건이 없는 경우
-                    cf_dialog.confirm('근무결재요청을 ' + $('#btn_apvlBfrReq').text() + '하시겠습니까?', function() {
+                    cf_dialog.confirm('연장근무품의을 ' + $('#btn_apvlBfrReq').text() + '하시겠습니까?', function() {
                         if(this.key == 'ok') {
                             saveApvlReq();
                         }
@@ -386,7 +386,7 @@
             "currReqPopStts" : $("#currReqPopStts").val(),           // 현재 팝업 상태 - 신규 / 수정
             "email"          : sessionStorage.getItem("email"),      // 로그인한 사용자 아이디
             "apvlDivs"       : $("#currApvlDivsStts").val(),         // 01: 선결재, 02: 후결재
-            "apvlReqDivs"    : apvlReqDivs,                          // 01: 야간근무, 02: 휴일근무
+            "apvlReqDivs"    : apvlReqDivs,                          // 01: 연장근무, 02: 휴일근무
             "wrkDt"          : $("#ipt_wrkDt").val(),                // 연차일자
             "jobStrtTm"      : inptStrtTm,                           // 연차 시작 시간
             "jobEndTm"       : inptEndTm,                            // 연차 종료 시간

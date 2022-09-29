@@ -6,7 +6,7 @@
         //TO DO : h5_apvlReqBfrTit 등록/수정/상세 제목 변경
         //TO DO : btn_apvlBfrReq 저장/수정 버튼 변경
         if ($('#currReqPopStts').val() == "register") {
-            $('#h5_apvlReqBfrTit').html("<b>근무결재요청 등록</b>");
+            $('#h5_apvlReqBfrTit').html("<b>연장근무품의 등록</b>");
             $('#btn_apvlBfrReq').text("저장");
             $('#ipt_wrkDt').prop('readonly', false);
             $('#apvlReqUpdDtDiv').addClass('d-none');
@@ -86,10 +86,10 @@
             if(arrWrkDt[4] != '01' || (arrWrkDt[4] == '01' && arrWrkDt[0] != sessionStorage.getItem("email"))) {
                 if(arrWrkDt[4] != '01' && arrWrkDt[0] == sessionStorage.getItem("email")) {
                     $('#apvlReqAcptDiv').addClass('d-block');
-                    $('#sp_apvlReqBfr').html("<b>근무결재요청 수정은 '미승인' 상태에서만 가능합니다.</b>");
+                    $('#sp_apvlReqBfr').html("<b>연장근무품의 수정은 '미승인' 상태에서만 가능합니다.</b>");
                 }
 				else {
-                    $('#sp_apvlReqBfr').html("<b>근무결재요청 수정은 본인만 가능합니다.</b>");
+                    $('#sp_apvlReqBfr').html("<b>연장근무품의 수정은 본인만 가능합니다.</b>");
                 }
 
                 var strApvlStts = arrWrkDt[4] == '01' ? '미승인' : arrWrkDt[4] == '02' ? '승인' : '반려' ;
@@ -99,7 +99,7 @@
 
                 $('#currReqPopStts').val("detail")
 
-                $('#h5_apvlReqBfrTit').html("<b>근무결재요청 상세</b>");
+                $('#h5_apvlReqBfrTit').html("<b>연장근무품의 상세</b>");
                 $('#btn_apvlBfrReq').text("");
                 $('#btn_apvlBfrReq').css('display', 'none');
                 $('#ipt_ref1SearchNamePop').prop('placeholder', '')
@@ -115,7 +115,7 @@
 			else if(arrWrkDt[4] == '01' && arrWrkDt[0] == sessionStorage.getItem("email")) {
                 $('#apvlReqAcptDiv').addClass('d-none');
 
-                $('#h5_apvlReqBfrTit').html("<b>근무결재요청 수정</b>");
+                $('#h5_apvlReqBfrTit').html("<b>연장근무품의 수정</b>");
                 $('#btn_apvlBfrReq').text("수정");
                 $('#ipt_wrkDt').prop('readonly', true);
                 $('#ipt_jobStrtTm1').prop('readonly', true);
@@ -369,7 +369,7 @@
                 }
 				else {
                     //동일 날짜에 결재요청건이 없는 경우
-                    cf_dialog.confirm('근무결재요청을 ' + $('#btn_apvlBfrReq').text() + '하시겠습니까?', function() {
+                    cf_dialog.confirm('연장근무품의을 ' + $('#btn_apvlBfrReq').text() + '하시겠습니까?', function() {
                         if(this.key == 'ok') {
                             saveApvlReq();
                         }
@@ -406,7 +406,7 @@
                 var nowDt = new Date();
                 var strUpdDt = nowDt.getFullYear() + '-' + fillZero(2, (nowDt.getMonth() + 1) + '') + '-' + fillZero(2, nowDt.getDate() + '');
                 var msg = $('#currReqPopStts').val() == "modify" ? '수정일' : '등록일';
-                cf_dialog.confirm(msg + ' : ' + strUpdDt + '\n근무결재요청을 ' + $('#btn_apvlBfrReq').text() + '하시겠습니까?', function() {
+                cf_dialog.confirm(msg + ' : ' + strUpdDt + '\n연장근무품의을 ' + $('#btn_apvlBfrReq').text() + '하시겠습니까?', function() {
                     if(this.key == 'ok') {
                         saveApvlReq();
                     }
@@ -444,7 +444,7 @@
             "currReqPopStts" : $("#currReqPopStts").val(),           // 현재 팝업 상태 - 신규 / 수정
             "email"          : sessionStorage.getItem("email"),      // 로그인한 사용자 아이디
             "apvlDivs"       : $("#currApvlDivsStts").val(),         // 01: 선결재, 02: 후결재
-            "apvlReqDivs"    : apvlReqDivs,                          // 01: 야간근무, 02: 휴일근무
+            "apvlReqDivs"    : apvlReqDivs,                          // 01: 연장근무, 02: 휴일근무
             "wrkDt"          : $("#ipt_wrkDt").val(),                // 근무일자
             "jobStrtTm"      : inptStrtTm,                           // 근무 시작 시간
             "jobEndTm"       : inptEndTm,                            // 근무 종료 시간
@@ -465,7 +465,7 @@
                             'data'          : JSON.stringify(param),
                             'async'         : false,
                             'callbackFn'    : function(data) {
-                                g_toast.push('근무결재요청 ' + $('#btn_apvlBfrReq').text() + '이 완료되었습니다.');
+                                g_toast.push('연장근무품의 ' + $('#btn_apvlBfrReq').text() + '이 완료되었습니다.');
 
                                 $('#exitApvlReqModalBtn').click();
                                 $('#apvlHistSearchBtn').click();
@@ -507,7 +507,7 @@
 <div style="width :600px;">
         <div class="mb-4" role="alert">
             <h5 id="h5_apvlReqBfrTit">
-                <b>근무결재요청 등록</b>
+                <b>연장근무품의 등록</b>
             </h5>
             <div role="alert">
                 <h6 style="text-align: right">

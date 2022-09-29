@@ -447,7 +447,7 @@
             return;
         }
 
-        if(sSelStr == "야간근무" || sSelStr == "휴일근무") {
+        if(sSelStr == "연장근무" || sSelStr == "휴일근무") {
             url = "{% url 'dili_api:apvlReqPop' %}" ;
         /*} else if (sSelStr == "반차결재" ) { //|| sSelStr == "연차결재") {
             url = "{% url 'dili_api:apvlReqBfrChkPop' %}" ;*/
@@ -640,7 +640,7 @@
                             <button class="button" id="apvlReqBtn">결재등록</button>
                         </div>-->
                         <div class="align-self-center mr-3">
-                            <button class="button" id="apvlReq2Btn">초과근무요청</button>
+                            <button class="button" id="apvlReq2Btn">연장근무품의</button>
                         </div>
                         <div class="align-self-end align-self-center">
                             <button class="button" id="apvlAcptBtn">결재승인</button>
