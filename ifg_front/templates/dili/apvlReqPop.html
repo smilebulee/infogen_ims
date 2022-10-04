@@ -475,7 +475,7 @@
 
     // 취소 버튼 선택 시, 결재요청 데이터 취소
     $('#btn_apvlWrkCncl').click(function() {
-        n_dialog.confirm('초과근무 요청을 취소하시겠습니까?',function(){
+        cf_dialog.confirm('초과근무 요청을 취소하시겠습니까?',function(){
             if(this.key == 'ok'){
                 var param = {
                     "email"         : sessionStorage.getItem("email"),              // 로그인한 사용자 아이디
