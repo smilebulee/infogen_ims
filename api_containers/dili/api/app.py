@@ -3805,6 +3805,11 @@ class deptOneInfo(Resource): # Mariadb 연결 진행
                       "          FROM TB_EMP_MGMT E" \
                       "         WHERE E.EMP_ID = C.EMP_ID" \
                       "       ) AS EMP_NAME" \
+                      "     , C.GM_ID" \
+                      "     , (SELECT E.EMP_NAME" \
+                      "          FROM TB_EMP_MGMT E" \
+                      "         WHERE E.EMP_ID = C.GM_ID" \
+                      "       ) AS GM_NAME" \
                       "  FROM TB_CMM_CD_DETL C" \
                       " WHERE C.CMM_CD_GRP_ID = 'SLIN_BZDP'" \
                       "   AND C.CMM_CD = '" + data["deptCode"] + "'"\
