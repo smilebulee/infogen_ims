@@ -1019,12 +1019,11 @@ class apvlAcptHist(Resource):  # Mariadb 연결 진행
                           "        END AS BANCHA" \
                           "     , NVL(A.TH1_APRV_NM, '') AS TH1_APRV_NM " \
                           "     , NVL(A.TH2_APRV_NM, '') AS TH2_APRV_NM " \
-                          "  FROM TB_APVL_REQ_MGMT_M A, TB_EMP_MGMT B, TB_EMP_MGMT C " \
+                          "  FROM TB_APVL_REQ_MGMT_M A, TB_EMP_MGMT C " \
                           " WHERE A.EMP_EMAL_ADDR = C.EMP_EMAIL  " \
-                          "   AND A.TH1_APRV_NM = B.EMP_EMAIL  " \
                           "   and A.APVL_REQ_DIVS <> '99'" \
-                          "   AND ((A.TH1_APRV_NM = '" + email + "' OR A.TH2_APRV_NM = '" + email + "') " \
-                          "       AND (A.TH1_APRV_STUS = '" + apvlStusDivs + "' OR A.TH2_APRV_STUS = '" + apvlStusDivs + "')) " \
+                          "   AND ((A.TH1_APRV_NM = '" + email + "' AND A.TH1_APRV_STUS = '" + apvlStusDivs + "' ) " \
+                          "       OR (A.TH2_APRV_NM = '" + email + "' AND A.TH2_APRV_STUS = '" + apvlStusDivs + "')) " \
                           " ORDER BY APVL_REQ_DT ASC "
 
                     logging.debug("apvlAcptHist SQL문" + sql)
