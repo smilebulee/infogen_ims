@@ -794,7 +794,7 @@ class saveApvlAcpt(Resource): # Mariadb 연결 진행
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 #쿼리문 실행
-                if authFlag == "1" or authFlag == "3":
+                if authFlag == "1":
                     #쿼리문 실행
                     sql = " UPDATE TB_APVL_REQ_MGMT_M /*1차승인*/ " \
                           "    SET TH1_APRV_STUS     = '" + th1AprvStus + "'" \
@@ -817,7 +817,18 @@ class saveApvlAcpt(Resource): # Mariadb 연결 진행
                           "    AND WRK_DT            = '" + wrkDt + "' " \
                           "    AND JOB_STRT_TM       = '" + jobStrtTm + "' " \
                           "    AND JOB_END_TM        = '" + jobEndTm + "' "
-
+                elif authFlag == "3":
+                    #쿼리문 실행
+                    sql = " UPDATE TB_APVL_REQ_MGMT_M /*1차승인*/ " \
+                          "    SET TH1_APRV_STUS     = '" + th1AprvStus + "'" \
+                          "      , TH2_APRV_STUS     = '" + th1AprvStus + "'"\
+                          "      , TH1_APRV_RSN      = '" + th1AprvRsn + "'" \
+                          "      , TH1_APRV_DT       = NOW() " \
+                          "      , APVL_LAST_APRV_DT = NOW() " \
+                          "  WHERE EMP_EMAL_ADDR     = '" + email + "' " \
+                          "    AND WRK_DT            = '" + wrkDt + "' " \
+                          "    AND JOB_STRT_TM       = '" + jobStrtTm + "' " \
+                          "    AND JOB_END_TM        = '" + jobEndTm + "' "
                 logger.info(sql)
                 cursor.execute(sql)
 
@@ -884,8 +895,8 @@ class apvlReqHist(Resource): # Mariadb 연결 진행
                       "     , CASE WHEN A.TH1_APRV_STUS = '01' AND NVL(A.TH2_APRV_STUS, '01') = '01' THEN C.EMP_NAME" \
                       "            WHEN A.TH1_APRV_STUS = '02' AND NVL(A.TH2_APRV_STUS, '01') = '01' THEN C.EMP_NAME" \
                       "            WHEN A.TH1_APRV_STUS = '02' AND NVL(A.TH2_APRV_STUS, '02') = '02' THEN D.EMP_NAME" \
+                      "            WHEN A.TH1_APRV_STUS = '03' AND A.TH2_APRV_STUS = '03' THEN C.EMP_NAME" \
                       "            WHEN A.TH2_APRV_STUS = '03' THEN D.EMP_NAME" \
-                      "            WHEN A.TH1_APRV_STUS = '03' THEN C.EMP_NAME" \
                       "            ELSE '반려' END REF_NM" \
                       "     , IFNULL(A.APVL_REQ_DT, '') AS APVL_REQ_DT" \
                       "     , CONCAT(IFNULL(A.WRK_REQ_RSN, ''), IFNULL(A.HOLI_REQ_RSN, '')) AS WRK_REQ_RSN" \
