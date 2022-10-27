@@ -1,5 +1,5 @@
 # Pull python 3 image
-FROM python:3
+FROM python:3.10
 
 # Create a work dir
 # 도커내부경로로
