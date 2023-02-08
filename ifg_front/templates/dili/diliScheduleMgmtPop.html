@@ -88,7 +88,7 @@
 
         console.log("dayLabel = "+dayLabel);
         var sExtStr = ""; //연장근무 / 주휴근무 문자열 지정
-        if(dayLabel == "0" || dayLabel == "6"){
+        if(dayLabel == "0"){
             sExtStr = "주휴근무";
         }else{
             sExtStr = "연장근무";
@@ -269,11 +269,13 @@
     function bsisDataInfo(){
 
         var dt = $('#tmpPopDt').text();
+        var wrkSeq = $('#tmpPopWrkSeq').text();
         var email = sessionStorage.getItem("email");
 
         var param = {
             "email" : email,
-            "dt"    : dt
+            "dt"    : dt,
+            "wrkSeq" : wrkSeq
         }
 
         $.ajaxCall( param, {
@@ -361,7 +363,7 @@
         var url = "{% url 'dili_api:apvlReqBfrPop' %}" ;
         //$('#currReqMthd').val("02");
         //$('#currReqPopStts').val("register");
-        
+
         modal('apvlUpldDiv_modal');
         $('#apvlUpld_modal').load(url);
 
