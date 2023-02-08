@@ -43,3 +43,7 @@
     border: none;
     font-weight: 500;
 }
+
+.toastui-calendar-popup-overlay {
+    height: 1500px;
+}
