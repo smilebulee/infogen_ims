@@ -137,7 +137,7 @@
             var inptDt = new Date($("#ipt_apvlSearchYyyyMm").val());
             var todayDt = new Date(strNowDt);
             if(inptDt > todayDt) {
-                alertMsg("연차요청월은 현재월, 현재월 이전으로 선택해주세요.", function() {
+                alertMsg("연차요청월은 현재월 이전으로 선택해주세요.", function() {
                     $('#ipt_apvlSearchYyyyMm').val(strNowDt).focus();
                 });
                 return;
@@ -331,7 +331,7 @@
                     if(data[i].WRK_TME != "" && data[i].WRK_TME != "000000") {
                         wrkDtm += '( ';
                         wrkDtm += data[i].WRK_TME.substring(0,2) != '00' ? parseInt(data[i].WRK_TME.substring(0,2)) + '시간 ' : '';
-                        wrkDtm += data[i].WRK_TME.substring(2,4) != '00' ? parseInt(data[i].WRK_TME.substring(2,4)) + '분 ' : '';
+                        wrkDtm += data[i].WRK_TME.substring(3,5) != '00' ? parseInt(data[i].WRK_TME.substring(3,5)) + '분 ' : '';
                         //wrkDtm += data[i].WRK_TME.substring(4,6) != '00' ? parseInt(data[i].WRK_TME.substring(4,6)) + '초 ' : '';
                         wrkDtm += ')';
                     }

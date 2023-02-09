@@ -941,7 +941,8 @@ class apvlReqHist(Resource): # Mariadb 연결 진행
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 # 쿼리문 실행
-                sql = "SELECT B.EMP_NAME " \
+                sql = "SELECT A.WRK_SEQ" \
+                      "     , B.EMP_NAME " \
                       "     , A.EMP_EMAL_ADDR " \
                       "     , A.TH1_APRV_NM " \
                       "     , NVL(A.WRK_DT,'') WRK_DT " \
@@ -980,7 +981,10 @@ class apvlReqHist(Resource): # Mariadb 연결 진행
                       "        END AS BANCHA" \
                       "     , NVL(A.TH1_APRV_NM, '') AS TH1_APRV_NM " \
                       "     , NVL(A.TH2_APRV_NM, '') AS TH2_APRV_NM " \
-                      "  FROM TB_APVL_REQ_MGMT_M A, TB_EMP_MGMT B, TB_EMP_MGMT C, TB_EMP_MGMT D" \
+                      "  FROM TB_NEW_APVL_REQ_MGMT_M A " \
+                      "      ,TB_EMP_MGMT B" \
+                      "      ,TB_EMP_MGMT C" \
+                      "      ,TB_EMP_MGMT D" \
                       " WHERE A.EMP_EMAL_ADDR = B.EMP_EMAIL" \
                       "   AND A.TH1_APRV_NM = C.EMP_EMAIL " \
                       "   AND A.TH2_APRV_NM = D.EMP_EMAIL " \
