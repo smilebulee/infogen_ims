@@ -1669,8 +1669,7 @@ class calendarData(Resource): # Mariadb 연결 진행
                       +"	  AND A.EMP_EMAL_ADDR = B.EMP_EMAL_ADDR " \
                       +"	  AND B.APVL_REQ_DIVS <> '99'" \
                       +"	  ORDER BY WRK_DT,JOB_STRT_TM, HOLI_TERM1 IS NULL ASC" \
- \
- \
+
                 logging.debug(sql)
                 cursor.execute(sql)
 

@@ -2,6 +2,7 @@
     {% load static %}
 
     <script type="text/javascript">
+        var gridType = "";
         $(document).ready(function(){
             $('#ipt_searchName').val(sessionStorage.getItem("email"))
             var tempStrtDt = "";
@@ -734,7 +735,7 @@
         /*********************************************************************
         *   onclickWeekEvt 날짜 가져오기
         *********************************************************************/
-       function onclickWeekEvt(trId) {
+       function onclickWeekEvt(trId,wrkSeq) {
 
             var wClickDt = trId.id.replace('grd_week','');
             var trIdStr = trId.id;
