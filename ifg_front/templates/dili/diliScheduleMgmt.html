@@ -64,11 +64,15 @@
 
                 tempStrtDt = setWeek(dfrStrtDate).baseDate;
                 tempEndDt = setWeek(dfrEndDate).baseDate;
-                setWeekGridData(tempStrtDt, tempEndDt);
 
                 $('#txt_mmYy').text($('#txt_weekEndYy').text());
                 $('#txt_mmMm').text($('#txt_weekEndMm').text());
-                setMonthGridData();
+
+                if( gridType == "grid_week") {
+                    setWeekGridData(tempStrtDt, tempEndDt);
+                } else {
+                    setMonthGridData();
+                }
 
                 var weekBtnNowDay = new Date($('#txt_mmYy').text(), Number($('#txt_mmMm').text())-1, 1);
 
@@ -109,12 +113,17 @@
 
                 tempStrtDt = setWeek(nxtStrtDate).baseDate;
                 tempEndDt = setWeek(nxtEndDate).baseDate;
-                setWeekGridData(tempStrtDt, tempEndDt);
+
 
                 $('#txt_mmYy').text($('#txt_weekEndYy').text());
                 $('#txt_mmMm').text($('#txt_weekEndMm').text());
-                setMonthGridData();
 
+
+                if( gridType == "grid_week") {
+                    setWeekGridData(tempStrtDt, tempEndDt);
+                } else {
+                    setMonthGridData();
+                }
                 var weekBtnNowDay = new Date($('#txt_mmYy').text(), Number($('#txt_mmMm').text())-1, 1);
 
                 calendar.clear();
@@ -145,7 +154,7 @@
                 var weekBtnDate = weekBtnNowDay.getDate();
                 var weekBtnDay = weekBtnNowDay.getDay();
 
-                crteTodayShow(weekBtnYear, weekBtnMonth, weekBtnDate, weekBtnDay);
+               //crteTodayShow(weekBtnYear, weekBtnMonth, weekBtnDate, weekBtnDay);
 
                 calendar.clear();
                 calendar.setDate(weekBtnNowDay);
@@ -176,7 +185,7 @@
                 var weekBtnDate = weekBtnNowDay.getDate();
                 var weekBtnDay = weekBtnNowDay.getDay();
 
-                crteTodayShow(weekBtnYear, weekBtnMonth, weekBtnDate, weekBtnDay);
+                //crteTodayShow(weekBtnYear, weekBtnMonth, weekBtnDate, weekBtnDay);
 
                 calendar.clear();
                 calendar.setDate(weekBtnNowDay);
@@ -396,8 +405,11 @@
 
                 tempStrtDt = setWeek(dfrStrtDate).baseDate;
                 tempEndDt = setWeek(dfrEndDate).baseDate;
-                setWeekGridData(tempStrtDt, tempEndDt);
-                setMonthGridData();
+                if( gridType == "grid_week") {
+                    setWeekGridData(tempStrtDt, tempEndDt);
+                } else {
+                    setMonthGridData();
+                }
                 $('#my_modal2').empty();
                 $('.model_layout').empty();
 
@@ -591,25 +603,28 @@
             table += '<th class="text-center">결재상태</th>';
             table += '</tr>';
             table += '</thead>';
-            table += '<tbody id="weekBoody">';
+            table += '<tbody id="'+gridType+'"+weekBoody">';
 
-            var gridType = "";
             if ( document.getElementById("btn_showWeek").style.color == "white" ) {
                 gridType = "grid_week";
             } else {
-                gridType = "month_week";
+                gridType = "grid_month";
             }
 
-            var gridStrtYy = $('#txt_weekStrtYy').text(); //현재 시작 년도
-            var gridStrtMm = $('#txt_weekStrtMm').text()-1; //현재 시작 월
+            var gridStrtYy = "";
+            var gridStrtMm = "";
 
             var gridStrtDate = "";
             var gridEndDate = 0;
+
             if ( gridType == "grid_week") {
                 var gridStrtDd = $('#txt_weekStrtDd').text(); //현재 시작 일
+                gridStrtYy = $('#txt_weekStrtYy').text(); //현재 시작 년도
+                gridStrtMm = $('#txt_weekStrtMm').text()-1; //현재 시작 월
                 gridStrtDate = new Date(gridStrtYy, gridStrtMm, gridStrtDd); //시작 날짜
-                gridEndDate = 7;
+                gridEndDate = 7;//종료날짜
             } else {
+                gridStrtYy = $('#txt_mmYy').text(); //현재 시작 년도
                 gridStrtMm =  $('#txt_mmMm').text()-1; //현재 시작 월
                 gridStrtDate = new Date(gridStrtYy, gridStrtMm, 1); //시작 날짜
                 var monthEndDate = new Date(gridStrtYy, gridStrtMm, 32); //다음 년도,월 세팅
@@ -682,7 +697,7 @@
                             var hour = Math.floor(tmpSumTotalWkrTm/60);
                             var minute = Math.floor(tmpSumTotalWkrTm%60);
                             var sumTotalWkrTm = lpad((hour).toString(),2,"0")+":"+lpad((minute).toString(),2,"0");
-                            table += '<tr id ="grd_week'+tempSetWeek+ j+'" onclick="onclickWeekEvt(this,'+wrkSeq+')">';
+                            table += '<tr id ="'+gridType+tempSetWeek+ j+'" onclick="onclickWeekEvt(this,'+wrkSeq+')">';
                             table += '<td class="pt-3-half" contenteditable="false">'+tdDate+'</td>';
                             table += '<td class="pt-3-half" contenteditable="false">'+jobStrtTm+'</td>';
                             table += '<td class="pt-3-half" contenteditable="false">'+jobEndTm+'</td>';
@@ -703,7 +718,7 @@
                         }
                     }//for end
                     if ( !chkGrid ) {
-                        table += '<tr id ="grd_week'+tempSetWeek+'" onclick="onclickWeekEvt(this,'+wrkSeq+')">';
+                        table += '<tr id ="'+gridType+tempSetWeek+'" onclick="onclickWeekEvt(this,'+wrkSeq+')">';
                         table += '<td class="pt-3-half" contenteditable="false">'+tdDate+'</td>';
                         table += '<td class="pt-3-half" contenteditable="false">'+'-'+'</td>';
                         table += '<td class="pt-3-half" contenteditable="false">'+'-'+'</td>';
@@ -737,8 +752,7 @@
         *********************************************************************/
        function onclickWeekEvt(trId,wrkSeq) {
 
-            var wClickDt = trId.id.replace('grd_week','');
-            var trIdStr = trId.id;
+            var wClickDt = trId.id.replace(gridType,'');
             //getWrkTimeByIml(null, weekDate.strtDate, weekDate.endDate);     // Session Email 을 기준으로 시작~종료일에 대한 근무시간 조회.
             $('#'+trId.id).prevAll().css("background-color","");
             $('#'+trId.id).nextAll().css("background-color","");
@@ -748,7 +762,7 @@
                 modal('my_modal');
                 $('#my_modal2').load("{% url 'dili_api:scheduleMgmtPop' %}");
 
-                $('#tmpPopDt').text(trIdStr.substring(8,18));
+                $('#tmpPopDt').text(wClickDt.substring(0,10));
                 $('#tmpPopWrkSeq').text(wrkSeq);
                 $('#tmpPopStrtTm').text($('#'+trId.id).children().eq(1).text());
                 $('#tmpPopEndTm').text($('#'+trId.id).children().eq(2).text());
@@ -1430,7 +1444,7 @@
                                 </div>
                             </div>
                             <!--week table 영역 -->
-                            <div id="month_week"></div>
+                            <div id="grid_month"></div>
                         </div>
 
                     </div>
