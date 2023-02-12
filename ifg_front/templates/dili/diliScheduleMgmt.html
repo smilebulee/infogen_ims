@@ -673,15 +673,15 @@
                                 jobAprvStrtTm = schdData[j].JOB_APRV_STRT_TM;
                                 jobAprvEndTm = schdData[j].JOB_APRV_END_TM;
                                 allWrkTm = schdData[j].WRK_TM;
+                                restTm = schdData[j].REST_TM;
+                                sumRestTm = Number(restTm);
+                                totalRestTm += sumRestTm;
                             }
                             wrkDivStr = "정상근무"; //연장근무 / 주휴근무 문자열 지정
                             if(day == "0"){
                                 wrkDivStr = "주휴근무";
                             }
-                            if ( schdData[j].APVL_REQ_DIVS == "") { //NEW 요청 테이블에 휴게시간 컬럼 추가시 휴게시간 내용은 IF문 박으로
-                                restTm = schdData[j].REST_TM;
-                                sumRestTm = Number(restTm);
-                                totalRestTm += sumRestTm;
+                            if ( schdData[j].APVL_REQ_DIVS == "") {
                                 apvlStus = "-";
                                 wrkSeq = 0;
                             } else {
