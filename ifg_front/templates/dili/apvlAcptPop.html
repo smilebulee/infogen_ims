@@ -22,6 +22,8 @@
         *********************************************************************/
         var param = {
             "email" : sessionStorage.getItem("email"),
+            "empPr" : sessionStorage.getItem("empPr"),   // 세션 값 - 부서 현장대리인
+            "empGm" : sessionStorage.getItem("empGm"),   // 세션 값 - 부서 사업부장
             "apvlStusDivs" : "01"                       //화면 진입 시 '미승인' 상태 요청 조회
         }
 
@@ -121,10 +123,13 @@
     *********************************************************************/
     function srchApvlAcptHist() {
         var param = {
-            "email"        : sessionStorage.getItem("email"),   // 세션 값
+            "email"        : sessionStorage.getItem("email"),   // 세션 값 - email
+            "empPr"        : sessionStorage.getItem("empPr"),   // 세션 값 - 부서 현장대리인
+            "empGm"        : sessionStorage.getItem("empGm"),   // 세션 값 - 부서 사업부장
             "apvlStusDivs" : $('#sbx_aprvStusNm').val()         // 결재 승인 상태
         }
-        //console.log("##srchApvlAcptHist param::", param);
+
+        console.log("##srchApvlAcptHist param::", param);
 
         $.ajaxCall( param, {
              'method' : 'GET',

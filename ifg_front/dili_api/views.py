@@ -348,6 +348,20 @@ def getDuplApvlReqCnt(request):
     logger.info(json.loads(r.text))
     return JsonResponse(ast.literal_eval(r.json()), safe=False)
 
+def getDuplApvlYryReqCnt(request):
+    param = json.loads(request.GET['param'])
+
+    logger.info("Parameters Start")
+    logger.info(param)
+    logger.info("Parameters End")
+
+    # api 호출
+    r = requests.get('http://dili_api:5006/duplApvlYryReqCnt', json=param)
+    logger.info(r)
+    logger.info(r.text)
+    logger.info(logger.info(ast.literal_eval(r.json())))
+    logger.info(json.loads(r.text))
+    return JsonResponse(ast.literal_eval(r.json()), safe=False)
 
 def getDuplWrkCnt(request):
     param = json.loads(request.GET['param'])
@@ -763,9 +777,9 @@ def getApvlWrkReqHistDetl(request):
 def getApvlAcptHist(request):
     param = json.loads(request.GET['param'])
 
-    logger.info("Parameters Start")
+    logger.info("getApvlAcptHist Parameters Start")
     logger.info(param)
-    logger.info("Parameters End")
+    logger.info("getApvlAcptHist Parameters End")
 
     # api 호출
     r = requests.get('http://dili_api:5006/apvlAcptHist', json=param)

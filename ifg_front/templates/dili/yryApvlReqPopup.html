@@ -125,6 +125,7 @@
             var params = {
                 "email"      : arrWrkDt[0],     // 기안자
                 "wrkDt"      : arrWrkDt[1],     // 연차시작일
+                "wrkSeq"     : arrWrkDt[6],     // 결재요청Seq
                 "apvlReqDt"  : arrWrkDt[5]      // 근무요청일시
             }
             var url = "{% url 'dili_api:getApvlReqHistDetl' %}";
@@ -148,6 +149,7 @@
                 var ptoKdCd   = data[0].PTO_KD_CD;     //휴가종류
                 var holiTerm1 = data[0].HOLI_TERM1;    //휴가시작일자
                 var holiTerm2 = data[0].HOLI_TERM2;    //휴가종료일자
+                var wrkSeq    = data[0].WRK_SEQ;       //결재요청Seq
                 var holiRsn   = data[0].WRK_REQ_RSN;   //휴가요청사유
                 var apvlEmail = data[0].TH1_APRV_NM;   //1차결재자 email
                 var apvlName  = data[0].TH1_APRV_NAME; //1차결재자 명
@@ -172,6 +174,7 @@
                 /* 휴가 기간, */
                 $("#ipt_holiTerm1").val(holiTerm1);
                 $("#ipt_holiTerm2").val(holiTerm2);
+                $("#ipt_wrkSeq").val(wrkSeq);
                 $("#ipt_holiTerm1").attr("disabled", true);
                 $("#ipt_holiTerm2").attr("disabled", true);
 
@@ -379,11 +382,6 @@
             dateCalcu();
     });
 
-
-
-
-
-
     /*********************************************************************
     *   연차 시작일 값 변경 시 휴가 일수 계산
     *********************************************************************/
@@ -459,6 +457,7 @@
                     "holiTerm1"     : $("#ipt_holiTerm1").val(),                    // 연차시작일
                     "holiTerm2"     : $("#ipt_holiTerm2").val(),                    // 연차 종료일
                     "wrkDt"         : $("#ipt_holiTerm1").val(),                    // 근무일 환산
+                    "wrkSeq"        : $("#ipt_wrkSeq").val(),                       // 결재요청Seq
                     "wrkTme"        : $('input[name="ptoKdCd"]:checked').val() == "01" || $('input[name="ptoKdCd"]:checked').val() == "03" ? "080000" : "040000",   // 근무시간 환산
                     "wrkReqRsn"     : $("#txa_holiRsn").val().trim(),               // 연차요청사유
                     "th1AprvStus"   : $("#ipt_yryApvlReqEmail").val()==$("#ipt_yry1ApvlLnSearchEmailPop").val()?"02":"01", // 01: 미승인, 기안자와 1차 결재자가 같은경우 승인으로 처리
@@ -561,12 +560,13 @@
             //동일 일자 결재 진행건 유효성 검증
             var param = {
                 "email"         : sessionStorage.getItem("email"),      //로그인한 사용자 아이디
-                "wrkDt"         : $('#ipt_holiTerm1').val(),                //근무일자
-                "holiTerm2"     : $('#ipt_holiTerm2').val(),                //근무일자(휴가종료일자)
+                "wrkDt"         : $('#ipt_holiTerm1').val(),            //근무일자
+                "wrkSeq"        : $('#ipt_wrkSeq').val(),               //결재요청Seq
+                "holiTerm2"     : $('#ipt_holiTerm2').val(),            //근무일자(휴가종료일자)
             }
             //console.log("###########param::", param);
 
-            var url = "{% url 'dili_api:getDuplApvlReqCnt' %}";
+            var url = "{% url 'dili_api:getDuplApvlYryReqCnt' %}";
             submissionCallList( param, 'GET', url, function(data) {
                 if(data.length > 0 && data[0].APVL_REQ_CNT > 0) {
                     //동일 날짜에 결재요청건이 있는 경우
@@ -591,6 +591,7 @@
                     "email"         : sessionStorage.getItem("email"),              // 로그인한 사용자 아이디
                     "apvlReqDivs"   : "99",    // 01: 야근, 02:휴일, 03: 연차, 04: 반차, 99:취소
                     "wrkDt"         : $("#ipt_holiTerm1").val(),                    // 근무일 환산
+                    "wrkSeq"        : $("#ipt_wrkSeq").val(),                       // 근무요청Seq
                 }
                 $.ajaxCall( param, {
                      method : 'POST',
@@ -652,6 +653,7 @@
                                 <div class="align-self-center mr-1">
                                     <div style="float: left;">
                                        <input type="date" class="align-self-start align-self-center form-control"        id="ipt_holiTerm1"  style="width:150px;" name="ipt_holiTerm1" />
+                                       <input type="text" class="form-control" id="ipt_wrkSeq" name="ipt_wrkSeq" style="width:70px;display:none;" readOnly/>
                                     </div>
                                     <div style="float: left;">
                                         <span class="align-self-start align-self-center">&nbsp;~&nbsp;</span>
@@ -691,8 +693,8 @@
                         <!-- 결재선 지정 영역 -->
                         <div class="card-body flex-height d-flex m-0 p-2">
                             <!-- 1차 결재자 -->
-                            <div class="align-self-center mr-4 " style="font-weight:bold">
-                                <span class="mr-4"><span class="requiredTag mr-1">*</span>1차 결재자</span>
+                            <div class="align-self-center mr-3 " style="font-weight:bold">
+                                <span class="mr-3"><span class="requiredTag mr-1">*</span>1차 결재자</span>
                             </div>
 
                             <div class="align-self-center mr-1">
@@ -701,16 +703,13 @@
                                     <input type="text" class="align-self-start align-self-center mr-1 form-control" id="ipt_yry1ApvlLnSearchEmailPop" name="ipt_yry1ApvlLnSearchEmailPop" style="width:235px; display:none;" readOnly/>
                                 </div>
                             </div>
-                            <div class="align-self-center mr-5">
-                                <button type="button" class="delInptButton" style="display:none;">x</button>
-                            </div>
                         </div>
 
                         <!-- 결재선 지정 영역 -->
                         <div class="card-body flex-height d-flex m-0 p-2">
                             <!-- 2차 결재자 -->
-                            <div class="align-self-center mr-4 " style="font-weight:bold">
-                                <span class="mr-4"><span class="requiredTag mr-1">*</span>2차 결재자</span>
+                            <div class="align-self-center mr-3 " style="font-weight:bold">
+                                <span class="mr-3"><span class="requiredTag mr-1">*</span>2차 결재자</span>
                             </div>
 
                             <div class="align-self-center mr-1">
@@ -719,16 +718,13 @@
                                     <input type="text" class="align-self-start align-self-center mr-1 form-control" id="ipt_yry2ApvlLnSearchEmailPop" name="ipt_yry2ApvlLnSearchEmailPop" style="width:235px; display:none;" readOnly/>
                                 </div>
                             </div>
-                            <div class="align-self-center mr-5">
-                                <button type="button" class="delInptButton" style="display:none;">x</button>
-                            </div>
                         </div>
 
 
                         <div class="card-body flex-height d-flex m-0 p-2">
                             <!-- 참조자1 -->
-                            <div class="align-self-center mr-5 " style="font-weight:bold">
-                                <span class="mr-4">참조자1&nbsp;</span>
+                            <div class="align-self-center mr-3 " style="font-weight:bold">
+                                <span class="mr-5">참조자1</span>
                             </div>
 
                             <div class="align-self-center mr-1">
@@ -737,15 +733,12 @@
                                     <input type="text" class="align-self-start align-self-center mr-1 form-control" id="ipt_yry1RefSearchEmailPop" name="ipt_yry1RefSearchEmailPop" style="width:235px; display:none;" readOnly/>
                                 </div>
                             </div>
-                            <div class="align-self-center mr-5">
-                                <button type="button" id="btn_del1YryRefSearchNamePop" class="delInptButton" style="display:none;">x</button>
-                            </div>
                         </div>
                     
                         <div class="card-body flex-height d-flex m-0 p-2">
                             <!-- 참조자2 -->
-                            <div class="align-self-center mr-5 " style="font-weight:bold">
-                                <span class="mr-4">참조자2&nbsp;</span>
+                            <div class="align-self-center mr-3 " style="font-weight:bold">
+                                <span class="mr-5">참조자2</span>
                             </div>
 
                             <div class="align-self-center mr-1">
@@ -754,15 +747,12 @@
                                     <input type="text" class="align-self-start align-self-center mr-1 form-control" id="ipt_yry2RefSearchEmailPop" name="ipt_yry2RefSearchEmailPop" style="width:235px; display:none;" readOnly/>
                                 </div>
                             </div>
-                            <div class="align-self-center mr-5">
-                                <button type="button" id="btn_del2YryRefSearchNamePop" class="delInptButton" style="display:none;">x</button>
-                            </div>
                         </div>
 
                         <div class="card-body flex-height d-flex m-0 p-2">
                             <!-- 기안자 -->
-                            <div class="align-self-center mr-5 " style="font-weight:bold">
-                                <span class="mr-3">기안자&nbsp;&nbsp;</span>
+                            <div class="align-self-center mr-4 " style="font-weight:bold">
+                                <span class="mr-5">기안자</span>
                             </div>
 
                             <div class="align-self-center mr-3">
@@ -777,8 +767,8 @@
 
                         <div class="card-body flex-height d-flex m-0 p-2">
                             <!-- 기안일 -->
-                            <div class="align-self-center mr-5 " style="font-weight:bold">
-                                <span class="mr-3">기안일&nbsp;&nbsp;</span>
+                            <div class="align-self-center mr-4 " style="font-weight:bold">
+                                <span class="mr-5">기안일</span>
                             </div>
 
                             <div class="align-self-center mr-3">

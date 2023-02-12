@@ -476,7 +476,18 @@ class SingIn(Resource): # 사용자 정보 조회
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 #쿼리문 실행
-                sql = "SELECT * FROM TB_EMP_MGMT WHERE BINARY EMP_ID =%s AND EMP_PW =%s"
+                sql = "SELECT E.EMP_ID " \
+                      "     , E.EMP_EMAIL " \
+                      "     , E.AUTH_ID " \
+                      "     , E.DEPT_CD " \
+                      "     , E.WORK_YN " \
+                      "     , D.EMP_PR " \
+                      "     , D.EMP_GM " \
+                      "  FROM TB_EMP_MGMT E" \
+                      "     , TB_DEPT_CD_MGMT D " \
+                      " WHERE E.DEPT_CD = D.DEPT_CD" \
+                      "   AND BINARY E.EMP_ID =%s AND E.EMP_PW =%s"
+
                 cursor.execute(sql,(emp_id,emp_pw))
 
                 mysql_con.commit();
@@ -491,7 +502,10 @@ class SingIn(Resource): # 사용자 정보 조회
                 "msg": "Data has been saved successfully",
                 "email": result2['EMP_EMAIL'],
                 "authId": result2['AUTH_ID'],
-                "deptCd": result2['DEPT_CD']
+                "deptCd": result2['DEPT_CD'],
+                "workYn": result2['WORK_YN'],
+                "empPr": result2['EMP_PR'],
+                "empGm": result2['EMP_GM']
             }
         else :
             retJson = {

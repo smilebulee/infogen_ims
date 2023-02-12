@@ -110,7 +110,7 @@
                 $('#ipt_jobEndTm1').prop('readonly', true);
                 $('#txa_reqBfrRsn').prop('readonly', true);
                 $('#ipt_ref1SearchNamePop').prop('readonly', true);
-
+                $('#sbx_RestTme').prop('disabled', true);
             }
 			else if(arrWrkDt[4] == '01' && arrWrkDt[0] == sessionStorage.getItem("email")) {
                 $('#apvlReqAcptDiv').addClass('d-none');
@@ -119,13 +119,13 @@
                 $('#btn_apvlBfrReq').text("수정");
                 $('#ipt_wrkDt').prop('readonly', true);
                 $('#ipt_jobStrtTm1').prop('readonly', true);
-
             }
             console.log(arrWrkDt);
             // 결재 요청 정보 PK 트랜잭션
             var params = {
                 "email"      : arrWrkDt[0],     // 기안자
                 "wrkDt"      : arrWrkDt[1],     // 근무요청일시
+                "wrkSeq"     : arrWrkDt[6],     // 결재요청Seq
                 "apvlReqDt"  : arrWrkDt[5],     // 기안일시
             }
             var url = "{% url 'dili_api:getApvlWrkReqHistDetl' %}";
@@ -146,6 +146,7 @@
             } else {
                 // 결재 상세 input 값 초기화
                 $("#ipt_wrkDt").val(data[0].WRK_DT);
+                $("#ipt_wrkSeq").val(data[0].WRK_SEQ);
                 $("#ipt_jobStrtTm1").val(data[0].JOB_STRT_TM);
                 $("#ipt_jobEndTm1").val(data[0].JOB_END_TM);
                 $("#txa_reqBfrRsn").val(data[0].WRK_REQ_RSN);
@@ -221,6 +222,7 @@
         var param = {
             "email"         : sessionStorage.getItem("email"),      //로그인한 사용자 아이디
             "wrkDt"         : $("#ipt_wrkDt").val(),                //근무일자
+            "wrkSeq"        : $("#ipt_wrkSeq").val(),               //결재요청Seq
         }
         //console.log("###########param::", param);
 
@@ -319,41 +321,29 @@
                                          + " " + currDt.getHours() + ":" + currDt.getMinutes());
                 var strCurrDt = currDt.getFullYear() + "-" + fillZero(2, (currDt.getMonth() + 1)) + "-" + currDt.getDate();
                 var strInptDt = inptDt.getFullYear() + "-" + fillZero(2, (inptDt.getMonth() + 1)) + "-" + inptDt.getDate();
-                if( strCurrDt == strInptDt && currDtTm > inptStrtDtTm) {
-                    alertMsg("근무 시간은 현재 시각 이후로 선택해주세요.", function() {
-                        $('#ipt_jobStrtTm1').val(currDt.getHours() + ":" + currDt.getMinutes()).focus();
+
+                //현재 날짜가 결재 요청 일자 이후인 경우,
+                if( inptStrtDtTm > inptEndDtTm ) {
+                    alertMsg("근무 종료 시간은 근무 시작 시간 이후로 선택해주세요.", function() {
+                        $('#ipt_jobEndTm1').val($('#ipt_jobStrtTm1').val().substring(0, 4) + (parseInt($('#ipt_jobStrtTm1').val().substring(4, 5)) + 1)).focus();
                     });
                     return;
                 }
-                else {
-                    //현재 날짜가 결재 요청 일자 이후인 경우, 20221113 주석처리
-                    /*if( strCurrDt > strInptDt ) {
-                        alertMsg("근무 일자는 현재 일자 이후로 선택해주세요.", function() {
-                            $('#ipt_wrkDt').val(currDt.getFullYear() + "-" + fillZero(2, (currDt.getMonth() + 1)) + "-" + (currDt.getDate() + 1)).focus();
-                        });
-                        return;
-                    }*/
-
-                    //현재 날짜가 결재 요청 일자 이후인 경우,
-                    if( inptStrtDtTm > inptEndDtTm ) {
-                        alertMsg("근무 종료 시간은 근무 시작 시간 이후로 선택해주세요.", function() {
-                            $('#ipt_jobEndTm1').val($('#ipt_jobStrtTm1').val().substring(0, 4) + (parseInt($('#ipt_jobStrtTm1').val().substring(4, 5)) + 1)).focus();
-                        });
-                        return;
-                    }
-
-                }
             }
 
-            //동일 일자 결재 진행건 유효성 검증
+            //동일 일자 시간대 결재 진행건 유효성 검증
             var param = {
                 "email"         : sessionStorage.getItem("email"),      //로그인한 사용자 아이디
                 "wrkDt"         : $("#ipt_wrkDt").val(),                //근무일자
+                "wrkSeq"        : $("#ipt_wrkSeq").val(),               //결재요청Seq
                 "holiTerm2"     : $("#ipt_wrkDt").val(),                //근무일자와 같은 값 전달
+                "jobStrtTm" 	: $("#ipt_jobStrtTm1").val(),           //결재요청 시작시간
+                "jobEndTm"  	: $("#ipt_jobEndTm1").val()             //결재요청 종료시간
             }
             //console.log("###########param::", param);
 
             var url = "{% url 'dili_api:getDuplApvlReqCnt' %}";
+
             submissionCallList( param, 'GET', url, function(data) {
                 if(data.length > 0 && data[0].APVL_REQ_CNT > 0) {
                     //동일 날짜에 결재요청건이 있는 경우
@@ -363,7 +353,7 @@
                             saveApvlReq();
                         }
                     });*/
-                    var msg = '일자 : ' + param.wrkDt + '\n결재요청건이 ' + data[0].APVL_REQ_CNT + '건 있습니다! \n결재 수정하십시오.';
+                    var msg = '일자 : ' + param.wrkDt + '\n근무요청시간이 중복됩니다.\n근무요청시간을 수정하십시오.';
                     alertMsg(msg);
                     return;
                 }
@@ -391,12 +381,14 @@
                 'REF_NAME'              : $("#ipt_ref1SearchNamePop").val(),
                 'APVL_REQ_DT'           : $("#sp_reqDt").text(),
                 'WRK_DT'                : $("#ipt_wrkDt").val(),
+                'WRK_SEQ'               : $("#ipt_wrkSeq").val(),
                 'JOB_STRT_TM'   		: $("#ipt_jobStrtTm1").val(),
                 'NGHT_WRK_STRT_TM'   	: $("#ipt_jobStrtTm1").val(),
                 'JOB_END_TM'    		: $("#ipt_jobEndTm1").val(),
                 'WRK_REQ_RSN'   		: $("#txa_reqBfrRsn").val().trim(),
                 'TH1_APRV_RSN'  		: $("#txa_reqAcptRsn").text(),
-                'TH1_APRV_DT'   		: $("#sp_acptDt").text()
+                'TH1_APRV_DT'   		: $("#sp_acptDt").text(),
+                'REST_TM'               : $("#sbx_RestTme").val()
             }
             postReqInfo = JSON.stringify(postReqInfo);
             console.log("preReqInfo::", preReqInfo);
@@ -419,7 +411,7 @@
         }
     });
 
-    //선결재 저장
+    //결재 저장
     function saveApvlReq() {
         var inptWrkDt     = $("#ipt_wrkDt").val();
         var inptStrtTm    = $("#ipt_jobStrtTm1").val().substring(0,2) + "" + $("#ipt_jobStrtTm1").val().substring(3,5) + "00";
@@ -446,6 +438,7 @@
             "apvlDivs"       : $("#currApvlDivsStts").val(),         // 01: 선결재, 02: 후결재
             "apvlReqDivs"    : apvlReqDivs,                          // 01: 연장근무, 02: 휴일근무
             "wrkDt"          : $("#ipt_wrkDt").val(),                // 근무일자
+            "wrkSeq"         : $("#ipt_wrkSeq").val(),               // 결재요청Seq
             "jobStrtTm"      : inptStrtTm,                           // 근무 시작 시간
             "jobEndTm"       : inptEndTm,                            // 근무 종료 시간
             "wrkTme"         : wrkTme || '000000',                   // $("#ipt_wrkDt").val().substring(11,13) +""+ $("#ipt_wrkDt").val().substring(14,16) +"" + $("#ipt_wrkDt").val().substring(17,19),
@@ -456,6 +449,7 @@
             "th2AprvNm"      : $("#ipt_apvl2LnSearchEmailPop").val(),     // 2차 결재자
             "refNm"          : $('#ipt_ref1SearchEmailPop').val(),     // 참조자1
             "ref2Nm"         : $('#ipt_ref2SearchEmailPop').val(),     // 참조자2
+            "restTm"         : $("#sbx_RestTme").val(),     // 휴게시간
         }
 
         $.ajaxCall( param, {
@@ -481,6 +475,7 @@
                     "email"         : sessionStorage.getItem("email"),              // 로그인한 사용자 아이디
                     "apvlReqDivs"   : "99",    // 01: 야근, 02:휴일, 03: 연차, 04: 반차, 99:취소
                     "wrkDt"         : $("#ipt_wrkDt").val(),                    // 근무일
+                    "wrkSeq"        : $("#ipt_wrkSeq").val(),                   // 결재요청SEQ
                 }
                 $.ajaxCall( param, {
                      method : 'POST',
@@ -554,6 +549,7 @@
                                             <div class="align-self-center mr-1">
                                                 <div style="float: left;" class="mr-2">
                                                      <input type="date" class="align-self-start align-self-center mr-1 form-control" id="ipt_wrkDt"   style="width:150px;"    name="ipt_wrkDt"      max="9999-12-31" />
+                                                     <input type="text" id="ipt_wrkSeq" name="ipt_wrkDt" style="display:none;"/>
                                                 </div>
                                                 <div style="float: left;">
                                                    <input type="time" class="align-self-start align-self-center form-control"       id="ipt_jobStrtTm1"  style="width:125px;" name="ipt_jobStrtTm1" />
@@ -567,25 +563,42 @@
                                             </div>
                                         </div>
 
+                                        <!-- 휴게시간 지정 영역 -->
+                                        <div class="flex-height d-flex m-0 p-2">
+                                            <!-- 1차 결재자 -->
+                                            <div class="align-self-center mr-3" style="font-weight:bold">
+                                                <span class="mr-3">휴게시간(분)</span>
+                                            </div>
+
+                                            <div class="align-self-center mr-1">
+                                                <div class="align-self-center mr-1">
+                                                    <select id="sbx_RestTme" class="form-control" name="type" style="width:200px;">
+                                                        <option value = "0" selected>0</option>
+                                                        <option value = "10">10</option>
+                                                        <option value = "20">20</option>
+                                                        <option value = "30">30</option>
+                                                        <option value = "40">40</option>
+                                                        <option value = "50">50</option>
+                                                        <option value = "60">60</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+
                                         <div class="flex-height d-flex m-0 p-2">
                                             <div class="align-self-start align-self-center mr-3" style="font-weight:bold"><span class="requiredTag mr-1">*</span>근무요청사유</div>
                                             <div class="align-self-center mr-7">
                                                 <textarea id="txa_reqBfrRsn" class="form-control" name="reqRsn" maxlength="510" style="resize: none; width:440px; height:70px;" placeholder="사유를 입력해주세요.(500자 이하)" onkeyup="chkLength(this, 500)">
-3. 근무 유형 : 연장
-    * 연장/야간/휴일 중 선택
-    * 야간 근무 : 밤 10시 ~ 오전 6시 사이의 근무인 경우를 의미함.
-4. 근무 사유(고객사로부터의 업무 지시 등)
-    - 운영배포 및 모니터링
-5. 업무 내용(연장 근무시 수행할 업무를 구체적으로 작성)
-    - R&D 지원포탈 CSR 운영 배포</textarea>
+근무 사유(고객사로부터의 업무 지시 등)
+    - 운영배포 및 모니터링</textarea>
                                             </div>
                                         </div>
 
                                         <!-- 결재선 지정 영역 -->
-                                        <div class="card-body flex-height d-flex m-0 p-2">
+                                        <div class="flex-height d-flex m-0 p-2">
                                             <!-- 1차 결재자 -->
-                                            <div class="align-self-center mr-4 " style="font-weight:bold">
-                                                <span class="mr-4"><span class="requiredTag mr-1">*</span>1차 결재자</span>
+                                            <div class="align-self-center mr-3" style="font-weight:bold">
+                                                <span class="mr-3"><span class="requiredTag mr-1">*</span>1차 결재자</span>
                                             </div>
 
                                             <div class="align-self-center mr-1">
@@ -594,73 +607,53 @@
                                                     <input type="text" class="align-self-start align-self-center mr-1 form-control" id="ipt_apvl1LnSearchEmailPop" name="ipt_apvl1LnSearchEmailPop" style="width:235px; display:none;" readonly/>
                                                 </div>
                                             </div>
-
-                                            <div class="align-self-center mr-5">
-                                                <button type="button" class="delInptButton" style="display:none;">x</button>
-                                            </div>
-
                                         </div>
 
                                          <!-- 결재선 지정 영역 -->
-                                        <div class="card-body flex-height d-flex m-0 p-2">
+                                        <div class="flex-height d-flex m-0 p-2">
                                             <!-- 2차 결재자 -->
-                                            <div class="align-self-center mr-4 " style="font-weight:bold">
-                                                <span class="mr-4"><span class="requiredTag mr-1">*</span>2차 결재자</span>
+                                            <div class="align-self-center mr-3" style="font-weight:bold">
+                                                <span class="mr-3"><span class="requiredTag mr-1">*</span>2차 결재자</span>
                                             </div>
-
                                             <div class="align-self-center mr-1">
                                                 <div class="align-self-center mr-1">
                                                     <input type="text" class="align-self-start align-self-center mr-1 form-control" id="ipt_apvl2LnSearchNamePop" name="ipt_apvl2LnSearchNamePop" placeholder="이름을 입력해주세요." maxlength="10" readonly/>
                                                     <input type="text" class="align-self-start align-self-center mr-1 form-control" id="ipt_apvl2LnSearchEmailPop" name="ipt_apvl2LnSearchEmailPop" style="width:235px; display:none;" readonly/>
                                                 </div>
                                             </div>
-
-                                            <div class="align-self-center mr-5">
-                                                <button type="button" class="delInptButton" style="display:none;">x</button>
-                                            </div>
-
                                         </div>
 
-                                        <div class="card-body flex-height d-flex m-0 p-2">
-                                            <!-- 결재자 -->
-                                            <div class="align-self-center mr-5 " style="font-weight:bold">
-                                                <span class="mr-4">참조자1&nbsp;</span>
+                                        <div class="flex-height d-flex m-0 p-2">
+                                            <!-- 참조자1 -->
+                                            <div class="align-self-center mr-3" style="font-weight:bold">
+                                                <span class="mr-5">참조자1</span>
                                             </div>
-
                                             <div class="align-self-center mr-1">
                                                 <div class="align-self-center mr-1">
-                                                    <input type="text" class="align-self-start align-self-center mr-1 form-control" id="ipt_ref1SearchNamePop" name="ipt_ref1SearchNamePop" placeholder="이름을 입력해주세요." maxlength="10" readonly/>
-                                                    <input type="text" class="align-self-start align-self-center mr-1 form-control" id="ipt_ref1SearchEmailPop" name="ipt_ref1SearchEmailPop" style="width:235px; display:none;" readonly/>
+                                                    <input type="text" class="align-self-start align-self-center mr-1 form-control" id="ipt_ref1SearchNamePop" name="ipt_ref1SearchNamePop" placeholder="이름을 입력해주세요." maxlength="10" readonly />
+                                                    <input type="text" class="align-self-start align-self-center mr-1 form-control" id="ipt_ref1SearchEmailPop" name="ipt_ref1SearchEmailPop" style="width:235px; display:none;" readonly />
                                                 </div>
-                                            </div>
-                                            <div class="align-self-center mr-5">
-                                                <button type="button" id="btn_del1RefSearchNamePop" class="delInptButton">x</button>
                                             </div>
                                         </div>
 
-                                        <div class="card-body flex-height d-flex m-0 p-2">
-                                            <!-- 결재자 -->
-                                            <div class="align-self-center mr-5 " style="font-weight:bold">
-                                                <span class="mr-4">참조자2&nbsp;</span>
+                                        <div class="flex-height d-flex m-0 p-2">
+                                            <!-- 참조자2 -->
+                                            <div class="align-self-center mr-3" style="font-weight:bold">
+                                                <span class="mr-5">참조자2</span>
                                             </div>
-
                                             <div class="align-self-center mr-1">
                                                 <div class="align-self-center mr-1">
                                                     <input type="text" class="align-self-start align-self-center mr-1 form-control" id="ipt_ref2SearchNamePop" name="ipt_ref2SearchNamePop" placeholder="이름을 입력해주세요." maxlength="10" readonly/>
                                                     <input type="text" class="align-self-start align-self-center mr-1 form-control" id="ipt_ref2SearchEmailPop" name="ipt_ref2SearchEmailPop" style="width:235px; display:none;" readonly/>
                                                 </div>
                                             </div>
-                                            <div class="align-self-center mr-5">
-                                                <button type="button" id="btn_del2RefSearchNamePop" class="delInptButton">x</button>
-                                            </div>
                                         </div>
 
-                                        <div class="card-body flex-height d-flex m-0 p-2">
+                                        <div class="flex-height d-flex m-0 p-2">
                                             <!-- 기안자 -->
-                                            <div class="align-self-center mr-5 " style="font-weight:bold">
-                                                <span class="mr-3">기안자&nbsp;&nbsp;</span>
+                                            <div class="align-self-center mr-4" style="font-weight:bold">
+                                                <span class="mr-5">기안자</span>
                                             </div>
-
                                             <div class="align-self-center mr-3">
                                                 <div class="align-self-center mr-3">
                                                     <span id="sp_apvlReqName"></span>
@@ -668,13 +661,12 @@
                                                     <input type="text" class="align-self-start align-self-center mr-1 form-control" id="ipt_reqEmail" 		name="ipt_reqEmail" style="width:235px; display:none;" readonly/>
                                                 </div>
                                             </div>
-
                                         </div>
 
-                                        <div class="card-body flex-height d-flex m-0 p-2">
+                                        <div class="flex-height d-flex m-0 p-2">
                                             <!-- 기안일 -->
-                                            <div class="align-self-center mr-5 " style="font-weight:bold">
-                                                <span class="mr-3">기안일&nbsp;&nbsp;</span>
+                                            <div class="align-self-center mr-4" style="font-weight:bold">
+                                                <span class="mr-5">기안일</span>
                                             </div>
 
                                             <div class="align-self-center mr-3">

@@ -107,6 +107,16 @@
                             sessionStorage.setItem("deptCd",loginInfo.deptCd);
                         }
 
+                        //2023.02.12 팀 현장대리인 추가
+                        if (loginInfo.empPr != null && loginInfo.empPr != "") {
+                            sessionStorage.setItem("empPr",loginInfo.empPr);
+                        }
+
+                        //2023.02.12 팀 사업부장 추가
+                        if (loginInfo.empGm != null && loginInfo.empGm != "") {
+                            sessionStorage.setItem("empGm",loginInfo.empGm);
+                        }
+
                         reData = {'next': $form.serializeObject().next}
                         window.location.href = $form.serializeObject().next;
                     }
