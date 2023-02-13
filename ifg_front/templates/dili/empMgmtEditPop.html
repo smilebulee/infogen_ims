@@ -31,6 +31,7 @@
             $('#Echk_empAuthId').attr('style', "font-size:x-small");
         });
 
+        selectDeptName();
 
         /* 권한설정까지 셋팅 */
         var isAdmin = checkEmpAuthByEmail(sessionStorage.getItem("email"), "ADMIN");
@@ -54,6 +55,28 @@
 
     });
 
+    /* 부서 설정 */
+    function selectDeptName(){
+    $.ajaxCall( {}, {
+             'method' : 'GET',
+             'url' : "{% url 'dili_api:getDeptInfo' %}",
+             'dataType' : 'json',
+             'data' : JSON.stringify(param),
+             'callbackFn' : function(data){
+                // 로그
+                console.log("deptInfo data : " + data[0].DEPT_CODE + ", " + data[0].DEPT_NAME);
+
+                // 리턴
+                for(var i=0; i < data.length; i++){
+                // <option value="00" selected>선택</option>
+                var deptTag = "<option value=" + data[i].DEPT_CODE + ">" + data[i].DEPT_NAME + "</option>"
+
+                $("#sbx_empDept").append(deptTag)
+                }
+             }
+        });
+    };
+
     /* 해당 직원 정보 조회 */
     function getEditEmpInfo(email){
         var param = {
@@ -69,7 +92,7 @@
              'async' : false,
              'callbackFn' : function(data){
                 // 로그
-                //console.log("data : ",data);
+                console.log("data : ",data);
                 // 리턴
                 empInfoSet(data);
              }
@@ -87,23 +110,23 @@
         var get_empAId = data[0].AUTH_ID.split("|");
         var get_empName = data[0].EMP_NAME;
         var get_empDCd = data[0].DEPT_CD;
+        var get_empPr = data[0].EMP_PR;
+        var get_empGm = data[0].EMP_GM;
         var get_empJobStrtTm = data[0].JOB_STRT_TM;
         var get_empJobEndTm = data[0].JOB_END_TM;
+        var get_empWorkYn = data[0].WORK_YN;
         exPW = get_empPw;
 
-        if(initFlag) {
-            // 공통 코드 조회 - '부서조회'
-            retrieveCmmCd('sbx_empDept', 'SLIN_BZDP', function(){
-                $("#sbx_empDept option[value='"+get_empDCd+"']").attr("selected", true);
-            });
+//        if(initFlag) {
+//            selectDeptName();
 
-            initFlag = false;
+//            initFlag = false;
 
-        } else {
-            $("#sbx_empDept option").removeAttr("selected")
-            $("#sbx_empDept option[value='"+get_empDCd+"']").attr("selected", true);
+//        } else {
+//            $("#sbx_empDept option").removeAttr("selected")
+//            $("#sbx_empDept option[value='"+get_empDCd+"']").attr("selected", true);
 
-         }
+//         }
 
 
         // 선택된 권한 체크
@@ -123,9 +146,13 @@
 
         $('#ipt_empId').val(get_empId);
         $('#ipt_empPw').val(get_empPw);
+        $('#ipt_empPr').val(get_empPr);
+        $('#ipt_empGm').val(get_empGm);
         $('#ipt_empNm').val(get_empName);
         $('#sbx_jobStrtTm').val(get_empJobStrtTm);
         $('#sbx_jobEndTm').val(get_empJobEndTm);
+        $('#sbx_empWorkYn').val(get_empWorkYn);
+        $("#sbx_empDept option[value='"+get_empDCd+"']").attr("selected", true);
 
         /* 성명관련 버튼 초기화 */
         $('#ipt_empNm').attr('readonly', true);
@@ -206,6 +233,9 @@
         var ipt_empDept = $('[name="sbx_empDept"] option:selected').val();
         var ipt_jobStrtTm = $('[name="sbx_jobStrtTm"] option:selected').val();
         var ipt_jobEndTm = $('[name="sbx_jobEndTm"] option:selected').val();
+        var ipt_empWorkYn = $('[name="sbx_empWorkYn"] option:selected').val();
+        var ipt_empPr = $('[name="ipt_empPr"] option:selected').val();
+        var ipt_empGm = $('[name="ipt_empGm"] option:selected').val();
 
         var query = "input[name='AUTH_CD']:checked";
         var selectedEls = document.querySelectorAll(query);
@@ -265,7 +295,10 @@
             "ipt_empDept"   : ipt_empDept,
             "ipt_jobStrtTm" : ipt_jobStrtTm,
             "ipt_jobEndTm"  : ipt_jobEndTm,
-            "sessionId"     : sessionStorage.getItem("email")      //로그인한 사용자 아이디
+            "ipt_empPr"     : ipt_empPr,
+            "ipt_empGm"     : ipt_empGm,
+            "sessionId"     : sessionStorage.getItem("email"),      //로그인한 사용자 아이디
+            "ipt_empWorkYn" : ipt_empWorkYn
         }
 
         n_dialog.confirm('수정하시겠습니까?',function(){
@@ -525,6 +558,28 @@
                             </div>
                         </td>
                         <td></td>
+                    </tr>
+                    <!-- 재직여부 -->
+                    <tr>
+                        <td>
+                            <div class="align-self-start align-self-center mr-5"><span class="requiredTag mr-1">*</span><label for="sbx_empWorkYn">재직여부</label></div>
+                        </td>
+                        <td>
+                             <div class="align-self-center mr-2">
+                                <select id="sbx_empWorkYn" name="sbx_empWorkYn" class="form-control">
+                                    <option value="Y">재직</option>
+                                    <option value="N">퇴사</option>
+                                </select>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td colspan="2">
+                            <div class="flex-height d-flex mb-2">
+                                <span class="requiredText">> 퇴사한 직원의 경우, '퇴사'를 선택해주세요. </span>
+                            </div>
+                        </td>
                     </tr>
                     <!-- 버튼 -->
                     <tr>

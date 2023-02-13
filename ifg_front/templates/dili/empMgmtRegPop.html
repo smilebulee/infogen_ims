@@ -22,13 +22,39 @@ $("#exitEmpModalBtnTest").click(function(){//asdf
 
 $(document).ready(function(){
     // 공통 코드 조회 - '부서 조회'
-    retrieveCmmCd('sbx_empDept2', 'SLIN_BZDP');
+    //retrieveCmmCd('sbx_empDept2', 'SLIN_BZDP');
+
+    selectDeptName();
+
     // 공통 코드 조회 - '권한 조회'
     retrieveCmmCdChk('chk_empAuthId2', 'AUTH_CD');
     $('#chk_empAuthId2').attr('style', "font-size:x-small");
 
 
 });
+
+
+function selectDeptName(){
+ $.ajaxCall( {}, {
+             'method' : 'GET',
+             'url' : "{% url 'dili_api:getDeptInfo' %}",
+             'dataType' : 'json',
+             'data' : JSON.stringify(param),
+             'callbackFn' : function(data){
+                // 로그
+                console.log("deptInfo data : " + data[0].DEPT_CODE + ", " + data[0].DEPT_NAME);
+
+                // 리턴
+                for(var i=0; i < data.length; i++){
+                // <option value="00" selected>선택</option>
+                var deptTag = "<option value=" + data[i].DEPT_CODE + ">" + data[i].DEPT_NAME + "</option>"
+                $("#sbx_empDept2").append(deptTag)
+                }
+
+             }
+        });
+
+};
 
 
 /* ID 중복확인 버튼 클릭 이벤트 */
@@ -172,6 +198,9 @@ function onClickSubmitBtn2() {
     /* var ipt_empAuthId = $('[name="sbx_empAuthId"] option:selected').val(); */
     var ipt_empNm2 = $('[name="ipt_empNm2"]').val();
     var ipt_empDept = $('[name="sbx_empDept2"] option:selected').val();
+    var ipt_jobStrtTm = $('[name="sbx_jobStrtTm"] option:selected').val();
+    var ipt_jobEndTm = $('[name="sbx_jobEndTm"] option:selected').val();
+
 
     var query = "input[name='AUTH_CD']:checked";
     var selectedEls = document.querySelectorAll(query);
@@ -216,9 +245,15 @@ function onClickSubmitBtn2() {
             $('#ipt_empNm2').focus();
         });
         return false;
-    } else if($('#reIsExistNmBtn2').is(":hidden")) {
-        alertMsg("직원 성명 중복여부 체크해 주세요.", function() {
-            $('#ipt_empNm2').focus();
+
+    } else if (ipt_jobStrtTm == "00" || ipt_jobStrtTm == null ){
+        alertMsg("근무 시작시간을 선택해 주세요.", function() {
+            $('#ipt_jobStrtTm').focus();
+        });
+        return false;
+    } else if (ipt_jobEndTm == "00" || ipt_jobEndTm == null ){
+        alertMsg("근무 종료시간을 선택해 주세요.", function() {
+            $('#ipt_jobEndTm').focus();
         });
         return false;
     } else if (ipt_empAuthId == "none" || ipt_empAuthId == null ){
@@ -240,7 +275,10 @@ function onClickSubmitBtn2() {
         "ipt_empAuthId" : ipt_empAuthId,
         "ipt_empNm"     : ipt_empNm2,
         "ipt_empDept"   : ipt_empDept,
-        "sessionId"         : sessionStorage.getItem("email")      //로그인한 사용자 아이디
+        "ipt_jobStrtTm" : ipt_jobStrtTm,
+        "ipt_jobEndTm"  : ipt_jobEndTm,
+        "sessionId"     : sessionStorage.getItem("email")      //로그인한 사용자 아이디
+
     }
 
     n_dialog.confirm('등록하시겠습니까?',function(){
@@ -293,7 +331,8 @@ function onClickResetBtn2() {
     $('#ipt_empId2').val("");
     $('#ipt_empPw2').val("");
     $('#ipt_empNm2').val("");
-
+    $('#sbx_jobStrtTm').val("00");
+    $('#sbx_jobEndTm').val("00");
     $('#chk_empAuthId2').children().find('.test').prop("checked", false);
     $('#sbx_empDept2').val("00");
 
@@ -320,7 +359,7 @@ function validChk(){
 /* 비밀번호 영문, 숫자만 입력가능체크 */
 function validChk2(){
     var inputPw = $('#ipt_empPw2').val();
-    var idReg = /^[a-z0-9]{0,12}$/g;
+    var idReg = /^[a                       -z0-9]{0,12}$/g;
     if( !idReg.test( inputPw) ) {
         $('#pwValidText').attr('class','requiredTextAlert');
         $('#ipt_empPw2').val(inputPw.substring( 0, (inputPw.length)-1 ));
@@ -422,6 +461,40 @@ function validChk2(){
                         </div>
                     </td>
                 </tr>
+                <!-- 근무시간 -->
+                    <tr>
+                        <td>
+                            <div class="align-self-start align-self-center mr-7"><span class="requiredTag mr-1">*</span><label for="sbx_jobStrtTm">근무시간</label></div>
+                        </td>
+                        <td>
+                            <div class="align-self-center mr-3 pb-2">
+                                <select id="sbx_jobStrtTm" name="sbx_jobStrtTm" class="form-control">
+                                    <option value="00">선택</option>
+                                    <option value="070000">07시</option>
+                                    <option value="073000">07시 30분</option>
+                                    <option value="080000">08시</option>
+                                    <option value="083000">08시 30분</option>
+                                    <option value="090000">09시</option>
+                                    <option value="093000">09시 30분</option>
+                                    <option value="100000">10시</option>
+                                </select>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="align-self-center mr-9 pb-2">
+                                <select id="sbx_jobEndTm" name="sbx_jobEndTm" class="form-control">
+                                    <option value="00">선택</option>
+                                    <option value="160000">16시</option>
+                                    <option value="163000">16시 30분</option>
+                                    <option value="170000">17시</option>
+                                    <option value="173000">17시 30분</option>
+                                    <option value="180000">18시</option>
+                                    <option value="183000">18시 30분</option>
+                                    <option value="190000">19시</option>
+                                </select>
+                            </div>
+                        </td>
+                    </tr>
                 <!-- 권한 -->
                 <tr>
                     <td>

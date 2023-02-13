@@ -136,7 +136,7 @@ function empListGrd(data){
                 empListTable += '<tr id ="grd_empList" onclick="onClickEvt(\''+data[i].EMP_EMAIL+'\')">';
                 empListTable += '<td id="empId" class="pt-3-half">'+data[i].EMP_ID+'</td>';
                 empListTable += '<td id="empName" class="pt-3-half">'+maskingNm(data[i].EMP_NAME)+'</td>';
-                empListTable += '<td id="empAuth" class="pt-3-half">'+data[i].AUTH_VAL+'</td>';
+                empListTable += '<td id="empAuth" class="pt-3-half">'+data[i].AUTH_ID+'</td>';
                 empListTable += '<td id="empDept" class="pt-3-half">'+data[i].DEPT_NAME+'</td>';
                 if(data[i].WORK_YN == "N"){
                     empListTable += '<td id="empWork" class="pt-3-half" style="color:red;">퇴사</td>';
@@ -149,7 +149,7 @@ function empListGrd(data){
                     empListTable += '<tr id ="grd_empList" onclick="onClickEvt(\''+data[i].EMP_EMAIL+'\')">';
                     empListTable += '<td id="empId" class="pt-3-half">'+data[i].EMP_ID+'</td>';
                     empListTable += '<td id="empName" class="pt-3-half">'+maskingNm(data[i].EMP_NAME)+'</td>';
-                    empListTable += '<td id="empAuth" class="pt-3-half">'+data[i].AUTH_VAL+'</td>';
+                    empListTable += '<td id="empAuth" class="pt-3-half">'+data[i].AUTH_ID+'</td>';
                     empListTable += '<td id="empDept" class="pt-3-half">'+data[i].DEPT_NAME+'</td>';
                     if(data[i].WORK_YN == "N"){
                         empListTable += '<td id="empWork" class="pt-3-half" style="color:red;">퇴사</td>';

@@ -1190,7 +1190,7 @@ class empInfo(Resource): # Mariadb 연결 진행
                 #쿼리문 실행
                 if workChk == 'Y':
                     #현재 재직중인 직원 조회
-                    sql = "SELECT SEQ_NO, EMP_NAME, EMP_EMAIL, EMP_ID, AUTH_ID AUTH_VAL, DEPT_CD, DEPT_NAME, WORK_YN " \
+                    sql = "SELECT SEQ_NO, EMP_NAME, EMP_EMAIL, EMP_ID, EMP_PR, EMP_GM, AUTH_ID, DEPT_CD, DEPT_NAME, WORK_YN " \
                           "FROM TB_EMP_MGMT " \
                           "WHERE EMP_NAME LIKE '%" + data["name"] + "%' " \
                           "AND WORK_YN = 'Y' " \
@@ -1198,7 +1198,7 @@ class empInfo(Resource): # Mariadb 연결 진행
 
                 else:
                     # 전체 직원 조회
-                    sql = "SELECT SEQ_NO, EMP_NAME, EMP_EMAIL, EMP_ID, AUTH_ID AUTH_VAL, DEPT_CD, DEPT_NAME, WORK_YN " \
+                    sql = "SELECT SEQ_NO, EMP_NAME, EMP_EMAIL, EMP_ID, EMP_PR, EMP_GM, AUTH_ID, DEPT_CD, DEPT_NAME, WORK_YN " \
                           "FROM TB_EMP_MGMT " \
                           "WHERE EMP_NAME LIKE '%" + data["name"] + "%' " \
                           "ORDER BY SEQ_NO"
@@ -1268,13 +1268,25 @@ class empDeptGm(Resource): # Mariadb 연결 진행
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 #쿼리문 실행
-                sql = "SELECT C.CMM_CD AS DEPT_CD " \
-                      "     , C.CMM_CD_NAME AS DEPT_NAME " \
-                      "     , (SELECT E.EMP_NAME FROM TB_EMP_MGMT E WHERE E.EMP_ID = C.GM_ID) AS DEPT_GM_NAME " \
-                      "     , GM_ID AS DEPT_GM_EMAIL " \
-                      "  FROM TB_CMM_CD_DETL C " \
-                      " WHERE C.CMM_CD_GRP_ID = 'SLIN_BZDP'" \
-                      "   AND C.CMM_CD = (" \
+                # sql = "SELECT C.CMM_CD AS DEPT_CD " \
+                #       "     , C.CMM_CD_NAME AS DEPT_NAME " \
+                #       "     , (SELECT E.EMP_NAME FROM TB_EMP_MGMT E WHERE E.EMP_ID = C.GM_ID) AS DEPT_GM_NAME " \
+                #       "     , GM_ID AS DEPT_GM_EMAIL " \
+                #       "  FROM TB_CMM_CD_DETL C " \
+                #       " WHERE C.CMM_CD_GRP_ID = 'SLIN_BZDP'" \
+                #       "   AND C.CMM_CD = (" \
+                #       "                   SELECT DEPT_CD " \
+                #       "                     FROM TB_EMP_MGMT " \
+                #       "                    WHERE EMP_EMAIL = '" + data["email"] + "'" \
+                #       "                  )"
+
+                # 쿼리문 실행(221129)
+                sql = "SELECT C.DEPT_CD " \
+                      "     , C.DEPT_NAME " \
+                      "     , (SELECT E.EMP_NAME FROM TB_EMP_MGMT E WHERE E.EMP_ID = C.EMP_GM) AS GM_NAME " \
+                      "     , C.EMP_GM " \
+                      "  FROM TB_DEPT_CD_MGMT C " \
+                      "   WHERE C.DEPT_CD = (" \
                       "                   SELECT DEPT_CD " \
                       "                     FROM TB_EMP_MGMT " \
                       "                    WHERE EMP_EMAIL = '" + data["email"] + "'" \
@@ -1311,17 +1323,29 @@ class empDeptPr(Resource): # Mariadb 연결 진행
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 #쿼리문 실행
-                sql = "SELECT D.CMM_CD      AS DEPT_CD " \
-                      "     , D.CMM_CD_NAME AS DEPT_NAME " \
-                      "     , D.EMP_ID      AS DEPT_PR_EMAIL " \
-                      "     , (SELECT XX.EMP_NAME FROM TB_EMP_MGMT XX WHERE XX.EMP_ID = D.EMP_ID) AS DEPT_PR_NAME " \
-                      "  FROM TB_CMM_CD_DETL D " \
-                      " WHERE D.CMM_CD_GRP_ID = 'SLIN_BZDP' " \
-                      "   AND D.CMM_CD = ( " \
-                      "                   SELECT X.DEPT_CD " \
-                      "                     FROM TB_EMP_MGMT X  " \
-                      "                    WHERE X.EMP_EMAIL = '" + data["email"] + "' " \
-                      "                  ) "
+                # sql = "SELECT D.CMM_CD      AS DEPT_CD " \
+                #       "     , D.CMM_CD_NAME AS DEPT_NAME " \
+                #       "     , D.EMP_ID      AS DEPT_PR_EMAIL " \
+                #       "     , (SELECT XX.EMP_NAME FROM TB_EMP_MGMT XX WHERE XX.EMP_ID = D.EMP_ID) AS DEPT_PR_NAME " \
+                #       "  FROM TB_CMM_CD_DETL D " \
+                #       " WHERE D.CMM_CD_GRP_ID = 'SLIN_BZDP' " \
+                #       "   AND D.CMM_CD = ( " \
+                #       "                   SELECT X.DEPT_CD " \
+                #       "                     FROM TB_EMP_MGMT X  " \
+                #       "                    WHERE X.EMP_EMAIL = '" + data["email"] + "' " \
+                #       "                  ) "
+
+                # 쿼리문 실행(221129)
+                sql = "SELECT C.DEPT_CD " \
+                      "     , C.DEPT_NAME " \
+                      "     , (SELECT E.EMP_NAME FROM TB_EMP_MGMT E WHERE E.EMP_ID = C.EMP_PR) AS PR_NAME " \
+                      "     , C.EMP_PR " \
+                      "  FROM TB_DEPT_CD_MGMT C " \
+                      "   WHERE C.DEPT_CD = (" \
+                      "                   SELECT DEPT_CD " \
+                      "                     FROM TB_EMP_MGMT " \
+                      "                    WHERE EMP_EMAIL = '" + data["email"] + "'" \
+                      "                  )"
 
                 logging.debug(sql)
                 cursor.execute(sql)
@@ -2807,12 +2831,14 @@ class empMgmtRegSubmit(Resource):
         ipt_empPw = request.form['ipt_empPw']
         ipt_empAuthId = request.form['ipt_empAuthId']
         ipt_empNm = request.form['ipt_empNm']
+        ipt_jobStrtTm = request.form['ipt_jobStrtTm']
+        ipt_jobEndTm = request.form['ipt_jobEndTm']
         ipt_empDept = request.form['ipt_empDept']
         sessionId = request.form['sessionId']
         ipt_empEmail = ipt_empId;
 
 
-        logging.debug("====Param data====")
+        logging.debug("====empMgmtReg Param data====")
 
         logging.debug("ipt_empId = " + ipt_empId)
         logging.debug("ipt_empEmail = " + ipt_empEmail)
@@ -2820,6 +2846,8 @@ class empMgmtRegSubmit(Resource):
         logging.debug("ipt_empAuthId = " + ipt_empAuthId)
         logging.debug("ipt_empNm = " + ipt_empNm)
         logging.debug("ipt_empDept = " + ipt_empDept)
+        logging.debug("ipt_jobStrtTm = " + ipt_jobStrtTm)
+        logging.debug("ipt_jobEndTm = " + ipt_jobEndTm)
         logging.debug("sessionId = " + sessionId)
 
 
@@ -2835,7 +2863,29 @@ class empMgmtRegSubmit(Resource):
 
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
-                sql= "INSERT INTO TB_EMP_MGMT (EMP_ID, " \
+                # sql= "INSERT INTO TB_EMP_MGMT (EMP_ID, " \
+                #                                 "EMP_EMAIL, " \
+                #                                 "EMP_PW, " \
+                #                                 "EMP_NAME, " \
+                #                                 "AUTH_ID, " \
+                #                                 "REG_DTM, " \
+                #                                 "REG_USER, " \
+                #                                 "WORK_YN, " \
+                #                                 "DEPT_CD, " \
+                #                                 "DEPT_NAME) " \
+                #                     "VALUES('" + ipt_empId + "', " \
+                #                             "'" + ipt_empEmail + "', " \
+                #                             "'" + ipt_empPw + "', " \
+                #                             "'" + ipt_empNm + "', " \
+                #                             "'" + ipt_empAuthId + "', " \
+                #                             "now(), " \
+                #                             "'" + sessionId + "', " \
+                #                             "'Y', " \
+                #                             "'" + ipt_empDept + "', " \
+                #                             "(SELECT CMM_CD_NAME DEPT_VAL FROM TB_CMM_CD_DETL WHERE CMM_CD_GRP_ID = 'SLIN_BZDP' AND CMM_CD = " \
+                #                             "'" + ipt_empDept + "'))"\
+
+                sql = "INSERT INTO TB_EMP_MGMT (EMP_ID, " \
                                                 "EMP_EMAIL, " \
                                                 "EMP_PW, " \
                                                 "EMP_NAME, " \
@@ -2843,6 +2893,10 @@ class empMgmtRegSubmit(Resource):
                                                 "REG_DTM, " \
                                                 "REG_USER, " \
                                                 "WORK_YN, " \
+                                                "JOB_STRT_TM, " \
+                                                "JOB_END_TM, " \
+                                                "EMP_PR, " \
+                                                "EMP_GM, " \
                                                 "DEPT_CD, " \
                                                 "DEPT_NAME) " \
                                     "VALUES('" + ipt_empId + "', " \
@@ -2853,9 +2907,13 @@ class empMgmtRegSubmit(Resource):
                                             "now(), " \
                                             "'" + sessionId + "', " \
                                             "'Y', " \
+                                            "'" + ipt_jobStrtTm + "', " \
+                                            "'" + ipt_jobEndTm + "', " \
+                                            "(SELECT EMP_PR FROM TB_DEPT_CD_MGMT WHERE DEPT_CD = '" + ipt_empDept + "'), " \
+                                            "(SELECT EMP_GM FROM TB_DEPT_CD_MGMT WHERE DEPT_CD = '" + ipt_empDept + "'), " \
                                             "'" + ipt_empDept + "', " \
-                                            "(SELECT CMM_CD_NAME DEPT_VAL FROM TB_CMM_CD_DETL WHERE CMM_CD_GRP_ID = 'SLIN_BZDP' AND CMM_CD = " \
-                                            "'" + ipt_empDept + "'))"\
+                                            "(SELECT DEPT_NAME FROM TB_DEPT_CD_MGMT WHERE DEPT_CD = " \
+                                            "'" + ipt_empDept + "'))" \
 
                 logger.info(sql)
                 cursor.execute(sql)
@@ -2894,6 +2952,9 @@ class empOneInfo(Resource): # Mariadb 연결 진행
                       "     , AUTH_ID" \
                       "     , EMP_NAME" \
                       "     , DEPT_CD" \
+                      "     , WORK_YN" \
+                      "     , EMP_PR" \
+                      "     , EMP_GM" \
                       "     , DATE_FORMAT(JOB_STRT_TM, '%H%i%s') AS JOB_STRT_TM" \
                       "     , DATE_FORMAT(JOB_END_TM, '%H%i%s') AS JOB_END_TM" \
                       "  FROM TB_EMP_MGMT " \
@@ -2939,11 +3000,11 @@ class isExistEmpNm(Resource): # Mariadb 연결 진행
 
                 logging.debug(sql)
                 cursor.execute(sql)
-                logging.debug('getEditEmpInfo SUCCESS')
+                logging.debug('isExistEmpNm SUCCESS')
 
         finally:
             mysql_con.close()
-            logging.debug('getEditEmpInfo CLOSE')
+            logging.debug('isExistEmpNm CLOSE')
 
 
 
@@ -2973,8 +3034,12 @@ class empMgmtEditSubmit(Resource):
         ipt_empDept = request.form['ipt_empDept']
         ipt_jobStrtTm = request.form['ipt_jobStrtTm']
         ipt_jobEndTm = request.form['ipt_jobEndTm']
+        ipt_empPr = request.form['ipt_empPr']
+        ipt_empGm = request.form['ipt_empGm']
         sessionId = request.form['sessionId']
+        ipt_empWorkYn = request.form['ipt_empWorkYn']
         ipt_empEmail = ipt_empId;
+
 
 
         logging.debug("====Param data====")
@@ -2988,7 +3053,9 @@ class empMgmtEditSubmit(Resource):
         logging.debug("ipt_jobStrtTm = " + ipt_jobStrtTm)
         logging.debug("ipt_jobEndTm = " + ipt_jobEndTm)
         logging.debug("sessionId = " + sessionId)
-
+        logging.debug("ipt_empWorkYn = " + ipt_empWorkYn)
+        logging.debug("ipt_empPr = " + ipt_empPr)
+        logging.debug("ipt_empGm = " + ipt_empGm)
         logging.debug("=====================")
 
 
@@ -3001,16 +3068,30 @@ class empMgmtEditSubmit(Resource):
 
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
-                sql= "UPDATE TB_EMP_MGMT SET EMP_PW = '"+ipt_empPw+"', " \
-                                                "EMP_NAME = '"+ipt_empNm+"', " \
-                                                "AUTH_ID = '"+ipt_empAuthId+"', " \
-                                                "DEPT_CD = '"+ipt_empDept+"', " \
-                                                "JOB_STRT_TM = '" + ipt_jobStrtTm + "', " \
-                                                "JOB_END_TM = '" + ipt_jobEndTm + "', " \
-                                                "UPD_DTM = now(), " \
-                                                "UPD_USER = '"+sessionId+"', " \
-                                                "DEPT_NAME = (SELECT CMM_CD_NAME DEPT_VAL FROM TB_CMM_CD_DETL WHERE CMM_CD_GRP_ID = 'SLIN_BZDP' AND CMM_CD = '" + ipt_empDept + "') " \
-                                                "WHERE EMP_ID = '"+ipt_empId+"'" \
+                # sql= "UPDATE TB_EMP_MGMT SET EMP_PW = '"+ipt_empPw+"', " \
+                #                                 "EMP_NAME = '"+ipt_empNm+"', " \
+                #                                 "AUTH_ID = '"+ipt_empAuthId+"', " \
+                #                                 "DEPT_CD = '"+ipt_empDept+"', " \
+                #                                 "JOB_STRT_TM = '" + ipt_jobStrtTm + "', " \
+                #                                 "JOB_END_TM = '" + ipt_jobEndTm + "', " \
+                #                                 "UPD_DTM = now(), " \
+                #                                 "UPD_USER = '"+sessionId+"', " \
+                #                                 "DEPT_NAME = (SELECT CMM_CD_NAME DEPT_VAL FROM TB_CMM_CD_DETL WHERE CMM_CD_GRP_ID = 'SLIN_BZDP' AND CMM_CD = '" + ipt_empDept + "') " \
+                #                                 "WHERE EMP_ID = '"+ipt_empId+"'" \
+
+                sql = "UPDATE TB_EMP_MGMT SET EMP_PW = '" + ipt_empPw + "', " \
+                      "EMP_NAME = '" + ipt_empNm + "', " \
+                      "AUTH_ID = '" + ipt_empAuthId + "', " \
+                      "DEPT_CD = '" + ipt_empDept + "', " \
+                      "JOB_STRT_TM = '" + ipt_jobStrtTm + "', " \
+                      "JOB_END_TM = '" + ipt_jobEndTm + "', " \
+                      "UPD_DTM = now(), " \
+                      "UPD_USER = '" + sessionId + "', " \
+                      "EMP_PR = (SELECT EMP_PR FROM TB_DEPT_CD_MGMT WHERE DEPT_CD = '" + ipt_empDept + "'), " \
+                      "EMP_GM = (SELECT EMP_GM FROM TB_DEPT_CD_MGMT WHERE DEPT_CD = '" + ipt_empDept + "'), " \
+                      "WORK_YN = '" + ipt_empWorkYn + "', " \
+                      "DEPT_NAME = (SELECT DEPT_NAME FROM TB_DEPT_CD_MGMT WHERE DEPT_CD = '" + ipt_empDept + "') " \
+                      "WHERE EMP_ID = '" + ipt_empId + "'" \
 
                 logger.info(sql)
                 cursor.execute(sql)
@@ -3286,7 +3367,7 @@ class questiondetail(Resource): # Mariadb 연결 진행
 
                 logger.debug(sql2)
                 cursor.execute(sql2)
-
+                
                 logging.debug('questionDtPop SUCCESS')
 
         finally:
@@ -3724,7 +3805,7 @@ class deptInfo(Resource): # Mariadb 연결 진행
 
         # get data
         #name = data["name"]
-        logging.debug('================== App Start ==================')
+        logging.debug('================== deptInfo Start ==================')
         logging.debug(data)
         logging.debug(request.args.get('param'))
         logging.debug('================== App End ==================')
@@ -3738,23 +3819,23 @@ class deptInfo(Resource): # Mariadb 연결 진행
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 #쿼리문 실행
                 # 전체 부서 조회
-                sql = "SELECT C.CMM_CD AS DEPT_CODE" \
-                      "     , C.CMM_CD_NAME AS DEPT_NAME" \
-                      "     , C.USE_YN" \
-                      "     , IFNULL(C.RMKS, '') AS RMKS" \
-                      "     , C.EMP_ID" \
-                      "     , (SELECT E.EMP_NAME" \
-                      "          FROM TB_EMP_MGMT E" \
-                      "         WHERE E.EMP_ID = C.EMP_ID" \
-                      "       ) AS EMP_NAME" \
-                      "     , IFNULL(C.GM_ID, '') AS GM_ID" \
-                      "     , IFNULL((SELECT E.EMP_NAME" \
-                      "          FROM TB_EMP_MGMT E" \
-                      "         WHERE E.EMP_ID = C.GM_ID" \
-                      "       ), '') AS GM_NAME" \
-                      "  FROM TB_CMM_CD_DETL C" \
-                      " WHERE C.CMM_CD_GRP_ID = 'SLIN_BZDP'" \
-                      " ORDER BY C.CMM_CD"
+                sql =   "  SELECT 	C.DEPT_CD AS DEPT_CODE, " \
+	                    "  C.DEPT_NAME AS DEPT_NAME,        " \
+	                    "  C.DEPT_USE_YN,                   " \
+	                    "  IFNULL(C.RMKS, '') AS RMKS,      " \
+	                    "  C.EMP_PR,                        " \
+	                    "  (SELECT E.EMP_NAME               " \
+ 	                    "  FROM TB_EMP_MGMT E               " \
+ 	                    "  WHERE E.EMP_ID = C.EMP_PR        " \
+ 	                    "  ) AS PR_NAME,                   " \
+	                    "  C.EMP_GM,                        " \
+	                    "  (SELECT E.EMP_NAME               " \
+ 	                    "  FROM TB_EMP_MGMT E               " \
+ 	                    "  WHERE E.EMP_ID = C.EMP_GM        " \
+ 	                    "  ) AS GM_NAME                     " \
+	                    "  FROM TB_DEPT_CD_MGMT C           " \
+	                    "  ORDER BY DEPT_CD                 "
+
 
                 logging.debug(sql)
 
@@ -3770,7 +3851,17 @@ class deptInfo(Resource): # Mariadb 연결 진행
             logging.debug('===============')
         array = list(result2)  # 결과를 리스트로
 
+        logging.debug('======deptInfo array===')
+        logging.debug(array)
+        logging.debug('===============')
+
+        logging.debug('======deptInfo dumps===')
+        logging.debug(json.dumps(result2, indent=4, cls=DateTimeEncoder))
+        logging.debug('===============')
+
         return json.dumps(result2, indent=4, cls=DateTimeEncoder)
+
+
 
 class deptMgmtRegSubmit(Resource):
     def post(self):
@@ -3782,23 +3873,25 @@ class deptMgmtRegSubmit(Resource):
             logger.info(row + ':' + request.form[row])
             globals()[row] = request.form[row]
 
-        ipt_empId2 = request.form['ipt_empId']
-        ipt_empNm2 = request.form['ipt_empNm']
+        ipt_empId = request.form['ipt_empId']
+        ipt_empNm = request.form['ipt_empNm']
         ipt_deptName = request.form['ipt_deptName']
         sessionId = request.form['sessionId']
-        ipt_gmId2 = request.form['ipt_gmId']
+        ipt_gmId = request.form['ipt_gmId']
+        ipt_gmNm = request.form['ipt_gmNm']
 
+        logging.debug("====deptMgmtRegSubmit Param data====")
 
-        logging.debug("====Param data====")
-
-        logging.debug("ipt_empId2 = " + ipt_empId2)
-        logging.debug("ipt_empNm2 = " + ipt_empNm2)
+        logging.debug("ipt_empId = " + ipt_empId)
+        logging.debug("ipt_empNm = " + ipt_empNm)
         logging.debug("ipt_deptName = " + ipt_deptName)
         logging.debug("sessionId = " + sessionId)
+        logging.debug("ipt_gmId = " + ipt_gmId)
+        logging.debug("ipt_gmNm = " + ipt_gmNm)
 
 
 
-        logging.debug("=====================")
+        logging.debug("====deptMgmtRegSubmit Param data====")
 
 
 
@@ -3810,21 +3903,25 @@ class deptMgmtRegSubmit(Resource):
 
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
-                sql= "INSERT INTO TB_CMM_CD_DETL(CMM_CD_GRP_ID, CMM_CD, CMM_CD_NAME, USE_YN, REG_DATE, REG_EMP_NO, CHG_DATE, CHG_EMP_NO, EMP_ID, GM_ID) "\
-                     "VALUES( "\
-                     "        'SLIN_BZDP' "\
-                     "      , (SELECT * FROM (SELECT MAX(CMM_CD)+1 FROM TB_CMM_CD_DETL WHERE CMM_CD_GRP_ID = 'SLIN_BZDP' AND CMM_CD <> '99') A) "\
-                     "      , '" + ipt_deptName + "' "\
-                     "      , 'Y' "\
-                     "      , NOW() "\
-                     "      , '" + sessionId + "' "\
-                     "      , NOW() "\
-                     "      , '" + sessionId + "' "\
-                     "      , '" + ipt_empId2 + "' "\
-                     "      , '" + ipt_gmId2 + "' "\
-                     " ) "\
+                sql = "INSERT INTO TB_DEPT_CD_MGMT(DEPT_CD, DEPT_NAME, EMP_PR, EMP_GM, DEPT_USE_YN, RMKS, REG_DATE, REG_EMP_NO, CHG_DATE, CHG_EMP_NO) " \
+                      "VALUES( " \
+                      "        (SELECT * FROM (SELECT MAX(DEPT_CD)+1 FROM TB_DEPT_CD_MGMT WHERE DEPT_CD <> '99') A) " \
+                      "      , '" + ipt_deptName + "' " \
+                      "      , '" + ipt_empId + "' " \
+                      "      , '" + ipt_gmId + "' " \
+                      "      , 'Y' " \
+                      "      , CONCAT(DATE_FORMAT(NOW(),'%Y-%m-%d'), ' 신규등록') "\
+                      "      , NOW() " \
+                      "      , '" + sessionId + "' " \
+                      "      , NOW() " \
+                      "      , '" + sessionId + "' " \
+                      " ) "
 
+                logging.debug("====deptMgmtRegSubmit SQL====")
                 logger.info(sql)
+                logging.debug("====deptMgmtRegSubmit SQL====")
+
+
                 cursor.execute(sql)
                 mysql_con.commit()
 
@@ -3836,11 +3933,15 @@ class deptMgmtRegSubmit(Resource):
             "msg": "Data has been saved successfully"
         }
 
+        logging.debug("====deptMgmtRegSubmit jsonify(retJson)====")
+        logging.debug(jsonify(retJson))
+        logging.debug("====deptMgmtRegSubmit jsonify(retJson)====")
+
         return jsonify(retJson)
 
 class deptMgmtEditSubmit(Resource):
     def post(self):
-        logger.info('========app.py empMgmtEditSubmit=========')
+        logger.info('========app.py deptMgmtEditSubmit=========')
         params = request.get_json()
         logger.info(params)
 
@@ -3854,6 +3955,8 @@ class deptMgmtEditSubmit(Resource):
         ipt_deptName = request.form['ipt_deptName']
         sessionId = request.form['sessionId']
         ipt_gmId = request.form['ipt_gmId']
+        ipt_gmNm = request.form['ipt_gmNm']
+        ipt_deptUseYn = request.form['ipt_deptUseYn']
 
 
         logging.debug("====Param data====")
@@ -3864,6 +3967,8 @@ class deptMgmtEditSubmit(Resource):
         logging.debug("ipt_deptName = " + ipt_deptName)
         logging.debug("sessionId = " + sessionId)
         logging.debug("ipt_gmId = " + ipt_gmId)
+        logging.debug("ipt_gmNm = " + ipt_gmNm)
+        logging.debug("ipt_deptUseYn = " + ipt_deptUseYn)
 
         logging.debug("=====================")
 
@@ -3878,14 +3983,14 @@ class deptMgmtEditSubmit(Resource):
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 # 부서정보 변경
-                sql= "UPDATE TB_CMM_CD_DETL "\
-                     "   SET CMM_CD_NAME = '" + ipt_deptName + "' "\
-                     "     , EMP_ID =  '" + ipt_empId + "' "\
-                     "     , GM_ID =  '" + ipt_gmId + "' "\
-                     "     , CHG_DATE = NOW() "\
-                     "     , CHG_EMP_NO = '" + sessionId + "' "\
-                     " WHERE CMM_CD_GRP_ID = 'SLIN_BZDP' "\
-                     "   AND CMM_CD = '" + ipt_deptCode + "' "
+                sql= "UPDATE TB_DEPT_CD_MGMT C "\
+                     "   SET C.DEPT_NAME = '" + ipt_deptName + "' "\
+                     "     , C.EMP_PR =  '" + ipt_empId + "' "\
+                     "     , C.EMP_GM =  '" + ipt_gmId + "' " \
+                     "     , C.CHG_DATE = NOW() "\
+                     "     , C.CHG_EMP_NO = '" + sessionId + "' " \
+                     "     , C.DEPT_USE_YN = '" + ipt_deptUseYn + "' " \
+                     " WHERE C.DEPT_CD = '" + ipt_deptCode + "' "
 
                 logger.info(sql)
                 cursor.execute(sql)
@@ -3901,13 +4006,14 @@ class deptMgmtEditSubmit(Resource):
                 cursor.execute(sql)
 
                 # 변경한 부서의 현장대리인의 권한, 부서코드, 부서명 변경
-                sql = "UPDATE TB_EMP_MGMT " \
-                      "   SET AUTH_ID = 'PR' " \
-                      "     , DEPT_CD = '" + ipt_deptCode + "' "\
-                      "     , DEPT_NAME = '" + ipt_deptName + "' "\
-                      " WHERE EMP_ID = '" + ipt_empId + "' "
-                logger.info(sql)
-                cursor.execute(sql)
+                #sql = "UPDATE TB_EMP_MGMT " \
+                #      "   SET AUTH_ID = 'PR' " \
+                #      "     , DEPT_CD = '" + ipt_deptCode + "' "\
+                #      "     , DEPT_NAME = '" + ipt_deptName + "' "\
+                #      " WHERE EMP_ID = '" + ipt_empId + "' "
+                #logger.info(sql)
+                #cursor.execute(sql)
+
 
                 mysql_con.commit()
 
@@ -3936,24 +4042,23 @@ class deptOneInfo(Resource): # Mariadb 연결 진행
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 #쿼리문 실행
-                sql = "SELECT C.CMM_CD AS DEPT_CODE" \
-                      "     , C.CMM_CD_NAME AS DEPT_NAME" \
-                      "     , C.USE_YN" \
-                      "     , IFNULL(C.RMKS, '') AS RMKS" \
-                      "     , C.EMP_ID" \
-                      "     , (SELECT E.EMP_NAME" \
-                      "          FROM TB_EMP_MGMT E" \
-                      "         WHERE E.EMP_ID = C.EMP_ID" \
-                      "       ) AS EMP_NAME" \
-                      "     , C.GM_ID" \
-                      "     , (SELECT E.EMP_NAME" \
-                      "          FROM TB_EMP_MGMT E" \
-                      "         WHERE E.EMP_ID = C.GM_ID" \
-                      "       ) AS GM_NAME" \
-                      "  FROM TB_CMM_CD_DETL C" \
-                      " WHERE C.CMM_CD_GRP_ID = 'SLIN_BZDP'" \
-                      "   AND C.CMM_CD = '" + data["deptCode"] + "'"\
-                      " ORDER BY C.CMM_CD"
+                sql =   "  SELECT C.DEPT_CD AS DEPT_CODE, " \
+	                    "  C.DEPT_NAME AS DEPT_NAME,        " \
+	                    "  C.DEPT_USE_YN,                   " \
+	                    "  IFNULL(C.RMKS, '') AS RMKS,      " \
+	                    "  C.EMP_PR,                        " \
+	                    "  (SELECT E.EMP_NAME               " \
+ 	                    "  FROM TB_EMP_MGMT E               " \
+ 	                    "  WHERE E.EMP_ID = C.EMP_PR        " \
+ 	                    "  ) AS PR_NAME,                   " \
+	                    "  C.EMP_GM,                        " \
+	                    "  (SELECT E.EMP_NAME               " \
+ 	                    "  FROM TB_EMP_MGMT E               " \
+ 	                    "  WHERE E.EMP_ID = C.EMP_GM        " \
+ 	                    "  ) AS GM_NAME                     " \
+	                    "  FROM TB_DEPT_CD_MGMT C           " \
+	                    "  WHERE C.DEPT_CD = '" + data["deptCode"] + "'"\
+	                    "  ORDER BY DEPT_CD                 "
 
                 logging.debug(sql)
                 cursor.execute(sql)
@@ -4002,7 +4107,7 @@ class diliScheduleTotalMgmt(Resource):
                       "	        WHERE C.EMP_EMAIL = NVL(A.EMP_EMAL_ADDR, B.EMP_EMAL_ADDR)) OCEM_NAME" \
                       "      ,SUM(" \
                       "            CASE WHEN NVL(B.PTO_KD_CD, 'X') IN ('01', '03') /*01 연차,02 반차,03 기타*/ " \
-                      "                 THEN SUBSTRING(B.WRK_TME, 1, 2)" \
+                      "                 THEN SUBSTRING(B.WRK_TME,   1, 2)" \
                       "                 WHEN NVL(B.PTO_KD_CD, 'X') = '02' /*02 반차*/" \
                       "                 THEN SUBSTRING(DATE_SUB(STR_TO_DATE(NVL(A.ALL_WRK_TM, '000000'), '%H%i%s'), INTERVAL A.REST_TM + A.DINN_REST_TM MINUTE), 1, 2)" \
                       "                 ELSE SUBSTRING(DATE_SUB(DATE_ADD(STR_TO_DATE(NVL(A.ALL_WRK_TM, '000000'), '%H%i%s'), INTERVAL TIME_TO_SEC(STR_TO_DATE(LPAD(NVL(B.WRK_TME, A.NGHT_WRK_TM), 6, '0'), '%H%i%s')) SECOND), INTERVAL A.REST_TM + A.DINN_REST_TM MINUTE), 1, 2)" \
