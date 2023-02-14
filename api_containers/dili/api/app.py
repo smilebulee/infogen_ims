@@ -1187,9 +1187,9 @@ class empInfo(Resource): # Mariadb 연결 진행
 
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
-                #쿼리문 실행
+                # 쿼리문 실행
                 if workChk == 'Y':
-                    #현재 재직중인 직원 조회
+                    # 현재 재직중인 직원 조회
                     sql = "SELECT SEQ_NO, EMP_NAME, EMP_EMAIL, EMP_ID, EMP_PR, EMP_GM, AUTH_ID, DEPT_CD, DEPT_NAME, WORK_YN " \
                           "FROM TB_EMP_MGMT " \
                           "WHERE EMP_NAME LIKE '%" + data["name"] + "%' " \
@@ -2850,7 +2850,6 @@ class empMgmtRegSubmit(Resource):
         logging.debug("ipt_jobEndTm = " + ipt_jobEndTm)
         logging.debug("sessionId = " + sessionId)
 
-
         logging.debug("=====================")
 
 
@@ -3034,18 +3033,14 @@ class empMgmtEditSubmit(Resource):
         ipt_empDept = request.form['ipt_empDept']
         ipt_jobStrtTm = request.form['ipt_jobStrtTm']
         ipt_jobEndTm = request.form['ipt_jobEndTm']
-        ipt_empPr = request.form['ipt_empPr']
-        ipt_empGm = request.form['ipt_empGm']
         sessionId = request.form['sessionId']
         ipt_empWorkYn = request.form['ipt_empWorkYn']
-        ipt_empEmail = ipt_empId;
 
 
 
         logging.debug("====Param data====")
 
         logging.debug("ipt_empId = " + ipt_empId)
-        logging.debug("ipt_empEmail = " + ipt_empEmail)
         logging.debug("ipt_empPw = " + ipt_empPw)
         logging.debug("ipt_empAuthId = " + ipt_empAuthId)
         logging.debug("ipt_empNm = " + ipt_empNm)
@@ -3054,8 +3049,7 @@ class empMgmtEditSubmit(Resource):
         logging.debug("ipt_jobEndTm = " + ipt_jobEndTm)
         logging.debug("sessionId = " + sessionId)
         logging.debug("ipt_empWorkYn = " + ipt_empWorkYn)
-        logging.debug("ipt_empPr = " + ipt_empPr)
-        logging.debug("ipt_empGm = " + ipt_empGm)
+
         logging.debug("=====================")
 
 
@@ -3367,7 +3361,7 @@ class questiondetail(Resource): # Mariadb 연결 진행
 
                 logger.debug(sql2)
                 cursor.execute(sql2)
-                
+
                 logging.debug('questionDtPop SUCCESS')
 
         finally:
@@ -3797,6 +3791,14 @@ class popUpData(Resource): # Mariadb 연결 진행
             logging.debug('===============')
         array = list(result2)  # 결과를 리스트로
 
+        logging.debug('======deptInfo array===')
+        logging.debug(array)
+        logging.debug('===============')
+
+        logging.debug('======deptInfo dumps===')
+        logging.debug(json.dumps(result2, indent=4, cls=DateTimeEncoder))
+        logging.debug('===============')
+
         return json.dumps(result2, indent=4, cls=DateTimeEncoder)
 
 class deptInfo(Resource): # Mariadb 연결 진행
@@ -3850,14 +3852,6 @@ class deptInfo(Resource): # Mariadb 연결 진행
             logging.debug(row)
             logging.debug('===============')
         array = list(result2)  # 결과를 리스트로
-
-        logging.debug('======deptInfo array===')
-        logging.debug(array)
-        logging.debug('===============')
-
-        logging.debug('======deptInfo dumps===')
-        logging.debug(json.dumps(result2, indent=4, cls=DateTimeEncoder))
-        logging.debug('===============')
 
         return json.dumps(result2, indent=4, cls=DateTimeEncoder)
 
@@ -4013,7 +4007,6 @@ class deptMgmtEditSubmit(Resource):
                 #      " WHERE EMP_ID = '" + ipt_empId + "' "
                 #logger.info(sql)
                 #cursor.execute(sql)
-
 
                 mysql_con.commit()
 
@@ -4188,7 +4181,7 @@ api.add_resource(duplWrkCnt       , '/duplWrkCnt')            # 선결재 동일
 api.add_resource(wrkTm            , '/wrkTm')                 # 선결재 동일 일자 스케줄 조회(정규 근무 시간정보)
 api.add_resource(apvlReqHistDetl  , '/apvlReqHistDetl')       # 연차 결재 요청 상세 조회
 api.add_resource(apvlReqWrkHistDetl  , '/apvlReqWrkHistDetl')       # 근무 결재 요청 상세 조회
-api.add_resource(apvlAcptHist     , '/apvlAcptHist')          # 근무 결재 승인 내역 조회
+api.add_resource(apvlAcptHist     , '/apvlAcptHist')          # 근무 결재 승인 내회역 조회
 
 api.add_resource(calendarData,'/calendarData') #api 선언
 api.add_resource(noticeLst,'/noticeLst') #api 선언
@@ -4200,7 +4193,7 @@ api.add_resource(noticeSave,'/noticeSave') #api 선언
 api.add_resource(noticeDelete,'/noticeDelete') #api 선언
 api.add_resource(empList,'/empList') #api 선언
 api.add_resource(empInfo,'/empInfo') #api 선언
-api.add_resource(empName,'/empName')                        #이메일로 사용자 이름 조회
+api.add_resource(empName,'/empName')                        #이메일로 사용자 이름 조
 api.add_resource(empDept,'/empDept')                        #이메일로 사용자 부서 정보 조회
 api.add_resource(empDeptGm,'/empDeptGm')                    #이메일로 사용자 부서 사업부장(GM) 정보 조회
 api.add_resource(empDeptPr,'/empDeptPr')                    #이메일로 사용자 부서 현장대리인(PR) 정보 조회

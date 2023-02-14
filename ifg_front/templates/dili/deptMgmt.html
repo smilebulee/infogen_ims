@@ -30,11 +30,11 @@ $(document).ready(function(){
     /* 로그인한 아이디가 관리자일 경우*/
     if(isAdmin) {
         /* 검색, 등록버튼 활성화 */
-        $('#deptMgmtRegBtn').attr('hidden',false);
+        $('#').attr('hidden',false);
 
     }else{
         /* 검색, 등록버튼 비활성화 */;
-        $('#deptMgmtRegBtn').attr('hidden',true);
+        $('#').attr('hidden',true);
     }
 
 
@@ -96,7 +96,7 @@ function makePaging(ret){
 };
 
 /* 직원조회 권한 처리 및 모달 오픈 */
-$("#deptMgmtRegBtn").click(function(){
+$("#").click(function(){
     var url = "{% url 'dili_api:deptMgmtRegPop' %}" ;
 
     modal('deptModalDivTest');
@@ -186,7 +186,7 @@ function fncDeptClose() {
 <!--                        </div>-->
                         <div class="align-self-end align-self-right mr-3">
                             <input type="text" class="form-control" id="hidden_selectDeptCode" name="hidden_selectDeptCode" maxlength="30" readonly hidden/>
-                            <button class="button" id="deptMgmtRegBtn" type="button">등록</button>
+                            <button class="button" id="" type="button">등록</button>
                         </div>
                     </div>
                 </div>

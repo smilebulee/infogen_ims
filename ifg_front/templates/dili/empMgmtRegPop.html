@@ -34,6 +34,7 @@ $(document).ready(function(){
 });
 
 
+/* 부서 설정 */
 function selectDeptName(){
  $.ajaxCall( {}, {
              'method' : 'GET',
@@ -371,7 +372,15 @@ function validChk2(){
     }
 }
 
+    /* 업무시작시간 selectBox 변경 이벤트 */
+    function onChangeJobStrtTm(obj) {
+        var iIndex = obj.selectedIndex;
+        //var sVal = obj.options[iIndex].value;
+        //var sText = obj.options[iIndex].text;
+        var oJobEndTm = eval(document.getElementById('sbx_jobEndTm'));
 
+        oJobEndTm.value = oJobEndTm.options[iIndex-1].value;
+    }
 
 </script>
 <div style="width :500px;">
@@ -468,7 +477,7 @@ function validChk2(){
                         </td>
                         <td>
                             <div class="align-self-center mr-3 pb-2">
-                                <select id="sbx_jobStrtTm" name="sbx_jobStrtTm" class="form-control">
+                                <select id="sbx_jobStrtTm" name="sbx_jobStrtTm" class="form-control" onchange="onChangeJobStrtTm(this)">
                                     <option value="00">선택</option>
                                     <option value="070000">07시</option>
                                     <option value="073000">07시 30분</option>
@@ -482,8 +491,7 @@ function validChk2(){
                         </td>
                         <td>
                             <div class="align-self-center mr-9 pb-2">
-                                <select id="sbx_jobEndTm" name="sbx_jobEndTm" class="form-control">
-                                    <option value="00">선택</option>
+                                <select id="sbx_jobEndTm" name="sbx_jobEndTm" class="form-control" readonly>
                                     <option value="160000">16시</option>
                                     <option value="163000">16시 30분</option>
                                     <option value="170000">17시</option>
