@@ -70,15 +70,15 @@
             // 로그인한 사용자 소속 현장대리인 이름, 이메일 조회 후 값 세팅 ( 1, 2차 결재자 세팅 )
             retrieveEmpDeptPrByEmail(sessionStorage.getItem("email"), function(data) {
                 if(data.length > 0) {
-                    $('#ipt_yry1ApvlLnSearchNamePop').val(data[0].DEPT_PR_NAME);
-                    $("#ipt_yry1ApvlLnSearchEmailPop").val(data[0].DEPT_PR_EMAIL);
+                    $('#ipt_yry1ApvlLnSearchNamePop').val(data[0].PR_NAME);
+                    $("#ipt_yry1ApvlLnSearchEmailPop").val(data[0].EMP_PR);
                     $('#ipt_yry1ApvlLnSearchNamePop').prop('readOnly', true);
 
                     // 로그인한 사용자 소속 사업부장 이름, 이메일 조회 후 값 세팅
                     retrieveEmpDeptGmByEmail(sessionStorage.getItem("email"), function(data) {
                         if(data.length > 0) {
-                            $('#ipt_yry2ApvlLnSearchNamePop').val(data[0].DEPT_GM_NAME);
-                            $("#ipt_yry2ApvlLnSearchEmailPop").val(data[0].DEPT_GM_EMAIL);
+                            $('#ipt_yry2ApvlLnSearchNamePop').val(data[0].GM_NAME);
+                            $("#ipt_yry2ApvlLnSearchEmailPop").val(data[0].EMP_GM);
                             $('#ipt_yry2ApvlLnSearchNamePop').prop('readOnly', true);
                         } else {
                             alertMsg("소속 부서 사업부장 정보가 존재하지 않습니다. 경영지원실에 문의해주세요.", function() {
