@@ -678,9 +678,7 @@
                                 totalRestTm += sumRestTm;
                             }
                             wrkDivStr = "정상근무"; //연장근무 / 주휴근무 문자열 지정
-                            if(day == "0"){
-                                wrkDivStr = "주휴근무";
-                            }
+
                             if ( schdData[j].APVL_REQ_DIVS == "") {
                                 apvlStus = "-";
                                 wrkSeq = 0;
@@ -689,6 +687,11 @@
                                 apvlStus = schdData[j].APVL_STTS_CD_NM;
                                 wrkSeq = schdData[j].WRK_SEQ;
                             }
+
+                            if(day == "0"){
+                                wrkDivStr = "주휴근무";
+                            }
+
                             if(allWrkTm != '-') {
                                 var tmpTm = Number(allWrkTm.substr(0,2) * 60 ) + Number(allWrkTm.substr(3,6));
                                 tmpSumTotalWkrTm += Number(tmpTm);
@@ -731,11 +734,11 @@
                 }
                 gridStrtDate.setDate(gridStrtDate.getDate()+1);
             }
-
+            console.log(lpad(Math.floor(totalRestTm/60),2,'0')+':'+totalRestTm%60);
             table += '<tr><td>합계</td>';
             table += '<td>-</td>';
             table += '<td>-</td>';
-            table += '<td>'+totalRestTm+'</td>';
+            table += '<td>'+lpad(Math.floor(totalRestTm/60)+'',2,'0')+':'+totalRestTm%60+'</td>';
             table += '<td>'+ sumTotalWkrTm +'</td>';
             table += '<td>-</td>';
             table += '<td>-</td></tr>';
