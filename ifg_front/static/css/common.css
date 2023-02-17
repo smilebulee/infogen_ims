@@ -47,3 +47,9 @@
 .toastui-calendar-popup-overlay {
     height: 1500px;
 }
+
+.fixedHeader {
+    position: sticky;
+    top: 0;
+    background: #f7f7f7;
+}

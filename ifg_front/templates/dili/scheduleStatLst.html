@@ -310,24 +310,24 @@
 
         function scheduleStatLst(data) {
 
-            var scheduleStatLstTable = '<table class="table table-bordered text-center" id="selData">';
+            var scheduleStatLstTable = '<table class="table table-bordered text-center" id="selData">';// custom-table : 헤더 고정하기 위하여 사용
             scheduleStatLstTable += '<thead>';
             scheduleStatLstTable += '<tr>';
-            scheduleStatLstTable += '<th class="text-center">순번</th>';
-            scheduleStatLstTable += '<th class="text-center">부서</th>';
-            scheduleStatLstTable += '<th class="text-center">성명</th>';
-            scheduleStatLstTable += '<th class="text-center">일자</th>';
-            scheduleStatLstTable += '<th class="text-center">요일</th>';
-            //scheduleStatLstTable += '<th class="text-center">근무구분</th>';
-            scheduleStatLstTable += '<th class="text-center">시작시간</th>';
-            scheduleStatLstTable += '<th class="text-center">종료시간</th>';
-            scheduleStatLstTable += '<th class="text-center">휴게</th>';
-            scheduleStatLstTable += '<th class="text-center">연장</th>';
-            scheduleStatLstTable += '<th class="text-center">야간</th>';
-            scheduleStatLstTable += '<th class="text-center">주휴</th>';
-            scheduleStatLstTable += '<th class="text-center">연차</th>';
-            scheduleStatLstTable += '<th class="text-center">총근무시간</th>';
-            scheduleStatLstTable += '<th class="text-center">승인상태</th>';
+            scheduleStatLstTable += '<th class="text-center fixedHeader">순번</th>';
+            scheduleStatLstTable += '<th class="text-center fixedHeader">부서</th>';
+            scheduleStatLstTable += '<th class="text-center fixedHeader">성명</th>';
+            scheduleStatLstTable += '<th class="text-center fixedHeader">일자</th>';
+            scheduleStatLstTable += '<th class="text-center fixedHeader">요일</th>';
+            //scheduleStatLstTable += '<th class="text-center fixedHeader">근무구분</th>';
+            scheduleStatLstTable += '<th class="text-center fixedHeader">시작시간</th>';
+            scheduleStatLstTable += '<th class="text-center fixedHeader">종료시간</th>';
+            scheduleStatLstTable += '<th class="text-center fixedHeader">휴게</th>';
+            scheduleStatLstTable += '<th class="text-center fixedHeader">연장</th>';
+            scheduleStatLstTable += '<th class="text-center fixedHeader">야간</th>';
+            scheduleStatLstTable += '<th class="text-center fixedHeader">주휴</th>';
+            scheduleStatLstTable += '<th class="text-center fixedHeader">연차</th>';
+            scheduleStatLstTable += '<th class="text-center fixedHeader">총근무시간</th>';
+            scheduleStatLstTable += '<th class="text-center fixedHeader">승인상태</th>';
             scheduleStatLstTable += '</tr>';
             scheduleStatLstTable += '</thead>';
             scheduleStatLstTable += '<tbody>';
@@ -594,7 +594,7 @@
                     <!-- 3-1. 사원 Schedule Grid 영역 주단위 -->
                     <div id="grp_showWeek">
                         <!--현황 table 영역 -->
-                        <div id="grid_stat">
+                        <div style="width:100%; height:460px; overflow:auto" id="grid_stat">
                         </div>
                     </div>
                 </div>
