@@ -404,6 +404,7 @@ class weekGridData(Resource): # Mariadb 연결 진행
                        +"	   ,'' AS PTO_KD_CD_NM                                                                                                                    " \
                        +"       ,'' AS HDO_KD_CD                                                                                                                      " \
                        +"       ,'' AS HDO_KD_CD_NM                                                                                                                   " \
+                       +"       ,'' AS APVL_STTS_CD                                                                                                                   " \
                        +"       ,'' AS APVL_STTS_CD_NM                                                                                                                " \
                        +"  FROM TMP_WRK A                                                                                                                             " \
                        +"  LEFT JOIN TB_NEW_APVL_REQ_MGMT_M B                                                                                                         " \
@@ -426,7 +427,7 @@ class weekGridData(Resource): # Mariadb 연결 진행
                        +"                                                                                                                                             " \
                        +"SELECT B.WRK_SEQ AS WRK_SEQ                                                                                                                  " \
                        +"      ,B.EMP_EMAL_ADDR                                                                                                                       " \
-                       +"      ,B.WRK_DT                                                                                                                              " \
+                       +"      ,NVL(A.WRK_DT,B.WRK_DT)                                                                                                                              " \
                        +"      ,( CASE WHEN B.APVL_REQ_DIVS = '03' OR B.HDO_KD_CD = '01'                                                                              " \
                        +"                 THEN NVL(DATE_FORMAT(A.JOB_STRT_TM, '%H:%i'),'-')                                                                           " \
                        +"                 WHEN B.HDO_KD_CD = '02'                                                                                                     " \
@@ -434,9 +435,7 @@ class weekGridData(Resource): # Mariadb 연결 진행
                        +"                 ELSE NVL(DATE_FORMAT(B.JOB_STRT_TM, '%H:%i'),'-')                                                                           " \
                        +"                 END                                                                                                                         " \
                        +"         ) AS JOB_STRT_TM                                                                                                                    " \
-                       +"      ,( CASE WHEN B.APVL_REQ_DIVS = '03' OR B.HDO_KD_CD = '02'                                                                              " \
-                       +"              THEN NVL(DATE_FORMAT(A.JOB_END_TM, '%H:%i'),'-')                                                                               " \
-                       +"              WHEN B.HDO_KD_CD = '01'                                                                                                        " \
+                       +"      ,( CASE WHEN B.PTO_KD_CD = '02' AND B.HDO_KD_CD = '01'                                                                                 " \
                        +"              THEN SUBSTRING( REPLACE ( A.JOB_STRT_TM,SUBSTRING(A.JOB_STRT_TM,1,2),SUBSTRING(A.JOB_STRT_TM,1,2)+5),1,5)                      " \
                        +"              ELSE NVL(DATE_FORMAT(B.JOB_END_TM, '%H:%i'),'-')                                                                               " \
                        +"               END                                                                                                                           " \
@@ -461,6 +460,15 @@ class weekGridData(Resource): # Mariadb 연결 진행
                        +"      ,NVL((SELECT CMM_CD_NAME FROM TB_CMM_CD_DETL WHERE CMM_CD_GRP_ID = 'PTO_KD_CD' AND CMM_CD = B.PTO_KD_CD),'') AS PTO_KD_CD_NM           " \
                        +"      ,NVL(B.HDO_KD_CD,'') AS HDO_KD_CD                                                                                                      " \
                        +"      ,NVL((SELECT CMM_CD_NAME FROM TB_CMM_CD_DETL WHERE CMM_CD_GRP_ID = 'HDO_KD_CD' AND CMM_CD = B.HDO_KD_CD),'') AS HDO_KD_CD_NM           " \
+                       +"      ,(CASE WHEN B.TH1_APRV_STUS = '01'                                                                                                     " \
+                       +"             THEN '01'                                                                                                                       " \
+                       +"             WHEN B.TH2_APRV_STUS = '02'                                                                                                     " \
+                       +"             THEN '03'                                                                                                                       " \
+                       +"             WHEN B.TH1_APRV_STUS = '02'                                                                                                     " \
+                       +"             THEN '02'                                                                                                                       " \
+                       +"             WHEN B.TH1_APRV_STUS = '03'                                                                                                     " \
+                       +"             THEN '99'                                                                                                                       " \
+                       +"             END  ) AS APVL_STTS_CD                                                                                                          " \
                        +"      ,(SELECT CMM_CD_NAME FROM TB_CMM_CD_DETL                                                                                               " \
                        +"         WHERE CMM_CD_GRP_ID = 'APVL_STTS_CD'                                                                                                " \
                        +"           AND CMM_CD = ((CASE WHEN B.TH1_APRV_STUS = '01'                                                                                   " \
@@ -470,7 +478,7 @@ class weekGridData(Resource): # Mariadb 연결 진행
                        +"                              WHEN B.TH1_APRV_STUS = '02'                                                                                    " \
                        +"                              THEN '02'                                                                                                      " \
                        +"                              WHEN B.TH1_APRV_STUS = '03'                                                                                    " \
-                       +"                              THEN '04'                                                                                                      " \
+                       +"                              THEN '99'                                                                                                      " \
                        +"                               END  ))                                                                                                       " \
                        +"       ) AS APVL_STTS_CD_NM                                                                                                                  " \
                        +" FROM TB_WRK_TM_MGMT_M A                                                                                                                     " \
@@ -583,9 +591,10 @@ class monthGridData(Resource): # Mariadb 연결 진행
                        +"       ,'' AS HOLI_TERM1                                                                                                                     " \
                        +"       ,'' AS HOLI_TERM2                                                                                                                     " \
                        +"       ,'' AS PTO_KD_CD                                                                                                                      " \
-                       +"	   ,'' AS PTO_KD_CD_NM                                                                                                                    " \
+                       +"	    ,'' AS PTO_KD_CD_NM                                                                                                                    " \
                        +"       ,'' AS HDO_KD_CD                                                                                                                      " \
                        +"       ,'' AS HDO_KD_CD_NM                                                                                                                   " \
+                       +"       ,'' AS APVL_STTS_CD                                                                                                                   " \
                        +"       ,'' AS APVL_STTS_CD_NM                                                                                                                " \
                        +"  FROM TMP_WRK A                                                                                                                             " \
                        +"  LEFT JOIN TB_NEW_APVL_REQ_MGMT_M B                                                                                                         " \
@@ -608,7 +617,7 @@ class monthGridData(Resource): # Mariadb 연결 진행
                        +"                                                                                                                                             " \
                        +"SELECT B.WRK_SEQ AS WRK_SEQ                                                                                                                  " \
                        +"      ,B.EMP_EMAL_ADDR                                                                                                                       " \
-                       +"      ,B.WRK_DT                                                                                                                              " \
+                       +"      ,NVL(A.WRK_DT,B.WRK_DT)                                                                                                                " \
                        +"      ,( CASE WHEN B.APVL_REQ_DIVS = '03' OR B.HDO_KD_CD = '01'                                                                              " \
                        +"                 THEN NVL(DATE_FORMAT(A.JOB_STRT_TM, '%H:%i'),'-')                                                                           " \
                        +"                 WHEN B.HDO_KD_CD = '02'                                                                                                     " \
@@ -616,9 +625,7 @@ class monthGridData(Resource): # Mariadb 연결 진행
                        +"                 ELSE NVL(DATE_FORMAT(B.JOB_STRT_TM, '%H:%i'),'-')                                                                           " \
                        +"                 END                                                                                                                         " \
                        +"         ) AS JOB_STRT_TM                                                                                                                    " \
-                       +"      ,( CASE WHEN B.APVL_REQ_DIVS = '03' OR B.HDO_KD_CD = '02'                                                                              " \
-                       +"              THEN NVL(DATE_FORMAT(A.JOB_END_TM, '%H:%i'),'-')                                                                               " \
-                       +"              WHEN B.HDO_KD_CD = '01'                                                                                                        " \
+                       +"      ,( CASE  WHEN B.PTO_KD_CD = '02' AND B.HDO_KD_CD = '01'                                                                                " \
                        +"              THEN SUBSTRING( REPLACE ( A.JOB_STRT_TM,SUBSTRING(A.JOB_STRT_TM,1,2),SUBSTRING(A.JOB_STRT_TM,1,2)+5),1,5)                      " \
                        +"              ELSE NVL(DATE_FORMAT(B.JOB_END_TM, '%H:%i'),'-')                                                                               " \
                        +"               END                                                                                                                           " \
@@ -643,6 +650,15 @@ class monthGridData(Resource): # Mariadb 연결 진행
                        +"      ,NVL((SELECT CMM_CD_NAME FROM TB_CMM_CD_DETL WHERE CMM_CD_GRP_ID = 'PTO_KD_CD' AND CMM_CD = B.PTO_KD_CD),'') AS PTO_KD_CD_NM           " \
                        +"      ,NVL(B.HDO_KD_CD,'') AS HDO_KD_CD                                                                                                      " \
                        +"      ,NVL((SELECT CMM_CD_NAME FROM TB_CMM_CD_DETL WHERE CMM_CD_GRP_ID = 'HDO_KD_CD' AND CMM_CD = B.HDO_KD_CD),'') AS HDO_KD_CD_NM           " \
+                       +"      ,(CASE WHEN B.TH1_APRV_STUS = '01'                                                                                                     " \
+                       +"             THEN '01'                                                                                                                       " \
+                       +"             WHEN B.TH2_APRV_STUS = '02'                                                                                                     " \
+                       +"             THEN '03'                                                                                                                       " \
+                       +"             WHEN B.TH1_APRV_STUS = '02'                                                                                                     " \
+                       +"             THEN '02'                                                                                                                       " \
+                       +"             WHEN B.TH1_APRV_STUS = '03'                                                                                                     " \
+                       +"             THEN '99'                                                                                                                       " \
+                       +"             END  ) AS APVL_STTS_CD                                                                                                          " \
                        +"      ,(SELECT CMM_CD_NAME FROM TB_CMM_CD_DETL                                                                                               " \
                        +"         WHERE CMM_CD_GRP_ID = 'APVL_STTS_CD'                                                                                                " \
                        +"           AND CMM_CD = ((CASE WHEN B.TH1_APRV_STUS = '01'                                                                                   " \
@@ -652,7 +668,7 @@ class monthGridData(Resource): # Mariadb 연결 진행
                        +"                              WHEN B.TH1_APRV_STUS = '02'                                                                                    " \
                        +"                              THEN '02'                                                                                                      " \
                        +"                              WHEN B.TH1_APRV_STUS = '03'                                                                                    " \
-                       +"                              THEN '04'                                                                                                      " \
+                       +"                              THEN '99'                                                                                                      " \
                        +"                               END  ))                                                                                                       " \
                        +"       ) AS APVL_STTS_CD_NM                                                                                                                  " \
                        +" FROM TB_WRK_TM_MGMT_M A                                                                                                                     " \

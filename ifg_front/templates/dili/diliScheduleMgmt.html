@@ -645,33 +645,35 @@
 
             for(var i = 0; i < gridEndDate; i++){
 
-                tdDate = gridStrtDate.getDate() + '('+getDayLabel(gridStrtDate.getDay())+')';
-                dd = new Date(gridStrtYy, gridStrtMm, gridStrtDate.getDate());
+                tdDate = gridStrtDate.getDate();
+                dd = new Date(tdDate);
                 day = dd.getDay();
-
                 tempSetWeek = dateConverting1(setWeek(gridStrtDate).baseDate);
 
-                var jobStrtTm = "-";
-                var jobEndTm = "-";
-                var jobAprvStrtTm = "-"; //결재받은/요청중인 시작시간
-                var jobAprvEndTm = "-"; //결재받은/요청중인 종료시간
-                var allWrkTm = "-";
-                var apvlStus = "-";
-                var restTm = 0;
-                var sumRestTm = "-";
+                 var tdDateStr = tdDate + '('+getDayLabel(gridStrtDate.getDay())+')';
+                // var jobStrtTm = "-";
+                // var jobEndTm = "-";
+                // var allWrkTm = "-";
+                // var apvlStus = "-";
+                // var restTm = 0;
+                // var sumRestTm = "-";
                 var wrkSeq = -1;
                 var chkGrid = false; // 그리드 생성여부
 
                 if(schdData.length > 0){
                     for(var j = 0; j < schdData.length; j++){
+                        var jobStrtTm = "-";
+                        var jobEndTm = "-";
+                        var allWrkTm = "-";
+                        var apvlStus = "-";
+                        var restTm = 0;
+                        var sumRestTm = "-";
+
                         if(tempSetWeek == schdData[j].WRK_DT){
 
-                            if(schdData[j].APVL_REQ_DIVS != "03"){
-
+                            if(schdData[j].PTO_KD_CD == ""){
                                 jobStrtTm = schdData[j].JOB_STRT_TM;
                                 jobEndTm = schdData[j].JOB_END_TM;
-                                jobAprvStrtTm = schdData[j].JOB_APRV_STRT_TM;
-                                jobAprvEndTm = schdData[j].JOB_APRV_END_TM;
                                 allWrkTm = schdData[j].WRK_TM;
                                 restTm = schdData[j].REST_TM;
                                 sumRestTm = Number(restTm);
@@ -684,8 +686,8 @@
                                 wrkSeq = 0;
                             } else {
                                 wrkDivStr = "연장근무";
-                                apvlStus = schdData[j].APVL_STTS_CD_NM;
                                 wrkSeq = schdData[j].WRK_SEQ;
+                                apvlStus = schdData[j].APVL_STTS_CD_NM;
                             }
 
                             if(day == "0"){
@@ -701,28 +703,29 @@
                             var minute = Math.floor(tmpSumTotalWkrTm%60);
                             var sumTotalWkrTm = lpad((hour).toString(),2,"0")+":"+lpad((minute).toString(),2,"0");
                             table += '<tr id ="'+gridType+tempSetWeek+ j+'" onclick="onclickWeekEvt(this,'+wrkSeq+')">';
-                            table += '<td class="pt-3-half" contenteditable="false">'+tdDate+'</td>';
+                            table += '<td class="pt-3-half" contenteditable="false">'+tdDateStr+'</td>';
                             table += '<td class="pt-3-half" contenteditable="false">'+jobStrtTm+'</td>';
                             table += '<td class="pt-3-half" contenteditable="false">'+jobEndTm+'</td>';
                             table += '<td class="pt-3-half" contenteditable="false">'+sumRestTm+'</td>';
                             table += '<td class="pt-3-half" contenteditable="false">'+allWrkTm+'</td>';
 
-                            if ( schdData[j].PTO_KD_CD == "") {
+                            if ( schdData[j].PTO_KD_CD == "" ) {
                                 table += '<td class="pt-3-half" contenteditable="false">'+ wrkDivStr + ' : '  + allWrkTm + '</td>';
+                            } else if ( schdData[j].PTO_KD_CD == "02" ){
+                                table += '<td class="pt-3-half" contenteditable="false">'+schdData[j].HDO_KD_CD_NM+'</td>';
                             } else {
                                 table += '<td class="pt-3-half" contenteditable="false">'+schdData[j].PTO_KD_CD_NM+'</td>';
                             }
-
                             table += '<td class="pt-3-half" contenteditable="false">'+apvlStus+'</td>';
                             table += '</tr>';
 
                             chkGrid = true; //스케줄 데이터에 없는 날짜 그리드를 생성하기 위한 플래그
-                            tdDate = "";
+                            tdDateStr = "";
                         }
                     }//for end
                     if ( !chkGrid ) {
                         table += '<tr id ="'+gridType+tempSetWeek+'">';
-                        table += '<td class="pt-3-half" contenteditable="false">'+tdDate+'</td>';
+                        table += '<td class="pt-3-half" contenteditable="false">'+tdDateStr+'</td>';
                         table += '<td class="pt-3-half" contenteditable="false">'+'-'+'</td>';
                         table += '<td class="pt-3-half" contenteditable="false">'+'-'+'</td>';
                         table += '<td class="pt-3-half" contenteditable="false">'+'-'+'</td>';
@@ -738,7 +741,7 @@
             table += '<tr><td>합계</td>';
             table += '<td>-</td>';
             table += '<td>-</td>';
-            table += '<td>'+lpad(Math.floor(totalRestTm/60)+'',2,'0')+':'+totalRestTm%60+'</td>';
+            table += '<td>'+lpad(Math.floor(totalRestTm/60)+'',2,'0')+':'+lpad(Math.floor(totalRestTm%60)+'',2,'0')+'</td>';
             table += '<td>'+ sumTotalWkrTm +'</td>';
             table += '<td>-</td>';
             table += '<td>-</td></tr>';
@@ -1010,22 +1013,25 @@
 
             var param = {
                 "email"     : email,
-                "dt"        : dt
+                // "dt"        : dt
+                "mDt"       : dt
             }
 
             $.ajaxCall( param, {
                  'method' : 'GET',
-                 'url' : "{% url 'dili_api:getCalendarData' %}",
+                 // 'url' : "{% url 'dili_api:getCalendarData' %}"
+                'url' : "{% url 'dili_api:getMonthGridData' %}",
                  'dataType' : 'json',
                  'data' : JSON.stringify(param),
                  'async' : false,
                  'callbackFn' : function(data, status, xhr){
-                    console.log("data111 : ",JSON.parse(data))
-                    var dataParam = JSON.parse(data)
+                    // console.log("data111 : ",JSON.parse(data))
+                    // var dataParam = JSON.parse(data)
 
-                    if(dataParam.length > 0) {
-                        setCalendar(data);
-                    }
+                    // if(dataParam.length > 0) {
+                    //     setCalendar(data);
+                    // }
+                     setCalendar(data);
                  }
             });
         }
@@ -1038,55 +1044,50 @@
             // console.log("setCalendar Start");
             // console.log("calendarData1 : ",data);
 
-            var calendarData = JSON.parse(data);
+            // var calendarData = JSON.parse(data);
+            var calendarData = data;
 
             dataCustomArray = new Array();
-            let holiStartDt;
+             let holiStartDt;
 
             for(var i=0; i < calendarData.length; i++) {
 
                 var wrkDt  = calendarData[i].WRK_DT;
 
-                if ( holiStartDt >= wrkDt ) {
+                var statTm  = calendarData[i].JOB_STRT_TM;
+                var endTm  = calendarData[i].JOB_END_TM;
+                var apvlReqDivs = calendarData[i].APVL_REQ_DIVS;
+                var statTmTitle = "근무시간 : " + statTm + " ~ " + endTm;
+                var startTimeAdd = wrkDt + "T" + statTm;
+                var endTimeAdd = wrkDt + "T" + endTm;
+
+                if ( holiStartDt >= wrkDt && apvlReqDivs == "03" ) {
                     continue;
                 }
 
-                var statTm  = calendarData[i].JOB_STRT_TM;
-                var endTm  = calendarData[i].JOB_END_TM;
+                // var normTm  = calendarData[i].NORM_WRK_TM;
+                // var overTm  = calendarData[i].OVER_WRK_TM;
 
-                var normTm  = calendarData[i].NORM_WRK_TM;
-                var overTm  = calendarData[i].OVER_WRK_TM;
-                var apvlReqDivs = calendarData[i].APVL_REQ_DIVS;
-                var statTmTitle = "근무시간 : " + statTm + " ~ " + endTm;
 
-                var startTimeAdd = wrkDt + "T" + statTm;
-                var endTimeAdd = wrkDt + "T" + endTm;
                 if(apvlReqDivs == "03"){
-                    statTmTitle  = "휴가";
+                    statTmTitle  = calendarData[i].APVL_REQ_DIVS_NM;
                     startTimeAdd = calendarData[i].HOLI_TERM1;
                     endTimeAdd   = calendarData[i].HOLI_TERM2;
                     holiStartDt = endTimeAdd;
                 } else if( apvlReqDivs == "01" ) {
-                    statTmTitle = "초과근무 : " + statTm + " ~ " + endTm;
+                    statTmTitle = calendarData[i].APVL_REQ_DIVS_NM + " : " + statTm + " ~ " + endTm;
                 } else if ( apvlReqDivs == "02" ) {
-
+                    statTmTitle = calendarData[i].APVL_REQ_DIVS_NM + " : " + statTm + " ~ " + endTm;
+                }else if ( apvlReqDivs == "04" ) {
+                    statTmTitle  = calendarData[i].HDO_KD_CD_NM;
+                    startTimeAdd = calendarData[i].HOLI_TERM1;
+                    endTimeAdd   = calendarData[i].HOLI_TERM2;
                 }
 
-                var bgColor = "";
-
-                if(calendarData[i].APVL_REQ_DT == "N/A" && calendarData[i].APVL_LAST_APRV_DT == "N/A" && calendarData[i].OVER_WRK_TM != "00:00"){
-                    bgColor = "rgba( 255,139,139, 0.5 )";
-                }
-                if(calendarData[i].TH1_APRV_STUS == "01"){
-                    bgColor = "rgba( 255,255,153, 0.5 )";
-                }
-                if(calendarData[i].TH2_APRV_STUS == "02"){
-                    bgColor = "rgba( 71,200,62, 1 )";
-                }else if(calendarData[i].TH1_APRV_STUS == "02"){
-                    bgColor = "rgba( 255,255,153, 0.5 )"
-                }
-                if(calendarData[i].TH1_APRV_STUS == "03" || calendarData[i].TH2_APRV_STUS == "03"){
-                    bgColor = "rgba(153,153,255, 0.5)";
+                var bgColor ="";
+                if ( apvlReqDivs != "" ) {
+                    bgColor = setCalendarColor(calendarData[i].APVL_STTS_CD);
+                    console.log("APVL_STTS_CD : " +calendarData[i].APVL_STTS_CD + ", bgColor : " + bgColor  );
                 }
 
                 if(statTm != "-"){
@@ -1098,8 +1099,8 @@
                         start: startTimeAdd,
                         end: endTimeAdd,
                         category: "allday",
-                        normTm: normTm,
-                        overTm: overTm,
+                        // normTm: normTm,
+                        // overTm: overTm,
                         backgroundColor:bgColor,
                         borderColor: 'white',
                     };
@@ -1125,30 +1126,24 @@
         }
         /*********************************************************************
          *   Draw  calendar Event - 캘린더 색입히기
+         *   현재는 근무/휴가 종류 관계없이 결재 승인 상태별 색상 지정
          *********************************************************************/
-        /* function setCalendarColor(){
-             for(var i=0; i < dataCustomArray.length; i++) {
-                 if(dataCustomArray[i].apvlStus == "2차승인"){
-                     $('div[data-calendar-id="'+dataCustomArray[i].calendarId+'"]').css("background-color","rgba( 71,200,62, 1 )");
-                 }
-             }
-             for(var i=0; i < dataCustomArray.length; i++) {
-                 if(dataCustomArray[i].apvlStus == "미등록"){
-                    $('div[data-calendar-id="'+dataCustomArray[i].calendarId+'"]').css("background-color","rgba( 255,139,139, 0.5 )");
-                 }
-             }
-             for(var i=0; i < dataCustomArray.length; i++) {
-                 if(dataCustomArray[i].apvlStus == "미승인" || dataCustomArray[i].apvlStus == "1차승인"){
-                    $('div[data-calendar-id="'+dataCustomArray[i].calendarId+'"]').css("background-color","rgba( 255,255,153, 0.5 )");
-                 }
-             }
-             for(var i=0; i < dataCustomArray.length; i++) {
-                 if(dataCustomArray[i].apvlStus == "반려"){
-                    $('div[data-calendar-id="'+dataCustomArray[i].calendarId+'"]').css("background-color","rgba( 153,153,255, 0.5 )");
-                 }
-             }
+         function setCalendarColor(apvlSttsCd){
 
-         }*/
+            var backgroundColor = "";
+
+            if(apvlSttsCd == "01"){
+                backgroundColor = "rgba( 255,255,153, 0.5 )";
+            } else if ( apvlSttsCd== "02" ) {
+                backgroundColor = "rgba( 255,255,153, 0.5 )";
+            } else if ( apvlSttsCd == "03" ) {
+                backgroundColor = "rgba( 71,200,62, 1 )";
+            } else if ( apvlSttsCd == "99" ) {
+                backgroundColor = "rgba(153,153,255, 0.5)";
+            }
+
+            return backgroundColor;
+         }
 
         /*********************************************************************
         *   주그리드 그래프세팅
