@@ -444,11 +444,7 @@ class weekGridData(Resource): # Mariadb 연결 진행
                        +"              THEN '08:00'                                                                                                                    " \
                        +"              WHEN B.PTO_KD_CD = '02'                                                                                                         " \
                        +"              THEN '04:00'                                                                                                                     " \
-                       +"              ELSE IF (                                                                                                                       " \
-                       +"                          SUBSTRING(LPAD(B.JOB_END_TM - B.JOB_STRT_TM,6,'0'),3,2) < B.REST_TM % 60                                           " \
-                       +"                         ,CONCAT(LPAD(SUBSTRING(LPAD(B.JOB_END_TM - B.JOB_STRT_TM,6,'0'),1,2)-1,2,0),':',60 - B.REST_TM % 60)                " \
-                       +"                         ,CONCAT(SUBSTRING(LPAD(B.JOB_END_TM - B.JOB_STRT_TM,6,'0'),1,2),':',IF( SUBSTRING(LPAD(B.JOB_END_TM - B.JOB_STRT_TM,6,'0'),3,2) > 60,SUBSTRING(LPAD(B.JOB_END_TM - B.JOB_STRT_TM,6,'0'),3,2)-40,SUBSTRING(LPAD(B.JOB_END_TM - B.JOB_STRT_TM,6,'0'),3,2) ) - B.REST_TM % 60) " \
-                       +"                       )                                                                                                                     " \
+                       +"              ELSE SUBSTR(SUBTIME(B.JOB_END_TM, ADDTIME(B.JOB_STRT_TM,RPAD(B.REST_TM,4,0))),1,5)                                              " \
                        +"               END                                                                                                                            " \
                        +"        ) AS WRK_TM                                                                                                                          " \
                        +"	   ,NVL(B.REST_TM,0) AS REST_TM                                                                                                           " \
@@ -627,18 +623,14 @@ class monthGridData(Resource): # Mariadb 연결 진행
                        +"         ) AS JOB_STRT_TM                                                                                                                    " \
                        +"      ,( CASE  WHEN B.PTO_KD_CD = '02' AND B.HDO_KD_CD = '01'                                                                                " \
                        +"              THEN SUBSTRING( REPLACE ( A.JOB_STRT_TM,SUBSTRING(A.JOB_STRT_TM,1,2),SUBSTRING(A.JOB_STRT_TM,1,2)+5),1,5)                      " \
-                       +"              ELSE NVL(DATE_FORMAT(B.JOB_END_TM, '%H:%i'),'-')                                                                               " \
+                       +"              ELSE SUBSTRING(NVL(DATE_FORMAT(A.JOB_END_TM, '%H:%i'),B.JOB_END_TM),1,5)                                                                               " \
                        +"               END                                                                                                                           " \
                        +"       ) AS JOB_END_TM                                                                                                                       " \
                        +"	   ,( CASE WHEN B.PTO_KD_CD = '01'                                                                                                         " \
                        +"              THEN '08:00'                                                                                                                    " \
                        +"              WHEN B.PTO_KD_CD = '02'                                                                                                         " \
                        +"              THEN '04:00'                                                                                                                     " \
-                       +"              ELSE IF (                                                                                                                       " \
-                       +"                          SUBSTRING(LPAD(B.JOB_END_TM - B.JOB_STRT_TM,6,'0'),3,2) < B.REST_TM % 60                                           " \
-                       +"                         ,CONCAT(LPAD(SUBSTRING(LPAD(B.JOB_END_TM - B.JOB_STRT_TM,6,'0'),1,2)-1,2,0),':',60 - B.REST_TM % 60)                " \
-                       +"                         ,CONCAT(SUBSTRING(LPAD(B.JOB_END_TM - B.JOB_STRT_TM,6,'0'),1,2),':',IF( SUBSTRING(LPAD(B.JOB_END_TM - B.JOB_STRT_TM,6,'0'),3,2) > 60,SUBSTRING(LPAD(B.JOB_END_TM - B.JOB_STRT_TM,6,'0'),3,2)-40,SUBSTRING(LPAD(B.JOB_END_TM - B.JOB_STRT_TM,6,'0'),3,2) ) - B.REST_TM % 60) " \
-                       +"                       )                                                                                                                     " \
+                       +"              ELSE SUBSTR(SUBTIME(B.JOB_END_TM, ADDTIME(B.JOB_STRT_TM,RPAD(B.REST_TM,4,0))),1,5)                                             " \
                        +"               END                                                                                                                            " \
                        +"        ) AS WRK_TM                                                                                                                          " \
                        +"	   ,NVL(B.REST_TM,0) AS REST_TM                                                                                                           " \
@@ -2774,117 +2766,189 @@ class scheduleStatLst(Resource):
 
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
-                sql = "SELECT CASE WHEN NVL(B.EMP_EMAL_ADDR, '') = '' THEN A.EMP_EMAL_ADDR" \
-                      "            WHEN NVL(A.EMP_EMAL_ADDR, '') = '' THEN B.EMP_EMAL_ADDR" \
-                      "                                               ELSE A.EMP_EMAL_ADDR" \
-                      "                                                END EMP_EMAL_ADDR" \
-                      "      ,CASE WHEN NVL(B.WRK_DT, '') = '' THEN A.WRK_DT" \
-                      "            WHEN NVL(A.WRK_DT, '') = '' THEN B.WRK_DT" \
-                      "                                        ELSE A.WRK_DT" \
-                      "                                         END WRK_DT" \
-                      "      ,(SELECT CASE WHEN DOW_DIVS_CD = '01' THEN '일'" \
-                      "                    WHEN DOW_DIVS_CD = '02' THEN '월'" \
-                      "                    WHEN DOW_DIVS_CD = '03' THEN '화'" \
-                      "                    WHEN DOW_DIVS_CD = '04' THEN '수'" \
-                      "                    WHEN DOW_DIVS_CD = '05' THEN '목'" \
-                      "                    WHEN DOW_DIVS_CD = '06' THEN '금'" \
-                      "                    WHEN DOW_DIVS_CD = '07' THEN '토'" \
-		              "                    ELSE ''" \
-					  "	                    END DOW_DT" \
- 		              "          FROM TB_DT_INFO" \
-			          "         WHERE DT = NVL(A.WRK_DT, B.WRK_DT)" \
-		              "       ) DOW" \
-                      "      ,(SELECT D.CMM_CD_NAME" \
-                      "		     FROM TB_CMM_CD_DETL D" \
-                      "		         ,TB_EMP_MGMT E" \
-                      "			WHERE D.CMM_CD_GRP_ID = 'SLIN_BZDP'" \
-                      "			  AND D.CMM_CD = E.DEPT_CD" \
-                      "			  AND E.EMP_EMAIL = NVL(A.EMP_EMAL_ADDR, B.EMP_EMAL_ADDR)) DEPT_NAME" \
-                      "	     ,(SELECT C.EMP_NAME " \
-                      "	         FROM TB_EMP_MGMT C" \
-                      "	        WHERE C.EMP_EMAIL = NVL(A.EMP_EMAL_ADDR, B.EMP_EMAL_ADDR)) OCEM_NAME" \
-                      "      ,NVL(A.REST_TM, '') REST_TM" \
-                      "      ,NVL(A.DINN_REST_TM, '') DINN_REST_TM" \
-                      "      ,CASE WHEN B.EMP_EMAL_ADDR IS NULL AND (A.HLDY_WRK_TM != '000000' OR A.NGHT_WRK_TM != '000000') THEN '야근(미승인)'" \
-                      "            WHEN B.APVL_REQ_DIVS IS NOT NULL THEN (SELECT F.CMM_CD_NAME" \
-                      "                                                     FROM TB_CMM_CD_DETL F" \
-                      "      										       WHERE F.CMM_CD_GRP_ID = 'APVL_DIVS_CD'" \
-                      "      				     						     AND F.CMM_CD = B.APVL_REQ_DIVS)" \
-                      "      		ELSE '정상근무' END WRK_DIVS" \
-                      "		 ,CASE WHEN B.EMP_EMAL_ADDR IS NULL AND (A.HLDY_WRK_TM != '000000' OR A.NGHT_WRK_TM != '000000') " \
-                      "            THEN '미등록'" \
-                      "            WHEN B.TH2_APRV_STUS = '02'" \
-                      "            THEN '승인완료'" \
-                      "            WHEN B.TH1_APRV_STUS = '02'" \
-                      "            THEN '1차승인'" \
-                      "            WHEN B.TH1_APRV_STUS = '03' OR B.TH2_APRV_STUS = '03'" \
-                      "            THEN '반려'"\
-                      "            WHEN B.TH1_APRV_STUS = '01'" \
-                      "            THEN '미승인'"\
-                      "            ELSE ''" \
-                      "        END AS APVL_STUS" \
-                      "		 ,NVL(NVL(A.JOB_STRT_TM, B.JOB_STRT_TM), '') AS WRK_STRT_TM" \
-                      "		 ,NVL(NVL(A.JOB_END_TM, B.JOB_END_TM), '') AS WRK_END_TM" \
-                      "      ,CASE WHEN NVL(B.PTO_KD_CD, 'X') IN ('01', '03') /*01 연차, 03 기타*/ " \
-                      "            THEN CONCAT(SUBSTRING(B.WRK_TME, 1, 2), ':', SUBSTRING(B.WRK_TME, 3, 2))" \
-                      "            WHEN NVL(B.PTO_KD_CD, 'X') = '02' /*02 반차*/" \
-                      "            THEN CONCAT(SUBSTRING(DATE_SUB(STR_TO_DATE(NVL(A.ALL_WRK_TM, '000000'), '%H%i%s'), INTERVAL A.REST_TM + A.DINN_REST_TM MINUTE), 1, 2), ':', SUBSTRING(DATE_SUB(STR_TO_DATE(NVL(A.ALL_WRK_TM, '000000'), '%H%i%s'), INTERVAL A.REST_TM + A.DINN_REST_TM MINUTE), 4, 2))" \
-                      "            ELSE CONCAT(SUBSTRING(DATE_SUB(DATE_ADD(STR_TO_DATE(NVL(A.ALL_WRK_TM, '000000'), '%H%i%s'), INTERVAL TIME_TO_SEC(STR_TO_DATE(LPAD(NVL(B.WRK_TME, A.NGHT_WRK_TM), 6, '0'), '%H%i%s')) SECOND), INTERVAL A.REST_TM + A.DINN_REST_TM MINUTE), 1, 2), ':', SUBSTRING(DATE_SUB(DATE_ADD(STR_TO_DATE(NVL(A.ALL_WRK_TM, '000000'), '%H%i%s'), INTERVAL TIME_TO_SEC(STR_TO_DATE(LPAD(NVL(B.WRK_TME, A.NGHT_WRK_TM), 6, '0'), '%H%i%s')) SECOND), INTERVAL A.REST_TM + A.DINN_REST_TM MINUTE), 4, 2))" \
-                      "        END AS ALL_WRK_TM"\
-                      "      ,CASE WHEN B.EMP_EMAL_ADDR IS NULL AND (A.HLDY_WRK_TM != '000000' OR A.NGHT_WRK_TM != '000000') THEN 'N'" \
-                      "            ELSE 'Y' END APVL_REQ_YN" \
-                      "      ,CASE WHEN B.APVL_REQ_DIVS IN ('01', '02') AND NVL(NVL(B.WRK_TME, A.NGHT_WRK_TM), '') != '' AND NVL(NVL(B.WRK_TME, A.NGHT_WRK_TM), '') != '000000' " \
-                      "            THEN CONCAT(SUBSTRING(STR_TO_DATE(NVL(B.WRK_TME, A.NGHT_WRK_TM), '%H%i%s'), 1, 2), ':', SUBSTRING(STR_TO_DATE(NVL(B.WRK_TME, A.NGHT_WRK_TM), '%H%i%s'), 4, 2))" \
-                      "            ELSE ''" \
-                      "             END NGHT_WRK_YN" \
-                      "     , CASE WHEN B.APVL_REQ_DIVS IN ('01', '02') AND DATE_SUB(STR_TO_DATE(DATE_FORMAT(CASE WHEN NVL(B.APVL_REQ_DIVS,'') = '' THEN A.JOB_END_TM ELSE B.JOB_END_TM END, '%H%i%s'), '%H%i%s'), INTERVAL STR_TO_DATE('220000', '%H%i%s') DAY_SECOND) > 0 " \
-                      "            THEN CONCAT(SUBSTRING(NVL(DATE_SUB(STR_TO_DATE(DATE_FORMAT(CASE WHEN NVL(B.APVL_REQ_DIVS,'') = '' THEN A.JOB_END_TM ELSE B.JOB_END_TM END, '%H%i%s'), '%H%i%s'), INTERVAL STR_TO_DATE('220000', '%H%i%s') DAY_SECOND), ''), 1, 2), ':', SUBSTRING(NVL(DATE_SUB(STR_TO_DATE(DATE_FORMAT(CASE WHEN NVL(B.APVL_REQ_DIVS,'') = '' THEN A.JOB_END_TM ELSE B.JOB_END_TM END, '%H%i%s'), '%H%i%s'), INTERVAL STR_TO_DATE('220000', '%H%i%s') DAY_SECOND), ''), 4, 2))" \
-                      "            ELSE '' " \
-                      "        END AS NGHT_SFT_YN" \
-                      "      ,CASE WHEN NVL(A.HLDY_WRK_TM, '') != '' AND NVL(A.HLDY_WRK_TM, '') != '000000' " \
-                      "            THEN CONCAT(SUBSTRING(DATE_SUB(STR_TO_DATE(NVL(A.HLDY_WRK_TM, ''), '%H%i%s'), INTERVAL A.REST_TM + A.DINN_REST_TM MINUTE), 1, 2), ':', SUBSTRING(DATE_SUB(STR_TO_DATE(NVL(A.HLDY_WRK_TM, ''), '%H%i%s'), INTERVAL A.REST_TM + A.DINN_REST_TM MINUTE), 4, 2))" \
-                      "            ELSE ''" \
-                      "             END HLDY_WRK_YN" \
-                      "      ,CASE WHEN PTO_KD_CD IS NOT NULL" \
-                      "            THEN NVL(CONCAT(SUBSTRING(B.WRK_TME, 1, 2), ':', SUBSTRING(B.WRK_TME, 3, 2)),'')" \
-                      "            ELSE ''" \
-                      "        END AS PTO_KD_YN" \
-                      "      ,CASE WHEN A.APRV_STUS = '1' THEN 'Y'" \
-                      "            ELSE 'N'" \
-                      "        END AS APRV_STUS" \
-                      "      ,NVL(A.APRV_NM, '') AS APRV_NM" \
-                      "      ,NVL((SELECT Z.EMP_NAME FROM TB_EMP_MGMT Z WHERE Z.EMP_EMAIL = A.APRV_NM), '') AS APRV_NAME" \
-                      "      ,NVL(A.APRV_DT, '') AS APRV_DT" \
-                      "  FROM TB_WRK_TM_MGMT_M A" \
-                      "  LEFT OUTER JOIN" \
-                      "       TB_APVL_REQ_MGMT_M B" \
-                      "    ON A.EMP_EMAL_ADDR = B.EMP_EMAL_ADDR" \
-                      "   AND (A.WRK_DT = B.WRK_DT OR A.WRK_DT BETWEEN B.HOLI_TERM1 AND B.HOLI_TERM2)" \
-                      "   AND B.APVL_REQ_DIVS <> '99'" \
-                      " WHERE SUBSTRING(A.WRK_DT, 1, 7) = '" + data["wrkDt"] + "'"
-                if data["email"] != "":
-                      sql += "    AND A.EMP_EMAL_ADDR = '" + data["email"] + "'" \
+               sql =  " WITH TMP_WRK AS (                                                                                                                                                         " \
+                      +"                   SELECT AA.*,BB.EMP_NAME,BB.DEPT_NAME                                                                                                                 " \
+                      +"                     FROM TB_WRK_TM_MGMT_M AA                                                                                                                           " \
+                      +" 						  JOIN TB_EMP_MGMT BB                                                                                                                         " \
+                      +" 						    ON AA.EMP_EMAL_ADDR = BB.EMP_ID                                                                                                           " \
+                      +"                    WHERE 1=1                                                                                                                                         " \
+                      +"                      AND BB.DEPT_CD = '" + data["dept"] + "'                                                                                                           " \
+                      +"   					  AND BB.WORK_YN = 'Y'                                                                                                                              " \
+                      +"                      AND AA.WRK_DT LIKE '" + data["wrkDt"] + "%'                                                                                                       " \
+                      +" 					  AND '" + data["wrkDivs"] + "' IN ('00','05')                                                                                                    "
 
-                if data["wrkDivs"] != "" and data["wrkDivs"] != "00" and data["wrkDivs"] != "05" and data["wrkDivs"] != "06":
-                      sql += "    AND B.APVL_REQ_DIVS = '" + data["wrkDivs"] + "'" \
+               if data["email"] != "":
+                  sql += "AND BB.EMP_ID = '" + data["email"] + "'"
 
-                if data["wrkDivs"] != "" and data["wrkDivs"] == "05":
-                      sql += "    AND A.HLDY_WRK_TM = '000000'" \
-                             "    AND A.NGHT_WRK_TM = '000000'" \
-                             "    AND A.ALL_WRK_TM != '000000'" \
+               sql += "              )                                                                                                                                                      " \
+                  +" SELECT  A.EMP_EMAL_ADDR                                                                                                                                                " \
+                  +"        ,A.DEPT_NAME                                                                                                                                                    " \
+                  +" 	    ,A.EMP_NAME                                                                                                                                                       " \
+                  +"        ,A.WRK_DT                                                                                                                                                       " \
+                  +" 		 ,(SELECT ( CASE WHEN DOW_DIVS_CD = '01' THEN '일'                                                                                                                 " \
+                  +"                       WHEN DOW_DIVS_CD = '02' THEN '월'                                                                                                                 " \
+                  +"                       WHEN DOW_DIVS_CD = '03' THEN '화'                                                                                                                 " \
+                  +"                       WHEN DOW_DIVS_CD = '04' THEN '수'                                                                                                                 " \
+                  +"                       WHEN DOW_DIVS_CD = '05' THEN '목'                                                                                                                 " \
+                  +"                       WHEN DOW_DIVS_CD = '06' THEN '금'                                                                                                                 " \
+                  +"                       WHEN DOW_DIVS_CD = '07' THEN '토'                                                                                                                 " \
+                  +"                       ELSE ''                                                                                                                                          " \
+                  +"                        END )                                                                                                                                           " \
+                  +"           FROM TB_DT_INFO                                                                                                                                              " \
+                  +"          WHERE DT =A.WRK_DT                                                                                                                                            " \
+                  +"         ) AS DOW_DT                                                                                                                                                    " \
+                  +"        ,( CASE WHEN B.PTO_KD_CD = '02' AND HDO_KD_CD = '01'                                                                                                            " \
+                  +"               THEN SUBSTRING( REPLACE ( A.JOB_STRT_TM,SUBSTRING(A.JOB_STRT_TM,1,2),SUBSTRING(A.JOB_STRT_TM,1,2)+5),1,5)                                                " \
+                  +"               ELSE NVL(DATE_FORMAT(A.JOB_STRT_TM, '%H:%i'),'-')                                                                                                        " \
+                  +"                END                                                                                                                                                     " \
+                  +"         ) AS JOB_STRT_TM                                                                                                                                               " \
+                  +"        ,( CASE WHEN B.HDO_KD_CD = '02'                                                                                                                                 " \
+                  +"                THEN SUBSTRING( REPLACE ( A.JOB_STRT_TM,SUBSTRING(A.JOB_STRT_TM,1,2),SUBSTRING(A.JOB_STRT_TM,1,2)+5),1,5)                                               " \
+                  +"                ELSE NVL(DATE_FORMAT(A.JOB_END_TM, '%H:%i'),'-')                                                                                                        " \
+                  +"                 END                                                                                                                                                    " \
+                  +"         ) AS JOB_END_TM                                                                                                                                                " \
+                  +"        ,( CASE WHEN B.PTO_KD_CD = '02'                                                                                                                                 " \
+                  +"                THEN '04:00'                                                                                                                                            " \
+                  +"                ELSE CONCAT(LPAD(SUBSTRING(LPAD(A.JOB_END_TM - A.JOB_STRT_TM,6,'0'),1,2)-A.REST_TM/60,2,0),':',SUBSTRING(LPAD(A.JOB_END_TM - A.JOB_STRT_TM,6,'0'),3,2)) " \
+                  +"                 END                                                                                                                                                    " \
+                  +"         ) AS WRK_TM                                                                                                                                                    " \
+                  +" 		 ,'' AS NGHT_WRK_TM                                                                                                                                               " \
+                  +" 	    ,'' AS NGHT_SFT_TM                                                                                                                                                " \
+                  +" 	    ,'' AS HLDY_WRK_TM                                                                                                                                                " \
+                  +" 	    ,'' AS PTO_KD_TM  	                                                                                                                                              " \
+                  +"        ,A.REST_TM AS REST_TM                                                                                                                                           " \
+                  +"        ,'' AS APVL_REQ_DIVS                                                                                                                                            " \
+                  +"        ,'정상근무' AS APVL_REQ_DIVS_NM                                                                                                                                    " \
+                  +"        ,'' AS HOLI_TERM1                                                                                                                                               " \
+                  +"        ,'' AS HOLI_TERM2                                                                                                                                               " \
+                  +"        ,'' AS PTO_KD_CD                                                                                                                                                " \
+                  +"        ,'' AS PTO_KD_CD_NM                                                                                                                                             " \
+                  +"        ,'' AS HDO_KD_CD                                                                                                                                                " \
+                  +"        ,'' AS HDO_KD_CD_NM                                                                                                                                             " \
+                  +"        ,'' AS APVL_STTS_CD                                                                                                                                             " \
+                  +"        ,'' AS APVL_STTS_CD_NM                                                                                                                                          " \
+                  +"   FROM TMP_WRK A                                                                                                                                                       " \
+                  +"   LEFT JOIN TB_NEW_APVL_REQ_MGMT_M B                                                                                                                                   " \
+                  +"     ON A.WRK_DT = B.WRK_DT                                                                                                                                             " \
+                  +"    AND A.EMP_EMAL_ADDR = B.EMP_EMAL_ADDR                                                                                                                               " \
+                  +"    AND B.APVL_REQ_DIVS = '04'                                                                                                                                          " \
+                  +"  WHERE 1 = 1                                                                                                                                                           " \
+                  +"                                                                                                                                                                        " \
+                  +" UNION ALL                                                                                                                                                              " \
+                  +"                                                                                                                                                                        " \
+                  +" SELECT  B.EMP_EMAL_ADDR                                                                                                                                                " \
+                  +"        ,C.DEPT_NAME                                                                                                                                                    " \
+                  +" 	    ,C.EMP_NAME AS EMP_NAME                                                                                                                                           " \
+                  +"        ,NVL(A.WRK_DT,B.WRK_DT) AS WRK_DT                                                                                                                               " \
+                  +" 	    ,(SELECT ( CASE WHEN DOW_DIVS_CD = '01' THEN '일'                                                                                                                  " \
+                  +"                        WHEN DOW_DIVS_CD = '02' THEN '월'                                                                                                                " \
+                  +"                        WHEN DOW_DIVS_CD = '03' THEN '화'                                                                                                                " \
+                  +"                        WHEN DOW_DIVS_CD = '04' THEN '수'                                                                                                                " \
+                  +"                        WHEN DOW_DIVS_CD = '05' THEN '목'                                                                                                                " \
+                  +"                        WHEN DOW_DIVS_CD = '06' THEN '금'                                                                                                                " \
+                  +"                        WHEN DOW_DIVS_CD = '07' THEN '토'                                                                                                                " \
+                  +"                        ELSE ''                                                                                                                                         " \
+                  +"                         END )                                                                                                                                          " \
+                  +"            FROM TB_DT_INFO                                                                                                                                             " \
+                  +"           WHERE DT = NVL(A.WRK_DT,B.WRK_DT)                                                                                                                            " \
+                  +"         ) DOW                                                                                                                                                          " \
+                  +"       ,( CASE WHEN B.APVL_REQ_DIVS = '03' OR B.HDO_KD_CD = '01'                                                                                                        " \
+                  +"               THEN NVL(DATE_FORMAT(A.JOB_STRT_TM, '%H:%i'),'-')                                                                                                        " \
+                  +"               WHEN B.HDO_KD_CD = '02'                                                                                                                                  " \
+                  +"               THEN SUBSTRING( REPLACE ( A.JOB_STRT_TM,SUBSTRING(A.JOB_STRT_TM,1,2),SUBSTRING(A.JOB_STRT_TM,1,2)+5),1,5)                                                " \
+                  +"               ELSE NVL(DATE_FORMAT(B.JOB_STRT_TM, '%H:%i'),'-')                                                                                                        " \
+                  +"               END                                                                                                                                                      " \
+                  +"         ) AS JOB_STRT_TM                                                                                                                                               " \
+                  +"       ,( CASE WHEN B.PTO_KD_CD = '02' AND B.HDO_KD_CD = '01'                                                                                                           " \
+                  +"               THEN SUBSTRING( REPLACE ( A.JOB_STRT_TM,SUBSTRING(A.JOB_STRT_TM,1,2),SUBSTRING(A.JOB_STRT_TM,1,2)+5),1,5)                                                " \
+                  +"               ELSE SUBSTRING(NVL(DATE_FORMAT(A.JOB_END_TM, '%H:%i'),B.JOB_END_TM),1,5)                                                                                 " \
+                  +"                END                                                                                                                                                     " \
+                  +"        ) AS JOB_END_TM                                                                                                                                                 " \
+                  +"       ,'' AS WRK_TM                                                                                                                                                    " \
+                  +" 	   ,( CASE WHEN B.APVL_REQ_DIVS = '01' AND B.JOB_STRT_TM >= A.JOB_STRT_TM                                                                                             " \
+                  +" 	           THEN SUBSTR( SUBTIME ( IF (B.JOB_END_TM > '22:00','22:00',B.JOB_END_TM),ADDTIME(B.JOB_STRT_TM,RPAD(B.REST_TM,4,0)) ) ,1 ,5 )                               " \
+                  +" 			     ELSE ''                                                                                                                                                  " \
+                  +" 			      END                                                                                                                                                     " \
+                  +" 	    ) AS NGHT_WRK_TM                                                                                                                                                  " \
+                  +" 	   ,( CASE WHEN B.APVL_REQ_DIVS = '01' OR B.APVL_REQ_DIVS = '02'                                                                                                      " \
+                  +" 	           THEN ( CASE WHEN B.JOB_END_TM > '22:00'                                                                                                                    " \
+                  +" 	                       THEN  SUBSTR(SUBTIME(B.JOB_END_TM, '22:00'),1,5)                                                                                               " \
+                  +" 	                       WHEN B.JOB_STRT_TM < NVL(A.JOB_STRT_TM,'06:00')                                                                      " \
+                  +" 	                       THEN  SUBSTR(SUBTIME(B.JOB_END_TM, B.JOB_STRT_TM),1,5)                                                                                         " \
+                  +" 	                       ELSE ''                                                                                                                                        " \
+                  +" 	                        END                                                                                                                                           " \
+                  +" 	                )                                                                                                                                                     " \
+                  +" 			     ELSE ''                                                                                                                                                  " \
+                  +" 			      END                                                                                                                                                     " \
+                  +"    	 )  AS NGHT_SFT_TM                                                                                                                                                " \
+                  +"    	,( CASE WHEN B.APVL_REQ_DIVS = '02'                                                                                                                               " \
+                  +" 	           THEN SUBSTR(SUBTIME(B.JOB_END_TM, ADDTIME(B.JOB_STRT_TM,RPAD(B.REST_TM,4,0))),1,5)                                                                         " \
+                  +" 			     ELSE ''                                                                                                                                                  " \
+                  +" 			      END                                                                                                                                                     " \
+                  +"     	 ) AS HLDY_WRK_TM                                                                                                                                                 " \
+                  +" 	   ,( CASE WHEN B.APVL_REQ_DIVS = '03'                                                                                                                                " \
+                  +" 	           THEN '08:00'                                                                                                                                               " \
+                  +" 	           WHEN B.APVL_REQ_DIVS = '04'                                                                                                                                " \
+                  +" 	           THEN '04:00'                                                                                                                                               " \
+                  +" 	           ELSE ''                                                                                                                                                    " \
+                  +" 	            END                                                                                                                                                       " \
+                  +"    	 ) AS PTO_KD_TM  	                                                                                                                                              " \
+                  +"      ,NVL(B.REST_TM,0) AS REST_TM                                                                                                                                      " \
+                  +"      ,B.APVL_REQ_DIVS AS APVL_REQ_DIVS                                                                                                                                 " \
+                  +"      ,NVL((SELECT CMM_CD_NAME FROM TB_CMM_CD_DETL WHERE CMM_CD_GRP_ID = 'APVL_DIVS_CD' AND CMM_CD = B.APVL_REQ_DIVS),'') AS APVL_REQ_DIVS_NM                           " \
+                  +"      ,NVL(B.HOLI_TERM1,'') AS HOLI_TERM1                                                                                                                               " \
+                  +"      ,NVL(B.HOLI_TERM2,'') AS HOLI_TERM2                                                                                                                               " \
+                  +"      ,NVL(B.PTO_KD_CD,'') AS PTO_KD_CD                                                                                                                                 " \
+                  +"      ,NVL((SELECT CMM_CD_NAME FROM TB_CMM_CD_DETL WHERE CMM_CD_GRP_ID = 'PTO_KD_CD' AND CMM_CD = B.PTO_KD_CD),'') AS PTO_KD_CD_NM                                      " \
+                  +"      ,NVL(B.HDO_KD_CD,'') AS HDO_KD_CD                                                                                                                                 " \
+                  +"      ,NVL((SELECT CMM_CD_NAME FROM TB_CMM_CD_DETL WHERE CMM_CD_GRP_ID = 'HDO_KD_CD' AND CMM_CD = B.HDO_KD_CD),'') AS HDO_KD_CD_NM                                      " \
+                  +"      ,(CASE WHEN B.TH1_APRV_STUS = '01'                                                                                                                                " \
+                  +"             THEN '01'                                                                                                                                                  " \
+                  +"             WHEN B.TH2_APRV_STUS = '02'                                                                                                                                " \
+                  +"             THEN '03'                                                                                                                                                  " \
+                  +"             WHEN B.TH1_APRV_STUS = '02'                                                                                                                                " \
+                  +"             THEN '02'                                                                                                                                                  " \
+                  +"             WHEN B.TH1_APRV_STUS = '03'                                                                                                                                " \
+                  +"             THEN '99'                                                                                                                                                  " \
+                  +"             END  ) AS APVL_STTS_CD                                                                                                                                     " \
+                  +"      ,(SELECT CMM_CD_NAME FROM TB_CMM_CD_DETL                                                                                                                          " \
+                  +"         WHERE CMM_CD_GRP_ID = 'APVL_STTS_CD'                                                                                                                           " \
+                  +"           AND CMM_CD = ((CASE WHEN B.TH1_APRV_STUS = '01'                                                                                                              " \
+                  +"                              THEN '01'                                                                                                                                 " \
+                  +"                              WHEN B.TH2_APRV_STUS = '02'                                                                                                               " \
+                  +"                              THEN '03'                                                                                                                                 " \
+                  +"                              WHEN B.TH1_APRV_STUS = '02'                                                                                                               " \
+                  +"                              THEN '02'                                                                                                                                 " \
+                  +"                              WHEN B.TH1_APRV_STUS = '03'                                                                                                               " \
+                  +"                              THEN '99'                                                                                                                                 " \
+                  +"                               END  ))                                                                                                                                  " \
+                  +"       ) AS APVL_STTS_CD_NM                                                                                                                                             " \
+                  +"  FROM TB_WRK_TM_MGMT_M A                                                                                                                                               " \
+                  +" RIGHT JOIN TB_NEW_APVL_REQ_MGMT_M B ON (A.EMP_EMAL_ADDR = B.EMP_EMAL_ADDR AND (B.WRK_DT = A.WRK_DT OR A.WRK_DT  BETWEEN B.HOLI_TERM1 AND B.HOLI_TERM2 ))               " \
+                  +"  JOIN TB_EMP_MGMT C ON B.EMP_EMAL_ADDR = C.EMP_ID                                                                                                                      " \
+                  +" WHERE 1=1                                                                                                                                                              " \
+                  +"   AND B.WRK_DT LIKE '" + data["wrkDt"] + "%'                                                                                                                           " \
+                  +"   AND B.APVL_REQ_DIVS <> '99'                                                                                                                                          " \
+                  +"   AND C.WORK_YN = 'Y'                                                                                                                                                  " \
+                  +"   AND C.DEPT_CD = '" + data["dept"] + "'                                                                                                                               "
 
-                if data["wrkDivs"] != "" and data["wrkDivs"] == "06":
-                      sql += "    AND B.EMP_EMAL_ADDR IS NULL" \
-                             "    AND (A.HLDY_WRK_TM != '000000' OR A.NGHT_WRK_TM != '000000')" \
+               if data["email"] != "":
+                  sql += "AND B.EMP_EMAL_ADDR = '" + data["email"] + "'"
 
-                if data["dept"] != "" and data["dept"] != "00":
-                      sql += "    AND A.EMP_EMAL_ADDR IN (SELECT H.EMP_EMAIL" \
-                             "                              FROM TB_EMP_MGMT H" \
-                             "                             WHERE H.DEPT_CD = '" + data["dept"] + "')"\
+               if data["wrkDivs"] != "" and data["wrkDivs"] != "00" and data["wrkDivs"] != "06":
+                  sql += "AND B.APVL_REQ_DIVS = '" + data["wrkDivs"] + "'"
 
-                logging.debug(sql + "*****************")
-                cursor.execute(sql)
-                logging.debug('scheduleStatLst SUCCESS')
+               if data["wrkDivs"] != "" and data["wrkDivs"] == "06":
+                  sql += "AND ( B.APVL_REQ_DIVS = '01' AND B.TH1_APRV_STUS = '01')"
+
+               if data["dept"] != "" and data["dept"] != "00":
+                  sql +="AND C.DEPT_CD = '" + data["dept"] + "'"
+
+               sql += " ORDER BY EMP_EMAL_ADDR,WRK_DT, JOB_STRT_TM                                                                                                                             "
+
+               logging.debug(sql + "*****************")
+               cursor.execute(sql)
+               logging.debug('scheduleStatLst SUCCESS')
         finally:
             mysql_con.close()
 
