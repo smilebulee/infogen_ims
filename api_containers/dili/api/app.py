@@ -2775,6 +2775,12 @@ class scheduleStatLst(Resource):
                       +"                      AND BB.DEPT_CD = '" + data["dept"] + "'                                                                                                           " \
                       +"   					  AND BB.WORK_YN = 'Y'                                                                                                                              " \
                       +"                      AND AA.WRK_DT LIKE '" + data["wrkDt"] + "%'                                                                                                       " \
+                      +"                      AND NOT EXISTS ( SELECT 'X'" \
+                      +"                                         FROM TB_NEW_APVL_REQ_MGMT_M X " \
+                      +"                                        WHERE X.EMP_EMAL_ADDR = AA.EMP_EMAL_ADDR " \
+                      +"                                          AND X.WRK_DT = AA.WRK_DT " \
+                      +"                                          AND X.APVL_REQ_DIVS = '03'" \
+                      +"                                     )" \
                       +" 					  AND '" + data["wrkDivs"] + "' IN ('00','05')                                                                                                    "
 
                if data["email"] != "":
