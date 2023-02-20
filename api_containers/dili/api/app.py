@@ -372,10 +372,16 @@ class weekGridData(Resource): # Mariadb 연결 진행
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 sql =  "WITH TMP_WRK AS (                                                                                                                            " \
                        +"				 SELECT *                                                                                                                    " \
-                       +"				   FROM TB_WRK_TM_MGMT_M                                                                                                     " \
+                       +"				   FROM TB_WRK_TM_MGMT_M AA                                                                                                   " \
                        +"                  WHERE EMP_EMAL_ADDR = '" + data["email"] + "'                                                                              " \
                        +"                    AND WRK_DT >= '" + data["strtDt"] + "'                                                                                   " \
                        +"                    AND WRK_DT <= '" + data["endDt"] + "'                                                                                    " \
+                       +"                    AND NOT EXISTS ( SELECT 'X'                                                                                              " \
+                       +"                                      FROM TB_NEW_APVL_REQ_MGMT_M X                                                                       " \
+                       +"                                     WHERE AA.EMP_EMAL_ADDR = X.EMP_EMAL_ADDR                                                           " \
+                       +"                                       AND AA.WRK_DT BETWEEN X.HOLI_TERM1 AND X.HOLI_TERM2                                               " \
+                       +"                                       AND X.APVL_REQ_DIVS = '03'                                                                         " \
+                       +"                                   )                                                                                                      " \
                        +"                 )                                                                                                                           " \
                        +"SELECT  '' AS WRK_SEQ                                                                                                                        " \
                        +"       ,A.EMP_EMAL_ADDR                                                                                                                      " \
@@ -412,16 +418,6 @@ class weekGridData(Resource): # Mariadb 연결 진행
                        +"   AND A.EMP_EMAL_ADDR = B.EMP_EMAL_ADDR                                                                                                     " \
                        +"   AND B.APVL_REQ_DIVS = '04'                                                                                                                " \
                        +" WHERE 1 = 1                                                                                                                                 " \
-                       +"   AND A.WRK_DT NOT IN (                                                                                                                       " \
-                       +"	      			  SELECT   A.WRK_DT                                                                                                        " \
-                       +"                        FROM TMP_WRK A                                                                                                       " \
-                       +"						JOIN TB_NEW_APVL_REQ_MGMT_M B                                                                                          " \
-                       +"				          ON (A.WRK_DT = B.WRK_DT OR A.WRK_DT  BETWEEN B.HOLI_TERM1 AND B.HOLI_TERM2)                                          " \
-                       +"                       WHERE 1 = 1                                                                                                           " \
-                       +"					     AND A.EMP_EMAL_ADDR = B.EMP_EMAL_ADDR                                                                                 " \
-                       +"                        AND B.APVL_REQ_DIVS = '03'                                                                                 " \
-                       +"                        AND B.APVL_REQ_DIVS <> '99'                                                                                          " \
-                       +"			         )                                                                                                                         " \
                        +"				                                                                                                                               " \
                        +"UNION ALL                                                                                                                                    " \
                        +"                                                                                                                                             " \
@@ -559,9 +555,15 @@ class monthGridData(Resource): # Mariadb 연결 진행
                 #쿼리문 실행
                 sql =  "WITH TMP_WRK AS (                                                                                                                            " \
                        +"				 SELECT *                                                                                                                    " \
-                       +"				   FROM TB_WRK_TM_MGMT_M                                                                                                     " \
+                       +"				   FROM TB_WRK_TM_MGMT_M AA                                                                                                    " \
                        +"                 WHERE EMP_EMAL_ADDR = '" + data["email"] + "'                                                                            " \
                        +"                   AND WRK_DT like '"+data["mDt"]+"%'                                                                                     " \
+                       +"                   AND NOT EXISTS ( SELECT 'X'                                                                                              " \
+                       +"                                      FROM TB_NEW_APVL_REQ_MGMT_M X                                                                       " \
+                       +"                                     WHERE AA.EMP_EMAL_ADDR = X.EMP_EMAL_ADDR                                                           " \
+                       +"                                       AND AA.WRK_DT BETWEEN X.HOLI_TERM1 AND X.HOLI_TERM2                                                " \
+                       +"                                       AND X.APVL_REQ_DIVS = '03'                                                                         " \
+                       +"                                   )                                                                                                      " \
                        +"                 )                                                                                                                           " \
                        +"SELECT  '' AS WRK_SEQ                                                                                                                        " \
                        +"       ,A.EMP_EMAL_ADDR                                                                                                                      " \
@@ -598,16 +600,6 @@ class monthGridData(Resource): # Mariadb 연결 진행
                        +"   AND A.EMP_EMAL_ADDR = B.EMP_EMAL_ADDR                                                                                                     " \
                        +"   AND B.APVL_REQ_DIVS = '04'                                                                                                                " \
                        +" WHERE 1 = 1                                                                                                                                 " \
-                       +"   AND A.WRK_DT NOT IN (                                                                                                                       " \
-                       +"	      			  SELECT   A.WRK_DT                                                                                                        " \
-                       +"                        FROM TMP_WRK A                                                                                                       " \
-                       +"						JOIN TB_NEW_APVL_REQ_MGMT_M B                                                                                          " \
-                       +"				          ON (A.WRK_DT = B.WRK_DT OR A.WRK_DT  BETWEEN B.HOLI_TERM1 AND B.HOLI_TERM2)                                          " \
-                       +"                       WHERE 1 = 1                                                                                                           " \
-                       +"					     AND A.EMP_EMAL_ADDR = B.EMP_EMAL_ADDR                                                                                 " \
-                       +"                        AND B.APVL_REQ_DIVS = '03'                                                                                 " \
-                       +"                        AND B.APVL_REQ_DIVS <> '99'                                                                                          " \
-                       +"			         )                                                                                                                         " \
                        +"				                                                                                                                               " \
                        +"UNION ALL                                                                                                                                    " \
                        +"                                                                                                                                             " \
@@ -2775,12 +2767,12 @@ class scheduleStatLst(Resource):
                       +"                      AND BB.DEPT_CD = '" + data["dept"] + "'                                                                                                           " \
                       +"   					  AND BB.WORK_YN = 'Y'                                                                                                                              " \
                       +"                      AND AA.WRK_DT LIKE '" + data["wrkDt"] + "%'                                                                                                       " \
-                      +"                      AND NOT EXISTS ( SELECT 'X'" \
-                      +"                                         FROM TB_NEW_APVL_REQ_MGMT_M X " \
-                      +"                                        WHERE X.EMP_EMAL_ADDR = AA.EMP_EMAL_ADDR " \
-                      +"                                          AND X.WRK_DT = AA.WRK_DT " \
-                      +"                                          AND X.APVL_REQ_DIVS = '03'" \
-                      +"                                     )" \
+                      +"                      AND NOT EXISTS ( SELECT 'X'                                                                                              " \
+                      +"                                         FROM TB_NEW_APVL_REQ_MGMT_M X                                                                       " \
+                      +"                                        WHERE AA.EMP_EMAL_ADDR = X.EMP_EMAL_ADDR                                                           " \
+                      +"                                          AND AA.WRK_DT BETWEEN X.HOLI_TERM1 AND X.HOLI_TERM2                                                          " \
+                      +"                                          AND X.APVL_REQ_DIVS = '03'                                                                         " \
+                      +"                                   )                                                                                                      " \
                       +" 					  AND '" + data["wrkDivs"] + "' IN ('00','05')                                                                                                    "
 
                if data["email"] != "":
