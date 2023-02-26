@@ -615,7 +615,7 @@ class monthGridData(Resource): # Mariadb 연결 진행
                        +"         ) AS JOB_STRT_TM                                                                                                                    " \
                        +"      ,( CASE  WHEN B.PTO_KD_CD = '02' AND B.HDO_KD_CD = '01'                                                                                " \
                        +"              THEN SUBSTRING( REPLACE ( A.JOB_STRT_TM,SUBSTRING(A.JOB_STRT_TM,1,2),SUBSTRING(A.JOB_STRT_TM,1,2)+5),1,5)                      " \
-                       +"              ELSE SUBSTRING(NVL(DATE_FORMAT(A.JOB_END_TM, '%H:%i'),B.JOB_END_TM),1,5)                                                                               " \
+                       +"              ELSE SUBSTRING(NVL(DATE_FORMAT(B.JOB_END_TM, '%H:%i'),A.JOB_END_TM),1,5)                                                                               " \
                        +"               END                                                                                                                           " \
                        +"       ) AS JOB_END_TM                                                                                                                       " \
                        +"	   ,( CASE WHEN B.PTO_KD_CD = '01'                                                                                                         " \
