@@ -98,7 +98,7 @@
                 wrkApvlTable += '<td class="pt-3-half">' + data[i].BANCHA  + '</td>';
                 wrkApvlTable += '<td style="display:none">' + wrkDtm               + '</td>';
                 wrkApvlTable += '<td class="pt-3-half">' + data[i].EMP_NAME     +'</td>';
-                wrkApvlTable += '<td class="pt-3-half" style="display: none;">' + data[i].WRK_DT + "|" + data[i].JOB_STRT_TM + "|" + data[i].JOB_END_TM + "|" + data[i].WRK_REQ_RSN + "|" + data[i].EMP_EMAL_ADDR  + "|" + data[i].TH1_APRV_STUS + "|" + data[i].TH2_APRV_STUS + "|" + data[i].TH1_APRV_NM + "|" + data[i].TH2_APRV_NM + '</td>';
+                wrkApvlTable += '<td class="pt-3-half" style="display: none;">' + data[i].WRK_DT + "|" + data[i].JOB_STRT_TM + "|" + data[i].JOB_END_TM + "|" + data[i].WRK_REQ_RSN + "|" + data[i].EMP_EMAL_ADDR  + "|" + data[i].TH1_APRV_STUS + "|" + data[i].TH2_APRV_STUS + "|" + data[i].TH1_APRV_NM + "|" + data[i].TH2_APRV_NM + "|" + data[i].WRK_SEQ +'</td>';
                 wrkApvlTable += '</tr>';
             }
         } else {
@@ -166,6 +166,7 @@
         var sTh2AprvNm   = $('#ipt_reqAcptTh2AprvNm').val();   //2차승인자 - email
         var sTh1AprvStus = $("#ipt_reqAcptTh1AprvStus").val(); //1차승인상태코드
         var sTh2AprvStus = $("#ipt_reqAcptTh2AprvStus").val(); //2차승인상태코드
+        var wrkSeq = $("#ipt_wrkSeq").val(); //PK
 
         var authFlag = ""; //승인플래그, 1:1차승인, 2:2차승인, 3:반려
 
@@ -242,6 +243,7 @@
                     //"th1AprvNm"     : sessionStorage.getItem("email"),    //결재자 : 로그인한 사용자 아이디
                     "th2AprvStus"   : apvlAcptStus,                         //2차승인상태 01: 미승인, 02: 승인, 03: 반려
                     "authFlag"      : authFlag,                             //승인플래그, 1:1차승인, 2:2차승인, 3:반려 update SQL 구분용
+                    "wrkSeq"        : wrkSeq ,                              //요청 테이블 시퀀스 PK
                 }
 
                 //param["th1AprvStus"] = thisId == 'btn_acpt' ? '02' : '03';
@@ -290,6 +292,7 @@
 
         $("#ipt_reqAcptTh1AprvNm").val(arrWrkDt[7]);
         $("#ipt_reqAcptTh2AprvNm").val(arrWrkDt[8]);
+        $("#ipt_wrkSeq").val(arrWrkDt[9]);
 
         /* 임시주석 윤상은 disabled 상태가 눈에 안띔 => 알림창으로 처리 변경
         if(arrWrkDt[5] != '01') {
@@ -425,6 +428,7 @@
                                         <input type="hidden" id="ipt_reqAcptTh2AprvStus" name="ipt_reqAcptTh2AprvStus" />
                                         <input type="hidden" id="ipt_reqAcptTh1AprvNm"   name="ipt_reqAcptTh1AprvNm" />
                                         <input type="hidden" id="ipt_reqAcptTh2AprvNm"   name="ipt_reqAcptTh2AprvNm" />
+                                        <input type="hidden" id="ipt_wrkSeq"             name="ipt_wrkSeq" />
 
                                         <div class="flex-height d-flex m-0 p-2">
                                             <div class="align-self-start align-self-center mr-3" style="font-weight:bold">결재요청사유&nbsp;&nbsp;&nbsp;&nbsp;</div>

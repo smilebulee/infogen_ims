@@ -907,6 +907,7 @@ class saveApvlAcpt(Resource): # Mariadb 연결 진행
         th1AprvRsn = request.form['th1AprvRsn']
         th2AprvStus = request.form['th2AprvStus']
         authFlag = request.form['authFlag']
+        wrkSeq   = request.form['wrkSeq']
 
         #requirements pymysql import 후 커넥트 사용
         #mysql_con = pymysql.connect(host=getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
@@ -918,30 +919,28 @@ class saveApvlAcpt(Resource): # Mariadb 연결 진행
                 #쿼리문 실행
                 if authFlag == "1":
                     #쿼리문 실행
-                    sql = " UPDATE TB_APVL_REQ_MGMT_M /*1차승인*/ " \
+                    sql = " UPDATE TB_NEW_APVL_REQ_MGMT_M /*1차승인*/ " \
                           "    SET TH1_APRV_STUS     = '" + th1AprvStus + "'" \
                           "      , TH1_APRV_RSN      = '" + th1AprvRsn + "'" \
                           "      , TH1_APRV_DT       = NOW() " \
                           "      , APVL_LAST_APRV_DT = NOW() " \
                           "  WHERE EMP_EMAL_ADDR     = '" + email + "' " \
                           "    AND WRK_DT            = '" + wrkDt + "' " \
-                          "    AND JOB_STRT_TM       = '" + jobStrtTm + "' " \
-                          "    AND JOB_END_TM        = '" + jobEndTm + "' "
+                          "    AND WRK_SEQ          = '" + wrkSeq + "' "
 
                 elif authFlag == "2":
                     #쿼리문 실행
-                    sql = " UPDATE TB_APVL_REQ_MGMT_M /*2차승인*/ " \
+                    sql = " UPDATE TB_NEW_APVL_REQ_MGMT_M /*2차승인*/ " \
                           "    SET TH2_APRV_STUS     = '" + th2AprvStus + "'" \
                           "      , TH2_APRV_RSN      = '" + th1AprvRsn + "'" \
                           "      , TH2_APRV_DT       = NOW() " \
                           "      , APVL_LAST_APRV_DT = NOW() " \
                           "  WHERE EMP_EMAL_ADDR     = '" + email + "' " \
                           "    AND WRK_DT            = '" + wrkDt + "' " \
-                          "    AND JOB_STRT_TM       = '" + jobStrtTm + "' " \
-                          "    AND JOB_END_TM        = '" + jobEndTm + "' "
+                          "    AND WRK_SEQ          = '" + wrkSeq + "' "
                 elif authFlag == "3":
                     #쿼리문 실행
-                    sql = " UPDATE TB_APVL_REQ_MGMT_M /*1차승인*/ " \
+                    sql = " UPDATE TB_NEW_APVL_REQ_MGMT_M /*1차승인*/ " \
                           "    SET TH1_APRV_STUS     = '" + th1AprvStus + "'" \
                           "      , TH2_APRV_STUS     = '" + th1AprvStus + "'"\
                           "      , TH1_APRV_RSN      = '" + th1AprvRsn + "'" \
@@ -949,8 +948,7 @@ class saveApvlAcpt(Resource): # Mariadb 연결 진행
                           "      , APVL_LAST_APRV_DT = NOW() " \
                           "  WHERE EMP_EMAL_ADDR     = '" + email + "' " \
                           "    AND WRK_DT            = '" + wrkDt + "' " \
-                          "    AND JOB_STRT_TM       = '" + jobStrtTm + "' " \
-                          "    AND JOB_END_TM        = '" + jobEndTm + "' "
+                          "    AND WRK_SEQ          = '" + wrkSeq + "' "
                 logger.info(sql)
                 cursor.execute(sql)
 
@@ -1138,6 +1136,7 @@ class apvlAcptHist(Resource):  # Mariadb 연결 진행
                     # 미승인, 승인, 반려
                     sql = "SELECT A.EMP_EMAL_ADDR, C.EMP_NAME " \
                           "     , NVL(A.WRK_DT,'') WRK_DT " \
+                          "     , A.WRK_SEQ " \
                           "     , NVL(A.JOB_STRT_TM, '') JOB_STRT_TM " \
                           "     , NVL(A.JOB_END_TM, '') JOB_END_TM " \
                           "     , CASE WHEN A.APVL_REQ_DIVS = '01' THEN NVL(A.WRK_TME,'') WHEN A.APVL_REQ_DIVS = '02' THEN NVL(A.WRK_TME,'') ELSE '' END WRK_TME  " \
