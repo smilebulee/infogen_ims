@@ -518,7 +518,7 @@ class apvlInfo(Resource): # Mariadb 연결 진행
                     + "       ,NVL(APVL_LAST_APRV_DT, 'N/A') AS APVL_LAST_APRV_DT "\
                     + "       ,NVL(TH1_APRV_STUS, 'N/A') AS TH1_APRV_STUS "\
                     + "       ,NVL(TH2_APRV_STUS, 'N/A') AS TH2_APRV_STUS "\
-                    + "     FROM TB_APVL_REQ_MGMT_M "\
+                    + "     FROM TB_NEW_APVL_REQ_MGMT_M "\
                     + "   WHERE EMP_EMAL_ADDR = '" + data["email"] + "' "\
                     + "   AND WRK_DT = '" + data["dt"] + "'"
                 logging.debug(sql)
@@ -701,7 +701,7 @@ class wrkTimeInfoByEml(Resource): # Mariadb 연결 진행
                     + "      ,DATE_FORMAT(SEC_TO_TIME(SUM(TIME_TO_SEC(STR_TO_DATE( CONCAT(SUBSTRING(IFNULL(B.WRK_TME,'000000'),1,2),':',SUBSTRING(IFNULL(B.WRK_TME,'000000'),3,2),':',SUBSTRING(IFNULL(B.WRK_TME,'000000'),5,2)) ,'%H:%i:%S')))),'%H.%i') APRV_OVER_WRK_TM" \
                     + "      ,MAX(DATE_FORMAT(E.JOB_STRT_TM, '%H:%i')) AS JOB_STRT_TM " \
                     + "      ,MAX(DATE_FORMAT(E.JOB_END_TM, '%H:%i')) AS JOB_END_TM " \
-                    + "  FROM TB_WRK_TM_MGMT_M A INNER JOIN TB_EMP_MGMT E ON A.EMP_EMAL_ADDR = E.EMP_EMAIL LEFT OUTER JOIN TB_APVL_REQ_MGMT_M B ON A.EMP_EMAL_ADDR = B.EMP_EMAL_ADDR AND A.WRK_DT = B.WRK_DT AND B.APVL_REQ_DIVS IN ('01','02')" \
+                    + "  FROM TB_WRK_TM_MGMT_M A INNER JOIN TB_EMP_MGMT E ON A.EMP_EMAL_ADDR = E.EMP_EMAIL LEFT OUTER JOIN TB_NEW_APVL_REQ_MGMT_M B ON A.EMP_EMAL_ADDR = B.EMP_EMAL_ADDR AND A.WRK_DT = B.WRK_DT AND B.APVL_REQ_DIVS IN ('01','02')" \
                     + " WHERE A.EMP_EMAL_ADDR = '" +data["email"] + "'" \
                     + "   AND A.WRK_DT LIKE '" + data["dt"] + "%'" \
                     + " GROUP BY A.EMP_EMAL_ADDR"
@@ -746,7 +746,7 @@ class wrkApvlReq(Resource): # Mariadb 연결 진행
                       " WHERE A.EMP_EMAL_ADDR = '" + data["email"] + "'" \
                       "   AND (NVL(A.HLDY_WRK_TM,'000000') != 000000 OR NVL(A.NGHT_WRK_TM,'000000') != 000000)" \
                       "   AND NOT EXISTS (SELECT 1" \
-                      "                     FROM TB_APVL_REQ_MGMT_M B" \
+                      "                     FROM TB_NEW_APVL_REQ_MGMT_M B" \
                       "                    WHERE B.EMP_EMAL_ADDR = A.EMP_EMAL_ADDR" \
                       "                      AND B.WRK_DT = A.WRK_DT)"
                 logging.debug("wrkApvlReq SQL문" + sql)
@@ -918,7 +918,7 @@ class saveApvlAcpt(Resource): # Mariadb 연결 진행
                 #쿼리문 실행
                 if authFlag == "1":
                     #쿼리문 실행
-                    sql = " UPDATE TB_APVL_REQ_MGMT_M /*1차승인*/ " \
+                    sql = " UPDATE TB_NEW_APVL_REQ_MGMT_M /*1차승인*/ " \
                           "    SET TH1_APRV_STUS     = '" + th1AprvStus + "'" \
                           "      , TH1_APRV_RSN      = '" + th1AprvRsn + "'" \
                           "      , TH1_APRV_DT       = NOW() " \
@@ -930,7 +930,7 @@ class saveApvlAcpt(Resource): # Mariadb 연결 진행
 
                 elif authFlag == "2":
                     #쿼리문 실행
-                    sql = " UPDATE TB_APVL_REQ_MGMT_M /*2차승인*/ " \
+                    sql = " UPDATE TB_NEW_APVL_REQ_MGMT_M /*2차승인*/ " \
                           "    SET TH2_APRV_STUS     = '" + th2AprvStus + "'" \
                           "      , TH2_APRV_RSN      = '" + th1AprvRsn + "'" \
                           "      , TH2_APRV_DT       = NOW() " \
@@ -941,7 +941,7 @@ class saveApvlAcpt(Resource): # Mariadb 연결 진행
                           "    AND JOB_END_TM        = '" + jobEndTm + "' "
                 elif authFlag == "3":
                     #쿼리문 실행
-                    sql = " UPDATE TB_APVL_REQ_MGMT_M /*1차승인*/ " \
+                    sql = " UPDATE TB_NEW_APVL_REQ_MGMT_M /*1차승인*/ " \
                           "    SET TH1_APRV_STUS     = '" + th1AprvStus + "'" \
                           "      , TH2_APRV_STUS     = '" + th1AprvStus + "'"\
                           "      , TH1_APRV_RSN      = '" + th1AprvRsn + "'" \
@@ -2461,7 +2461,7 @@ class insertStrtTm(Resource):  # Mariadb 연결 진행
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
 
-                sql1 =  "UPDATE TB_APVL_REQ_MGMT_M    " \
+                sql1 =  "UPDATE TB_NEW_APVL_REQ_MGMT_M    " \
                         "   SET JOB_STRT_TM  	= %s  " \
                         "     , APVL_UPD_DT  	= NOW()  " \
                         " WHERE EMP_EMAL_ADDR 	= %s  " \
@@ -4276,7 +4276,7 @@ class diliScheduleTotalMgmt(Resource):
                       "                                                                                          END ),60) HLDY_WRK_YN_M" \
                       "  FROM TB_WRK_TM_MGMT_M A" \
                       "  LEFT OUTER JOIN" \
-                      "       TB_APVL_REQ_MGMT_M B" \
+                      "       TB_NEW_APVL_REQ_MGMT_M B" \
                       "   ON (A.WRK_DT = B.WRK_DT OR A.WRK_DT BETWEEN B.HOLI_TERM1 AND B.HOLI_TERM2) "\
                       "   AND A.EMP_EMAL_ADDR = B.EMP_EMAL_ADDR "\
                       "   AND B.APVL_REQ_DIVS <> '99'" \
