@@ -2762,17 +2762,20 @@ class scheduleStatLst(Resource):
                       +"                     FROM TB_WRK_TM_MGMT_M AA                                                                                                                           " \
                       +" 						  JOIN TB_EMP_MGMT BB                                                                                                                         " \
                       +" 						    ON AA.EMP_EMAL_ADDR = BB.EMP_ID                                                                                                           " \
-                      +"                    WHERE 1=1                                                                                                                                         " \
-                      +"                      AND BB.DEPT_CD = '" + data["dept"] + "'                                                                                                           " \
-                      +"   					  AND BB.WORK_YN = 'Y'                                                                                                                              " \
-                      +"                      AND AA.WRK_DT LIKE '" + data["wrkDt"] + "%'                                                                                                       " \
-                      +"                      AND NOT EXISTS ( SELECT 'X'                                                                                              " \
-                      +"                                         FROM TB_NEW_APVL_REQ_MGMT_M X                                                                       " \
-                      +"                                        WHERE AA.EMP_EMAL_ADDR = X.EMP_EMAL_ADDR                                                           " \
-                      +"                                          AND AA.WRK_DT BETWEEN X.HOLI_TERM1 AND X.HOLI_TERM2                                                          " \
-                      +"                                          AND X.APVL_REQ_DIVS = '03'                                                                         " \
-                      +"                                   )                                                                                                      " \
-                      +" 					  AND '" + data["wrkDivs"] + "' IN ('00','05')                                                                                                    "
+                      +"                    WHERE 1=1                                                                                                                                         "
+
+               if data["dept"] != "" and data["dept"] != "00":
+                    sql +="AND BB.DEPT_CD = '" + data["dept"] + "'"
+
+               sql += "   					  AND BB.WORK_YN = 'Y'                                                                                                                              " \
+                  +"                      AND AA.WRK_DT LIKE '" + data["wrkDt"] + "%'                                                                                                       " \
+                  +"                      AND NOT EXISTS ( SELECT 'X'                                                                                              " \
+                  +"                                         FROM TB_NEW_APVL_REQ_MGMT_M X                                                                       " \
+                  +"                                        WHERE AA.EMP_EMAL_ADDR = X.EMP_EMAL_ADDR                                                           " \
+                  +"                                          AND AA.WRK_DT BETWEEN X.HOLI_TERM1 AND X.HOLI_TERM2                                                          " \
+                  +"                                          AND X.APVL_REQ_DIVS = '03'                                                                         " \
+                  +"                                   )                                                                                                      " \
+                  +" 					  AND '" + data["wrkDivs"] + "' IN ('00','05')                                                                                                   "
 
                if data["email"] != "":
                   sql += "AND BB.EMP_ID = '" + data["email"] + "'"
@@ -2926,8 +2929,7 @@ class scheduleStatLst(Resource):
                   +" WHERE 1=1                                                                                                                                                              " \
                   +"   AND B.WRK_DT LIKE '" + data["wrkDt"] + "%'                                                                                                                           " \
                   +"   AND B.APVL_REQ_DIVS <> '99'                                                                                                                                          " \
-                  +"   AND C.WORK_YN = 'Y'                                                                                                                                                  " \
-                  +"   AND C.DEPT_CD = '" + data["dept"] + "'                                                                                                                               "
+                  +"   AND C.WORK_YN = 'Y'                                                                                                                          "
 
                if data["email"] != "":
                   sql += "AND B.EMP_EMAL_ADDR = '" + data["email"] + "'"
