@@ -2861,12 +2861,13 @@ class scheduleStatLst(Resource):
                   +"         ) AS JOB_STRT_TM                                                                                                                                               " \
                   +"       ,( CASE WHEN B.PTO_KD_CD = '02' AND B.HDO_KD_CD = '01'                                                                                                           " \
                   +"               THEN SUBSTRING( REPLACE ( A.JOB_STRT_TM,SUBSTRING(A.JOB_STRT_TM,1,2),SUBSTRING(A.JOB_STRT_TM,1,2)+5),1,5)                                                " \
-                  +"               ELSE SUBSTRING(NVL(DATE_FORMAT(A.JOB_END_TM, '%H:%i'),B.JOB_END_TM),1,5)                                                                                 " \
+                  +"               ELSE SUBSTRING(B.JOB_END_TM,1,5)                                                                                 " \
                   +"                END                                                                                                                                                     " \
                   +"        ) AS JOB_END_TM                                                                                                                                                 " \
                   +"       ,'' AS WRK_TM                                                                                                                                                    " \
                   +" 	   ,( CASE WHEN B.APVL_REQ_DIVS = '01' AND B.JOB_STRT_TM >= A.JOB_STRT_TM                                                                                             " \
-                  +" 	           THEN SUBSTR( SUBTIME ( IF (B.JOB_END_TM > '22:00','22:00',B.JOB_END_TM),ADDTIME(B.JOB_STRT_TM,RPAD(B.REST_TM,4,0)) ) ,1 ,5 )                               " \
+                  +" 	           THEN SUBSTR( SUBTIME ( IF (B.JOB_END_TM > '22:00','22:00',B.JOB_END_TM),ADDTIME(B.JOB_STRT_TM,CASE WHEN B.REST_TM = 60 THEN '01:00:00'                       " \
+                  +"                                                                                                                  ELSE RPAD(B.REST_TM,4,0) END) ) ,1 ,5 )                 " \
                   +" 			     ELSE ''                                                                                                                                                  " \
                   +" 			      END                                                                                                                                                     " \
                   +" 	    ) AS NGHT_WRK_TM                                                                                                                                                  " \
