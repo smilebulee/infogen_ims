@@ -49,7 +49,7 @@ services:
       - SPRING_PROFILES_ACTIVE=prod
       - SPRING_APPLICATION_NAME=emp_api
       - SIDECAR_PORT=5001
-      - MYSQL_HOST=218.151.225.142
+      - MYSQL_HOST=112.220.26.195
       - MYSQL_ROOT_PASSWORD=infogen
       - MYSQL_PORT=3306
       - MYSQL_USER=ims2
@@ -70,7 +70,7 @@ services:
       - SPRING_PROFILES_ACTIVE=prod
       - SPRING_APPLICATION_NAME=prj_api
       - SIDECAR_PORT=5002
-      - MYSQL_HOST=218.151.225.142
+      - MYSQL_HOST=112.220.26.195
       - MYSQL_ROOT_PASSWORD=infogen
       - MYSQL_PORT=3306
       - MYSQL_USER=ims2
@@ -134,7 +134,7 @@ services:
       - SPRING_PROFILES_ACTIVE=prod      # 이미지 생성시 세팅될 환경변수들
       - SPRING_APPLICATION_NAME=dili_api
       - SIDECAR_PORT=5006
-      - MYSQL_HOST=218.151.225.142
+      - MYSQL_HOST=112.220.26.195
       - MYSQL_ROOT_PASSWORD=infogen
       - MYSQL_PORT=3306
       - MYSQL_USER=ims2
@@ -153,7 +153,7 @@ services:
     volumes:
       - data-postgressql:/var/lib/mysql
     environment:
-      MYSQL_HOST: '218.151.225.142'
+      MYSQL_HOST: '112.220.26.195'
       MYSQL_ROOT_PASSWORD: 'infogen'
       MYSQL_USER : 'ims2'
       MYSQL_PASSWORD : '1234'

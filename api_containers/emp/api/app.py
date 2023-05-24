@@ -57,7 +57,7 @@ def getSystemInfo():
             return "mariadb"
         else :
             logging.debug('Local Server')
-            return "218.151.225.142"
+            return "112.220.26.195"
 
     except Exception as e:
         logging.exception(e)
