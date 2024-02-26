@@ -18,7 +18,6 @@
 
     $(document).ready(function(){
 
-
         /* 부모창에서 선택한 직원 email*/
         var email = document.getElementById('hidden_selectMail').value;
 
@@ -50,6 +49,7 @@
             $('#reIsExistNmBtn').attr('disabled', true);
             $('#isExistNmBtn').attr('disabled', true);
             $('#sbx_empDept').attr('disabled',true);
+            $('#sbx_isSelfPr').attr('disabled',true);
         }
 
 
@@ -115,6 +115,7 @@
         var get_empJobStrtTm = data[0].JOB_STRT_TM;
         var get_empJobEndTm = data[0].JOB_END_TM;
         var get_empWorkYn = data[0].WORK_YN;
+        var get_isSelfPr = data[0].SELF_PR_YN;
         exPW = get_empPw;
 
 //        if(initFlag) {
@@ -151,6 +152,7 @@
         $('#sbx_jobEndTm').val(get_empJobEndTm);
         $('#sbx_empWorkYn').val(get_empWorkYn);
         $("#sbx_empDept option[value='"+get_empDCd+"']").attr("selected", true);
+        $("#sbx_isSelfPr option[value='"+get_isSelfPr+"']").attr("selected", true);
 
         /* 성명관련 버튼 초기화 */
         $('#ipt_empNm').attr('readonly', true);
@@ -232,8 +234,7 @@
         var ipt_jobStrtTm = $('[name="sbx_jobStrtTm"] option:selected').val();
         var ipt_jobEndTm = $('[name="sbx_jobEndTm"] option:selected').val();
         var ipt_empWorkYn = $('[name="sbx_empWorkYn"] option:selected').val();
-        var ipt_empPr = $('[name="ipt_empPr"] option:selected').val();
-        var ipt_empGm = $('[name="ipt_empGm"] option:selected').val();
+        var ipt_isSelfPr = $('[name="sbx_isSelfPr"] option:selected').val();
 
         var query = "input[name='AUTH_CD']:checked";
         var selectedEls = document.querySelectorAll(query);
@@ -294,7 +295,8 @@
             "ipt_jobStrtTm" : ipt_jobStrtTm,
             "ipt_jobEndTm"  : ipt_jobEndTm,
             "sessionId"     : sessionStorage.getItem("email"),      //로그인한 사용자 아이디
-            "ipt_empWorkYn" : ipt_empWorkYn
+            "ipt_empWorkYn" : ipt_empWorkYn,
+            "ipt_isSelfPr"  : ipt_isSelfPr
         }
 
         n_dialog.confirm('수정하시겠습니까?',function(){
@@ -555,13 +557,27 @@
                         </td>
                         <td></td>
                     </tr>
+                    <!-- Self1차승인여부 -->
+                    <tr>
+                        <td>
+                            <div class="align-self-start align-self-center mr-5"><span class="requiredTag mr-1">*</span><label for="sbx_isSelfPr">셀프승인</label></div>
+                        </td>
+                        <td>
+                             <div class="align-self-center mr-3 pb-2">
+                                <select id="sbx_isSelfPr" name="sbx_isSelfPr" class="form-control">
+                                    <option value="Y">Y</option>
+                                    <option value="N">N</option>
+                                </select>
+                            </div>
+                        </td>
+                    </tr>
                     <!-- 재직여부 -->
                     <tr>
                         <td>
                             <div class="align-self-start align-self-center mr-5"><span class="requiredTag mr-1">*</span><label for="sbx_empWorkYn">재직여부</label></div>
                         </td>
                         <td>
-                             <div class="align-self-center mr-2">
+                             <div class="align-self-center mr-3 pb-2">
                                 <select id="sbx_empWorkYn" name="sbx_empWorkYn" class="form-control">
                                     <option value="Y">재직</option>
                                     <option value="N">퇴사</option>

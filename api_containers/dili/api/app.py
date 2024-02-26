@@ -1398,17 +1398,37 @@ class empDeptPr(Resource): # Mariadb 연결 진행
                 #       "                    WHERE X.EMP_EMAIL = '" + data["email"] + "' " \
                 #       "                  ) "
 
-                # 쿼리문 실행(221129)
+                # 쿼리문 실행(240226)
                 sql = "SELECT C.DEPT_CD " \
                       "     , C.DEPT_NAME " \
-                      "     , (SELECT E.EMP_NAME FROM TB_EMP_MGMT E WHERE E.EMP_ID = C.EMP_PR) AS PR_NAME " \
-                      "     , C.EMP_PR " \
+                      "     , CASE WHEN 'Y'=NVL((SELECT SELF_PR_YN " \
+                      "						    FROM TB_EMP_MGMT " \
+                      "						   WHERE EMP_ID = '" + data["email"] + "' " \
+                      "						 ), 'N') " \
+                      "            THEN (SELECT E.EMP_NAME " \
+                      "		            FROM TB_EMP_MGMT E " \
+                      "		           WHERE E.EMP_ID = '" + data["email"] + "' " \
+                      "		         ) " \
+                      "            ELSE (SELECT E.EMP_NAME " \
+                      "		            FROM TB_EMP_MGMT E " \
+                      "		           WHERE E.EMP_ID = C.EMP_PR " \
+                      "		         ) " \
+                      "		END AS PR_NAME  " \
+                      "     , CASE WHEN 'Y'=NVL((SELECT SELF_PR_YN " \
+                      "						    FROM TB_EMP_MGMT " \
+                      "						   WHERE EMP_ID = '" + data["email"] + "' " \
+                      "						 ), 'N') " \
+                      "            THEN '" + data["email"] + "' " \
+                      "            ELSE C.EMP_PR " \
+                      "        END AS EMP_PR " \
                       "  FROM TB_DEPT_CD_MGMT C " \
-                      "   WHERE C.DEPT_CD = (" \
+                      " WHERE C.DEPT_CD = ( " \
                       "                   SELECT DEPT_CD " \
-                      "                     FROM TB_EMP_MGMT " \
-                      "                    WHERE EMP_EMAIL = '" + data["email"] + "'" \
-                      "                  )"
+                      "                     FROM TB_EMP_MGMT  " \
+                      "                    WHERE EMP_EMAIL = '" + data["email"] + "' " \
+                      "                  ) "
+
+
 
                 logging.debug(sql)
                 cursor.execute(sql)
@@ -2979,6 +2999,7 @@ class empMgmtRegSubmit(Resource):
         ipt_jobEndTm = request.form['ipt_jobEndTm']
         ipt_empDept = request.form['ipt_empDept']
         sessionId = request.form['sessionId']
+        ipt_isSelfPr = request.form['ipt_isSelfPr']
         ipt_empEmail = ipt_empId;
 
 
@@ -2992,6 +3013,7 @@ class empMgmtRegSubmit(Resource):
         logging.debug("ipt_empDept = " + ipt_empDept)
         logging.debug("ipt_jobStrtTm = " + ipt_jobStrtTm)
         logging.debug("ipt_jobEndTm = " + ipt_jobEndTm)
+        logging.debug("ipt_isSelfPr = " + ipt_isSelfPr)
         logging.debug("sessionId = " + sessionId)
 
         logging.debug("=====================")
@@ -3041,7 +3063,8 @@ class empMgmtRegSubmit(Resource):
                                                 "EMP_PR, " \
                                                 "EMP_GM, " \
                                                 "DEPT_CD, " \
-                                                "DEPT_NAME) " \
+                                                "DEPT_NAME," \
+                                                "SELF_PR_YN ) " \
                                     "VALUES('" + ipt_empId + "', " \
                                             "'" + ipt_empEmail + "', " \
                                             "'" + ipt_empPw + "', " \
@@ -3056,7 +3079,8 @@ class empMgmtRegSubmit(Resource):
                                             "(SELECT EMP_GM FROM TB_DEPT_CD_MGMT WHERE DEPT_CD = '" + ipt_empDept + "'), " \
                                             "'" + ipt_empDept + "', " \
                                             "(SELECT DEPT_NAME FROM TB_DEPT_CD_MGMT WHERE DEPT_CD = " \
-                                            "'" + ipt_empDept + "'))" \
+                                            "'" + ipt_empDept + "') ," \
+                                            "'" + ipt_isSelfPr + "')" \
 
                 logger.info(sql)
                 cursor.execute(sql)
@@ -3100,6 +3124,7 @@ class empOneInfo(Resource): # Mariadb 연결 진행
                       "     , EMP_GM" \
                       "     , DATE_FORMAT(JOB_STRT_TM, '%H%i%s') AS JOB_STRT_TM" \
                       "     , DATE_FORMAT(JOB_END_TM, '%H%i%s') AS JOB_END_TM" \
+                      "     , NVL(SELF_PR_YN, 'N') AS SELF_PR_YN" \
                       "  FROM TB_EMP_MGMT " \
                       " WHERE EMP_EMAIL = '" + data["email"] + "'";
 
@@ -3179,6 +3204,7 @@ class empMgmtEditSubmit(Resource):
         ipt_jobEndTm = request.form['ipt_jobEndTm']
         sessionId = request.form['sessionId']
         ipt_empWorkYn = request.form['ipt_empWorkYn']
+        ipt_isSelfPr = request.form['ipt_isSelfPr']
 
 
 
@@ -3193,6 +3219,7 @@ class empMgmtEditSubmit(Resource):
         logging.debug("ipt_jobEndTm = " + ipt_jobEndTm)
         logging.debug("sessionId = " + sessionId)
         logging.debug("ipt_empWorkYn = " + ipt_empWorkYn)
+        logging.debug("ipt_isSelfPr = " + ipt_isSelfPr)
 
         logging.debug("=====================")
 
@@ -3228,6 +3255,7 @@ class empMgmtEditSubmit(Resource):
                       "EMP_PR = (SELECT EMP_PR FROM TB_DEPT_CD_MGMT WHERE DEPT_CD = '" + ipt_empDept + "'), " \
                       "EMP_GM = (SELECT EMP_GM FROM TB_DEPT_CD_MGMT WHERE DEPT_CD = '" + ipt_empDept + "'), " \
                       "WORK_YN = '" + ipt_empWorkYn + "', " \
+                      "SELF_PR_YN = '" + ipt_isSelfPr + "', " \
                       "DEPT_NAME = (SELECT DEPT_NAME FROM TB_DEPT_CD_MGMT WHERE DEPT_CD = '" + ipt_empDept + "') " \
                       "WHERE EMP_ID = '" + ipt_empId + "'" \
 

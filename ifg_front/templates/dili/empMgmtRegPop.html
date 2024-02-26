@@ -201,6 +201,8 @@ function onClickSubmitBtn2() {
     var ipt_empDept = $('[name="sbx_empDept2"] option:selected').val();
     var ipt_jobStrtTm = $('[name="sbx_jobStrtTm"] option:selected').val();
     var ipt_jobEndTm = $('[name="sbx_jobEndTm"] option:selected').val();
+    var ipt_isSelfPr = $('[name="sbx_isSelfPr"] option:selected').val();
+
 
 
     var query = "input[name='AUTH_CD']:checked";
@@ -278,6 +280,7 @@ function onClickSubmitBtn2() {
         "ipt_empDept"   : ipt_empDept,
         "ipt_jobStrtTm" : ipt_jobStrtTm,
         "ipt_jobEndTm"  : ipt_jobEndTm,
+        "ipt_isSelfPr"  : ipt_isSelfPr,
         "sessionId"     : sessionStorage.getItem("email")      //로그인한 사용자 아이디
 
     }
@@ -524,6 +527,21 @@ function validChk2(){
                         <div class="align-self-center mr-5 pb-2">
                             <select id="sbx_empDept2" name="sbx_empDept2" class="form-control">
                                 <option value="00" selected>선택</option>
+                            </select>
+                        </div>
+                    </td>
+                    <td></td>
+                </tr>
+                <!-- Self1차승인여부 -->
+                <tr>
+                    <td>
+                        <div class="align-self-start align-self-center mr-5"><span class="requiredTag mr-1">*</span><label for="sbx_isSelfPr">셀프승인</label></div>
+                    </td>
+                    <td>
+                        <div class="align-self-center mr-5 pb-2">
+                            <select id="sbx_isSelfPr" name="sbx_isSelfPr" class="form-control">
+                                <option value="Y">Y</option>
+                                <option value="N">N</option>
                             </select>
                         </div>
                     </td>
