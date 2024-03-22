@@ -847,9 +847,9 @@ class saveApvlReq(Resource): # Mariadb 연결 진행
                           "     , WRK_TME       = '"  + wrkTme      + "' " \
                           "     , WRK_REQ_RSN   = '"  + wrkReqRsn   + "' " \
                           "     , TH1_APRV_NM   = '"  + th1AprvNm   + "' " \
-                          "     , TH1_APRV_STUS = '"  + th1AprvStus + "' " \
+                          "     , TH1_APRV_STUS = '01'" \
                           "     , TH2_APRV_NM   = '"  + th2AprvNm   + "' " \
-                          "     , TH2_APRV_STUS = '"  + th2AprvStus + "' " \
+                          "     , TH2_APRV_STUS = '01' " \
                           "     , REF_NM        = '"  + refNm       + "' " \
                           "     , REF2_NM       = '"  + ref2Nm      + "' " \
                           "     , REST_TM       = '"  + restTm      + "' " \
