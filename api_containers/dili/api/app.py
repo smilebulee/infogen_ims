@@ -440,7 +440,7 @@ class weekGridData(Resource): # Mariadb 연결 진행
                        +"              THEN '08:00'                                                                                                                    " \
                        +"              WHEN B.PTO_KD_CD = '02'                                                                                                         " \
                        +"              THEN '04:00'                                                                                                                     " \
-                       +"              ELSE SUBSTR(SUBTIME(B.JOB_END_TM, ADDTIME(B.JOB_STRT_TM,RPAD(B.REST_TM,4,0))),1,5)                                              " \
+                       +"              ELSE SUBSTR(SUBTIME(B.JOB_END_TM, ADDTIME(B.JOB_STRT_TM,RPAD(nvl(B.REST_TM,0),4,0))),1,5)                                              " \
                        +"               END                                                                                                                            " \
                        +"        ) AS WRK_TM                                                                                                                          " \
                        +"	   ,NVL(B.REST_TM,0) AS REST_TM                                                                                                           " \
@@ -622,7 +622,7 @@ class monthGridData(Resource): # Mariadb 연결 진행
                        +"              THEN '08:00'                                                                                                                    " \
                        +"              WHEN B.PTO_KD_CD = '02'                                                                                                         " \
                        +"              THEN '04:00'                                                                                                                     " \
-                       +"              ELSE SUBSTR(SUBTIME(B.JOB_END_TM, ADDTIME(B.JOB_STRT_TM,RPAD(B.REST_TM,4,0))),1,5)                                             " \
+                       +"              ELSE SUBSTR(SUBTIME(B.JOB_END_TM, ADDTIME(B.JOB_STRT_TM,RPAD(nvl(B.REST_TM,0),4,0))),1,5)                                             " \
                        +"               END                                                                                                                            " \
                        +"        ) AS WRK_TM                                                                                                                          " \
                        +"	   ,NVL(B.REST_TM,0) AS REST_TM                                                                                                           " \
@@ -2903,7 +2903,7 @@ class scheduleStatLst(Resource):
                   +" 			      END                                                                                                                                                     " \
                   +"    	 )  AS NGHT_SFT_TM                                                                                                                                                " \
                   +"    	,( CASE WHEN B.APVL_REQ_DIVS = '02'                                                                                                                               " \
-                  +" 	           THEN SUBSTR(SUBTIME(B.JOB_END_TM, ADDTIME(B.JOB_STRT_TM,RPAD(B.REST_TM,4,0))),1,5)                                                                         " \
+                  +" 	           THEN SUBSTR(SUBTIME(B.JOB_END_TM, ADDTIME(B.JOB_STRT_TM,RPAD(nvl(B.REST_TM,0),4,0))),1,5)                                                                         " \
                   +" 			     ELSE ''                                                                                                                                                  " \
                   +" 			      END                                                                                                                                                     " \
                   +"     	 ) AS HLDY_WRK_TM                                                                                                                                                 " \
