@@ -1560,6 +1560,8 @@ class duplApvlYryReqCnt(Resource):  # Mariadb 연결 진행
                       "   AND EMP_EMAL_ADDR = '" + data["email"] + "' " \
                       "   AND APVL_REQ_DIVS in ('03', '04') " \
                       "   AND WRK_DT = '" + data["wrkDt"] + "' " \
+                      "   AND TH1_APRV_STUS <> '03' " \
+                      "   AND TH2_APRV_STUS <> '03' " \
                       "   AND (WRK_DT BETWEEN '"       + data["wrkDt"] + "' AND '"+ data["holiTerm2"] +"'" \
                       "       OR '" + data["wrkDt"] + "' BETWEEN HOLI_TERM1 AND HOLI_TERM2) "
 
