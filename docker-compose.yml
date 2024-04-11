@@ -37,6 +37,7 @@ services:
   # front ui
   front:
     build: "./ifg_front"
+    platform: linux/amd64
 
     ports:
       - "80:8000"
@@ -63,6 +64,7 @@ services:
   # 1.직원관리
   emp_api:
     build: "./api_containers/emp/api"     # Dockerfile의 경로
+    platform: linux/amd64
     ports:
       - "5001:5001"     # 로컬의 5001포트로 요청일 들어오면 emp_api 컨테이너의 5001 포트로 연결
     environment:
@@ -80,6 +82,7 @@ services:
   # 2.프로젝트 관리
   prj_api:
     build: "./api_containers/prj/api"
+    platform: linux/amd64
     ports:
       - "5002:5002"
     environment:
@@ -97,6 +100,7 @@ services:
   # 3.skill 관리
   skil_api:
     build: "./api_containers/skil/api"
+    platform: linux/amd64
     ports:
       - "5003:5003"
     environment:
@@ -113,6 +117,7 @@ services:
 
   cmm_api:
     build: "./api_containers/cmm/api"
+    platform: linux/amd64
     ports:
       - "5004:5004"
     links:
@@ -137,6 +142,7 @@ services:
   # 6.근태 관리
   dili_api:
     build: "./api_containers/dili/api"     # Dockerfile의 경로
+    platform: linux/amd64
     ports:
       - "5006:5006"     # 로컬의 5001포트로 요청일 들어오면 dili_api 컨테이너의 5006 포트로 연결
     environment:

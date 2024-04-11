@@ -23,7 +23,7 @@ RUN wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSI
 # Run our app
 #CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
 
-#RUN chmod +x docker-entrypoint.sh
+RUN chmod +x docker-entrypoint.sh
 
 # 아래 파일의 EOL(End Of Line)이 윈도우 형식(CRLF)으로 되어 있으면 unix 형식(LF)으로 변환해야 함
 ENTRYPOINT ["./docker-entrypoint.sh"]
