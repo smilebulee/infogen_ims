@@ -273,7 +273,7 @@ class yryMgmt(Resource): # Mariadb 연결 진행
         try:
             with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
                 #쿼리문 실행
-                sql = "SELECT * FROM TB_YRY_MGMT_M WHERE EMP_EMAL_ADDR = '" + data["email"] + "'"
+                sql = "SELECT ALL_YRY_DAYS, USE_YRY_DAYS, ALL_YRY_DAYS-USE_YRY_DAYS AS YRY_DAYS FROM TB_YRY_MGMT_M WHERE EMP_EMAL_ADDR = '" + data["email"] + "'"
                 cursor.execute(sql)
 
         finally:

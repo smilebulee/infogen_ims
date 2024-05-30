@@ -31,6 +31,7 @@
                 if (data.length > 0) {
                     $('#txt_allAnhoDays').val(data[0].ALL_YRY_DAYS) //전체연차일수
                     $('#txt_rmnAnhoDays').val(data[0].ALL_YRY_DAYS - data[0].USE_YRY_DAYS) //남은연차일수
+                    $('#sp_yryDays').text(data[0].YRY_DAYS)
                 }
                 else {
                     $('#txt_allAnhoDays').val(0) //전체연차일수
@@ -46,6 +47,8 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         /* 사용자 권한 셋팅 */
         checkEmpAuthsByEmail(sessionStorage.getItem("email"), ["ADMIN", "GM", "USER"]);
+
+        setAnhoMgmt();
 
         //TO DO : h5_apvlYryTit 등록/수정/상세 제목 변경
         //TO DO : btn_apvlYryReq 저장/수정 버튼 변경
@@ -672,6 +675,15 @@
                                     <input type="text" class="form-control" id="ipt_holiDays" name="" maxlength="4" value="1" style="width:70px;display:none;" readOnly/>
                                     <span id="sp_holiDays" >1</span>&nbsp;&nbsp;일&nbsp;&nbsp;
                                     <input type="checkbox" id="chkbox" name="chkbox" value="1" class="ml-3">&nbsp;&nbsp;공휴일 포함하여 계산
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex-height d-flex m-0 p-2">
+                            <div class="align-self-start align-self-center mr-3" style="font-weight:bold; margin-right:2rem!important">잔여휴가일수</div>
+                            <div class="align-self-center mr-1">
+                                <div class="align-self-center mr-1">
+                                    <span id="sp_yryDays">1</span>&nbsp;&nbsp;일
                                 </div>
                             </div>
                         </div>
