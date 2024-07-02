@@ -36,7 +36,10 @@ $(document).ready(function(){
 
 /* 부서 설정 */
 function selectDeptName(){
- $.ajaxCall( {}, {
+    var param = {
+        "deptUseYn" : "Y"
+    }
+    $.ajaxCall( param, {
              'method' : 'GET',
              'url' : "{% url 'dili_api:getDeptInfo' %}",
              'dataType' : 'json',

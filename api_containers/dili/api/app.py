@@ -3986,6 +3986,8 @@ class deptInfo(Resource): # Mariadb 연결 진행
         logging.debug(request.args.get('param'))
         logging.debug('================== App End ==================')
 
+        deptUseYn = data["deptUseYn"]
+
         #requirements pymysql import 후 커넥트 사용
         #mysql_con = pymysql.connect(host=getSystemInfo(), port=3306, db='IFG_IMS', user='ims2', password='1234',
         #                                charset='utf8', autocommit=False)
@@ -4009,8 +4011,12 @@ class deptInfo(Resource): # Mariadb 연결 진행
  	                    "  FROM TB_EMP_MGMT E               " \
  	                    "  WHERE E.EMP_ID = C.EMP_GM        " \
  	                    "  ) AS GM_NAME                     " \
-	                    "  FROM TB_DEPT_CD_MGMT C           " \
-	                    "  ORDER BY DEPT_CD                 "
+	                    "  FROM TB_DEPT_CD_MGMT C           "
+
+                if deptUseYn != "":
+                    sql += "  WHERE C.DEPT_USE_YN = '" + deptUseYn + "'" \
+
+                sql +=  "  ORDER BY C.DEPT_CD               "
 
 
                 logging.debug(sql)

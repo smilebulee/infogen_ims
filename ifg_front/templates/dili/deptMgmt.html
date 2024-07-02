@@ -12,6 +12,10 @@ $(document).ready(function(){
 
     $('#deptModalTest').load("{% url 'dili_api:deptMgmtRegPop' %}");
 
+    var param = {
+        "deptUseYn"         : ""
+    }
+
     /* 목록조회 */
     $.ajaxCall( param, {
          'method' : 'GET',
