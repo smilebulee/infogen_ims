@@ -1168,6 +1168,8 @@ class apvlAcptHist(Resource):  # Mariadb 연결 진행
                         sql=sql+"   AND A.TH1_APRV_NM = '" + email + "' AND A.TH1_APRV_STUS = '" + apvlStusDivs + "'  "
                     elif email == empGm:
                         sql=sql+"   AND A.TH2_APRV_NM = '" + email + "' AND A.TH1_APRV_STUS = '02' AND A.TH2_APRV_STUS = '" + apvlStusDivs + "'  "
+                    else:
+                        sql=sql+"   AND 1=2 "
 
                     sql=sql+" ORDER BY APVL_REQ_DT ASC "
 
