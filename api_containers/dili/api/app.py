@@ -53,7 +53,7 @@ def getSystemInfo():
             return "mariadb"
         else :
             logging.debug('Local Server')
-            return "112.220.26.195"
+            return "118.222.92.21"
 
     except Exception as e:
         logging.exception(e)
@@ -2432,12 +2432,15 @@ class saveYryApvlCncl(Resource):  # Mariadb 연결 진행
         apvlReqDivs = params['apvlReqDivs']
         wrkDt = params['wrkDt']
         wrkSeq = params['wrkSeq']
+        holiDays = params['holiDays']
+
         logging.debug("====Param data====")
 
         logging.debug("email        = " + email)
         logging.debug("apvlReqDivs  = " + apvlReqDivs)
         logging.debug("wrkDt        = " + wrkDt)
         logging.debug("wrkSeq       = " + wrkSeq)
+        logging.debug("holiDays     = " + holiDays)
 
         # requirements pymysql import 후 커넥트 사용
         mysql_con = getMariaConn()
@@ -2451,6 +2454,14 @@ class saveYryApvlCncl(Resource):  # Mariadb 연결 진행
                        "   AND WRK_SEQ       = '"+wrkSeq+"'"
                 logger.info(sql1)
                 cursor.execute(sql1)
+                mysql_con.commit()
+
+                sql3 = "UPDATE TB_YRY_MGMT_M" \
+                       "   SET USE_YRY_DAYS = (USE_YRY_DAYS-"+holiDays+")" \
+                       " WHERE EMP_EMAL_ADDR = '"+email+"'"
+
+                logger.info(sql3)
+                cursor.execute(sql3)
                 mysql_con.commit()
         except Exception as e:
             logger.info("에러!!!!!!!!!!!!!!!!!!!!!!!" + e)

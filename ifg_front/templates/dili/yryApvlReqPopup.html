@@ -289,6 +289,10 @@
             return 0.5;
         }
 
+        if ($('input[name="ptoKdCd"]:checked').val() == "03") { //기타휴가는 0개
+            return 0;
+        }
+
         while(true) {
             var temp_date = date1;
 
@@ -549,6 +553,7 @@
             return;
         }
 
+        /* 2025-01-13 남은연차 -라도 등록할 수 있도록 수정
         if(Number($('#txt_rmnAnhoDays').val()) == 0){
             alertMsg("남은연차가 없습니다.");
             return;
@@ -557,6 +562,7 @@
             alertMsg("남은연차일수 보다 등록하실 연차일수가 더 큽니다.");
             return;
         }
+        */
 
         //신규 저장시, 입력받은 데이터 유효성 검증
         if($('#currYryPopStts').val() == "register") {
@@ -595,6 +601,7 @@
                     "apvlReqDivs"   : "99",    // 01: 야근, 02:휴일, 03: 연차, 04: 반차, 99:취소
                     "wrkDt"         : $("#ipt_holiTerm1").val(),                    // 근무일 환산
                     "wrkSeq"        : $("#ipt_wrkSeq").val(),                       // 근무요청Seq
+                    "holiDays"      : calcWrkDate()+"",      // 휴가일수
                 }
                 $.ajaxCall( param, {
                      method : 'POST',
