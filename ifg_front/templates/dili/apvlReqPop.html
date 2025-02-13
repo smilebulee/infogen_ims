@@ -476,6 +476,7 @@
                     "apvlReqDivs"   : "99",    // 01: 야근, 02:휴일, 03: 연차, 04: 반차, 99:취소
                     "wrkDt"         : $("#ipt_wrkDt").val(),                    // 근무일
                     "wrkSeq"        : $("#ipt_wrkSeq").val(),                   // 결재요청SEQ
+                    "holiDays"      : "0"                   // 휴가일수
                 }
                 $.ajaxCall( param, {
                      method : 'POST',
