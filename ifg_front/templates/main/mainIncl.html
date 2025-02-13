@@ -55,8 +55,20 @@
             var mainMenuTh = '';
 
             for(var i=0; i < data.length; i++){
-
-                 mainMenuTh += '<th id="'+data[i].MENU_ID+'" style="font-size:20px; color:black;" onclick="mainMenuClickEvt(this)">'+data[i].MENU_NM+'</th>'
+                 if( data[i].MENU_ID == 'M0002' )
+                 {
+                        if(  ( sessionStorage.getItem("email") == 'ywlee'
+                            || sessionStorage.getItem("email") == 'jsshin'
+                             )
+                          )
+                        {
+                        mainMenuTh += '<th id="'+data[i].MENU_ID+'" style="font-size:20px; color:black;" onclick="mainMenuClickEvt(this)">'+data[i].MENU_NM+'</th>'
+                        }
+                 }
+                 else
+                 {
+                        mainMenuTh += '<th id="'+data[i].MENU_ID+'" style="font-size:20px; color:black;" onclick="mainMenuClickEvt(this)">'+data[i].MENU_NM+'</th>'
+                 }
             }
 
             document.getElementById('mainMenuTrId').innerHTML = mainMenuTh;
