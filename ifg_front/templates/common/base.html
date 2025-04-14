@@ -37,8 +37,73 @@
         <script type="text/javascript" src="{% static 'common/common.js' %}?{% now 'YmdHis' %}"></script>
         <script type="text/javascript">
             $(document).ready(function(){
-
             });
+
+            // 쿠키 설정
+            function setCookie(name, value, days) {
+              const date = new Date();
+              date.setDate(date.getDate() + days);
+              document.cookie = `${name}=${value}; path=/; expires=${date.toUTCString()}`;
+            }
+
+            // 쿠키 읽기
+            function getCookie(name) {
+              const value = `; ${document.cookie}`;
+              const parts = value.split(`; ${name}=`);
+              if (parts.length === 2) return parts.pop().split(';').shift();
+              return null;
+            }
+
+            // 팝업 열기
+            function showPopup() {
+              if (!getCookie("hidePopupToday")) {
+                // document.getElementById("popupOverlay").style.display = "block";
+                document.getElementById("popup_gongji").style.display = "block";
+              }
+            }
+
+            // 팝업 닫기
+            function closePopup() {
+              const hideToday = document.getElementById("hideToday").checked;
+              if (hideToday) {
+                setCookie("hidePopupToday", "Y", 1); // 1일 동안 저장
+              }
+              // document.getElementById("popupOverlay").style.display = "none";
+              document.getElementById("popup_gongji").style.display = "none";
+            }
+
+            // 페이지 로드 시 팝업 보여주기
+            window.onload = function () {
+                showPopup();
+                makeDraggable("popup_gongji");
+            };
+
+            function makeDraggable(popupId, handleId) {
+                const popup = document.getElementById(popupId);
+                const handle = document.getElementById(handleId);
+
+                let isDragging = false;
+                let offsetX = 0, offsetY = 0;
+
+                handle.addEventListener("mousedown", function (e) {
+                    isDragging = true;
+                    offsetX = e.clientX - popup.offsetLeft;
+                    offsetY = e.clientY - popup.offsetTop;
+                    document.body.style.userSelect = "none"; // 드래그 중 텍스트 선택 방지
+                });
+
+                document.addEventListener("mousemove", function (e) {
+                    if (isDragging) {
+                      popup.style.left = (e.clientX - offsetX) + "px";
+                      popup.style.top = (e.clientY - offsetY) + "px";
+                    }
+                });
+
+                document.addEventListener("mouseup", function () {
+                    isDragging = false;
+                    document.body.style.userSelect = "auto";
+                });
+            }
 
         </script>
         <title>IFG-IMS</title>
@@ -106,6 +171,15 @@
         </div>
         <div class="border-top text-center" style="width : 100%; min-width : 1920px;">
             {% include 'common/footer.html' %}
+        </div>
+
+        <div id="popup_gongji" style="position: fixed; top: 30%; left: 30%; transform: translate(-50%, -30%); background: #fff; padding: 20px; width: 760px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); border-radius: 10px; display: none; z-index: 1000;">
+
+            <img src="{% static 'image/yeoncha_gongji.jpg' %}">
+            <label>
+                <input type="checkbox" id="hideToday"> 오늘 하루 열지 않기
+            </label>
+            <button onclick="closePopup()">닫기</button>
         </div>
     </body>
 </html>
