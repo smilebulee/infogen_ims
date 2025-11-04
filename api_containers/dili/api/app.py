@@ -1257,7 +1257,7 @@ class empInfo(Resource): # Mariadb 연결 진행
                     # 현재 재직중인 직원 조회
                     sql = "SELECT SEQ_NO, EMP_NAME, EMP_EMAIL, EMP_ID, EMP_PR, EMP_GM, AUTH_ID, DEPT_CD, DEPT_NAME, WORK_YN " \
                           "     , NVL((SELECT A.ALL_YRY_DAYS-A.USE_YRY_DAYS FROM TB_YRY_MGMT_M A WHERE A.EMP_EMAL_ADDR = B.EMP_EMAIL), 0) AS YRY_CNT " \
-                          "FROM TB_EMP_MGMT " \
+                          "FROM TB_EMP_MGMT B " \
                           "WHERE EMP_NAME LIKE '%" + data["name"] + "%' " \
                           "AND WORK_YN = 'Y' " \
                           "ORDER BY SEQ_NO"
