@@ -158,7 +158,8 @@
                 var reqEmail  = data[0].EMP_EMAIL;     //기안자
                 var reqName   = data[0].EMP_NAME;      //기안명
                 var reqDt     = data[0].APVL_REQ_DT;   //기안일자
-                var ptoKdCd   = data[0].PTO_KD_CD;     //휴가종류
+                var ptoKdCd   = data[0].PTO_KD_CD;     //연차종류
+                var hdoKdCd   = data[0].HDO_KD_CD;     //휴가종류
                 var holiTerm1 = data[0].HOLI_TERM1;    //휴가시작일자
                 var holiTerm2 = data[0].HOLI_TERM2;    //휴가종료일자
                 var wrkSeq    = data[0].WRK_SEQ;       //결재요청Seq
@@ -171,17 +172,42 @@
                 var refName   = data[0].REF_NAME;      //참조자1 명
                 var ref2Email = data[0].REF2_NM;       //참조자2 email
                 var ref2Name  = data[0].REF2_NAME;     //참조자2 명
-                console.log("ptoKdCd : "+ptoKdCd);
+                console.log("ptoKdCd : "+ptoKdCd+", "+hdoKdCd);
 
                 /* 휴가종류 01 연차 02 반차 03 기타- 수정 불가 */
-                if( ptoKdCd == "01" ) {
+                /*if( ptoKdCd == "01" ) {
                     $('input[name="ptoKdCd"]:input[value="01"]').attr('checked', true);
                 } else if( ptoKdCd == "02" ) {
                     $('input[name="ptoKdCd"]:input[value="02"]').attr('checked', true);
                 } else if( ptoKdCd == "03" ) {
                     $('input[name="ptoKdCd"]:input[value="03"]').attr('checked', true);
                 }
-                $("input:radio[name=ptoKdCd]").attr("disabled", true); //비활성화
+                $("input:radio[name=ptoKdCd]").attr("disabled", true);*/ //비활성화
+
+                $('[name="ptoKdCdList"]').val(ptoKdCd);
+                $('[name="ptoKdCdList"]').prop('disabled', true);
+
+                $('[name="ptoKdCdDtlList"]').prop('disabled', false);
+                $('[name="ptoKdCdDtlList"]').empty();
+                if(ptoKdCd == "02"){
+                    //반차시 오전/오후
+                    retrieveCmmCd('sbx_ptoKdCdDtl', 'HDO_KD_CD', function(data) {
+                        $("#sp_holiDays").text(0.5);
+                        $("#ipt_holiDays").val(0.5);
+                    });
+                }else if(ptoKdCd == "05"){
+                    //건강검진 휴가시
+                    retrieveCmmCd('sbx_ptoKdCdDtl', 'HDO_KD_CD_2', function(data) {
+                        $("#sp_holiDays").text(0.5);
+                        $("#ipt_holiDays").val(0.5);
+                    });
+                }else{
+                    $('[name="ptoKdCdDtlList"]').prepend('<option value="">선택</option>');
+                }
+                $('[name="ptoKdCdDtlList"]').val(hdoKdCd);
+                $('[name="ptoKdCdDtlList"]').prop('disabled', true);
+
+
 
                 /* 휴가 기간, */
                 $("#ipt_holiTerm1").val(holiTerm1);
@@ -421,16 +447,23 @@
             //반차시 오전/오후
             retrieveCmmCd('sbx_ptoKdCdDtl', 'HDO_KD_CD', function(data) {
                 $('[name="ptoKdCdDtlList"]').prepend('<option value="">선택</option>');
+                $('#ipt_holiTerm2').prop('disabled', true);
             });
         }else if(selVal == "05"){
             $('[name="ptoKdCdDtlList"]').prop('disabled', false);
             //건강검진 휴가시
             retrieveCmmCd('sbx_ptoKdCdDtl', 'HDO_KD_CD_2', function(data) {
                 $('[name="ptoKdCdDtlList"]').prepend('<option value="">선택</option>');
+
+                $("#sp_holiDays").text(0.5);
+                $("#ipt_holiDays").val(0.5);
+
+                $('#ipt_holiTerm2').prop('disabled', true);
             });
         }else{
             $('[name="ptoKdCdDtlList"]').prepend('<option value="">선택</option>');
             $('[name="ptoKdCdDtlList"]').prop('disabled', true);
+            $('#ipt_holiTerm2').prop('disabled', false);
         }
 
         dateCalcu();

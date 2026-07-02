@@ -348,7 +348,7 @@
                 apvlReqHistTable += '<td class="pt-3-half">'+wrkDtm+'</td>';
                 apvlReqHistTable += '<td class="pt-3-half">'+data[i].APRV_STUS_NM+'</td>';
                 apvlReqHistTable += '<td class="pt-3-half">'+data[i].REF_NM+'</td>';
-                data[i].WRK_REQ_RSN = data[i].WRK_REQ_RSN.length >= 30 ? data[i].WRK_REQ_RSN.substring(0, 30) + '...' : data[i].WRK_REQ_RSN ;
+                //data[i].WRK_REQ_RSN = data[i].WRK_REQ_RSN.length >= 30 ? data[i].WRK_REQ_RSN.substring(0, 30) + '...' : data[i].WRK_REQ_RSN ;
                 apvlReqHistTable += '<td class="pt-3-half">'+data[i].WRK_REQ_RSN+'</td>';
                 //apvlReqHistTable += '<td class="pt-3-half" style="display: none;">' + data[i].TH1_APRV_NM + ';' + data[i].TH1_APRV_STUS + '</td>';
                 apvlReqHistTable += '<td class="pt-3-half" style="display: none;">' + data[i].EMP_EMAL_ADDR + ";" + data[i].WRK_DT + ";" + data[i].JOB_STRT_TM + ";" + data[i].JOB_END_TM + ";" + data[i].TH1_APRV_STUS + ";" + data[i].APVL_REQ_DT + ";" + data[i].WRK_SEQ + ";" + '</td>';
