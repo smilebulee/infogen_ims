@@ -711,8 +711,12 @@
 
                             if ( schdData[j].PTO_KD_CD == "" ) {
                                 table += '<td class="pt-3-half" contenteditable="false">'+ wrkDivStr + ' : '  + allWrkTm + '</td>';
+                            } else if ( schdData[j].PTO_KD_CD == "01" || schdData[j].PTO_KD_CD == "03" || schdData[j].PTO_KD_CD == "04" ){
+                                table += '<td class="pt-3-half" contenteditable="false">'+schdData[j].PTO_KD_CD_NM+'</td>';
                             } else if ( schdData[j].PTO_KD_CD == "02" ){
                                 table += '<td class="pt-3-half" contenteditable="false">'+schdData[j].HDO_KD_CD_NM+'</td>';
+                            } else if ( schdData[j].PTO_KD_CD == "05" ){
+                                table += '<td class="pt-3-half" contenteditable="false">'+schdData[j].PTO_KD_CD_NM+' '+schdData[j].HDO_KD_CD_NM+'</td>';
                             } else {
                                 table += '<td class="pt-3-half" contenteditable="false">'+schdData[j].PTO_KD_CD_NM+'</td>';
                             }
