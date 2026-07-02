@@ -711,6 +711,8 @@
 
                             if ( schdData[j].PTO_KD_CD == "" ) {
                                 table += '<td class="pt-3-half" contenteditable="false">'+ wrkDivStr + ' : '  + allWrkTm + '</td>';
+                            } else if ( schdData[j].PTO_KD_CD == "01" ){
+                                table += '<td class="pt-3-half" contenteditable="false">'+schdData[j].HDO_KD_CD_NM+'</td>';
                             } else if ( schdData[j].PTO_KD_CD == "02" ){
                                 table += '<td class="pt-3-half" contenteditable="false">'+schdData[j].HDO_KD_CD_NM+'</td>';
                             } else {

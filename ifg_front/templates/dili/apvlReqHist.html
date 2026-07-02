@@ -454,7 +454,7 @@
             url = "{% url 'dili_api:apvlReqPop' %}" ;
         /*} else if (sSelStr == "반차결재" ) { //|| sSelStr == "연차결재") {
             url = "{% url 'dili_api:apvlReqBfrChkPop' %}" ;*/
-        } else if (sSelStr == "연차결재" || sSelStr == "반차결재") {
+        } else if (sSelStr == "연차결재" || sSelStr == "반차결재" || sSelStr == "공가결재" || sSelStr == "경조휴가결재" || sSelStr == "건강검진결재") {
             url = "{% url 'dili_api:yryApvlReqPop' %}" ;
             $('#currYryPopStts').val("modify");
             $('#currYryPopParamArr').val($(trId).children().eq(9).html());
