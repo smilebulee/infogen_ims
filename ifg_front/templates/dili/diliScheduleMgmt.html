@@ -1061,6 +1061,7 @@
                 var statTm  = calendarData[i].JOB_STRT_TM;
                 var endTm  = calendarData[i].JOB_END_TM;
                 var apvlReqDivs = calendarData[i].APVL_REQ_DIVS;
+                var ptoKdCd = calendarData[i].PTO_KD_CD;
                 var statTmTitle = "근무시간 : " + statTm + " ~ " + endTm;
                 var startTimeAdd = wrkDt + "T" + statTm;
                 var endTimeAdd = wrkDt + "T" + endTm;
@@ -1073,8 +1074,18 @@
                 // var overTm  = calendarData[i].OVER_WRK_TM;
 
 
-                if(apvlReqDivs == "03"){
+                if(ptoKdCd == "01" || ptoKdCd == "03" || ptoKdCd == "04"){ //연차 공가 경조휴가
+                    statTmTitle  = calendarData[i].PTO_KD_CD_NM;
+                    startTimeAdd = calendarData[i].HOLI_TERM1;
+                    endTimeAdd   = calendarData[i].HOLI_TERM2;
+                    holiStartDt = endTimeAdd;
+                } else if (ptoKdCd == "02") { //반차
                     statTmTitle  = calendarData[i].APVL_REQ_DIVS_NM;
+                    startTimeAdd = calendarData[i].HOLI_TERM1;
+                    endTimeAdd   = calendarData[i].HOLI_TERM2;
+                    holiStartDt = endTimeAdd;
+                } else if (ptoKdCd == "05") {
+                    statTmTitle  = calendarData[i].PTO_KD_CD_NM +' '+ calendarData[i].HDO_KD_CD_NM;
                     startTimeAdd = calendarData[i].HOLI_TERM1;
                     endTimeAdd   = calendarData[i].HOLI_TERM2;
                     holiStartDt = endTimeAdd;
@@ -1082,11 +1093,12 @@
                     statTmTitle = calendarData[i].APVL_REQ_DIVS_NM + " : " + statTm + " ~ " + endTm;
                 } else if ( apvlReqDivs == "02" ) {
                     statTmTitle = calendarData[i].APVL_REQ_DIVS_NM + " : " + statTm + " ~ " + endTm;
-                }else if ( apvlReqDivs == "04" ) {
+                }
+                /*else if ( apvlReqDivs == "04" ) {
                     statTmTitle  = calendarData[i].HDO_KD_CD_NM;
                     startTimeAdd = calendarData[i].HOLI_TERM1;
                     endTimeAdd   = calendarData[i].HOLI_TERM2;
-                }
+                }*/
 
                 var bgColor ="";
                 if ( apvlReqDivs != "" ) {
