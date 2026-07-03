@@ -386,15 +386,17 @@ class weekGridData(Resource): # Mariadb 연결 진행
                        +"SELECT  '' AS WRK_SEQ                                                                                                                      " \
                        +"       ,A.EMP_EMAL_ADDR                                                                                                                    " \
                        +"       ,A.WRK_DT                                                                                                                           " \
-                       +"       ,( CASE WHEN B.PTO_KD_CD = '02' /*PTO_KD_CD 02 반차*/                                                                                " \
+                       +"       ,( CASE WHEN B.PTO_KD_CD IN ('01', '03', '04')                                                                                      " \
+                       +"               THEN NVL(DATE_FORMAT(A.JOB_STRT_TM, '%H:%i'),'-')                                                                           " \
+                       +"               WHEN B.PTO_KD_CD = '02' OR B.HDO_KD_CD = '03'                                                                               " \
                        +"               THEN SUBSTRING( REPLACE ( A.JOB_STRT_TM,SUBSTRING(A.JOB_STRT_TM,1,2),SUBSTRING(A.JOB_STRT_TM,1,2)+5),1,5)                   " \
-                       +"               ELSE NVL(DATE_FORMAT(A.JOB_STRT_TM, '%H:%i'),'-')                                                                           " \
-                       +"                END                                                                                                                        " \
-                       +"         ) AS JOB_STRT_TM                                                                                                                  " \
-                       +"       ,( CASE WHEN B.HDO_KD_CD = '02' /*HDOP_KD_CD 02 오후반차*/                                                                           " \
+                       +"               ELSE NVL(DATE_FORMAT(B.JOB_STRT_TM, '%H:%i'),'-')                                                                           " \
+                       +"           END                                                                                                                             " \
+                       +"        ) AS JOB_STRT_TM                                                                                                                   " \
+                       +"       ,( CASE WHEN B.PTO_KD_CD = '02' AND B.HDO_KD_CD = '01'                                                                              " \
                        +"               THEN SUBSTRING( REPLACE ( A.JOB_STRT_TM,SUBSTRING(A.JOB_STRT_TM,1,2),SUBSTRING(A.JOB_STRT_TM,1,2)+5),1,5)                   " \
-                       +"               ELSE NVL(DATE_FORMAT(A.JOB_END_TM, '%H:%i'),'-')                                                                            " \
-                       +"                END                                                                                                                        " \
+                       +"               ELSE NVL(DATE_FORMAT(B.JOB_END_TM, '%H:%i'),'-')                                                                            " \
+                       +"               END                                                                                                                         " \
                        +"        ) AS JOB_END_TM                                                                                                                    " \
                        +"       ,( CASE WHEN B.PTO_KD_CD = '02' OR (B.PTO_KD_CD = '05' AND B.HDO_KD_CD = '03')  /*PTO_KD_CD 02 오후반차 OR 건강검진연차*/               " \
                        +"               THEN '04:00'                                                                                                                " \
@@ -418,18 +420,18 @@ class weekGridData(Resource): # Mariadb 연결 진행
                        +"   AND A.EMP_EMAL_ADDR = B.EMP_EMAL_ADDR                                                                                                     " \
                        +"   AND B.APVL_REQ_DIVS = '04'                                                                                                                " \
                        +" WHERE 1 = 1                                                                                                                                 " \
-                       +"				                                                                                                                               " \
+                       +"				                                                                                                                              " \
                        +"UNION ALL                                                                                                                                    " \
                        +"                                                                                                                                             " \
                        +"SELECT B.WRK_SEQ AS WRK_SEQ                                                                                                                  " \
                        +"      ,B.EMP_EMAL_ADDR                                                                                                                       " \
-                       +"      ,NVL(A.WRK_DT,B.WRK_DT)                                                                                                                              " \
-                       +"      ,( CASE WHEN B.PTO_KD_CD IN ('01', '03', '04')                                                                              " \
-                       +"              THEN NVL(DATE_FORMAT(A.JOB_STRT_TM, '%H:%i'),'-')                                                                           " \
-                       +"              WHEN B.PTO_KD_CD = '02' OR B.HDO_KD_CD = '03'                                                                                    " \
-                       +"              THEN SUBSTRING( REPLACE ( A.JOB_STRT_TM,SUBSTRING(A.JOB_STRT_TM,1,2),SUBSTRING(A.JOB_STRT_TM,1,2)+5),1,5)                   " \
-                       +"              ELSE NVL(DATE_FORMAT(B.JOB_STRT_TM, '%H:%i'),'-')                                                                           " \
-                       +"          END                                                                                                                         " \
+                       +"      ,NVL(A.WRK_DT,B.WRK_DT)                                                                                                                " \
+                       +"      ,( CASE WHEN B.PTO_KD_CD IN ('01', '03', '04')                                                                                         " \
+                       +"              THEN NVL(DATE_FORMAT(A.JOB_STRT_TM, '%H:%i'),'-')                                                                              " \
+                       +"              WHEN B.PTO_KD_CD = '02' OR B.HDO_KD_CD = '03'                                                                                  " \
+                       +"              THEN SUBSTRING( REPLACE ( A.JOB_STRT_TM,SUBSTRING(A.JOB_STRT_TM,1,2),SUBSTRING(A.JOB_STRT_TM,1,2)+5),1,5)                      " \
+                       +"              ELSE NVL(DATE_FORMAT(B.JOB_STRT_TM, '%H:%i'),'-')                                                                              " \
+                       +"          END                                                                                                                                " \
                        +"         ) AS JOB_STRT_TM                                                                                                                    " \
                        +"      ,( CASE WHEN B.PTO_KD_CD = '02' AND B.HDO_KD_CD = '01'                                                                                 " \
                        +"              THEN SUBSTRING( REPLACE ( A.JOB_STRT_TM,SUBSTRING(A.JOB_STRT_TM,1,2),SUBSTRING(A.JOB_STRT_TM,1,2)+5),1,5)                      " \
@@ -568,15 +570,17 @@ class monthGridData(Resource): # Mariadb 연결 진행
                        +"SELECT  '' AS WRK_SEQ                                                                                                                        " \
                        +"       ,A.EMP_EMAL_ADDR                                                                                                                      " \
                        +"       ,A.WRK_DT                                                                                                                             " \
-                       +"       ,( CASE WHEN B.PTO_KD_CD = '02' /*PTO_KD_CD 02 반차*/                                                                                " \
+                       +"       ,( CASE WHEN B.PTO_KD_CD IN ('01', '03', '04')                                                                                      " \
+                       +"               THEN NVL(DATE_FORMAT(A.JOB_STRT_TM, '%H:%i'),'-')                                                                           " \
+                       +"               WHEN B.PTO_KD_CD = '02' OR B.HDO_KD_CD = '03'                                                                               " \
                        +"               THEN SUBSTRING( REPLACE ( A.JOB_STRT_TM,SUBSTRING(A.JOB_STRT_TM,1,2),SUBSTRING(A.JOB_STRT_TM,1,2)+5),1,5)                   " \
                        +"               ELSE NVL(DATE_FORMAT(A.JOB_STRT_TM, '%H:%i'),'-')                                                                           " \
-                       +"                END                                                                                                                        " \
-                       +"         ) AS JOB_STRT_TM                                                                                                                  " \
-                       +"       ,( CASE WHEN B.HDO_KD_CD = '02' /*HDOP_KD_CD 02 오후반차*/                                                                           " \
+                       +"           END                                                                                                                             " \
+                       +"        ) AS JOB_STRT_TM                                                                                                                   " \
+                       +"       ,( CASE WHEN B.PTO_KD_CD = '02' AND B.HDO_KD_CD = '01'                                                                              " \
                        +"               THEN SUBSTRING( REPLACE ( A.JOB_STRT_TM,SUBSTRING(A.JOB_STRT_TM,1,2),SUBSTRING(A.JOB_STRT_TM,1,2)+5),1,5)                   " \
                        +"               ELSE NVL(DATE_FORMAT(A.JOB_END_TM, '%H:%i'),'-')                                                                            " \
-                       +"                END                                                                                                                        " \
+                       +"               END                                                                                                                         " \
                        +"        ) AS JOB_END_TM                                                                                                                    " \
                        +"       ,( CASE WHEN B.PTO_KD_CD = '02' OR (B.PTO_KD_CD = '05' AND B.HDO_KD_CD = '03')  /*PTO_KD_CD 02 오후반차 OR 건강검진연차*/               " \
                        +"               THEN '04:00'                                                                                                                " \
@@ -606,23 +610,23 @@ class monthGridData(Resource): # Mariadb 연결 진행
                        +"SELECT B.WRK_SEQ AS WRK_SEQ                                                                                                                  " \
                        +"      ,B.EMP_EMAL_ADDR                                                                                                                       " \
                        +"      ,NVL(A.WRK_DT,B.WRK_DT)                                                                                                                " \
-                       +"      ,( CASE WHEN B.APVL_REQ_DIVS = '03' OR B.HDO_KD_CD = '01'                                                                              " \
-                       +"                 THEN NVL(DATE_FORMAT(A.JOB_STRT_TM, '%H:%i'),'-')                                                                           " \
-                       +"                 WHEN B.HDO_KD_CD = '02'                                                                                                     " \
-                       +"                 THEN SUBSTRING( REPLACE ( A.JOB_STRT_TM,SUBSTRING(A.JOB_STRT_TM,1,2),SUBSTRING(A.JOB_STRT_TM,1,2)+5),1,5)                   " \
-                       +"                 ELSE NVL(DATE_FORMAT(B.JOB_STRT_TM, '%H:%i'),'-')                                                                           " \
-                       +"                 END                                                                                                                         " \
-                       +"         ) AS JOB_STRT_TM                                                                                                                    " \
-                       +"      ,( CASE  WHEN B.PTO_KD_CD = '02' AND B.HDO_KD_CD = '01'                                                                                " \
+                       +"      ,( CASE WHEN B.PTO_KD_CD IN ('01', '03', '04')                                                                                         " \
+                       +"              THEN NVL(DATE_FORMAT(A.JOB_STRT_TM, '%H:%i'),'-')                                                                              " \
+                       +"              WHEN B.PTO_KD_CD = '02' OR B.HDO_KD_CD = '03'                                                                                  " \
                        +"              THEN SUBSTRING( REPLACE ( A.JOB_STRT_TM,SUBSTRING(A.JOB_STRT_TM,1,2),SUBSTRING(A.JOB_STRT_TM,1,2)+5),1,5)                      " \
-                       +"              ELSE SUBSTRING(NVL(DATE_FORMAT(B.JOB_END_TM, '%H:%i'),A.JOB_END_TM),1,5)                                                                               " \
+                       +"              ELSE NVL(DATE_FORMAT(B.JOB_STRT_TM, '%H:%i'),'-')                                                                              " \
+                       +"          END                                                                                                                                " \
+                       +"         ) AS JOB_STRT_TM                                                                                                                    " \
+                       +"      ,( CASE WHEN B.PTO_KD_CD = '02' AND B.HDO_KD_CD = '01'                                                                                 " \
+                       +"              THEN SUBSTRING( REPLACE ( A.JOB_STRT_TM,SUBSTRING(A.JOB_STRT_TM,1,2),SUBSTRING(A.JOB_STRT_TM,1,2)+5),1,5)                      " \
+                       +"              ELSE NVL(DATE_FORMAT(B.JOB_END_TM, '%H:%i'),'-')                                                                               " \
                        +"               END                                                                                                                           " \
                        +"       ) AS JOB_END_TM                                                                                                                       " \
-                       +"	   ,( CASE WHEN B.PTO_KD_CD IN ( '01', '03', '04' )                                                                                         " \
+                       +"	   ,( CASE WHEN B.PTO_KD_CD IN ( '01', '03', '04' ) OR B.HDO_KD_CD = '04'                                                                 " \
                        +"              THEN '08:00'                                                                                                                    " \
-                       +"              WHEN B.PTO_KD_CD = '02' OR B.HDO_KD_CD = '03'                                                                                   " \
+                       +"              WHEN B.PTO_KD_CD = '02' OR B.HDO_KD_CD = '03'                                                                                    " \
                        +"              THEN '04:00'                                                                                                                     " \
-                       +"              ELSE SUBSTR(SUBTIME(B.JOB_END_TM, ADDTIME(B.JOB_STRT_TM,CASE WHEN B.REST_TM = 60 THEN '01:00:00' ELSE RPAD(B.REST_TM,4,0) END)),1,5)                                             " \
+                       +"              ELSE SUBSTR(SUBTIME(B.JOB_END_TM, ADDTIME(B.JOB_STRT_TM,CASE WHEN B.REST_TM = 60 THEN '01:00:00' ELSE RPAD(B.REST_TM,4,0) END)),1,5)                                              " \
                        +"               END                                                                                                                            " \
                        +"        ) AS WRK_TM                                                                                                                          " \
                        +"	   ,NVL(B.REST_TM,0) AS REST_TM                                                                                                           " \
@@ -1052,7 +1056,7 @@ class apvlReqHist(Resource): # Mariadb 연결 진행
                 if deptCd != "" and deptCd != "00":
                     sql += "   AND B.DEPT_CD = '" + deptCd + "' "
 
-                sql += " ORDER BY A.APVL_REQ_DT ASC, A.WRK_DT ASC "
+                sql += " ORDER BY B.EMP_NAME ASC, A.APVL_REQ_DT ASC, A.WRK_DT ASC "
                 logging.debug("apvlReqHist SQL문" + sql)
                 cursor.execute(sql)
 
