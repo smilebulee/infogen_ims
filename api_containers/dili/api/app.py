@@ -1042,10 +1042,12 @@ class apvlReqHist(Resource): # Mariadb 연결 진행
                       "     , CONCAT(IFNULL(A.WRK_REQ_RSN, ''), IFNULL(A.HOLI_REQ_RSN, '')) AS WRK_REQ_RSN" \
                       "     , CASE WHEN A.APVL_REQ_DIVS = '03'" \
                       "            THEN IFNULL(CONCAT(A.HOLI_TERM1, ' ~ ', A.HOLI_TERM2), '') " \
+                      "            WHEN A.APVL_REQ_DIVS = '04' AND A.HDO_KD_CD = '03' " \
+                      "            THEN IFNULL(CONCAT(A.HOLI_TERM1, ' ~ ', A.HOLI_TERM2), '') " \
                       "            ELSE ''" \
                       "        END AS YEONCHA" \
-                      "     , CASE WHEN A.APVL_REQ_DIVS = '04'" \
-                      "            THEN CONCAT(IFNULL(A.HOLI_TERM2, ''), '(', CASE WHEN A.HDO_KD_CD = '01' OR A.HDO_KD_CD = '04' THEN '오전' ELSE '오후' END, ')') " \
+                      "     , CASE WHEN A.APVL_REQ_DIVS = '04' AND A.HDO_KD_CD IN ('01','02','04','05') " \
+                      "            THEN CONCAT(IFNULL(A.HOLI_TERM2, ''), '(', CASE WHEN A.HDO_KD_CD = '01' THEN '오전' ELSE '오후' END, ')') " \
                       "            ELSE ''" \
                       "        END AS BANCHA" \
                       "     , NVL(A.TH1_APRV_NM, '') AS TH1_APRV_NM " \
@@ -1067,7 +1069,6 @@ class apvlReqHist(Resource): # Mariadb 연결 진행
                     sql += "   AND A.EMP_EMAL_ADDR = '" + email + "' "
                 if deptCd != "" and deptCd != "00":
                     sql += "   AND B.DEPT_CD = '" + deptCd + "' "
-
                 sql += " ORDER BY A.APVL_REQ_DT ASC, B.EMP_NAME ASC, A.WRK_DT ASC "
                 logging.debug("apvlReqHist SQL문" + sql)
                 cursor.execute(sql)
