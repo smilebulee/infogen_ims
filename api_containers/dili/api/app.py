@@ -1047,7 +1047,7 @@ class apvlReqHist(Resource): # Mariadb 연결 진행
                       "            ELSE ''" \
                       "        END AS YEONCHA" \
                       "     , CASE WHEN A.APVL_REQ_DIVS = '04' AND A.HDO_KD_CD IN ('01','02','04','05') " \
-                      "            THEN CONCAT(IFNULL(A.HOLI_TERM2, ''), '(', CASE WHEN A.HDO_KD_CD IN ('01', '04) THEN '오전' ELSE '오후' END, ')') " \
+                      "            THEN CONCAT(IFNULL(A.HOLI_TERM2, ''), '(', CASE WHEN A.HDO_KD_CD IN ('01', '04') THEN '오전' ELSE '오후' END, ')') " \
                       "            ELSE ''" \
                       "        END AS BANCHA" \
                       "     , NVL(A.TH1_APRV_NM, '') AS TH1_APRV_NM " \
@@ -2389,7 +2389,8 @@ class saveYryApvlReq(Resource):  # Mariadb 연결 진행
                                                       "`TH2_APRV_NM`," \
                                                       "`REF_NM`," \
                                                       "`REF2_NM`," \
-                                                      "`APVL_LAST_APRV_DT`)" \
+                                                      "`APVL_LAST_APRV_DT`," \
+                                                      "`BFR_YRY_CNT`)" \
                                             " VALUES (   '" + email       + "'"\
                                                       ", '" + apvlReqDivs + "'"\
                                                       ", '" + ptoKdCd + "'"\
@@ -2414,6 +2415,7 @@ class saveYryApvlReq(Resource):  # Mariadb 연결 진행
                                                       ", '" + refNm       + "'"\
                                                       ", '" + ref2Nm      + "'"\
                                                       ",      NOW()" \
+                                                      ",      (SELECT A.USE_YRY_DAYS FROM TB_YRY_MGMT_M A WHERE EMP_EMAL_ADDR = '" + email + "')"\
                                                       ") ON DUPLICATE KEY " \
                     "UPDATE   `APVL_REQ_DIVS`   = '" + apvlReqDivs + "'"\
                     "		, `PTO_KD_CD`		= '" + ptoKdCd + "'"\
@@ -2431,12 +2433,13 @@ class saveYryApvlReq(Resource):  # Mariadb 연결 진행
                     "		, `TH2_APRV_NM`     = '" + th2AprvNm   + "'"\
                     "		, `REF_NM`          = '" + refNm       + "'"\
                     "		, `REF2_NM`         = '" + ref2Nm      + "'"\
-                    "		, `APVL_LAST_APRV_DT` = NOW()"
+                    "		, `APVL_LAST_APRV_DT` = NOW()"\
+                    "       , `BFR_YRY_CNT` = (SELECT A.USE_YRY_DAYS FROM TB_YRY_MGMT_M A WHERE EMP_EMAL_ADDR = '" + email + "')"
                 logger.info(sql1)
                 cursor.execute(sql1)
 
                 sql3 = "UPDATE TB_YRY_MGMT_M" \
-                       "   SET USE_YRY_DAYS = CASE WHEN %s = '04' AND (USE_YRY_DAYS + %s) > ALL_YRY_DAYS " \
+                       "   SET USE_YRY_DAYS = CASE WHEN %s = '04' AND (USE_YRY_DAYS + CAST(%s AS DOUBLE)) > ALL_YRY_DAYS " \
                        "                           THEN ALL_YRY_DAYS  " \
                        "                           ELSE USE_YRY_DAYS + %s" \
                        "                       END " \
@@ -2502,7 +2505,18 @@ class saveYryApvlCncl(Resource):  # Mariadb 연결 진행
                 mysql_con.commit()
 
                 sql3 = "UPDATE TB_YRY_MGMT_M" \
-                       "   SET USE_YRY_DAYS = (USE_YRY_DAYS-"+holiDays+")" \
+                       "   SET USE_YRY_DAYS = CASE WHEN (SELECT Z.PTO_KD_CD FROM TB_NEW_APVL_REQ_MGMT_M Z " \
+                       "                                  WHERE EMP_EMAL_ADDR = '"+email+"'" \
+                       "                                    AND WRK_DT        = '"+wrkDt+"'" \
+                       "                                    AND WRK_SEQ       = '"+wrkSeq+"'" \
+                       "                                ) = '04' /*경조휴가인 경우 BFR_YRY_CNT로 업데이트한다.*/" \
+                       "                           THEN (SELECT Z.BFR_YRY_CNT FROM TB_NEW_APVL_REQ_MGMT_M Z " \
+                       "                                  WHERE EMP_EMAL_ADDR = '"+email+"'" \
+                       "                                    AND WRK_DT        = '"+wrkDt+"'" \
+                       "                                    AND WRK_SEQ       = '"+wrkSeq+"'" \
+                       "                                ) " \
+                       "                           ELSE (USE_YRY_DAYS-"+holiDays+")" \
+                       "                       END " \
                        " WHERE EMP_EMAL_ADDR = '"+email+"'"
 
                 logger.info(sql3)
