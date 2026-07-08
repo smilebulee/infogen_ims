@@ -516,7 +516,7 @@
         } else if( $('[name="ptoKdCdList"]').val() == "05" ){ //건강검진
             if($('[name="ptoKdCdDtlList"]').val() == "03"){ //연차신청 - 0.5소진
                 return 0.5;
-            } else if($('[name="ptoKdCdDtlList"]').val() == "04"){ //반차신청 - 미소진
+            } else if($('[name="ptoKdCdDtlList"]').val() == "04" || $('[name="ptoKdCdDtlList"]').val() == "05"){ //반차신청 - 미소진
                 return 0;
             }
         }
@@ -582,7 +582,7 @@
             if($('[name="ptoKdCdDtlList"]').val() == "03"){ //연차신청 - 0.5소진
                 $("#sp_holiDays").text(0.5);
                 $("#ipt_holiDays").val(0.5);
-            } else if($('[name="ptoKdCdDtlList"]').val() == "04"){ //반차신청 - 미소진
+            } else if($('[name="ptoKdCdDtlList"]').val() == "04" || $('[name="ptoKdCdDtlList"]').val() == "05"){ //반차신청 - 미소진
                 $("#sp_holiDays").text(0);
                 $("#ipt_holiDays").val(0);
             }
@@ -601,20 +601,20 @@
                                       || $('[name="ptoKdCdList"]').val() == "03"
                                       || $('[name="ptoKdCdList"]').val() == "04" ?"03":"04",    // 01: 야근, 02:휴일, 03: 연차, 04: 반차
                     "ptoKdCd"       : $('[name="ptoKdCdList"]').val(),     // 01: 연차, 02:반차, 03:공가, 04:경조휴가, 05:건강검진
-                    "hdoKdCd"       : $('[name="ptoKdCdDtlList"]').val(),     // 01: 오전반차, 02:오후반차, 03:건강검진-연차, 04:건강검진-반차
+                    "hdoKdCd"       : $('[name="ptoKdCdDtlList"]').val(),     // 01: 오전반차, 02:오후반차, 03:건강검진-연차, 04:건강검진-오전반차, 05:건강검진 오후반차
                     "jobStrtTm"     : $('[name="ptoKdCdList"]').val()=="01"
                                       || $('[name="ptoKdCdList"]').val() == "03"
-                                      || $('[name="ptoKdCdList"]').val() == "04" ? "090000" : $('[name="ptoKdCdDtlList"]').val() == "01" ?  "090000" : "140000",
+                                      || $('[name="ptoKdCdList"]').val() == "04" ? "090000" : ($('[name="ptoKdCdDtlList"]').val() == "01" || $('[name="ptoKdCdDtlList"]').val() == "05") ?  "090000" : "140000",
                     "jobEndTm"      : $('[name="ptoKdCdList"]').val()=="01"
                                       || $('[name="ptoKdCdList"]').val() == "03"
-                                      || $('[name="ptoKdCdList"]').val() == "04" ? "180000" : $('[name="ptoKdCdDtlList"]').val() == "01" ?  "130000" : "180000",
+                                      || $('[name="ptoKdCdList"]').val() == "04" ? "180000" : ($('[name="ptoKdCdDtlList"]').val() == "01" || $('[name="ptoKdCdDtlList"]').val() == "05") ?  "130000" : "180000",
                     "holiTerm1"     : $("#ipt_holiTerm1").val(),                    // 연차시작일
                     "holiTerm2"     : $("#ipt_holiTerm2").val(),                    // 연차 종료일
                     "wrkDt"         : $("#ipt_holiTerm1").val(),                    // 근무일 환산
                     "wrkSeq"        : $("#ipt_wrkSeq").val(),                       // 결재요청Seq
                     "wrkTme"        : $('[name="ptoKdCdList"]').val() == "02"
                                       || (  $('[name="ptoKdCdList"]').val() == "05"
-                                         && $('[name="ptoKdCdDtlList"]').val() == "04" ) ? "040000" : "080000",   // 근무시간 환산
+                                         && ($('[name="ptoKdCdDtlList"]').val() == "04" || $('[name="ptoKdCdDtlList"]').val() == "05") ) ? "040000" : "080000",   // 근무시간 환산
                     "wrkReqRsn"     : $("#txa_holiRsn").val().trim(),               // 연차요청사유
                     "th1AprvStus"   : $("#ipt_yryApvlReqEmail").val()==$("#ipt_yry1ApvlLnSearchEmailPop").val()?"02":"01", // 01: 미승인, 기안자와 1차 결재자가 같은경우 승인으로 처리
                     "th1AprvNm"     : $("#ipt_yry1ApvlLnSearchEmailPop").val(),     // 1차 결재자
