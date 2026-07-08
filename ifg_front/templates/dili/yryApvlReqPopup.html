@@ -508,14 +508,18 @@
 
         var count = 0;
 
-        if ($('input[name="ptoKdCd"]:checked').val() == "02") {
+        // 연차or기타/반차 일수 계산
+        if( $('[name="ptoKdCdList"]').val() == "02" ){ //반차
             return 0.5;
-        }
-
-        if ($('input[name="ptoKdCd"]:checked').val() == "03") { //기타휴가는 0개
+        } else if( $('[name="ptoKdCdList"]').val() == "03" ){ //공가 - 미소진
             return 0;
+        } else if( $('[name="ptoKdCdList"]').val() == "05" ){ //건강검진
+            if($('[name="ptoKdCdDtlList"]').val() == "03"){ //연차신청 - 0.5소진
+                return 0.5;
+            } else if($('[name="ptoKdCdDtlList"]').val() == "04"){ //반차신청 - 미소진
+                return 0;
+            }
         }
-
         while(true) {
             var temp_date = date1;
 

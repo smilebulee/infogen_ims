@@ -1007,11 +1007,11 @@ class apvlReqHist(Resource): # Mariadb 연결 진행
                       "            ELSE '' END WRK_TME  " \
                       "     , CASE WHEN A.APVL_REQ_DIVS = '01' THEN '연장근무' " \
                       "            WHEN A.APVL_REQ_DIVS = '02' THEN '휴일근무' " \
-                      "            WHEN A.PTO_KD_CD = '01' THEN '연차결재'  " \
-                      "            WHEN A.PTO_KD_CD = '02' THEN '반차결재'  " \
-                      "            WHEN A.PTO_KD_CD = '03' THEN '공가결재'  " \
-                      "            WHEN A.PTO_KD_CD = '04' THEN '경조휴가결재'  " \
-                      "            WHEN A.PTO_KD_CD = '05' THEN '건강검진결재'  " \
+                      "            WHEN A.PTO_KD_CD = '01' THEN '연차'  " \
+                      "            WHEN A.PTO_KD_CD = '02' THEN '반차'  " \
+                      "            WHEN A.PTO_KD_CD = '03' THEN '공가'  " \
+                      "            WHEN A.PTO_KD_CD = '04' THEN '경조휴가'  " \
+                      "            WHEN A.PTO_KD_CD = '05' THEN '건강검진'  " \
                       "            ELSE '' END APVL_REQ_NM  " \
                       "     , CASE WHEN A.TH1_APRV_STUS = '01' AND NVL(A.TH2_APRV_STUS, '01') = '01' THEN '미승인'" \
                       "            WHEN A.TH1_APRV_STUS = '02' AND NVL(A.TH2_APRV_STUS, '01') = '01' THEN '1차승인'" \
@@ -1056,7 +1056,7 @@ class apvlReqHist(Resource): # Mariadb 연결 진행
                 if deptCd != "" and deptCd != "00":
                     sql += "   AND B.DEPT_CD = '" + deptCd + "' "
 
-                sql += " ORDER BY B.EMP_NAME ASC, A.APVL_REQ_DT ASC, A.WRK_DT ASC "
+                sql += " ORDER BY A.APVL_REQ_DT ASC, B.EMP_NAME ASC, A.WRK_DT ASC "
                 logging.debug("apvlReqHist SQL문" + sql)
                 cursor.execute(sql)
 
@@ -1111,11 +1111,11 @@ class apvlAcptHist(Resource):  # Mariadb 연결 진행
                           "     , CASE WHEN A.APVL_REQ_DIVS = '01' THEN NVL(A.WRK_TME,'') WHEN A.APVL_REQ_DIVS = '02' THEN NVL(A.WRK_TME,'') ELSE '' END WRK_TME  " \
                           "     , CASE WHEN A.APVL_REQ_DIVS = '01' THEN '연장근무' " \
                           "            WHEN A.APVL_REQ_DIVS = '02' THEN '휴일근무' " \
-                          "            WHEN A.PTO_KD_CD = '01' THEN '연차결재'  " \
-                          "            WHEN A.PTO_KD_CD = '02' THEN '반차결재'  " \
-                          "            WHEN A.PTO_KD_CD = '03' THEN '공가결재'  " \
-                          "            WHEN A.PTO_KD_CD = '04' THEN '경조휴가결재'  " \
-                          "            WHEN A.PTO_KD_CD = '05' THEN '건강검진결재'  " \
+                          "            WHEN A.PTO_KD_CD = '01' THEN '연차'  " \
+                          "            WHEN A.PTO_KD_CD = '02' THEN '반차'  " \
+                          "            WHEN A.PTO_KD_CD = '03' THEN '공가'  " \
+                          "            WHEN A.PTO_KD_CD = '04' THEN '경조휴가'  " \
+                          "            WHEN A.PTO_KD_CD = '05' THEN '건강검진'  " \
                           "            ELSE '' END APVL_REQ_NM  " \
                           "     , CASE WHEN A.TH1_APRV_STUS = '01' AND NVL(A.TH2_APRV_STUS, '01') = '01' THEN '미승인'" \
                           "            WHEN A.TH1_APRV_STUS = '02' AND NVL(A.TH2_APRV_STUS, '01') = '01' THEN '1차승인'" \
@@ -1156,11 +1156,11 @@ class apvlAcptHist(Resource):  # Mariadb 연결 진행
                           "     , CASE WHEN A.APVL_REQ_DIVS = '01' THEN NVL(A.WRK_TME,'') WHEN A.APVL_REQ_DIVS = '02' THEN NVL(A.WRK_TME,'') ELSE '' END WRK_TME  " \
                           "     , CASE WHEN A.APVL_REQ_DIVS = '01' THEN '연장근무' " \
                           "            WHEN A.APVL_REQ_DIVS = '02' THEN '휴일근무' " \
-                          "            WHEN A.PTO_KD_CD = '01' THEN '연차결재'  " \
-                          "            WHEN A.PTO_KD_CD = '02' THEN '반차결재'  " \
-                          "            WHEN A.PTO_KD_CD = '03' THEN '공가결재'  " \
-                          "            WHEN A.PTO_KD_CD = '04' THEN '경조휴가결재'  " \
-                          "            WHEN A.PTO_KD_CD = '05' THEN '건강검진결재'  " \
+                          "            WHEN A.PTO_KD_CD = '01' THEN '연차'  " \
+                          "            WHEN A.PTO_KD_CD = '02' THEN '반차'  " \
+                          "            WHEN A.PTO_KD_CD = '03' THEN '공가'  " \
+                          "            WHEN A.PTO_KD_CD = '04' THEN '경조휴가'  " \
+                          "            WHEN A.PTO_KD_CD = '05' THEN '건강검진'  " \
                           "            ELSE '' END APVL_REQ_NM  " \
                           "     , CASE WHEN A.TH1_APRV_STUS = '01' AND NVL(A.TH2_APRV_STUS, '01') = '01' THEN '미승인'" \
                           "            WHEN A.TH1_APRV_STUS = '02' AND NVL(A.TH2_APRV_STUS, '01') = '01' THEN '1차승인'" \
@@ -1529,11 +1529,11 @@ class duplApvlReqCnt(Resource): # Mariadb 연결 진행
                 sql = "SELECT COUNT(*) AS APVL_REQ_CNT" \
                       "     , CASE WHEN APVL_REQ_DIVS = '01' THEN '연장근무' " \
                       "            WHEN APVL_REQ_DIVS = '02' THEN '휴일근무' " \
-                      "            WHEN PTO_KD_CD = '01' THEN '연차결재'  " \
-                      "            WHEN PTO_KD_CD = '02' THEN '반차결재'  " \
-                      "            WHEN PTO_KD_CD = '03' THEN '공가결재'  " \
-                      "            WHEN PTO_KD_CD = '04' THEN '경조휴가결재'  " \
-                      "            WHEN PTO_KD_CD = '05' THEN '건강검진결재'  " \
+                      "            WHEN PTO_KD_CD = '01' THEN '연차'  " \
+                      "            WHEN PTO_KD_CD = '02' THEN '반차'  " \
+                      "            WHEN PTO_KD_CD = '03' THEN '공가'  " \
+                      "            WHEN PTO_KD_CD = '04' THEN '경조휴가'  " \
+                      "            WHEN PTO_KD_CD = '05' THEN '건강검진'  " \
                       "            ELSE '' " \
                       "       END APVL_DIVS   " \
                       "  FROM TB_NEW_APVL_REQ_MGMT_M " \
@@ -1579,11 +1579,11 @@ class duplApvlYryReqCnt(Resource):  # Mariadb 연결 진행
                 sql = "SELECT COUNT(*) AS APVL_REQ_CNT" \
                       "     , CASE WHEN APVL_REQ_DIVS = '01' THEN '연장근무' " \
                       "            WHEN APVL_REQ_DIVS = '02' THEN '휴일근무' " \
-                      "            WHEN PTO_KD_CD = '01' THEN '연차결재'  " \
-                      "            WHEN PTO_KD_CD = '02' THEN '반차결재'  " \
-                      "            WHEN PTO_KD_CD = '03' THEN '공가결재'  " \
-                      "            WHEN PTO_KD_CD = '04' THEN '경조휴가결재'  " \
-                      "            WHEN PTO_KD_CD = '05' THEN '건강검진결재'  " \
+                      "            WHEN PTO_KD_CD = '01' THEN '연차'  " \
+                      "            WHEN PTO_KD_CD = '02' THEN '반차'  " \
+                      "            WHEN PTO_KD_CD = '03' THEN '공가'  " \
+                      "            WHEN PTO_KD_CD = '04' THEN '경조휴가'  " \
+                      "            WHEN PTO_KD_CD = '05' THEN '건강검진'  " \
                       "            ELSE '' " \
                       "       END APVL_DIVS   " \
                       "  FROM TB_NEW_APVL_REQ_MGMT_M " \
