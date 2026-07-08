@@ -1047,7 +1047,7 @@ class apvlReqHist(Resource): # Mariadb 연결 진행
                       "            ELSE ''" \
                       "        END AS YEONCHA" \
                       "     , CASE WHEN A.APVL_REQ_DIVS = '04' AND A.HDO_KD_CD IN ('01','02','04','05') " \
-                      "            THEN CONCAT(IFNULL(A.HOLI_TERM2, ''), '(', CASE WHEN A.HDO_KD_CD = '01' THEN '오전' ELSE '오후' END, ')') " \
+                      "            THEN CONCAT(IFNULL(A.HOLI_TERM2, ''), '(', CASE WHEN A.HDO_KD_CD IN ('01', '04) THEN '오전' ELSE '오후' END, ')') " \
                       "            ELSE ''" \
                       "        END AS BANCHA" \
                       "     , NVL(A.TH1_APRV_NM, '') AS TH1_APRV_NM " \
