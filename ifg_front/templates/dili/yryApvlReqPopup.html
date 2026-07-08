@@ -183,23 +183,30 @@
                 $('[name="ptoKdCdDtlList"]').empty();
                 if(ptoKdCd == "02"){
                     //반차시 오전/오후
-                    retrieveCmmCd('sbx_ptoKdCdDtl', 'HDO_KD_CD', function(data) {
+                    retrieveCmmCd('sbx_ptoKdCdDtl', 'HDO_KD_CD',async function(data) {
                         $("#sp_holiDays").text(0.5);
                         $("#ipt_holiDays").val(0.5);
+                        $('[name="ptoKdCdDtlList"]').val(hdoKdCd);
+                        $('[name="ptoKdCdDtlList"]').prop('disabled', true);
                     });
                 }else if(ptoKdCd == "05"){
                     //건강검진 휴가시
-                    retrieveCmmCd('sbx_ptoKdCdDtl', 'HDO_KD_CD_2', function(data) {
-                        $("#sp_holiDays").text(0.5);
-                        $("#ipt_holiDays").val(0.5);
+                    retrieveCmmCd('sbx_ptoKdCdDtl', 'HDO_KD_CD_2',async function(data) {
+                        $('[name="ptoKdCdDtlList"]').val(hdoKdCd);
+                        $('[name="ptoKdCdDtlList"]').prop('disabled', true);
                     });
                 }else{
                     $('[name="ptoKdCdDtlList"]').prepend('<option value="">선택</option>');
                 }
-                $('[name="ptoKdCdDtlList"]').val(hdoKdCd);
                 $('[name="ptoKdCdDtlList"]').prop('disabled', true);
 
-
+                if(hdoKdCd == "03") {
+                    $("#sp_holiDays").text(0.5);
+                    $("#ipt_holiDays").val(0.5);
+                }if(hdoKdCd == "04" || hdoKdCd == "05") {
+                    $("#sp_holiDays").text(0);
+                    $("#ipt_holiDays").val(0);
+                }
 
                 /* 휴가 기간, */
                 $("#ipt_holiTerm1").val(holiTerm1);
@@ -309,19 +316,20 @@
             $('[name="ptoKdCdDtlList"]').empty();
             if(selVal == "02"){
                 //반차시 오전/오후
-                retrieveCmmCd('sbx_ptoKdCdDtl', 'HDO_KD_CD', function(data) {
+                retrieveCmmCd('sbx_ptoKdCdDtl', 'HDO_KD_CD', async function(data) {
                     $('[name="ptoKdCdDtlList"]').prepend('<option value="">선택</option>');
                     $('#ipt_holiTerm2').prop('disabled', true);
+                    $("#sp_holiDays").text(0.5);
+                    $("#ipt_holiDays").val(0.5);
                 });
             }else if(selVal == "05"){
                 //건강검진 휴가시
-                retrieveCmmCd('sbx_ptoKdCdDtl', 'HDO_KD_CD_2', function(data) {
+                retrieveCmmCd('sbx_ptoKdCdDtl', 'HDO_KD_CD_2', async function(data) {
                     $('[name="ptoKdCdDtlList"]').prepend('<option value="">선택</option>');
-
-                    $("#sp_holiDays").text(0.5);
-                    $("#ipt_holiDays").val(0.5);
-
+                    $('[name="ptoKdCdDtlList"]').val("");
                     $('#ipt_holiTerm2').prop('disabled', true);
+                    $("#sp_holiDays").text(0);
+                    $("#ipt_holiDays").val(0);
                 });
             }else{
                 $('[name="ptoKdCdDtlList"]').prepend('<option value="">선택</option>');
@@ -563,7 +571,7 @@
         }
         // 연차or기타/반차 일수 계산
         if ( $('[name="ptoKdCdList"]').val() == "01"
-           ||$('[name="ptoKdCdList"]').val() == "04" ) { //연차, 경조휴가
+           || $('[name="ptoKdCdList"]').val() == "04" ) { //연차, 경조휴가
             if ($('#chkbox').prop("checked")) {
                 $("#sp_holiDays").text(parseInt(diffDate/currDate) + 1);
                 $("#ipt_holiDays").val(parseInt(diffDate/currDate) + 1);
@@ -604,10 +612,10 @@
                     "hdoKdCd"       : $('[name="ptoKdCdDtlList"]').val(),     // 01: 오전반차, 02:오후반차, 03:건강검진-연차, 04:건강검진-오전반차, 05:건강검진 오후반차
                     "jobStrtTm"     : $('[name="ptoKdCdList"]').val()=="01"
                                       || $('[name="ptoKdCdList"]').val() == "03"
-                                      || $('[name="ptoKdCdList"]').val() == "04" ? "090000" : ($('[name="ptoKdCdDtlList"]').val() == "01" || $('[name="ptoKdCdDtlList"]').val() == "05") ?  "090000" : "140000",
+                                      || $('[name="ptoKdCdList"]').val() == "04" ? "090000" : ($('[name="ptoKdCdDtlList"]').val() == "01" || $('[name="ptoKdCdDtlList"]').val() == "04") ?  "090000" : "140000",
                     "jobEndTm"      : $('[name="ptoKdCdList"]').val()=="01"
                                       || $('[name="ptoKdCdList"]').val() == "03"
-                                      || $('[name="ptoKdCdList"]').val() == "04" ? "180000" : ($('[name="ptoKdCdDtlList"]').val() == "01" || $('[name="ptoKdCdDtlList"]').val() == "05") ?  "130000" : "180000",
+                                      || $('[name="ptoKdCdList"]').val() == "04" ? "180000" : ($('[name="ptoKdCdDtlList"]').val() == "01" || $('[name="ptoKdCdDtlList"]').val() == "04") ?  "130000" : "180000",
                     "holiTerm1"     : $("#ipt_holiTerm1").val(),                    // 연차시작일
                     "holiTerm2"     : $("#ipt_holiTerm2").val(),                    // 연차 종료일
                     "wrkDt"         : $("#ipt_holiTerm1").val(),                    // 근무일 환산
