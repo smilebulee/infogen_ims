@@ -1052,13 +1052,18 @@ class apvlReqHist(Resource): # Mariadb 연결 진행
                       "        END AS BANCHA" \
                       "     , NVL(A.TH1_APRV_NM, '') AS TH1_APRV_NM " \
                       "     , NVL(A.TH2_APRV_NM, '') AS TH2_APRV_NM " \
+                      "     , B.DEPT_CD " \
+                      "     , E.DEPT_NAME " \
                       "  FROM TB_NEW_APVL_REQ_MGMT_M A " \
                       "      ,TB_EMP_MGMT B" \
                       "      ,TB_EMP_MGMT C" \
                       "      ,TB_EMP_MGMT D" \
+                      "      ,TB_DEPT_CD_MGMT E" \
                       " WHERE A.EMP_EMAL_ADDR = B.EMP_EMAIL" \
                       "   AND A.TH1_APRV_NM = C.EMP_EMAIL " \
                       "   AND A.TH2_APRV_NM = D.EMP_EMAIL " \
+                      "   AND B.DEPT_CD = E.DEPT_CD " \
+                      "   AND E.DEPT_USE_YN = 'Y'" \
                       "   AND A.APVL_REQ_DIVS <> '99'" \
                       "   AND A.APVL_REQ_DT LIKE '" + apvlReqDtYm + "%' "
                 if apvlStusDivs == "01": #미승인
