@@ -968,6 +968,29 @@ class saveApvlAcpt(Resource): # Mariadb 연결 진행
                 logger.info(sql)
                 cursor.execute(sql)
 
+                if authFlag == "3":
+                    sql3 = "UPDATE TB_YRY_MGMT_M" \
+                           "   SET USE_YRY_DAYS = USE_YRY_DAYS - (SELECT CASE WHEN Z.PTO_KD_CD IN ('01', '04')" \
+                           "                                                  THEN DATEDIFF(Z.HOLI_TERM2, Z.HOLI_TERM1) + 1" \
+                           "                                          	          - (TIMESTAMPDIFF(WEEK, Z.HOLI_TERM1, Z.HOLI_TERM2) * 2)" \
+                           "                                          	          - CASE WHEN DAYOFWEEK(Z.HOLI_TERM1) = 1 THEN 1 ELSE 0 END" \
+                           "                                          	          - CASE WHEN DAYOFWEEK(Z.HOLI_TERM2) = 7 THEN 1 ELSE 0 END" \
+                           "                                                 WHEN (Z.PTO_KD_CD = '02') OR (Z.PTO_KD_CD = '05' AND Z.HDO_KD_CD = '03')" \
+                           "                                                 THEN '0.5'" \
+                           "                                                 WHEN Z.PTO_KD_CD = '03'" \
+                           "                                                 THEN '0'" \
+                           "                                                 ELSE '0'" \
+                           "                                             END" \
+                           "                                        FROM TB_NEW_APVL_REQ_MGMT_M Z " \
+                           "                                       WHERE Z.EMP_EMAL_ADDR = %s" \
+                           "                                         AND Z.WRK_DT = %s" \
+                           "                                         AND Z.WRK_SEQ = %s" \
+                           "                                     ) " \
+                           " WHERE EMP_EMAL_ADDR = %s"
+
+                    logger.info(sql3)
+                    cursor.execute(sql3, (email, wrkDt, wrkSeq, email))
+
                 mysql_con.commit()
 
         finally:
@@ -1144,11 +1167,11 @@ class apvlAcptHist(Resource):  # Mariadb 연결 진행
                           "     , CONCAT(NVL(A.WRK_REQ_RSN, ''), NVL(A.HOLI_REQ_RSN, ''))  WRK_REQ_RSN " \
                           "     , NVL(A.TH1_APRV_STUS, '') AS TH1_APRV_STUS" \
                           "     , NVL(A.TH2_APRV_STUS, '') AS TH2_APRV_STUS" \
-                          "     , CASE WHEN A.APVL_REQ_DIVS = '03'" \
+                          "     , CASE WHEN (A.APVL_REQ_DIVS = '03') OR (A.PTO_KD_CD = '05' AND A.HDO_KD_CD = '03')" \
                           "            THEN IFNULL(CONCAT(A.HOLI_TERM1, ' ~ ', A.HOLI_TERM2), '') " \
                           "            ELSE ''" \
                           "        END AS YEONCHA" \
-                          "     , CASE WHEN A.APVL_REQ_DIVS = '04'" \
+                          "     , CASE WHEN A.APVL_REQ_DIVS = '04' AND A.HDO_KD_CD <> '03'" \
                           "            THEN CONCAT(IFNULL(A.HOLI_TERM2, ''), '(', CASE WHEN A.HDO_KD_CD = '01' THEN '오전' ELSE '오후' END, ')')  " \
                           "            ELSE ''" \
                           "        END AS BANCHA" \
@@ -1189,11 +1212,11 @@ class apvlAcptHist(Resource):  # Mariadb 연결 진행
                           "     , CONCAT(NVL(A.WRK_REQ_RSN, ''), NVL(A.HOLI_REQ_RSN, '')) WRK_REQ_RSN " \
                           "     , NVL(A.TH1_APRV_STUS, '') AS TH1_APRV_STUS" \
                           "     , NVL(A.TH2_APRV_STUS, '') AS TH2_APRV_STUS" \
-                          "     , CASE WHEN A.APVL_REQ_DIVS = '03'" \
+                          "     , CASE WHEN (A.APVL_REQ_DIVS = '03') OR (A.PTO_KD_CD = '05' AND A.HDO_KD_CD = '03')" \
                           "            THEN IFNULL(CONCAT(A.HOLI_TERM1, ' ~ ', A.HOLI_TERM2), '') " \
                           "            ELSE ''" \
                           "        END AS YEONCHA" \
-                          "     , CASE WHEN A.APVL_REQ_DIVS = '04'" \
+                          "     , CASE WHEN A.APVL_REQ_DIVS = '04' AND A.HDO_KD_CD <> '03'" \
                           "            THEN CONCAT(IFNULL(A.HOLI_TERM2, ''), '(', CASE WHEN A.HDO_KD_CD = '01' THEN '오전' ELSE '오후' END, ')') " \
                           "            ELSE ''" \
                           "        END AS BANCHA" \
