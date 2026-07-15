@@ -491,12 +491,12 @@
         $(trId).css("background-color","lightGrey");
 
         $('#currReqPopStts').val("modify");
-        $('#currReqPopParamArr').val($(trId).children().eq(9).html());
+        $('#currReqPopParamArr').val($(trId).children().eq(10).html());
         var sSelStr = $(trId).children().eq(0).html();
         // 결재 상세 모달 오픈
         var url;
 
-        var sAprvStus = $(trId).children().eq(6).html();
+        var sAprvStus = $(trId).children().eq(7).html();
         var sEmail = sessionStorage.getItem("email"); //접속자
         var sEmpPr = sessionStorage.getItem("empPr"); //현장대리인
         var sEmpGm = sessionStorage.getItem("empGm"); //사업부장
@@ -518,7 +518,7 @@
         } else if (sSelStr == "연차" || sSelStr == "반차" || sSelStr == "공가" || sSelStr == "경조휴가" || sSelStr == "건강검진") {
             url = "{% url 'dili_api:yryApvlReqPop' %}" ;
             $('#currYryPopStts').val("modify");
-            $('#currYryPopParamArr').val($(trId).children().eq(9).html());
+            $('#currYryPopParamArr').val($(trId).children().eq(10).html());
 
             modal('yryReqModalDiv');
             $('#yryReqModal').load(url);

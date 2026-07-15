@@ -1811,7 +1811,7 @@ class apvlReqWrkHistDetl(Resource): # Mariadb 연결 진행
                       "             WHERE A.APVL_REQ_DIVS <> '99'" \
                       "               AND A.EMP_EMAL_ADDR = '" + data["email"]     + "'" \
                       "               AND A.WRK_SEQ = '" + data["wrkSeq"]     + "'" \
-                      "               AND DATE_FORMAT(APVL_REQ_DT, '%Y-%m-%d') = '" + data["apvlReqDt"] + "'" \
+                      "               AND DATE_FORMAT(APVL_REQ_DT, '%Y-%m-%d') = '" + data["apvlReqDt"] + "'"
 
                 logging.debug("apvlReqWrkHistDetl SQL문 : " + sql)
                 cursor.execute(sql)
