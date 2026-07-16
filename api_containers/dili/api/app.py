@@ -974,24 +974,24 @@ class saveApvlAcpt(Resource): # Mariadb 연결 진행
 
                 if authFlag == "3":
                     sql3 = "UPDATE TB_YRY_MGMT_M A " \
-                           "   SET USE_YRY_DAYS = USE_YRY_DAYS - (SELECT CASE WHEN Z.PTO_KD_CD = '01' " \
-                           "                                                  THEN DATEDIFF(Z.HOLI_TERM2, Z.HOLI_TERM1) + 1" \
-                           "                                          	          - (TIMESTAMPDIFF(WEEK, Z.HOLI_TERM1, Z.HOLI_TERM2) * 2)" \
-                           "                                          	          - CASE WHEN DAYOFWEEK(Z.HOLI_TERM1) = 1 THEN 1 ELSE 0 END" \
-                           "                                          	          - CASE WHEN DAYOFWEEK(Z.HOLI_TERM2) = 7 THEN 1 ELSE 0 END" \
-                           "                                                 WHEN (Z.PTO_KD_CD = '02') OR (Z.PTO_KD_CD = '05' AND Z.HDO_KD_CD = '03')" \
-                           "                                                 THEN '0.5'" \
-                           "                                                 WHEN Z.PTO_KD_CD = '03'" \
-                           "                                                 THEN '0'" \
-                           "                                                 WHEN Z.PTO_KD_CD = '04'" \
-                           "                                                 THEN Z.BFR_YRY_CNT - A.ALL_YRY_DAYS" \
-                           "                                                 ELSE '0'" \
-                           "                                             END" \
-                           "                                        FROM TB_NEW_APVL_REQ_MGMT_M Z " \
-                           "                                       WHERE Z.EMP_EMAL_ADDR = %s" \
-                           "                                         AND Z.WRK_DT = %s" \
-                           "                                         AND Z.WRK_SEQ = %s" \
-                           "                                     ) " \
+                           "   SET USE_YRY_DAYS = (SELECT CASE WHEN Z.PTO_KD_CD = '01' " \
+                           "                                   THEN USE_YRY_DAYS - (DATEDIFF(Z.HOLI_TERM2, Z.HOLI_TERM1) + 1" \
+                           "                                        - (TIMESTAMPDIFF(WEEK, Z.HOLI_TERM1, Z.HOLI_TERM2) * 2)" \
+                           "                                        - CASE WHEN DAYOFWEEK(Z.HOLI_TERM1) = 1 THEN 1 ELSE 0 END" \
+                           "                                        - CASE WHEN DAYOFWEEK(Z.HOLI_TERM2) = 7 THEN 1 ELSE 0 END)" \
+                           "                                   WHEN (Z.PTO_KD_CD = '02') OR (Z.PTO_KD_CD = '05' AND Z.HDO_KD_CD = '03')" \
+                           "                                   THEN USE_YRY_DAYS - '0.5'" \
+                           "                                   WHEN Z.PTO_KD_CD = '03'" \
+                           "                                   THEN USE_YRY_DAYS - '0'" \
+                           "                                   WHEN Z.PTO_KD_CD = '04'" \
+                           "                                   THEN Z.BFR_YRY_CNT" \
+                           "                                   ELSE USE_YRY_DAYS - '0'" \
+                           "                               END" \
+                           "                         FROM TB_NEW_APVL_REQ_MGMT_M Z " \
+                           "                        WHERE Z.EMP_EMAL_ADDR = %s" \
+                           "                          AND Z.WRK_DT = %s" \
+                           "                          AND Z.WRK_SEQ = %s" \
+                           "                      ) " \
                            " WHERE EMP_EMAL_ADDR = %s"
 
                     logger.info(sql3)
