@@ -486,6 +486,8 @@ class weekGridData(Resource): # Mariadb 연결 진행
                        +"  AND B.WRK_DT >= '" + data["strtDt"] + "'                                                                                                   " \
                        +"  AND B.WRK_DT <= '" + data["endDt"] + "'                                                                                                    " \
                        +"  AND B.APVL_REQ_DIVS <> '99'                                                                                                                " \
+                       +"  AND B.TH1_APRV_STUS <> '03'                                                                                                                " \
+                       +"  AND B.TH2_APRV_STUS <> '03'                                                                                                                " \
                        +"ORDER BY WRK_DT, JOB_STRT_TM                                                                                                                 "
 
 
@@ -677,6 +679,8 @@ class monthGridData(Resource): # Mariadb 연결 진행
                        +"WHERE B.EMP_EMAL_ADDR = '" + data["email"] + "'                                                                                              " \
                        +"  AND B.WRK_DT like '"+data["mDt"]+"%'                                                                                                       " \
                        +"  AND B.APVL_REQ_DIVS <> '99'                                                                                                                " \
+                       +"  AND B.TH1_APRV_STUS <> '03'                                                                                                                " \
+                       +"  AND B.TH2_APRV_STUS <> '03'                                                                                                                " \
                        +"ORDER BY WRK_DT, JOB_STRT_TM                                                                                                                 "
 
                 logger.debug('========= sql generated')
@@ -969,8 +973,8 @@ class saveApvlAcpt(Resource): # Mariadb 연결 진행
                 cursor.execute(sql)
 
                 if authFlag == "3":
-                    sql3 = "UPDATE TB_YRY_MGMT_M" \
-                           "   SET USE_YRY_DAYS = USE_YRY_DAYS - (SELECT CASE WHEN Z.PTO_KD_CD IN ('01', '04')" \
+                    sql3 = "UPDATE TB_YRY_MGMT_M A " \
+                           "   SET USE_YRY_DAYS = USE_YRY_DAYS - (SELECT CASE WHEN Z.PTO_KD_CD = '01' " \
                            "                                                  THEN DATEDIFF(Z.HOLI_TERM2, Z.HOLI_TERM1) + 1" \
                            "                                          	          - (TIMESTAMPDIFF(WEEK, Z.HOLI_TERM1, Z.HOLI_TERM2) * 2)" \
                            "                                          	          - CASE WHEN DAYOFWEEK(Z.HOLI_TERM1) = 1 THEN 1 ELSE 0 END" \
@@ -979,6 +983,8 @@ class saveApvlAcpt(Resource): # Mariadb 연결 진행
                            "                                                 THEN '0.5'" \
                            "                                                 WHEN Z.PTO_KD_CD = '03'" \
                            "                                                 THEN '0'" \
+                           "                                                 WHEN Z.PTO_KD_CD = '04'" \
+                           "                                                 THEN Z.BFR_YRY_CNT - A.ALL_YRY_DAYS" \
                            "                                                 ELSE '0'" \
                            "                                             END" \
                            "                                        FROM TB_NEW_APVL_REQ_MGMT_M Z " \
