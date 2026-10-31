@@ -31,6 +31,7 @@
                 if (data.length > 0) {
                     $('#txt_allAnhoDays').val(data[0].ALL_YRY_DAYS) //전체연차일수
                     $('#txt_rmnAnhoDays').val(data[0].ALL_YRY_DAYS - data[0].USE_YRY_DAYS) //남은연차일수
+                    $('#txt_ussYryDays').val(data[0].USE_YRY_DAYS) //사용연차일수
                     $('#sp_yryDays').text(data[0].YRY_DAYS)
                 }
                 else {
@@ -447,6 +448,11 @@
                 return;
             }
             */
+
+            if(Number($('#txt_ussYryDays').val()) >= 25){
+                alertMsg("『근로기준법』 제 60조 제 4항에 따라 연차는 최대 25일까지 부여되므로, 사내 시스템의 연간 등록 가능 일수를 근로연수와 관계없이 25일로 제한합니다.<br/>시스템 오류가 발생하거나 추가 등록이 필요한 경우, 경영지원실로 문의해 주시길 바랍니다.");
+                return;
+            }
 
             //신규 저장시, 입력받은 데이터 유효성 검증
             if($('#currYryPopStts').val() == "register") {
@@ -899,12 +905,12 @@
                             <input type="hidden" id="txt_rmnAnhoDays" value="0">
 <!--                            <span> 일 / 총 연차 일수 : </span>-->
                             <input type="hidden" id="txt_allAnhoDays" value="0">
+                            <input type="hidden" id="txt_ussYryDays" value="0">
 <!--                            <span> 일</span>-->
 <!--                        </div>-->
 
                         <!-- 결재 요청 버튼 영역 -->
                         <div class="flex-height d-flex m-0 p-2">
-                            <div class="align-self-start align-self-center mr-3"></div>
                             <div class="align-self-center mr-7">
                                 <button class="button" id="btn_apvlYryReq">저장</button>
                                 <button class="button" id="btn_apvlYryCncl">취소</button>
