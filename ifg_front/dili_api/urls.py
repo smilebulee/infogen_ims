@@ -31,6 +31,7 @@ urlpatterns = [
     url(r'^apvlReqBfrChkPop/'   , views.apvlReqBfrChkPop.as_view()   , name='apvlReqBfrChkPop'),        # 선결재 팝업
     url(r'^getDuplApvlReqCnt/'  , views.getDuplApvlReqCnt         , name='getDuplApvlReqCnt'),    # 선결재 동일 일자 결재 건수 조회
     url(r'^getDuplApvlYryReqCnt/'  , views.getDuplApvlYryReqCnt         , name='getDuplApvlYryReqCnt'),    # 선결재 동일 일자 휴가 건수 조회
+    url(r'^getUseYryCnt/'  , views.getUseYryCnt         , name='getUseYryCnt'),    # 사용휴가건수체크
     url(r'^getDuplWrkCnt/'      , views.getDuplWrkCnt             , name='getDuplWrkCnt'),        # 선결재 동일 일자 스케줄 등록 건수 조회
     url(r'^getWrkTm/'           , views.getWrkTm                  , name='getWrkTm'),             # 선결재 동일 일자 스케줄 조회(정규 근무 시간정보)
     url(r'^apvlReqLtrPop/'      , views.apvlReqLtrPop.as_view()   , name='apvlReqLtrPop'),        # 후결재 팝업

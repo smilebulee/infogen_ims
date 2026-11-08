@@ -454,31 +454,48 @@
                 return;
             }
 
-            //신규 저장시, 입력받은 데이터 유효성 검증
-            if($('#currYryPopStts').val() == "register") {
-                //동일 일자 결재 진행건 유효성 검증
-                var param = {
-                    "email"         : sessionStorage.getItem("email"),      //로그인한 사용자 아이디
-                    "wrkDt"         : $('#ipt_holiTerm1').val(),            //근무일자
-                    "wrkSeq"        : $('#ipt_wrkSeq').val(),               //결재요청Seq
-                    "holiTerm2"     : $('#ipt_holiTerm2').val(),            //근무일자(휴가종료일자)
-                }
-                //console.log("###########param::", param);
+            //동일 일자 결재 진행건 유효성 검증
+            var paramChk = {
+                "email"         : sessionStorage.getItem("email"),      //로그인한 사용자 아이디
+                "holidays"      : calcWrkDate()                         //휴가사용일수
+            }
 
-                var url = "{% url 'dili_api:getDuplApvlYryReqCnt' %}";
-                submissionCallList( param, 'GET', url, function(data) {
-                    if(data.length > 0 && data[0].APVL_REQ_CNT > 0) {
-                        //동일 날짜에 결재요청건이 있는 경우
-                        var msg = '휴가요청기간 중\n' + data[0].APVL_DIVS + ' 결재요청건이 ' + data[0].APVL_REQ_CNT + '건 있습니다! \n결재 수정하십시오.';
-                        alertMsg(msg);
-                        return;
+            var url = "{% url 'dili_api:getUseYryCnt' %}";
+            submissionCallList( paramChk, 'GET', url, function(data) {
+                if(data.length > 0 && data[0].RESULT == "F") {
+                    //25개 초과 사용의 경우
+                    alertMsg("『근로기준법』 제 60조 제 4항에 따라 연차는 최대 25일까지 부여되므로, 사내 시스템의 연간 등록 가능 일수를 근로연수와 관계없이 25일로 제한합니다.<br/>시스템 오류가 발생하거나 추가 등록이 필요한 경우, 경영지원실로 문의해 주시길 바랍니다.");
+                    return;
+                }else{
+                    //신규 저장시, 입력받은 데이터 유효성 검증
+                    if($('#currYryPopStts').val() == "register") {
+                        //동일 일자 결재 진행건 유효성 검증
+                        var param = {
+                            "email"         : sessionStorage.getItem("email"),      //로그인한 사용자 아이디
+                            "wrkDt"         : $('#ipt_holiTerm1').val(),            //근무일자
+                            "wrkSeq"        : $('#ipt_wrkSeq').val(),               //결재요청Seq
+                            "holiTerm2"     : $('#ipt_holiTerm2').val(),            //근무일자(휴가종료일자)
+                        }
+                        //console.log("###########param::", param);
+
+                        var url = "{% url 'dili_api:getDuplApvlYryReqCnt' %}";
+                        submissionCallList( param, 'GET', url, function(data) {
+                            if(data.length > 0 && data[0].APVL_REQ_CNT > 0) {
+                                //동일 날짜에 결재요청건이 있는 경우
+                                var msg = '휴가요청기간 중\n' + data[0].APVL_DIVS + ' 결재요청건이 ' + data[0].APVL_REQ_CNT + '건 있습니다! \n결재 수정하십시오.';
+                                alertMsg(msg);
+                                return;
+                            } else {
+                                btnReqEvt2();   //임시 저장 로직 처리
+                            }
+                        });
                     } else {
                         btnReqEvt2();   //임시 저장 로직 처리
                     }
-                });
-            } else {
-                btnReqEvt2();   //임시 저장 로직 처리
-            }
+                }
+            });
+
+
             return;
         });
 

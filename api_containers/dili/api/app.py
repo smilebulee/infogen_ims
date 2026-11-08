@@ -4446,6 +4446,46 @@ class diliScheduleTotalMgmt(Resource):
 
         return json.dumps(result2, indent=4, cls=DateTimeEncoder)
 
+class useYryCnt(Resource): # Mariadb 연결 진행
+    def get(self):
+
+        data = request.get_json()
+
+        logging.debug('================== App Start ==================')
+        logging.debug(data)
+        logging.debug('================== App End ==================')
+
+        #requirements pymysql import 후 커넥트 사용
+        mysql_con = getMariaConn()
+        try:
+            with mysql_con.cursor(pymysql.cursors.DictCursor) as cursor:
+                #쿼리문 실행
+                sql =   "  SELECT CASE WHEN USE_YRY_DAYS + " + str(data["holidays"]) + " > 25 " \
+	                    "              THEN 'F'        " \
+	                    "              ELSE 'T'        " \
+	                    "          END AS RESULT       " \
+	                    "    FROM TB_YRY_MGMT_M        " \
+	                    "  WHERE EMP_EMAL_ADDR = '" + str(data["email"]) + "'"
+
+                logging.debug(sql)
+                cursor.execute(sql)
+                logging.debug('useYryCnt SUCCESS')
+
+        finally:
+            mysql_con.close()
+            logging.debug('useYryCnt CLOSE')
+
+
+
+        result2 = cursor.fetchall()
+        for row in result2:
+            logging.debug('====== row====')
+            logging.debug(row)
+            logging.debug('===============')
+        array = list(result2)  # 결과를 리스트로
+
+        return json.dumps(result2, indent=4, cls=DateTimeEncoder)
+
 
 api.add_resource(Hello, '/hello')
 api.add_resource(Register, '/register')
@@ -4521,6 +4561,7 @@ api.add_resource(deptMgmtRegSubmit,'/deptMgmtRegSubmit') #api 선언
 api.add_resource(deptMgmtEditSubmit,'/deptMgmtEditSubmit') #api 선언
 api.add_resource(deptOneInfo,'/deptOneInfo') #api 선언
 api.add_resource(diliScheduleTotalMgmt,'/diliScheduleTotalMgmt') #api 선언
+api.add_resource(useYryCnt,'/useYryCnt') #api 선언
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5006, debug=True)
